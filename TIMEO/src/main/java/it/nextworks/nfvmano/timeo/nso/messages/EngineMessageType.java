@@ -1,0 +1,11 @@
+package it.nextworks.nfvmano.timeo.nso.messages;
+
+public enum EngineMessageType {
+
+	INSTANTIATE_NS_REQUEST,
+	TERMINATE_NS_REQUEST,
+	NOTIFY_COMPUTATION_RESULT,
+	NOTIFY_COMPUTATION_RELEASE,
+	NOTIFY_ALLOCATION_RESULT
+	
+}

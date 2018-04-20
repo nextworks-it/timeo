@@ -1,0 +1,144 @@
+{
+	"vnfdId": "hss",
+	"vnfProvider": "OAI",
+	"vnfProductName": "hss",
+	"vnfSoftwareVersion": "0.1",
+	"vnfdVersion": "0.6",
+	"vnfProductInfoName": "vEPC OAI HSS",
+	"vnfProductInfoDescription": "vEPC OAI Home Subscriber Server",
+	"vnfmInfo": ["vEPC_VNFM"],
+	"vdu": [{
+		"vduId": "hss_vdu",
+		"name": "hss",
+		"description": "VDU of the HSS",
+		"intCpd": [{
+			"cpdId": "hssMgtInt",
+			"layerProtocol": "IPV4",
+			"description": "Management CP of the HSS",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": true,
+				"management": true,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}, {
+			"cpdId": "hssS6aInt",
+			"layerProtocol": "IPV4",
+			"description": "CP for the S6-a interface of the HSS",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": false,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}],
+		"virtualComputeDesc": "VCD_HSS",
+		"virtualStorageDesc": ["VSD_HSS"],
+		"swImageDesc": {
+			"id": "HSS_SWID",
+			"name": "HSS",
+			"version": "0.1",
+			"checksum": "TBD",
+			"containerFormat": "QCOW",
+			"diskFormat": "QCOW",
+			"minDisk": 1,
+			"minRam": 1,
+			"size": 10,
+			"swImage": "HSS",
+			"operatingSystem": "Ubuntu-10.04"
+		},
+		"configurableProperties": {}
+	}],
+	"virtualComputeDesc": [{
+		"virtualComputeDescId": "VCD_HSS",
+		"virtualMemory": {
+			"virtualMemSize": 2,
+			"virtualMemOversubscriptionPolicy": "asdasd",
+			"numaEnabled": false
+		},
+		"virtualCpu": {
+			"numVirtualCpu": 1,
+			"cpuArchitecture": "x86_64",
+			"virtualCpuClock": 0,
+			"virtualCpuOversubscriptionPolicy": "asdasd"
+		}
+		
+	}],
+	"virtualStorageDesc": [{
+		"id": "VSD_HSS",
+		"typeOfStorage": "VOLUME",
+		"sizeOfStorage": 10,
+		"swImageDesc": "HSS_SWID"
+	}],
+	"vnfExtCpd": [{
+		"cpdId": "hssMgtExt",
+		"layerProtocol": "IPV4",
+		"description": "Management external CP of the HSS",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": true,
+			"management": true,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "hssMgtInt"
+	}, {
+		"cpdId": "hssS6aExt",
+		"layerProtocol": "IPV4",
+		"description": "External CP for the S6-a interface of the HSS",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": false,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "hssS6aInt"
+	}],
+	"deploymentFlavour": [{
+		"flavourId": "df_hss",
+		"description": "Standard deployment flavour of the HSS",
+		"vduProfile": [{
+			"vduId": "hss_vdu",
+			"minNumberOfInstances": 1,
+			"maxNumberOfInstances": 1
+		}],
+		"instantiationLevel": [{
+			"levelId": "il_hss",
+			"description": "Standard instantiation level of the HSS",
+			"vduLevel": [{
+				"vduId": "hss_vdu",
+				"numberOfInstances": 1
+			}]
+		}],
+		"vnfLcmOperationsConfiguration": {}
+	}],
+	"configurableProperties": {
+			"autoScalable": false,
+			"autoHealable": false,
+			"additionalConfigurableProperty": [
+				"vnf.hss.vdu.hss_vdu.hostname",
+				"uservnf.hss.vdu.hss.domainname",
+				"vnf.spgw.vdu.spgw_vdu.intcp.spgwS1uInt.address",
+				"vnf.mme.vdu.mme_vdu.hostname"
+			]
+	},
+	"modifiableAttributes": {},
+	"lifeCycleManagementScript": [{
+		"event": ["START_VNF_INSTANTIATION"],
+		"script": "#!/bin/bash \necho \"nameserver 8.8.8.8\" > /etc/resolv.conf \necho \"domain $$config$$domainname\" >> /etc/resolv.conf \necho \"$$config$$hostname\" > /etc/hostname \nhostnamectl set-hostname $$config$$hostname \necho \"127.0.0.1 localhost\" > /etc/hosts \necho \"127.0.1.1 $$config$$hostname.$$config$$domainname $$config$$hostname\" >> /etc/hosts \nip route del default \nip route add default via $$config$$managementGw\n"
+	}, {
+		"event": ["END_VNF_INSTANTIATION"],
+		"script": ""
+	}, {
+		"event": ["START_VNF_TERMINATION"],
+		"script": ""
+	}, {
+		"event": ["END_VNF_TERMINATION"],
+		"script": ""
+	}]
+}

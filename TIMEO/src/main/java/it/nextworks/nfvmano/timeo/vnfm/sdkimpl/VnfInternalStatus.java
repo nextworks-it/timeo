@@ -1,0 +1,15 @@
+package it.nextworks.nfvmano.timeo.vnfm.sdkimpl;
+
+public enum VnfInternalStatus {
+
+	INIT,
+	ALLOCATING_EXTERNAL_CPS,
+	ALLOCATING_VNFCS,
+	ALLOCATED,
+	CONFIGURING_VNF,
+	CONFIGURED,
+	TERMINATING_VNFCS,
+	TERMINATING_EXTERNAL_CPS,
+	TERMINATED
+	
+}

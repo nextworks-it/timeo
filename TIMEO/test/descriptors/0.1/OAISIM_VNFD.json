@@ -1,0 +1,165 @@
+{
+	"vnfdId": "oaisim",
+	"vnfProvider": "OAI",
+	"vnfProductName": "oaisim",
+	"vnfSoftwareVersion": "0.1",
+	"vnfdVersion": "0.6",
+	"vnfProductInfoName": "vEPC OAI OAISIM",
+	"vnfProductInfoDescription": "vEPC OAI Simulator for eNodeB",
+	"vnfmInfo": ["vEPC_VNFM"],
+	"vdu": [{
+		"vduId": "oaisim_vdu",
+		"name": "oaisim",
+		"description": "VDU of the OAISIM",
+		"intCpd": [{
+			"cpdId": "oaisimMgtInt",
+			"layerProtocol": "IPV4",
+			"description": "Management CP of the OAISIM",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": true,
+				"management": true,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}, {
+			"cpdId": "oaisimS1cInt",
+			"layerProtocol": "IPV4",
+			"description": "CP for the S1-c interface of the OAISIM",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": false,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}, {
+			"cpdId": "oaisimS1uInt",
+			"layerProtocol": "IPV4",
+			"description": "CP for the S1-u interface of the OAISIM",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": false,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}],
+		"virtualComputeDesc": "VCD_OAISIM",
+		"virtualStorageDesc": ["VSD_OAISIM"],
+		"swImageDesc": {
+			"id": "OAISIM_SWID",
+			"name": "OAISIM",
+			"version": "0.1",
+			"checksum": "TBD",
+			"containerFormat": "QCOW",
+			"diskFormat": "QCOW",
+			"minDisk": 1,
+			"minRam": 1,
+			"size": 10,
+			"swImage": "OAISIM",
+			"operatingSystem": "Ubuntu-10.04"
+		},
+		"configurableProperties": {}
+	}],
+	"virtualComputeDesc": [{
+		"virtualComputeDescId": "VCD_OAISIM",
+		"virtualMemory": {
+			"virtualMemSize": 2,
+			"virtualMemOversubscriptionPolicy": "asdasd",
+			"numaEnabled": false
+		},
+		"virtualCpu": {
+			"numVirtualCpu": 1,
+			"cpuArchitecture": "x86_64",
+			"virtualCpuClock": 0,
+			"virtualCpuOversubscriptionPolicy": "asdasd"
+		}
+	}],
+	"virtualStorageDesc": [{
+		"id": "VSD_OAISIM",
+		"typeOfStorage": "VOLUME",
+		"sizeOfStorage": 10,
+		"swImageDesc": "OAISIM_SWID"
+	}],
+	"vnfExtCpd": [{
+		"cpdId": "oaisimMgtExt",
+		"layerProtocol": "IPV4",
+		"description": "Management external CP of the OAISIM",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": true,
+			"management": true,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "oaisimMgtInt"
+	}, {
+		"cpdId": "oaisimS1uExt",
+		"layerProtocol": "IPV4",
+		"description": "External CP for the S1-u interface of the OAISIM",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": false,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "oaisimS1uInt"
+	}, {
+		"cpdId": "oaisimS1cExt",
+		"layerProtocol": "IPV4",
+		"description": "External CP for the S1-c interface of the OAISIM",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": false,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "oaisimS1cInt"
+	}],
+	"deploymentFlavour": [{
+		"flavourId": "df_oaisim",
+		"description": "Standard deployment flavour of the OAISIM",
+		"vduProfile": [{
+			"vduId": "oaisim_vdu",
+			"minNumberOfInstances": 1,
+			"maxNumberOfInstances": 1
+		}],
+		"instantiationLevel": [{
+			"levelId": "il_oaisim",
+			"description": "Standard instantiation level of the OAISIM",
+			"vduLevel": [{
+				"vduId": "oaisim_vdu",
+				"numberOfInstances": 1
+			}]
+		}],
+		"vnfLcmOperationsConfiguration": {}
+	}],
+	"modifiableAttributes": {},
+	"configurableProperties": {
+			"autoScalable": false,
+			"autoHealable": false,
+			"additionalConfigurableProperty": [
+				"vnf.mme.vdu.mme_vdu.intcp.mmeS1cInt.address",
+				"vnf.oaisim.vdu.oaisim_vdu.intcp.oaisimS1cInt.address",
+				"vnf.oaisim.vdu.oaisim_vdu.intcp.oaisimS1uInt.address"
+			]
+	},
+	"lifeCycleManagementScript": [{
+		"event": ["START_VNF_INSTANTIATION"],
+		"script": "#!/bin/bash \necho \"nameserver 8.8.8.8\" > /etc/resolv.conf \necho \"domain $$config$$domainname\" >> /etc/resolv.conf \necho \"$$config$$hostname\" > /etc/hostname \nhostnamectl set-hostname $$config$$hostname \necho \"127.0.0.1 localhost\" > /etc/hosts \necho \"127.0.1.1 $$config$$hostname.$$config$$domainname $$config$$hostname\" >> /etc/hosts \nip route del default \nip route add default via $$config$$managementGw \n"
+	}, {
+		"event": ["END_VNF_INSTANTIATION"],
+		"script": ""
+	}, {
+		"event": ["START_VNF_TERMINATION"],
+		"script": ""
+	}, {
+		"event": ["END_VNF_TERMINATION"],
+		"script": ""
+	}]
+}

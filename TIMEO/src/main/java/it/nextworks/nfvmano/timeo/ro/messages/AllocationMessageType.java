@@ -1,0 +1,23 @@
+package it.nextworks.nfvmano.timeo.ro.messages;
+
+public enum AllocationMessageType {
+
+	//COMMANDS
+	ALLOCATE_NS_VLS,
+	ALLOCATE_VNF,
+	CONFIGURE_VNF,
+	SETUP_UNDERLYING_CONNECTIVITY,
+	REMOVE_NS_VLS,
+	REMOVE_VNF,
+	REMOVE_UNDERLYING_CONNECTIVITY,
+	
+	//ACKs from VIM
+	VIM_ACK_ALLOCATE_VNET_RESOURCE,
+	
+	//ACKs from VNFM
+	VNFM_OPERATION_ACK,
+	
+	//ACKs from SDN controller
+	SDN_CONTROLLER_ACK
+	
+}
