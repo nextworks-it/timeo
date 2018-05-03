@@ -1,6 +1,6 @@
 package it.nextworks.nfvmano.timeo.rc.algorithms;
 
-import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
+
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathEndPoint;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;

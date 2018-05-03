@@ -103,7 +103,7 @@ public class Utilities {
 		List<VnfToLevelMapping> orderedList = new ArrayList<>();
 		for (String vp : vduProfileIds) {
 			VnfToLevelMapping level = findVnfToLevelMappingForVdu(vp, input);
-			orderedList.add(level);
+			if (input.contains(level)) orderedList.add(level);
 		}
 		orderedList.add(findVnfToLevelMappingForVdu(lastItem, input));
 		return orderedList;

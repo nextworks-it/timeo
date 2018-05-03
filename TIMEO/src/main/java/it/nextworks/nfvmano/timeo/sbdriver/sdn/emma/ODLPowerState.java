@@ -1,7 +1,6 @@
 package it.nextworks.nfvmano.timeo.sbdriver.sdn.emma;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 /**

@@ -3,7 +3,7 @@ package it.nextworks.nfvmano.timeo.rc.algorithms;
 
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.descriptors.common.elements.LinkBitrateRequirements;
-import it.nextworks.nfvmano.libs.descriptors.common.elements.VirtualLinkDf;
+//import it.nextworks.nfvmano.libs.descriptors.common.elements.VirtualLinkDf;
 import it.nextworks.nfvmano.libs.descriptors.common.elements.VirtualLinkProfile;
 import it.nextworks.nfvmano.libs.descriptors.nsd.NsLevel;
 import it.nextworks.nfvmano.libs.descriptors.nsd.NsVirtualLinkConnectivity;
@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -41,7 +40,7 @@ class LogLinkBuilder {
     // Input data
     private Map<Vnfd, Map<String, String>> vnfds;
     private List<VnfProfile> vnfProfiles;
-    private List<NsVirtualLinkDesc> virtualLinkDesc;
+//    private List<NsVirtualLinkDesc> virtualLinkDesc;
     private List<VirtualLinkProfile> profiles;
     private List<Sapd> saps;
     private TopologyNode fep;
@@ -52,7 +51,7 @@ class LogLinkBuilder {
     private Map<String, List<LogicalLinkParameters>> vm2OutLogLinks = new HashMap<>();
 
     // Cache
-    private Map<String, VirtualLinkDf> vl2FlavourCache = null;
+//    private Map<String, VirtualLinkDf> vl2FlavourCache = null;
 
     LogLinkBuilder(Map<Vnfd, Map<String, String>> vnfds,
                    List<VnfProfile> vnfProfiles,
@@ -63,7 +62,7 @@ class LogLinkBuilder {
                    NsLevel nsLevel) {
         this.vnfds = vnfds;
         this.vnfProfiles = vnfProfiles;
-        this.virtualLinkDesc = virtualLinkDesc;
+        //this.virtualLinkDesc = virtualLinkDesc;
         this.profiles = profiles;
         this.saps = saps;
         this.fep = fep;
@@ -134,7 +133,7 @@ class LogLinkBuilder {
     /**
      * Builds a map with key = vlFlavourId and value = vldId
      * @return the map built
-     */
+     *
     private Map<String, String> buildId2FlavourMap() {
         Map<String, String> output = new HashMap<>();
         for (VirtualLinkProfile profile : profiles) {
@@ -142,6 +141,7 @@ class LogLinkBuilder {
         }
         return output;
     }
+    */
 
     /**
      * Builds a map with key = extCpdId and value = vldId to which it is attached.

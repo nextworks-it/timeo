@@ -828,14 +828,20 @@ implements AsynchronousVimNotificationInterface,
 			Nsd nsd = nsManagementEngine.retrieveNsd(nsInstanceId);
 			NsDf nsDeploymentFlavour = nsd.getNsDeploymentFlavour(allocateVnfMessage.getRequest().getFlavourId());
 			String nsInstantiationLevel = allocateVnfMessage.getRequest().getNsInstantiationLevelId();
+			log.debug("Ns Instantiation Level ID: " + nsInstantiationLevel);
 			NsLevel nsLevel;
-			if (nsInstantiationLevel != null) nsLevel = nsDeploymentFlavour.getNsLevel(nsInstantiationLevel);
-			else nsLevel = nsDeploymentFlavour.getDefaultInstantiationLevel();
-			log.debug("Retrieved NS Level");
-			
+			if (nsInstantiationLevel != null) {
+				nsLevel = nsDeploymentFlavour.getNsLevel(nsInstantiationLevel);
+				log.debug("Got NS level from request: " + nsLevel.getNsLevelId());
+			}
+			else {
+				nsLevel = nsDeploymentFlavour.getDefaultInstantiationLevel();
+				log.debug("Got defaul NS level: " + nsLevel.getNsLevelId());
+			}
 			List<VnfToLevelMapping> origVnfLevels = nsLevel.getVnfToLevelMapping();
+			log.debug("The orig NS Level includes " + origVnfLevels.size() + " VNFs.");
 			List<VnfToLevelMapping> vnfLevels = Utilities.orderVnfsBasedOnDependencies(origVnfLevels, nsDeploymentFlavour.getDependencies());
-			log.debug("The NS Level includes " + vnfLevels.size() + " VNFs.");
+			log.debug("The ordered NS Level includes " + vnfLevels.size() + " VNFs.");
 			for (VnfToLevelMapping vnf : vnfLevels) {
 				VnfProfile vnfProfile = nsDeploymentFlavour.getVnfProfile(vnf.getVnfProfileId());
 				log.debug("Analyzing VNF profile " + vnf.getVnfProfileId());

@@ -1,7 +1,6 @@
 package it.nextworks.nfvmano.timeo.sbdriver.sdn;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

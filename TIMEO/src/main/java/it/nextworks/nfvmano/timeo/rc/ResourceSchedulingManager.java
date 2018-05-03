@@ -45,6 +45,7 @@ import it.nextworks.nfvmano.timeo.nso.NsManagementEngine;
 import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
+import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithmNXW;
 import it.nextworks.nfvmano.timeo.rc.algorithms.DummyAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.algorithms.DummyAlgorithmNXW;
 import it.nextworks.nfvmano.timeo.rc.algorithms.NsResourceAllocationAlgorithmInterface;
@@ -449,6 +450,8 @@ public class ResourceSchedulingManager {
 			return new EmmaNetCompAlgorithm();
 		} else if (this.algorithmType.equals("DUMMY_NXW")){
 			return new DummyAlgorithmNXW();
+		} else if (this.algorithmType.equals("CDN_STATIC_NXW")){
+			return new CdnStaticAlgorithmNXW();
 		} else {
 			log.error("Unable to find a suitable algorithm");
 			throw new AlgorithmNotAvailableException();

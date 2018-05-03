@@ -1,0 +1,8 @@
+{
+    "sdnControllerId": "OpenDaylight_local",
+    "sdnControllerType": "SDN_CONTROLLER_OPENDAYLIGHT",
+    "url": "http://10.0.7.11:8181",
+    "username": "admin",
+    "password": "admin",
+    "vimId": "OpenStack_local"
+}

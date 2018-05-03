@@ -3,8 +3,7 @@ package it.nextworks.nfvmano.timeo.rc.elements;
 
 
 
-import java.util.Arrays;
-import java.util.Collections;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,7 +32,7 @@ public class TopologyNode {
 
     private Map<String, Double> processing = new HashMap<>(); // in W/Kb TODO should become a mapping flavor -> PC
 
-    private Set<PowerState> availablePowerStates;
+    //private Set<PowerState> availablePowerStates;
 
     public PowerState powerState;
 
@@ -56,7 +55,7 @@ public class TopologyNode {
         this.powerState = powerState;
         this.cps = cps;
         this.zoneId = zoneId;
-        this.availablePowerStates = new HashSet<>(Arrays.asList(PowerState.values()));
+        //this.availablePowerStates = new HashSet<>(Arrays.asList(PowerState.values()));
         this.vimName = vimName;
     }
 
@@ -68,7 +67,7 @@ public class TopologyNode {
 
     public TopologyNode(String nodeId, Set<TopologyCp> cps) {
         this(nodeId, cps, 0, 0, 0, 0, 0, PowerState.HIGH_POWER, null, null);
-        this.availablePowerStates = Collections.emptySet();
+        //this.availablePowerStates = Collections.emptySet();
     }
 
     @Override

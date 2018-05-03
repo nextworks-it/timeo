@@ -5,8 +5,7 @@ import dk.ange.octave.OctaveEngineFactory;
 import dk.ange.octave.type.OctaveDouble;
 import it.nextworks.nfvmano.timeo.common.exception.OptimizationFailedException;
 
-import java.io.IOException;
-import java.io.OutputStream;
+
 import java.io.PrintStream;
 
 /**
@@ -18,12 +17,14 @@ public class JOctaveSolver extends Solver {
 
     private OctaveEngine solver = new OctaveEngineFactory().getScriptEngine();
 
+    /*
     private PrintStream devNull = new PrintStream(new OutputStream() {
         @Override
         public void write(int i) throws IOException {
             // Swallow it.
         }
     });
+	*/
 
     JOctaveSolver(double[] objective,
                          double[][] eqConstraintM,

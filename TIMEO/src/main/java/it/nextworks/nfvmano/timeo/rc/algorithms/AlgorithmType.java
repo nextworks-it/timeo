@@ -5,5 +5,7 @@ public enum AlgorithmType {
 	DUMMY_NXW,
 	EMMA_NET,
 	EMMA_COMP,
-	EMMA_NET_COMP
+	EMMA_NET_COMP,
+	CDN_STATIC_5TONIC,
+	CDN_STATIC_NXW
 }
