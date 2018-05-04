@@ -1,7 +1,6 @@
 package it.nextworks.nfvmano.timeo.sbdriver;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -10,13 +9,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  */
 
 @Configuration
-@ComponentScan(basePackages = "it.nextworks.nfvmano.sbdrivers")
-public class ThreadPoolClass {
-
-    public final static String taskExecutor = "taskExecutor";
+public class ExecutorsConfig {
 
     @Bean
-    public ThreadPoolTaskExecutor taskExecutor(){
+    public ThreadPoolTaskExecutor tPTaskExecutor(){
         ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
         pool.setCorePoolSize(20);
         pool.setMaxPoolSize(20);
