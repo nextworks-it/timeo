@@ -1,5 +1,5 @@
 
-var nfvoAddr = '10.0.7.10';
+var nfvoAddr = window.location.hostname;
 //var nfvoAddr = 'localhost';
 var nfvoPort = '8081';
 
