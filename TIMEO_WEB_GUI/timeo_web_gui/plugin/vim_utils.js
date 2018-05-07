@@ -77,10 +77,10 @@ function createVIMTable(tableId, data, resId) {
 	}
 //  console.log(JSON.stringify(data, null, 4));
 	var btnFlag = true;
-	var header = createTableHeaderByValues(['Id', 'Type', 'Tenant', 'Url', 'Domain', 'External Network', 'External Router', 'Provider'], btnFlag, false);
+	var header = createTableHeaderByValues(['Id', 'Type', 'Tenant', 'Url', 'Domain', 'External Network', 'External Router'], btnFlag, false);
 	var cbacks = ['deleteVIM'];
 	var names = ['Delete'];
-    var columns = [['vimId'], ['type'], ['tenant'], ['url'], ['domain'], ['defaultExternalNetworkId'], ['defaultExternalRouterId'], ['providerId']];
+    var columns = [['vimId'], ['type'], ['tenant'], ['url'], ['domain'], ['defaultExternalNetworkId'], ['defaultExternalRouterId']];
 	var conts = '<tbody>';
 	for (var i in data) {
 		conts += createVIMTableContents(data[i], btnFlag, resId, names, cbacks, columns);
