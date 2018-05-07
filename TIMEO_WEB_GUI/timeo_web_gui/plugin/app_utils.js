@@ -2,9 +2,9 @@
 function fillAppPCounter(elemId, data, resId) {
 	var countDiv = document.getElementById(elemId);
 	
-	var appps = data;
+	var appds = data;
 	
-	countDiv.innerHTML = appps.length;
+	countDiv.innerHTML = appds.length;
 }
 
 function uploadAppDFromForm(formIds, resId) {
