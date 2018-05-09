@@ -33,6 +33,7 @@ import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.UpdateNsResp
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.NsdManagementService;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.InternalNsdInfo;
+import it.nextworks.nfvmano.timeo.nso.repository.InternalOperation;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
 import it.nextworks.nfvmano.timeo.tenant.Tenant;
 import it.nextworks.nfvmano.timeo.tenant.TenantManagementService;
@@ -190,8 +191,8 @@ public class NsLifecycleService implements NsLcmProviderInterface {
 	@Override
 	public OperationStatus getOperationStatus(String operationId) throws MethodNotImplementedException, NotExistingEntityException {
 		log.debug("Received get operation status request for operation " + operationId);
-		//TODO:
-		throw new MethodNotImplementedException();
+		InternalOperation internalOperation = nsDbWrapper.readInternalOperation(operationId);
+		return internalOperation.getStatus();
 	}
 	
 	public String subscribeNsLcmEvents(SubscribeRequest request, NsLcmConsumerInterface consumer) 

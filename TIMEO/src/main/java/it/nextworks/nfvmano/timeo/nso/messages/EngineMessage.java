@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
 /**
- * Abstract message sent to the EMMA NFVO engine
+ * Abstract message sent to the NFVO engine
  * 
  * @author nextworks
  *
