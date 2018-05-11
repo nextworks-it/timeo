@@ -73,9 +73,9 @@ public class CdnStaticAlgorithm5tonic extends AbstractNsResourceAllocationAlgori
 			npe2.add(npe2Src);
 			npe2.add(npe2Dst);
 			List<NetworkPathHop> nph2 = new ArrayList<>();
-			nph1.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:1", "openflow:1:3", incomingLinkId, outgoingLinkId, 0, true, false));
-			nph1.add(new NetworkPathHop(null, 1, "openflow:9", "openflow:9:4", "openflow:9:3", incomingLinkId, outgoingLinkId, 0, false, false));
-			nph1.add(new NetworkPathHop(null, 2, "openflow:2", "openflow:2:2", "openflow:2:1", incomingLinkId, outgoingLinkId, 0, false, true));
+			nph2.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:1", "openflow:1:3", incomingLinkId, outgoingLinkId, 0, true, false));
+			nph2.add(new NetworkPathHop(null, 1, "openflow:9", "openflow:9:4", "openflow:9:3", incomingLinkId, outgoingLinkId, 0, false, false));
+			nph2.add(new NetworkPathHop(null, 2, "openflow:2", "openflow:2:2", "openflow:2:1", incomingLinkId, outgoingLinkId, 0, false, true));
 			NetworkPath np2 = new NetworkPath(null, "NP_02_Distribution_Cache2", npe2, nph2, "VideoDistribution", false);
 			networkPaths.add(np2);	
 		}
@@ -114,9 +114,9 @@ public class CdnStaticAlgorithm5tonic extends AbstractNsResourceAllocationAlgori
 			npe5.add(npe5Src);
 			npe5.add(npe5Dst);
 			List<NetworkPathHop> nph5 = new ArrayList<>();
-			nph3.add(new NetworkPathHop(null, 0, "openflow:2", "openflow:2:1", "openflow:2:2", incomingLinkId, outgoingLinkId, 0, true, false));
-			nph3.add(new NetworkPathHop(null, 1, "openflow:8", "openflow:8:3", "openflow:8:2", incomingLinkId, outgoingLinkId, 0, false, false));
-			nph3.add(new NetworkPathHop(null, 2, "openflow:3", "openflow:3:4", "openflow:3:1", incomingLinkId, outgoingLinkId, 0, false, true));
+			nph5.add(new NetworkPathHop(null, 0, "openflow:2", "openflow:2:1", "openflow:2:2", incomingLinkId, outgoingLinkId, 0, true, false));
+			nph5.add(new NetworkPathHop(null, 1, "openflow:8", "openflow:8:3", "openflow:8:2", incomingLinkId, outgoingLinkId, 0, false, false));
+			nph5.add(new NetworkPathHop(null, 2, "openflow:3", "openflow:3:4", "openflow:3:1", incomingLinkId, outgoingLinkId, 0, false, true));
 			NetworkPath np5 = new NetworkPath(null, "NP_05_Mgt_Cache2-MgtSAP", npe5, nph5, "mgt", false);
 			networkPaths.add(np5);
 		}
@@ -128,9 +128,9 @@ public class CdnStaticAlgorithm5tonic extends AbstractNsResourceAllocationAlgori
 		npe6.add(npe6Src);
 		npe6.add(npe6Dst);
 		List<NetworkPathHop> nph6 = new ArrayList<>();
-		nph4.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:1", "openflow:1:2", incomingLinkId, outgoingLinkId, 0, true, false));
-		nph4.add(new NetworkPathHop(null, 1, "openflow:7", "openflow:7:2", "openflow:7:3", incomingLinkId, outgoingLinkId, 0, false, false));
-		nph4.add(new NetworkPathHop(null, 2, "openflow:3", "openflow:3:2", "openflow:3:1", incomingLinkId, outgoingLinkId, 0, false, true));
+		nph6.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:1", "openflow:1:2", incomingLinkId, outgoingLinkId, 0, true, false));
+		nph6.add(new NetworkPathHop(null, 1, "openflow:7", "openflow:7:2", "openflow:7:3", incomingLinkId, outgoingLinkId, 0, false, false));
+		nph6.add(new NetworkPathHop(null, 2, "openflow:3", "openflow:3:2", "openflow:3:1", incomingLinkId, outgoingLinkId, 0, false, true));
 		NetworkPath np6 = new NetworkPath(null, "NP_06_Mgt_WS-MgtSAP", npe6, nph6, "mgt", false);
 		networkPaths.add(np6);
 
@@ -141,9 +141,9 @@ public class CdnStaticAlgorithm5tonic extends AbstractNsResourceAllocationAlgori
 		npe7.add(npe7Src);
 		npe7.add(npe7Dst);
 		List<NetworkPathHop> nph7 = new ArrayList<>();
-		nph4.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:1", "openflow:1:2", incomingLinkId, outgoingLinkId, 0, true, false));
-		nph4.add(new NetworkPathHop(null, 1, "openflow:7", "openflow:7:2", "openflow:7:3", incomingLinkId, outgoingLinkId, 0, false, false));
-		nph4.add(new NetworkPathHop(null, 2, "openflow:3", "openflow:3:2", "openflow:3:1", incomingLinkId, outgoingLinkId, 0, false, true));
+		nph7.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:1", "openflow:1:2", incomingLinkId, outgoingLinkId, 0, true, false));
+		nph7.add(new NetworkPathHop(null, 1, "openflow:7", "openflow:7:2", "openflow:7:3", incomingLinkId, outgoingLinkId, 0, false, false));
+		nph7.add(new NetworkPathHop(null, 2, "openflow:3", "openflow:3:2", "openflow:3:1", incomingLinkId, outgoingLinkId, 0, false, true));
 		NetworkPath np7 = new NetworkPath(null, "NP_07_Mgt_SPGW-MgtSAP", npe7, nph7, "mgt", false);
 		networkPaths.add(np7);
 
