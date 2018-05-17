@@ -115,6 +115,7 @@ public class RequestParserTest {
         TopologyNode l2 = makeXPFE("L2");
         TopologyNode l3 = makeXPFE("L3");
         TopologyNode mgmt = new TopologyNode("mgmt", new HashSet<>());
+        mgmt.setProcessing(10000);
         topology.addNode(s1);
         topology.addNode(s2);
         topology.addNode(s3);
@@ -162,7 +163,7 @@ public class RequestParserTest {
     }
 
     private TopologyNode makeXPU(String id) {
-        return new TopologyNode(
+        TopologyNode node = new TopologyNode(
                 id,
                 new HashSet<>(),
                 50,
@@ -174,15 +175,19 @@ public class RequestParserTest {
                 "zone1",
                 id
         );
+        node.setProcessing(5*10);
+        return node;
     }
 
     private TopologyNode makeXPFE(String id) {
-        return new TopologyNode(
+        TopologyNode node = new TopologyNode(
                 id,
                 new HashSet<>(),
                 55,
                 PowerState.SLEEPING
         );
+        node.setProcessing(10000);
+        return node;
     }
 
     @Test
