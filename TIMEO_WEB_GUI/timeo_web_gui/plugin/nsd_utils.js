@@ -574,8 +574,10 @@ function fillNSInstantiationForm_step2(nsdInfoId, data, param) {
 	//console.log(JSON.stringify(data, null, 4));
 	//data = {'user.hss.aaa.bbb.domain':'OAI', 'user.spgw.ccc.ddd.boh':'OAI'};
 	var userParams_modalForm = document.getElementById(param);
+	var found = false;
 	$.each(data, function (key, val)  {
 		if (key.indexOf('user') == 0) {
+			found = true;
 			var field = key.split('.');
 			userParams_modalForm.innerHTML += '<div class="userParam-form-groups" id="' + key + '-' + nsdInfoId + '"><div class="form-group">\
 							<label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">' + field[field.length - 1].charAt(0).toUpperCase() + field[field.length - 1].slice(1) + '<!-- span class="required">*</span -->\
@@ -587,6 +589,20 @@ function fillNSInstantiationForm_step2(nsdInfoId, data, param) {
 						  </div></div>';
 		}
 	});
+	
+	if (!found) {
+		var title = document.getElementById('instantiateNSD-userParams_modalForm_' + nsdInfoId);
+		
+		if (title) {
+			title.style.display = 'none';
+		} else {
+			title = document.getElementById('instantiateNSD-userParams_modalForm_');
+			if (title) {
+				title.style.display = 'none';
+			}
+		}
+		
+	}
 }
 
 function showDfInstantiationLevel(selectId, elemId) {

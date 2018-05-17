@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import it.nextworks.nfvmano.timeo.rc.algorithms.AlgorithmType;
+import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithm5tonic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.BindingBuilder;
@@ -444,17 +446,27 @@ public class ResourceSchedulingManager {
 	
 	private NsResourceAllocationAlgorithmInterface loadAlgorithm() throws AlgorithmNotAvailableException {
 		//TODO: at the moment in configuration. Maybe it should be managed with some policies...
-		if (this.algorithmType.equals("DUMMY")) {
-			return new DummyAlgorithm();
-		} else if (this.algorithmType.equals("POLITO")) {
-			return new EmmaNetCompAlgorithm();
-		} else if (this.algorithmType.equals("DUMMY_NXW")){
-			return new DummyAlgorithmNXW();
-		} else if (this.algorithmType.equals("CDN_STATIC_NXW")){
-			return new CdnStaticAlgorithmNXW();
-		} else {
-			log.error("Unable to find a suitable algorithm");
+		AlgorithmType type;
+		try {
+			type = AlgorithmType.valueOf(this.algorithmType);
+		} catch (IllegalArgumentException e) {
+			log.error("Unknown algorithm type {}.", this.algorithmType);
 			throw new AlgorithmNotAvailableException();
+		}
+		switch (type) {
+			case DUMMY:
+				return new DummyAlgorithm();
+			case EMMA_NET_COMP:
+				return new EmmaNetCompAlgorithm();
+			case DUMMY_NXW:
+				return new DummyAlgorithmNXW();
+			case CDN_STATIC_NXW:
+				return new CdnStaticAlgorithmNXW();
+			case CDN_STATIC_5TONIC:
+				return new CdnStaticAlgorithm5tonic();
+			default:
+				log.error("Algorithm type {} not yet implemented.", type);
+				throw new AlgorithmNotAvailableException();
 		}
 	}
 
