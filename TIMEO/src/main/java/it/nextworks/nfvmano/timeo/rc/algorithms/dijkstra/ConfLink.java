@@ -1,5 +1,6 @@
 package it.nextworks.nfvmano.timeo.rc.algorithms.dijkstra;
 
+import it.nextworks.nfvmano.timeo.rc.algorithms.LogicalLinkParameters;
 import it.nextworks.nfvmano.timeo.rc.elements.TopologyNode;
 
 /**
@@ -11,7 +12,7 @@ abstract class ConfLink {
 
     protected TopologyNode node;
     ConfLinkType linkType;
-    private NetConfiguration source;
+    NetConfiguration source;
     NetConfiguration destination;
 
     private ConfLink(TopologyNode node, ConfLinkType linkType,
@@ -53,7 +54,7 @@ abstract class ConfLink {
     }
 
     static class StateChangeLink extends ConfLink {
-        private Integer newState;
+        Integer newState;
 
         StateChangeLink(TopologyNode node, Integer newState,
                         NetConfiguration source, NetConfiguration destination) {
@@ -136,11 +137,14 @@ abstract class ConfLink {
     static class TrafficProcessingLink extends ConfLink {
 
         String vmProcessing;
+        LogicalLinkParameters logLink;
 
         TrafficProcessingLink(TopologyNode node, String vmProcessing,
-                              NetConfiguration source, NetConfiguration destination) {
+                              NetConfiguration source, NetConfiguration destination,
+                              LogicalLinkParameters logLink) {
             super(node, ConfLinkType.TRAFFIC_PROCESSING, source, destination);
             this.vmProcessing = vmProcessing;
+            this.logLink = logLink;
         }
 
         @Override
@@ -156,7 +160,8 @@ abstract class ConfLink {
 
             TrafficProcessingLink that = (TrafficProcessingLink) o;
 
-            return vmProcessing.equals(that.vmProcessing);
+            return vmProcessing.equals(that.vmProcessing)
+                    && logLink.equals(that.logLink);
         }
 
         @Override

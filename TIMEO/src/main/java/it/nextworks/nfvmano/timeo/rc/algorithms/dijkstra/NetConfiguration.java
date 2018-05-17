@@ -20,8 +20,48 @@ class NetConfiguration {
     private Map<TopologyNode, Integer> powerStates;
     private Map<String, TopologyNode> vmMap;
     private Map<TopologyNode, List<String>> invVmMap;
+    private Map<TopologyNode, VMSize> usedResources;
     private List<String> vms;
     private Map<String, VMSize> sizes;
+
+    List<String> getVms() {
+        return vms;
+    }
+
+    Integer getState(TopologyNode node) {
+        return powerStates.get(node);
+    }
+
+    TopologyNode getCompute(String vm) {
+        return vmMap.get(vm);
+    }
+
+    private VMSize getUsedResources(TopologyNode node) {
+        return usedResources.getOrDefault(node, VMSize.sum());
+    }
+
+    boolean fits(String vm, TopologyNode node) {
+        return (getState(node) != 0 && getUsedResources(node).sum(sizes.get(vm)).fitsIn(node));
+    }
+
+    private void instantiate(String vm, TopologyNode node) {
+        if (!sizes.containsKey(vm)) {
+            throw new IllegalArgumentException(String.format("No vm named %s", vm));
+        }
+        VMSize newUsed = getUsedResources(node).sum(sizes.get(vm));
+        if (!newUsed.fitsIn(node)) {
+            throw new IllegalArgumentException(String.format(
+                    "Vm %s size %s does not fit in node %s, used %s. VMs: %s.",
+                    vm, sizes.get(vm),
+                    node, usedResources.getOrDefault(node, VMSize.sum()),
+                    invVmMap.getOrDefault(node, new ArrayList<>())
+            ));
+        }
+
+        invVmMap.putIfAbsent(node, new ArrayList<>());
+        invVmMap.get(node).add(vm);
+        usedResources.put(node, newUsed);
+    }
 
     NetConfiguration(Map<TopologyNode, Integer> powerStates,
                      Map<String, TopologyNode> vmMap,
@@ -32,26 +72,13 @@ class NetConfiguration {
         this.vms = vms;
         this.sizes = sizes;
         this.invVmMap = new HashMap<>();
+        this.usedResources = new HashMap<>();
         for (Map.Entry<String, TopologyNode> entry: this.vmMap.entrySet()) {
             if (entry.getValue() != null) {
-                invVmMap.putIfAbsent(entry.getValue(), new ArrayList<>());
-                invVmMap.get(entry.getValue()).add(entry.getKey());
-            }
-        }
-        for (Map.Entry<TopologyNode, List<String>> entry : invVmMap.entrySet()) {
-            VMSize totalSize = VMSize.sum(
-                    entry.getValue().stream().map(
-                            sizes::get
-                    ).toArray(VMSize[]::new));
-            if (!totalSize.fitsIn(entry.getKey())) {
-                throw new IllegalArgumentException(
-                        String.format("Overloaded node %s. VMs: %s.", entry.getKey(), entry.getValue())
-                );
+                instantiate(entry.getKey(), entry.getValue());
             }
         }
     }
-
-    
 
     /**
 	 * @return the invVmMap
@@ -60,34 +87,31 @@ class NetConfiguration {
 		return invVmMap;
 	}
 
-
-
 	boolean isVmInstantiated(String vm, TopologyNode node) {
         return node.equals(vmMap.get(vm));
     }
 
-    private NetConfiguration andSet(TopologyNode node, int state) {
+    NetConfiguration andSet(TopologyNode node, int state) {
         HashMap<TopologyNode, Integer> newStates = new HashMap<>(powerStates);
         newStates.put(node, state);
         return new NetConfiguration(
                 newStates,
-                new HashMap<>(vmMap),
+                vmMap, // TODO maybe copy?
                 vms,
                 sizes
         );
     }
 
-    private NetConfiguration andInstantiate(TopologyNode node, String vm) {
+    NetConfiguration andInstantiate(TopologyNode node, String vm) {
         HashMap<String, TopologyNode> newMap = new HashMap<>(vmMap);
         newMap.put(vm, node);
         return new NetConfiguration(
-                new HashMap<>(powerStates),
+                powerStates, // TODO maybe copy
                 newMap,
                 vms,
                 sizes
         );
     }
-
 
     private List<NetConfiguration> addSteps(NetConfGraph graph, Set<NetConfiguration> toSkip) {
         List<NetConfiguration> output = new ArrayList<>();
@@ -113,13 +137,9 @@ class NetConfiguration {
                     if (nodeEntry.getValue() == 0) {
                         continue;
                     }
+
                     TopologyNode node = nodeEntry.getKey();
-                    VMSize neededSize = VMSize.sum(
-                            invVmMap.getOrDefault(node, Collections.emptyList()).stream().map(
-                                    sizes::get
-                            ).toArray(VMSize[]::new))
-                            .sum(sizes.get(vm));
-                    if (!neededSize.fitsIn(node)) {
+                    if (!fits(vm, node)) {
                         continue;
                     }
 
@@ -154,8 +174,15 @@ class NetConfiguration {
             List<NetConfiguration> newConfs = current.addSteps(g, processed);
             frontier.addAll(newConfs);
             if (log.isDebugEnabled()) {
-                if (prev / 10 < processed.size() / 10) {
-                    log.info("Processed configuration node number {}.", (processed.size() / 10) * 10);
+                if (prev / 100 < processed.size() / 100) {
+                    log.debug("Processed configuration node number {}.", (processed.size() / 100) * 100);
+                }
+                if (processed.size() > 10000) {
+                    log.error("Too many nodes");
+                    for (NetConfiguration netConfiguration : processed) {
+                        log.debug("{}", netConfiguration);
+                    }
+                    throw new RuntimeException();
                 }
             }
         }

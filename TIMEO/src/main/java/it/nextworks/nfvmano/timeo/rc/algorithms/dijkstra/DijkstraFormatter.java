@@ -1,5 +1,7 @@
 package it.nextworks.nfvmano.timeo.rc.algorithms.dijkstra;
 
+import cern.jet.math.IntFunctions;
+import com.google.common.base.Functions;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import it.nextworks.nfvmano.timeo.common.exception.OptimizationFailedException;
@@ -17,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by Marco Capitani on 26/04/17.
@@ -27,7 +31,7 @@ public class DijkstraFormatter extends Formatter {
 
     private static final Logger log = LoggerFactory.getLogger(DijkstraFormatter.class);
 
-    DijkstraFormatter(NetworkTopology topology,
+    public DijkstraFormatter(NetworkTopology topology,
                              List<String> vms,
                              Map<String, VMSize> sizes,
                              Map<LogicalLinkParameters, Double> logLinks,
@@ -35,20 +39,23 @@ public class DijkstraFormatter extends Formatter {
                              List<TopologyNode> sourceNodes,
                              Map<String, TopologyNode> vmPlacement, 
                              String operationID) {
-        super(topology, vms, sizes, logLinks, coefficients, sourceNodes, vmPlacement, operationID);
+        super(topology, vms, sizes, logLinks, coefficients, sourceNodes, new HashMap<>(vmPlacement), operationID);
         log.debug("Formatter initialization completed.");
     }
 
     private NetConfiguration extractStartingConfiguration() {
         Map<TopologyNode, Integer> powerStates = new HashMap<>();
-        Map<String, TopologyNode> vmMap = new HashMap<>();
         for (TopologyNode node : topology.nodes) {
             powerStates.put(node, (node.isOn()) ? 1 : 0);
         }
         for (String vm : vms) {
-            vmMap.put(vm, null);
+            //noinspection unchecked
+            vmPlacement.putIfAbsent(
+                    vm,
+                    null
+            );
         }
-        return new NetConfiguration(powerStates, vmMap, vms, sizes);
+        return new NetConfiguration(powerStates, vmPlacement, vms, sizes);
     }
 
     private DirectedSparseGraph<TopologyNode, TopologyLink> makeTopologyGraph() {
@@ -63,63 +70,8 @@ public class DijkstraFormatter extends Formatter {
     }
 
     private Graph<Node, Link> makeGraph() {
-        NetConfiguration startingConf = extractStartingConfiguration();
-        log.debug("Starting configuration is: {}.", startingConf);
-        NetConfGraph confGraph = startingConf.makeConfigurationGraph();
-        log.debug("Configuration graph is {}", confGraph);
         Graph<TopologyNode, TopologyLink> topologyGraph = makeTopologyGraph();
-        log.info("Topology graph is {}", topologyGraph);
-
-        Graph<Node, Link> g = new DirectedSparseGraph<>();
-        LinkedList<Node> frontier = new LinkedList<>();
-        for (TopologyNode topologyNode : topology.nodes) {
-            for (NetConfiguration netConf : confGraph.getVertices()) {
-                // We create all of the graph's vertices right away.
-                // We will never add a vertex later, hence all errors will raise exceptions.
-                Node node = new Node(topologyNode, netConf);
-                g.addVertex(node);
-                frontier.add(node);
-            }
-        }
-        while (!frontier.isEmpty()) {
-            Node current = frontier.removeFirst();
-            List<TopologyNode> descendants = new ArrayList<>();
-            for (TopologyLink topologyLink : topologyGraph.getOutEdges(current.node)) {
-                descendants.add(topologyLink.destination);
-                Node destNode = new Node(topologyLink.destination, current.conf);
-                g.addEdge(new TLink(topologyLink),
-                        current,
-                        destNode
-                );
-            }
-            for (TopologyNode descendant : descendants) {
-                for (ConfLink confLink : confGraph.getChanges(descendant.nodeId, current.conf)) {
-                        Node destNode = new Node(current.node, confGraph.getDest(confLink));
-                        g.addEdge(new CLink(confLink),
-                                current,
-                                destNode
-                        );
-                    }
-
-            }
-            for (ConfLink confLink : confGraph.getInstantiations(current.node.nodeId, current.conf)) {
-                    Node destNode = new Node(current.node, confGraph.getDest(confLink));
-                    g.addEdge(new CLink(confLink),
-                            current,
-                            destNode
-                    );
-                }
-
-            for (ConfLink confLink : confGraph.getProcessing(current.node.nodeId, current.conf)) {
-                Node destNode = new Node(current.node, confGraph.getDest(confLink));
-                g.addEdge(new CLink(confLink),
-                        current,
-                        destNode
-                );
-            }
-        }
-        log.debug("Main graph is {}", g);
-        return g;
+        return new LazyGraph(topologyGraph, logLinks.keySet());
     }
 
     Map<LogicalLinkParameters, List<Link>> internalSolve() throws OptimizationFailedException {
@@ -134,8 +86,64 @@ public class DijkstraFormatter extends Formatter {
 
     @Override
     public ComputationSolution solve() throws ResourceAllocationSolutionNotFound {
-        //TODO
-        return null;
+        Map<LogicalLinkParameters, List<Link>> sol;
+        try {
+            sol = internalSolve();
+        } catch (OptimizationFailedException e) {
+            throw new ResourceAllocationSolutionNotFound(e);
+        }
+        // Collect config changes
+        Map<ConfLink.ConfLinkType, List<ConfLink>> configLinks = sol.values().stream()
+                .flatMap(Collection::stream)
+                .filter(lnk -> lnk.type() == LinkType.CONFIGURATION)
+                .map(lnk -> ((CLink) lnk).link)
+                .collect(Collectors.groupingBy(cLink -> cLink.linkType));
+        List<ConfLink.StateChangeLink> stateChangeLinks =
+                configLinks.get(ConfLink.ConfLinkType.NODE_STATE_CHANGE).stream()
+                        .map(lnk -> (ConfLink.StateChangeLink) lnk)
+                        .collect(Collectors.toList());
+        List<ConfLink.VMInstantiationLink> vmLink =
+                configLinks.get(ConfLink.ConfLinkType.VM_INSTANTIATION).stream()
+                        .map(lnk -> (ConfLink.VMInstantiationLink) lnk)
+                        .collect(Collectors.toList());
+        List<ConfLink.TrafficProcessingLink> processingLink =
+                configLinks.get(ConfLink.ConfLinkType.TRAFFIC_PROCESSING).stream()
+                        .map(lnk -> (ConfLink.TrafficProcessingLink) lnk)
+                        .collect(Collectors.toList());
+
+        // Generate node conf (i.e. turn on actions) and vm instantiations
+        Map<TopologyNode, Integer> nodeConfs = stateChangeLinks.stream()
+                .collect(Collectors.toMap(lnk -> lnk.node, lnk -> lnk.newState));
+        Map<String, TopologyNode> instantiations = vmLink.stream()
+                .collect(Collectors.toMap(lnk -> lnk.vmInstantiated, lnk -> lnk.node));
+
+        // Generate paths
+        Set<ComputationSolution.VMPath> paths = new HashSet<>();
+        for (Map.Entry<LogicalLinkParameters, List<Link>> entry : sol.entrySet()) {
+            LogicalLinkParameters lLink = entry.getKey();
+            String actualSource = lLink.previousVMId != null ? lLink.previousVMId: lLink.sourceNodeId;
+            TopologyNode sourceNode = instantiations.get(actualSource);
+            TopologyNode destNode = instantiations.get(lLink.nextVMId);
+
+            List<TopologyLink> path = entry.getValue().stream()
+                    .filter(lnk -> lnk.type() == LinkType.TOPOLOGY)
+                    .map(lnk -> ((TLink) lnk).link)
+                    .collect(Collectors.toList());
+            paths.add(new ComputationSolution.VMPath(
+                    lLink.sourceNodeId,
+                    actualSource,
+                    lLink.nextVMId,
+                    path,
+                    sourceNode,
+                    destNode
+            ));
+        }
+
+        return new ComputationSolution(
+                nodeConfs,
+                instantiations,
+                paths
+        );
     }
 
     static class Node {
@@ -199,12 +207,14 @@ public class DijkstraFormatter extends Formatter {
 
     }
 
-    private static class TLink implements Link {
+    static class TLink implements Link {
 
-        private TopologyLink link;
+        TopologyLink link;
+        NetConfiguration conf;
 
-        private TLink(TopologyLink link) {
+        TLink(TopologyLink link, NetConfiguration conf) {
             this.link = link;
+            this.conf = conf;
         }
 
         @Override
@@ -229,9 +239,11 @@ public class DijkstraFormatter extends Formatter {
     static class CLink implements Link {
 
         ConfLink link;
+        TopologyNode node;
 
-        CLink(ConfLink link) {
+        CLink(ConfLink link, TopologyNode node) {
             this.link = link;
+            this.node = node;
         }
 
         @Override

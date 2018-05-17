@@ -64,13 +64,6 @@ public class JOctaveSolver extends Solver {
             }
         }
         return new OctaveDouble(data, rows, columns);
-//        return new OctaveDouble(
-//                Arrays.stream(input)
-//                        .flatMapToDouble(Arrays::stream)
-//                        .toArray(),
-//                input.length,
-//                input[0].length
-//        );
     }
 
     private OctaveDouble convert(double[] input) {
@@ -87,10 +80,6 @@ public class JOctaveSolver extends Solver {
     @Override
     double[] solve() throws OptimizationFailedException {
         try {
-            PrintStream stdOut = System.out;
-            PrintStream stdErr = System.err;
-//        System.setOut(devNull);
-//        System.setErr(devNull);
             solver.eval("A2 = cat(1, A, G);");
             solver.eval("b2 = cat(1, b, h);");
             solver.eval("ctype = repelems([\"S\", \"U\"],[1, 2; size(A)(1), size(G)(1)])';");
@@ -109,8 +98,6 @@ public class JOctaveSolver extends Solver {
             for (int i = 0; i < size; i++) {
                 output[i] = x.get(i + 1, 1);
             }
-            System.setOut(stdOut);
-            System.setErr(stdErr);
             return output;
         } finally {
             solver.close();

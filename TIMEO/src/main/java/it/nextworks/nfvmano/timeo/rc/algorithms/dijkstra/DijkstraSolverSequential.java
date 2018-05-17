@@ -116,42 +116,29 @@ class DijkstraSolverSequential {
         Map<DijkstraFormatter.Node, DijkstraFormatter.Link> predecessors = new HashMap<>();
         estimates.put(source, 0D);
         while (!estimates.isEmpty()) {
-            log.info("Sizes:\n    Finals: {}\n    Estimates: {}\n    Graph: {}",
-                    finals.size(),
-                    estimates.size(),
-                    g.getVertexCount()
-            );
-            log.info("Estimates: {}.", estimates);
+            if (log.isDebugEnabled()) {
+                if (finals.size() % 50 == 0) {
+                    log.debug("Finals size: {}. Estimates size: {}.",
+                            finals.size(),
+                            estimates.size());
+                }
+            }
             Map.Entry<DijkstraFormatter.Node, Double> entry = estimates.poll();
-            log.info("Current estimate: {}.", entry.getKey());
-            log.info("Current estimate's weight: {}", entry.getValue());
-            // If it is a candidate endpoint of our link:
+
+            // If it is a candidate endpoint of our link, we are done:
             if (entry.getKey().endpointOf != null && entry.getKey().endpointOf.equals(logLink)) {
-                return makePath(predecessors, entry.getKey());
+                List<DijkstraFormatter.Link> path = makePath(predecessors, entry.getKey());
+                log.debug("DIJKSTRA REPORT: Finals size: {}. Estimates size: {}. " +
+                        "Path size: {}",
+                        finals.size(), estimates.size(), path.size());
+                return path;
             }
 
-            // else:
+            // else finalize it:
             finals.put(entry.getKey(), entry.getValue());
 
-            // if it has the required VM instantiated, candidate the node as an endpoint
-            if (entry.getKey().isCandidateEndpoint(logLink)) {
-                DijkstraFormatter.Node candidate = new DijkstraFormatter.Node(entry.getKey());
-                candidate.endpointOf = logLink;
-                DijkstraFormatter.Link link =
-                        new DijkstraFormatter.CLink(new ConfLink.TrafficProcessingLink(
-                                candidate.node,
-                                logLink.nextVMId,
-                                candidate.conf,
-                                candidate.conf
-                        ));
-                estimates.put(candidate, candidate.node.getProcessing() * traffic);
-                predecessors.put(candidate, link);
-                g.addVertex(candidate);
-                g.addEdge(link, entry.getKey(), candidate);
-            }
-            // and then do the usual dijkstra:
+            // main piece:
             for (DijkstraFormatter.Link link : g.getOutEdges(entry.getKey())) {
-                log.info("Parsing outgoing link: {}.", link);
                 DijkstraFormatter.Node potential = g.getDest(link);
                 double newWeight = entry.getValue() + link.weight(traffic);
                 if (finals.keySet().contains(potential)) {
@@ -162,7 +149,6 @@ class DijkstraSolverSequential {
                 }
                 else if ((!estimates.keySet().contains(potential))
                         || (estimates.get(potential) > newWeight)) {
-                    log.info("Adding {} to estimates through link {}.", potential, link);
                     estimates.put(potential, newWeight);
                     predecessors.put(potential, link);
                 }

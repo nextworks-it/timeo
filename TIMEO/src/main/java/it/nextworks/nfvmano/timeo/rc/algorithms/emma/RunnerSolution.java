@@ -76,8 +76,9 @@ class RunnerSolution {
     private void parseFlow(Map.Entry<Integer, Flow> flowEntry) {
         Flow flow = flowEntry.getValue();
         int index = flowEntry.getKey();
-        if (solution[index] > 1E-4)
-        addToPath(flow.sourceNode.nodeId, flow.previousVM, flow.nextVM, flow.link);
+        if (solution[index] > 1E-4) {
+            addToPath(flow.sourceNode.nodeId, flow.previousVM, flow.nextVM, flow.link);
+        }
     }
 
     private void parseConf(Map.Entry<Integer, NodeConfiguration> confEntry) {

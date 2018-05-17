@@ -36,6 +36,21 @@ public class TopologyLink {
         this.destinationCp = destinationCp;
     }
 
+    public TopologyNode opposite(TopologyNode node) {
+        if (node.equals(source)) {
+            return destination;
+        } else if (node.equals(destination)) {
+            return source;
+        } else {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Node %s not present in link %s",
+                            node, this
+                    )
+            );
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
