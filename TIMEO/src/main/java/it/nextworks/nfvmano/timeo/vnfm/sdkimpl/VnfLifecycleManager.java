@@ -789,6 +789,7 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 		List<VirtualNetworkInterfaceData> virtualNetworkInterface = new ArrayList<>();
 		List<VduCpd> intCpd = vdu.getIntCpd();
 		Map<String, String> ipAddresses = new HashMap<>();
+		Map<String, String> floating = new HashMap<>();
 		String gatewayIp = null;
 		for (VduCpd cp : intCpd) {
 			String intCpdId = cp.getCpdId();
@@ -804,7 +805,9 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 			VirtualNetworkPort portDescription = queryResponse.getNetworkPortData().get(0);
 			Map<String, String> metadata = portDescription.getMetadata();
 			String ipAddress = metadata.get("IP_ADDRESS");
+			String floatingIp = metadata.get("FLOATING_IP_ADDRESS");
 			ipAddresses.put(intCpdId, ipAddress);
+			floating.put(extCpId, floatingIp);
 			if (cp.getAddressData().get(0).isManagement()) {
 				log.debug("Management CP.");
 				gatewayIp = readNetworkGateway(portDescription.getNetworkId());
@@ -832,7 +835,7 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 		String elaboratedScript = null;
 		if (scripts.size() == 1) {
 			log.debug("Found script for VNF instantiation.");
-			elaboratedScript = CloudInitGenerator.fillInCloudInitScript(scripts.get(0).getScript(), computeName, domainName, ipAddresses, gatewayIp, vnfDbWrapper.getVnfInfo(vnfInstanceId).getVnfConfigurableProperty());
+			elaboratedScript = CloudInitGenerator.fillInCloudInitScript(scripts.get(0).getScript(), computeName, domainName, ipAddresses, gatewayIp, vnfDbWrapper.getVnfInfo(vnfInstanceId).getVnfConfigurableProperty(), floating);
 		}
 		
 		VirtualComputeFlavour computeData = new VirtualComputeFlavour(virtualComputeDescId, 

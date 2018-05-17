@@ -23,7 +23,7 @@ public class CloudInitGenerator {
 	 * @param ipAddresses IP addresses to be included in the script
 	 * @return the modified cloud init script
 	 */
-	public static String fillInCloudInitScript(String originalScript, String hostname, String domainName, Map<String, String> ipAddresses, String gatewayIpManagement, Map<String, String> userConfig) {
+	public static String fillInCloudInitScript(String originalScript, String hostname, String domainName, Map<String, String> ipAddresses, String gatewayIpManagement, Map<String, String> userConfig, Map<String, String > floatingIps) {
 		log.debug("Processing cloud init script");
 		log.debug("Original script: \n" + originalScript);
 		log.debug("Hostname: " + hostname);
@@ -33,6 +33,9 @@ public class CloudInitGenerator {
 			log.debug("CP: " + e.getKey() + " - IP address: " + e.getValue());
 		}
 		log.debug("Management network - gateway IP address: " + gatewayIpManagement);
+		for (Map.Entry<String, String> e : floatingIps.entrySet()) {
+			log.debug("CP: " + e.getKey() + " - Floating IP address: " + e.getValue());
+		}
 		
 		String resultingScript = CloudInitGenerator.modifyParameter(originalScript, "$$config$$hostname", hostname);
 		
@@ -51,6 +54,9 @@ public class CloudInitGenerator {
 		}
 		for (Map.Entry<String, String> e : ipAddresses.entrySet()) {
 			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$intCp." + e.getKey() + ".address", e.getValue());
+		}
+		for (Map.Entry<String, String> e : ipAddresses.entrySet()) {
+			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$extCp." + e.getKey() + ".floating", e.getValue());
 		}
 		resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$managementGw", gatewayIpManagement);
 		log.debug("Resulting cloud init script: \n" + resultingScript);

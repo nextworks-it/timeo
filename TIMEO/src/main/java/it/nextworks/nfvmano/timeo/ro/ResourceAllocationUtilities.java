@@ -59,6 +59,7 @@ public class ResourceAllocationUtilities {
 			//vnf.<vnfd_id>.vdu.<vdu_id>.intcp.<extcp>.address
 			//vnf.<vnfd_id>.vdu.<vdu_id>.hostname
 			//vnf.<vnfd_id>.vdu.<vdu_id>.domainname
+			//vnf.<vnfd_id>.vdu.<vdu_id>.extcp.<expcp>.floating
 			//uservnf.<vnfd_id>.vdu.<vdu_id>.domainname	--> this is used for parameters set by the user
 			if (configParam.startsWith("uservnf")) {
 				log.debug("The configuration parameter " + configParam + " shoud have been provided by the user in the instantiation request.");
@@ -97,6 +98,12 @@ public class ResourceAllocationUtilities {
 						} catch (Exception e) {
 							log.error("Unable to get CP address. Skipping.");
 						}
+					} else if ((splits[4].equals("extcp")) && (splits[6].equals("floating"))) {
+						try {
+							configuration.put(configParam, readParameter(ConfigParameterType.FLOATING, vnfdId, vduId, splits[5]));
+						} catch (Exception e) {
+							log.error("Unable to get CP address. Skipping.");
+						}
 					} else {
 						log.error("Unacceptable config parameter: " + splits[4]);
 					}
@@ -130,6 +137,14 @@ public class ResourceAllocationUtilities {
 
 		case EXTERNAL_CP_IP_ADDRESS: {
 			throw new FailedOperationException("External connection point parameter not yet supported");
+		}
+		
+		case FLOATING: {
+			if ((vnfdId == null) || (cpdId == null)) throw new FailedOperationException("Missing parameters");
+			log.debug("Reading floating IP address associated to external CPD " + cpdId);
+			String vnfInstanceId = getVnfInstanceIdFromVnfdId(vnfdId);
+			String floatingIp = getFloatingForExternalCp(vnfInstanceId, cpdId);
+			return floatingIp;
 		}
 
 		default: {
@@ -165,6 +180,25 @@ public class ResourceAllocationUtilities {
 			throw new NotExistingEntityException("MAC not found - Unmanaged network path end point");
 		}
 		}
+	}
+	
+	private String getFloatingForExternalCp(String vnfInstanceId, String extCpdId) throws Exception {
+		log.debug("Getting Floating IP associated to external connection point " + extCpdId + " in VNF " + vnfInstanceId);
+		
+		log.debug("Invoking VNFM to get info about VNF instance resources.");
+		Vnfm vnfm = vnfmMap.get(vnfInstanceId);
+		QueryVnfResponse vnfQueryResponse = vnfm.queryVnf(new GeneralizedQueryRequest(Utilities.buildVnfInfoFilter(vnfInstanceId), new ArrayList<>()));
+		
+		VnfExtCpInfo extCp = vnfQueryResponse.getVnfInfo().get(0).getInstantiatedVnfInfo().getExtCpFromCpdId(extCpdId);
+		String portId = extCp.getCpInstanceId();
+		log.debug("Port ID: " + portId);
+		
+		GeneralizedQueryRequest request = new GeneralizedQueryRequest(Utilities.buildVimResourceFilter(VimResourceType.PORT, portId), null);
+		QueryNetworkResponse networkResponse = defaultVimPlugin.queryVirtualisedNetworkResource(request);
+		String floatingIp = Utilities.readFloatingIpAddressFromMetadata(networkResponse.getNetworkPortData().get(0).getMetadata());
+		log.debug("Floating IP: " + floatingIp);
+		
+		return floatingIp;
 	}
 	
 	private VirtualNetworkInterface getVnicForInternalCp(String vnfInstanceId, String vduId, String cpdId) throws Exception {
