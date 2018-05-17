@@ -10,6 +10,7 @@ import java.util.Set;
 
 import it.nextworks.nfvmano.timeo.rc.algorithms.AlgorithmType;
 import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithm5tonic;
+import it.nextworks.nfvmano.timeo.rc.algorithms.dijkstra.DijkstraAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.BindingBuilder;
@@ -464,6 +465,8 @@ public class ResourceSchedulingManager {
 				return new CdnStaticAlgorithmNXW();
 			case CDN_STATIC_5TONIC:
 				return new CdnStaticAlgorithm5tonic();
+			case DIJKSTRA:
+				return new DijkstraAlgorithm();
 			default:
 				log.error("Algorithm type {} not yet implemented.", type);
 				throw new AlgorithmNotAvailableException();

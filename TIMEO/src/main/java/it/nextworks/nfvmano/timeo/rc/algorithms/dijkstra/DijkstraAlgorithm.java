@@ -30,7 +30,7 @@ public class DijkstraAlgorithm extends AbstractNsResourceAllocationAlgorithm {
     private static final Logger log = LoggerFactory.getLogger(DijkstraAlgorithm.class);
 
     public DijkstraAlgorithm() {
-        super(AlgorithmType.DUMMY_NXW); // TODO!!!
+        super(AlgorithmType.DIJKSTRA); // TODO!!!
     }
 
     public NsResourceSchedulingSolution computeNsResourceAllocationSolution(
