@@ -110,7 +110,7 @@ public class TopologyNode {
     }
 
     public double getProcessing() {
-        return processing.get("VM");
+        return processing.getOrDefault("VM", Double.POSITIVE_INFINITY);
     }
 
     public void setProcessing(Map<String, Double> processing) {
