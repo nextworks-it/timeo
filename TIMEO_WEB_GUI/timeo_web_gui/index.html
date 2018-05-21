@@ -37,6 +37,7 @@
     <script src="./plugin/vnfi_utils.js"></script>
     <script src="./plugin/app_utils.js"></script>
     <script src="./plugin/vnfm_utils.js"></script>
+    <script src="./plugin/pnf_utils.js"></script>
   </head>
 
   <body class="nav-md">
@@ -63,6 +64,12 @@
                     <ul class="nav child_menu">
                       <li><a href="./pages/ns/ns_descriptors.html">NS descriptors</a></li>
                       <li><a href="./pages/ns/ns_instances.html">NS instances</a></li>
+                    </ul>
+                  </li>
+                  <li><a><i class="fa fa-cube"></i> PNF <span class="fa fa-chevron-down"></a>
+                    <ul class="nav child_menu">
+                      <li><a href="./pages/pnf/pnf_descriptors.html">PNF descriptors</a></li>
+                      <li><a href="./pages/pnf/pnf_instances.html">PNF instances</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-file-o"></i> VNF <span class="fa fa-chevron-down"></a>
@@ -158,6 +165,25 @@
               </div>
               <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="tile-stats">
+                  <div class="icon"><i class="fa fa-cube"></i></div>
+                  <div class="count" id="count-PNFD">0</div>
+                  <h3><a href="./pages/pnf/pnf_descriptors.html">PNF descriptors</a></h3>
+                  <p></p>
+                </div>
+              </div>
+              <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="tile-stats">
+                  <div class="icon"><i class="fa fa-cube"></i></div>
+                  <div class="count" id="count-PNFI">0</div>
+                  <h3><a href="./pages/pnf/pnf_instances.html">NS instances</a></h3>
+                  <p></p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row top_tiles">
+              <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="tile-stats">
                   <div class="icon"><i class="fa fa-file-o"></i></div>
                   <div class="count" id="count-VNFP">0</div>
                   <h3><a href="./pages/vnf/vnf_descriptors.html">VNF packages</a></h3>
@@ -172,9 +198,6 @@
                   <p></p>
                 </div>
               </div>
-            </div>
-            
-            <div class="row top_tiles">
               <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="tile-stats">
                   <div class="icon"><i class="fa fa-file"></i></div>
@@ -191,6 +214,9 @@
                   <p></p>
                 </div>
               </div>
+            </div>
+
+            <div class="row top_tiles">
               <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="tile-stats">
                   <div class="icon"><i class="fa fa-cloud"></i></div>
@@ -207,9 +233,6 @@
                   <p></p>
                 </div>
               </div>
-            </div>
-
-            <div class="row top_tiles">
               <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="tile-stats">
                   <div class="icon"><i class="fa fa-level-down"></i></div>
@@ -273,6 +296,8 @@
     <!-- EMMA COUNTER -->
     <script>getNSDs("count-NSD","response",fillNSDCounter);</script>
     <script>getNSInstances("count-NSI","response",fillNSICounter);</script>
+    <script>getPNFDs("count-PNFD","response",fillPNFDCounter);</script>
+    <!--script>getPNFInstances("count-PNFI","response",fillPNFICounter);</script-->
     <script>getVNFDs("count-VNFP","response",fillVNFPCounter);</script>
     <script>getVNFIs("count-VNFI","response",fillVNFICounter);</script>
     <script>getAppDs("count-AppD","response",fillAppPCounter);</script>

@@ -37,7 +37,7 @@ function clearForms(parentId, flag) {
 	var elems = $('#' + parentId).find('form');
 	console.log(elems.length)
 	for (var i = 0; i < elems.length; i++) {
-		console.log(elems[i])
+		//console.log(elems[i])
 		elems[i].reset();
 	}
 	

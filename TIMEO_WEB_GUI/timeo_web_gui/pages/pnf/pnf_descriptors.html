@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>TIMEO | App Instances</title>
+    <title>TIMEO | PNF Descriptors</title>
 
     <!-- Bootstrap -->
     <link href="../../../gentelella/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -28,7 +28,8 @@
     <!-- TIMEO Scripts -->
     <script src="../../plugin/rest_api.js"></script>
     <script src="../../plugin/utils.js"></script>
-    <script src="../../plugin/app_utils.js"></script>
+    <script src="../../plugin/pnf_utils.js"></script>
+    
   </head>
 
   <body class="nav-md">
@@ -53,14 +54,14 @@
                   </li>
                   <li><a><i class="fa fa-chain"></i> Network Service <span class="fa fa-chevron-down"></a>
                     <ul class="nav child_menu">
-                      <li><a href="../ns/ns_descriptors.html">NS descriptors</a></li>
-                      <li><a href="../ns/ns_instances.html">NS instances</a></li>
+                      <li><a href="ns_descriptors.html">NS descriptors</a></li>
+                      <li><a href="ns_instances.html">NS instances</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-cube"></i> PNF <span class="fa fa-chevron-down"></a>
                     <ul class="nav child_menu">
-                      <li><a href="../pnf/pnf_descriptors.html">PNF descriptors</a></li>
-                      <li><a href="../pnf/pnf_instances.html">PNF instances</a></li>
+                      <li><a href="pnf_descriptors.html">PNF descriptors</a></li>
+                      <li><a href="pnf_instances.html">PNF instances</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-file-o"></i> VNF <span class="fa fa-chevron-down"></a>
@@ -71,8 +72,8 @@
                   </li>
                   <li><a><i class="fa fa-file"></i> MEC APP <span class="fa fa-chevron-down"></a>
                     <ul class="nav child_menu">
-                      <li><a href="app_descriptors.html">App packages</a></li>
-                      <li><a href="app_instances.html">App instances</a></li>
+                      <li><a href="../app/app_descriptors.html">App packages</a></li>
+                      <li><a href="../app/app_instances.html">App instances</a></li>
                     </ul>
                   </li>
                   <li><a href="../vim.html"><i class="fa fa-cloud"></i> VIM </a>
@@ -139,9 +140,26 @@
           <div class="">
             <div class="row">
               <div class="col-md-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>PNF <small>descriptors</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <table class="table table-hover" id="pnfdTable">
+                        <script>readPNFDs("pnfdTable", "response");</script>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="clearfix">
               </div>
             </div>
-          
+		  
             <div class="row">
               <div class="col-md-12">
               </div>
@@ -149,6 +167,7 @@
       
             <div class="row">
               <div class="col-md-4">
+                <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#AddPNFDForm">Add PNF Descriptor</button>
               </div>
       
               <div class="col-md-4">
@@ -161,20 +180,52 @@
             <div class="row">
               <div class="col-md-6" id="response">
               </div>
-            </div>    
+            </div>
+            
+            <div id="instantiateModalDiv"></div>
+            
+            <div id="AddPNFDForm" class="modal fade bs-example-modal-md in" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cancel"><span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Add PNF Descriptor</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <div id="pnfdArchive" style="display: none;"></div>
+                      <form role="form">
+                        <div class="box-body">
+                          <div class="form-group">
+                            <label for="exampleInputFile">File</label>
+                            <input type="file" autocomplete=off accept="application/json" onchange=loadPNFDFromFileIntoForm(event,"pnfdArchive","response");>
+                            <p class="help-block"></p>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" onclick=clearForms("AddPNFDForm")>Cancel</button>
+                    <button type="button" class="btn btn-info" data-dismiss="modal" onclick=uploadPNFDFromForm("pnfdArchive","response")>Submit</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <!-- /page content -->
-
-        <!-- footer content -->
-        <footer>
-          <div class="pull-right">
-            Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
-          </div>
-          <div class="clearfix"></div>
-        </footer>
-        <!-- /footer content -->
       </div>
+      <!-- /page content -->
+
+      <!-- footer content -->
+      <footer>
+        <div class="pull-right">
+          Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
+        </div>
+        <div class="clearfix"></div>
+      </footer>
+      <!-- /footer content -->
     </div>
 
     <!-- jQuery -->
