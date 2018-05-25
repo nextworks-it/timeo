@@ -52,11 +52,7 @@
 					"packetLossRatio": 0,
 					"priority": 0
 				},
-				"serviceAvaibilityLevel": "LEVEL_1",
-				"bitrateRequirements": {
-					"root": 4,
-					"leaf": 1
-				}
+				"serviceAvaibilityLevel": "LEVEL_1"
 			}],
 			"description": "Management network"
 		}, {
@@ -74,11 +70,7 @@
 					"packetLossRatio": 0,
 					"priority": 0
 				},
-				"serviceAvaibilityLevel": "LEVEL_1",
-				"bitrateRequirements": {
-					"root": 2,
-					"leaf": 2
-				}
+				"serviceAvaibilityLevel": "LEVEL_1"
 			}],
 			"description": "Network for video distribution"
 		}, {
@@ -96,11 +88,7 @@
 					"packetLossRatio": 0,
 					"priority": 0
 				},
-				"serviceAvaibilityLevel": "LEVEL_1",
-				"bitrateRequirements": {
-					"root": 8,
-					"leaf": 8
-				}
+				"serviceAvaibilityLevel": "LEVEL_1"
 			}],
 			"description": "Network for retrieving videos from origin server"
 		}],
