@@ -217,7 +217,7 @@ public class EmmaFormatterTest {
         System.out.println(formatter.solve());
     }
 
-    @Test
+    //@Test
     public void testSimple() throws Exception {
 
         /*
@@ -269,7 +269,7 @@ public class EmmaFormatterTest {
         System.out.println(formatter.solve());
     }
 
-    @Test
+    //@Test
     public void testMultiVM() throws Exception {
 
         /*
@@ -328,7 +328,7 @@ public class EmmaFormatterTest {
         System.out.println(formatter.solve());
     }
 
-    @Test
+    //@Test
     public void testMultiEP() throws Exception {
 
         /*
@@ -381,7 +381,7 @@ public class EmmaFormatterTest {
         System.out.println(formatter.solve());
     }
 
-    @Test
+    //@Test
     public void testMedium() throws Exception {
 
         /*
@@ -484,7 +484,7 @@ public class EmmaFormatterTest {
         System.out.println(formatter.solve());
     }
 
-    @Test
+    //@Test
     public void testBigger() throws Exception {
 
         /*
@@ -609,7 +609,7 @@ public class EmmaFormatterTest {
         System.out.println(formatter.solve());
     }
 
-    @Test
+    //@Test
     public void testBiggerMoreVm() throws Exception {
 
         // TODO: slow or looping?
@@ -742,7 +742,7 @@ public class EmmaFormatterTest {
         System.out.println(formatter.solve());
     }
 
-    @Test
+    //@Test
     public void testTooMuchIdleVM() throws Exception {
 
         /*
@@ -790,7 +790,7 @@ public class EmmaFormatterTest {
         System.out.println(formatter.solve());
     }
 
-    @Test
+    //@Test
     public void testTooMuchLinkPower() throws Exception {
 
         /*
@@ -838,7 +838,7 @@ public class EmmaFormatterTest {
         System.out.println(formatter.solve());
     }
 
-    @Test
+    //@Test
     public void testNotEnoughCapabilities() throws Exception {
 
         /*

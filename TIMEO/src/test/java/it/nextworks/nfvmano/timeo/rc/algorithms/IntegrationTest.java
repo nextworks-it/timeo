@@ -289,7 +289,7 @@ public class IntegrationTest {
         System.out.println(solAsStr);
     }
 
-    @Test
+    //@Test
     public void runEmmaTest() throws Exception {
 
         EmmaNetCompAlgorithm algo = new EmmaNetCompAlgorithm();
