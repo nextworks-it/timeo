@@ -1,6 +1,6 @@
 package it.nextworks.nfvmano.timeo.catalogue.apppackagemanagement;
 
-import java.util.List;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.nextworks.nfvmano.libs.catalogues.interfaces.elements.AppPackageInfo;
 import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.OnboardAppPackageRequest;
 import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.OnboardAppPackageResponse;
+import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.QueryOnBoadedAppPkgInfoResponse;
 import it.nextworks.nfvmano.libs.common.exceptions.AlreadyExistingEntityException;
 import it.nextworks.nfvmano.libs.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
@@ -50,8 +50,8 @@ public class AppdManagementRestController {
 	public ResponseEntity<?> queryApplicationPackage(@RequestBody GeneralizedQueryRequest request) {
 		log.debug("Received query Application Package request");
 		try {
-			List<AppPackageInfo> response = appdManagement.queryApplicationPackage(request);
-			return new ResponseEntity<List<AppPackageInfo>>(response, HttpStatus.OK);
+			QueryOnBoadedAppPkgInfoResponse response = appdManagement.queryApplicationPackage(request);
+			return new ResponseEntity<QueryOnBoadedAppPkgInfoResponse>(response, HttpStatus.OK);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request: " + e.getMessage());
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);

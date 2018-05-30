@@ -27,6 +27,7 @@ import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.AppPackageOnBoar
 import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.AppPackageStateChangeNotification;
 import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.OnboardAppPackageRequest;
 import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.OnboardAppPackageResponse;
+import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.QueryOnBoadedAppPkgInfoResponse;
 import it.nextworks.nfvmano.libs.common.elements.Filter;
 import it.nextworks.nfvmano.libs.common.enums.OperationalState;
 import it.nextworks.nfvmano.libs.common.enums.UsageState;
@@ -133,7 +134,7 @@ public class AppdManagementService implements MecAppPackageManagementProviderInt
 	}
 
 	@Override
-	public List<AppPackageInfo> queryApplicationPackage(GeneralizedQueryRequest request)
+	public QueryOnBoadedAppPkgInfoResponse queryApplicationPackage(GeneralizedQueryRequest request)
 			throws MethodNotImplementedException, NotExistingEntityException, MalformattedElementException {
 		log.debug("Received MEC application package query.");
 		request.isValid();
@@ -179,7 +180,7 @@ public class AppdManagementService implements MecAppPackageManagementProviderInt
             log.error("Received query MEC App package with attribute selector. Not supported at the moment.");
             throw new MethodNotImplementedException("Received query MEC App package with attribute selector. Not supported at the moment.");
         }
-		return pkgList;
+		return new QueryOnBoadedAppPkgInfoResponse(pkgList);
 	}
 
 	@Override

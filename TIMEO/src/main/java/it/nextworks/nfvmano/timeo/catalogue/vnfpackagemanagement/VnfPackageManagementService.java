@@ -375,6 +375,7 @@ public class VnfPackageManagementService implements VnfPackageManagementProvider
         //VNF_PACKAGE_PRODUCT_NAME
         //VNF_PACKAGE_SW_VERSION
         //VNF_PACKAGE_PROVIDER
+        //VNFD_ID
         //No attribute selector is supported at the moment
 
         Filter filter = request.getFilter();
@@ -388,6 +389,10 @@ public class VnfPackageManagementService implements VnfPackageManagementProvider
                 String pkgId = fp.get("VNF_PACKAGE_ID");
                 OnboardedVnfPkgInfo pkg = findVnfPackage(pkgId);
                 pkgList.add(pkg);
+            } else if (fp.size() == 1 && fp.containsKey("VNFD_ID")) {
+            	String vnfdId = fp.get("VNFD_ID");
+            	OnboardedVnfPkgInfo pkg = getOnboardedVnfPkgInfoFromVnfd(vnfdId);
+            	pkgList.add(pkg);
             } else if (fp.size() == 3 && fp.containsKey("VNF_PACKAGE_PRODUCT_NAME") && fp.containsKey("VNF_PACKAGE_SW_VERSION") && fp.containsKey("VNF_PACKAGE_PROVIDER")) {
                 String name = fp.get("VNF_PACKAGE_PRODUCT_NAME");
                 String version = fp.get("VNF_PACKAGE_SW_VERSION");
@@ -636,6 +641,8 @@ public class VnfPackageManagementService implements VnfPackageManagementProvider
             throw new NotExistingEntityException("VNF package with name " + name + ", version " + version + " and provider " + provider + " not found in DB.");
         }
     }
+    
+    
 
     /**
      * Method to download the VNF package and retrieve the VNFD.
