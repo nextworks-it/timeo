@@ -10,6 +10,7 @@ import java.util.Set;
 
 import it.nextworks.nfvmano.timeo.rc.algorithms.AlgorithmType;
 import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithm5tonic;
+import it.nextworks.nfvmano.timeo.rc.algorithms.VEPCStaticAlgorithmArno;
 import it.nextworks.nfvmano.timeo.rc.algorithms.dijkstra.DijkstraAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -467,6 +468,8 @@ public class ResourceSchedulingManager {
 				return new CdnStaticAlgorithm5tonic();
 			case DIJKSTRA:
 				return new DijkstraAlgorithm();
+			case VEPC_STATIC_ARNO:
+				return new VEPCStaticAlgorithmArno();
 			default:
 				log.error("Algorithm type {} not yet implemented.", type);
 				throw new AlgorithmNotAvailableException();
