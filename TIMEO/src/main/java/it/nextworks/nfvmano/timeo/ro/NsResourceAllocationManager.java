@@ -715,6 +715,11 @@ implements AsynchronousVimNotificationInterface,
 				sdnControllerOperationMap.put(sdnOperationId, npId);
 				log.debug("Added SDN controller operation " + sdnOperationId + " in internal list." );
 			}
+			if (networkPaths.size() == 0) {
+				log.debug("No network paths to tear down.");
+				internalStatus = ResourceAllocationStatus.TERMINATED_NETWORK_CONNECTIONS;
+				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.REMOVE_UNDERLYING_CONNECTIVITY, true);
+			}
 			log.debug("All requests to the SDN controller have been sent.");
 			
 		} catch (Exception e) {
@@ -781,7 +786,13 @@ implements AsynchronousVimNotificationInterface,
 				sdnControllerOperationMap.put(sdnOperationId, npId);
 				log.debug("Added SDN controller operation " + sdnOperationId + " in internal list." );
 			}
-			log.debug("All requests to the SDN controller have been sent.");
+			if (networkPaths.size() == 0) {
+				log.debug("No network path have to be instantiated.");
+				internalStatus = ResourceAllocationStatus.CREATED_NETWORK_CONNECTIONS;
+				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.SETUP_UNDERLYING_CONNECTIVITY, true);
+			} else {
+				log.debug("All requests to the SDN controller have been sent.");
+			}
 		} catch (Exception e) {
 			manageError(e.getMessage(), AllocationMessageType.SETUP_UNDERLYING_CONNECTIVITY);
 			rollback();
