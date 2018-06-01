@@ -2,7 +2,9 @@
 function fillAppPCounter(elemId, data, resId) {
 	var countDiv = document.getElementById(elemId);
 	
-	var appds = data;
+	var appds = data.queryResult;
+	
+	//console.log(JSON.stringify(data, null, 4));
 	
 	countDiv.innerHTML = appds.length;
 }

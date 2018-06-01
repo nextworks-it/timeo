@@ -81,7 +81,7 @@ function postJsonToURLWithResponseData(resourceUrl, jsonData, elemId, resId, cal
 		data : jsonData,
 		success : function(data) {
             
-            console.log(data);
+            //console.log(data);
             
             if (!data) {
                 if (callback && callback == showResultMessage) {
@@ -94,7 +94,7 @@ function postJsonToURLWithResponseData(resourceUrl, jsonData, elemId, resId, cal
                             showResultMessage(true, resId, "Operation successful");
                         //}
                     }
-                    console.log(callback);
+                    //console.log(callback);
                     callback(elemId, data, resId);
                 }
             }
