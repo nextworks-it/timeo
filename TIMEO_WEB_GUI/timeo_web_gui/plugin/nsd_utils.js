@@ -708,9 +708,9 @@ function createNSTopology(data) {
 					'shape': 'data(faveShape)',
 					'content': 'data(name)',
 					'text-valign': 'center',
-					'text-outline-width': 1,
+					'text-outline-width': 0,
 					'text-width': 2,
-					'text-outline-color': '#000',
+					//'text-outline-color': '#000',
 					'background-color': 'data(faveColor)',
 					'color': '#000',
 					'label': 'data(name)'
