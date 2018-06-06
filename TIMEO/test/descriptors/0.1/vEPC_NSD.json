@@ -1,0 +1,467 @@
+{
+	"nsd": {
+		"nsdIdentifier": "vEPC_v02",
+		"designer": "Nextworks",
+		"version": "0.2",
+		"nsdName": "vEPC_TIMEO",
+		"nsdInvariantId": "NXW_vEPC_v02",
+		"vnfdId": ["mme", "hss", "spgw", "oaisim"],
+		"sapd": [{
+				"cpdId": "mgtSap",
+				"description": "Management SAP for all the vEPC VNFs",
+				"layerProtocol": "IPV4",
+				"cpRole": "ROOT",
+				"addressData": [{
+					"addressType": "IP_ADDRESS",
+					"iPAddressAssignment": false,
+					"floatingIpActivated": true,
+					"iPAddressType": "IPv4",
+					"numberOfIpAddress": 1
+				}],
+				"sapAddressAssignment": false,
+				"nsVirtualLinkDescId": "mgt"
+			},
+			{
+				"cpdId": "sgiSap",
+				"description": "SAP interconnecting the SPGWs to the Internet",
+				"layerProtocol": "IPV4",
+				"cpRole": "ROOT",
+				"addressData": [{
+					"addressType": "IP_ADDRESS",
+					"iPAddressAssignment": false,
+					"floatingIpActivated": true,
+					"iPAddressType": "IPv4",
+					"numberOfIpAddress": 1
+				}],
+				"sapAddressAssignment": false,
+				"nsVirtualLinkDescId": "Sgi"
+			}
+		],
+		"virtualLinkDesc": [{
+			"virtualLinkDescId": "mgt",
+			"virtualLinkDescProvider": "NXW",
+			"virtuaLinkDescVersion": "0.1",
+			"connectivityType": {
+				"layerProtocol": "IPV4"
+			},
+			"virtualLinkDf": [{
+				"flavourId": "df_mgt",
+				"qos": {
+					"latency": 0,
+					"packetDelayVariation": 0,
+					"packetLossRatio": 0,
+					"priority": 0
+				},
+				"serviceAvaibilityLevel": "LEVEL_1",
+				"bitrateRequirements": {
+					"root": 4,
+					"leaf": 1
+				}
+			}],
+			"description": "Management network"
+		}, {
+			"virtualLinkDescId": "S6a",
+			"virtualLinkDescProvider": "NXW",
+			"virtuaLinkDescVersion": "0.1",
+			"connectivityType": {
+				"layerProtocol": "IPV4"
+			},
+			"virtualLinkDf": [{
+				"flavourId": "df_S6a",
+				"qos": {
+					"latency": 0,
+					"packetDelayVariation": 0,
+					"packetLossRatio": 0,
+					"priority": 0
+				},
+				"serviceAvaibilityLevel": "LEVEL_1",
+				"bitrateRequirements": {
+					"root": 2,
+					"leaf": 2
+				}
+			}],
+			"description": "Network for S6a reference point: HSS-MME"
+		}, {
+			"virtualLinkDescId": "S11",
+			"virtualLinkDescProvider": "NXW",
+			"virtuaLinkDescVersion": "0.1",
+			"connectivityType": {
+				"layerProtocol": "IPV4"
+			},
+			"virtualLinkDf": [{
+				"flavourId": "df_S11",
+				"qos": {
+					"latency": 0,
+					"packetDelayVariation": 0,
+					"packetLossRatio": 0,
+					"priority": 0
+				},
+				"serviceAvaibilityLevel": "LEVEL_1",
+				"bitrateRequirements": {
+					"root": 8,
+					"leaf": 8
+				}
+			}],
+			"description": "Network for S11 reference point: MME-SPGW"
+		}, {
+			"virtualLinkDescId": "S1c",
+			"virtualLinkDescProvider": "NXW",
+			"virtuaLinkDescVersion": "0.1",
+			"connectivityType": {
+				"layerProtocol": "IPV4"
+			},
+			"virtualLinkDf": [{
+				"flavourId": "df_S1c",
+				"qos": {
+					"latency": 0,
+					"packetDelayVariation": 0,
+					"packetLossRatio": 0,
+					"priority": 0
+				},
+				"serviceAvaibilityLevel": "LEVEL_1",
+				"bitrateRequirements": {
+					"root": 50,
+					"leaf": 50
+				}
+			}],
+			"description": "Network for S1c reference point: eNB-MME"
+		}, {
+			"virtualLinkDescId": "S1u",
+			"virtualLinkDescProvider": "NXW",
+			"virtuaLinkDescVersion": "0.1",
+			"connectivityType": {
+				"layerProtocol": "IPV4"
+			},
+			"virtualLinkDf": [{
+				"flavourId": "df_S1u",
+				"qos": {
+					"latency": 0,
+					"packetDelayVariation": 0,
+					"packetLossRatio": 0,
+					"priority": 0
+				},
+				"serviceAvaibilityLevel": "LEVEL_1",
+				"bitrateRequirements": {
+					"root": 500,
+					"leaf": 500
+				}
+			}],
+			"description": "Network for S1u reference point: eNB-SPGW"
+		}, {
+			"virtualLinkDescId": "Sgi",
+			"virtualLinkDescProvider": "NXW",
+			"virtuaLinkDescVersion": "0.1",
+			"connectivityType": {
+				"layerProtocol": "IPV4"
+			},
+			"virtualLinkDf": [{
+				"flavourId": "df_Sgi",
+				"qos": {
+					"latency": 0,
+					"packetDelayVariation": 0,
+					"packetLossRatio": 0,
+					"priority": 0
+				},
+				"serviceAvaibilityLevel": "LEVEL_1",
+				"bitrateRequirements": {
+					"root": 500,
+					"leaf": 500
+				}
+			}],
+			"description": "Network for SGI reference point: Internet access"
+		}],
+		"nsDf": [{
+			"nsDfId": "df_vEPC",
+			"flavourKey": "df_vEPC",
+			"vnfProfile": [{
+					"vnfProfileId": "hss_profile",
+					"vnfdId": "hss",
+					"flavourId": "df_hss",
+					"instantiationLevel": "il_hss",
+					"minNumberOfInstances": 1,
+					"maxNumberOfInstances": 1,
+					"nsVirtualLinkConnectivity": [{
+							"virtualLinkProfileId": "vl_profile_mgt",
+							"cpdId": [
+								"hssMgtExt"
+							]
+						},
+						{
+							"virtualLinkProfileId": "vl_profile_S6a",
+							"cpdId": [
+								"hssS6aExt"
+							]
+						}
+					]
+				},
+				{
+					"vnfProfileId": "mme_profile",
+					"vnfdId": "mme",
+					"flavourId": "df_mme",
+					"instantiationLevel": "il_mme",
+					"minNumberOfInstances": 1,
+					"maxNumberOfInstances": 1,
+					"nsVirtualLinkConnectivity": [{
+						"virtualLinkProfileId": "vl_profile_mgt",
+						"cpdId": [
+							"mmeMgtExt"
+						]
+					},
+					{
+						"virtualLinkProfileId": "vl_profile_S6a",
+						"cpdId": [
+							"mmeS6aExt"
+						]
+					},
+					{
+						"virtualLinkProfileId": "vl_profile_S11",
+						"cpdId": [
+							"mmeS11Ext"
+						]
+					},
+					{
+						"virtualLinkProfileId": "vl_profile_S1c",
+						"cpdId": [
+							"mmeS1cExt"
+						]
+					}]
+				},
+				{
+					"vnfProfileId": "spgw_profile",
+					"vnfdId": "spgw",
+					"flavourId": "df_spgw",
+					"instantiationLevel": "il_spgw",
+					"minNumberOfInstances": 1,
+					"maxNumberOfInstances": 1,
+					"nsVirtualLinkConnectivity": [{
+							"virtualLinkProfileId": "vl_profile_mgt",
+							"cpdId": [
+								"spgwMgtExt"
+							]
+						},
+						{
+							"virtualLinkProfileId": "vl_profile_S11",
+							"cpdId": [
+								"spgwS11Ext"
+							]
+						},
+						{
+							"virtualLinkProfileId": "vl_profile_S1u",
+							"cpdId": [
+								"spgwS1uExt"
+							]
+						},
+						{
+							"virtualLinkProfileId": "vl_profile_Sgi",
+							"cpdId": [
+								"spgwSgiExt"
+							]
+						}
+					]
+				},
+				{
+					"vnfProfileId": "oaisim_profile",
+					"vnfdId": "oaisim",
+					"flavourId": "df_oaisim",
+					"instantiationLevel": "il_oaisim",
+					"minNumberOfInstances": 1,
+					"maxNumberOfInstances": 1,
+					"nsVirtualLinkConnectivity": [{
+							"virtualLinkProfileId": "vl_profile_mgt",
+							"cpdId": [
+								"oaisimMgtExt"
+							]
+						},
+						{
+							"virtualLinkProfileId": "vl_profile_S1c",
+							"cpdId": [
+								"oaisimS1cExt"
+							]
+						},
+						{
+							"virtualLinkProfileId": "vl_profile_S1u",
+							"cpdId": [
+								"oaisimS1uExt"
+							]
+						}
+					]
+				}],
+			"virtualLinkProfile": [{
+				"virtualLinkProfileId": "vl_profile_mgt",
+				"virtualLinkDescId": "mgt",
+				"flavourId": "df_mgt",
+				"maxBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				},
+				"minBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				}
+			},
+			{
+				"virtualLinkProfileId": "vl_profile_S6a",
+				"virtualLinkDescId": "S6a",
+				"flavourId": "df_S6a",
+				"maxBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				},
+				"minBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				}
+			},
+			{
+				"virtualLinkProfileId": "vl_profile_S11",
+				"virtualLinkDescId": "S11",
+				"flavourId": "df_S11",
+				"maxBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				},
+				"minBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				}
+			},
+			{
+				"virtualLinkProfileId": "vl_profile_S1c",
+				"virtualLinkDescId": "S1c",
+				"flavourId": "df_S1c",
+				"maxBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				},
+				"minBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				}
+			},
+			{
+				"virtualLinkProfileId": "vl_profile_S1u",
+				"virtualLinkDescId": "S1u",
+				"flavourId": "df_S1u",
+				"maxBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				},
+				"minBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				}
+			},
+			{
+				"virtualLinkProfileId": "vl_profile_Sgi",
+				"virtualLinkDescId": "Sgi",
+				"flavourId": "df_Sgi",
+				"maxBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				},
+				"minBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				}
+			}],
+			"nsInstantiationLevel": [{
+				"nsLevelId": "il_vEPC_default",
+				"description": "Default instantiation level for the vEPC",
+				"vnfToLevelMapping": [{
+						"vnfProfileId": "hss_profile",
+						"numberOfInstances": 1
+					},
+					{
+						"vnfProfileId": "mme_profile",
+						"numberOfInstances": 1
+					},
+					{
+						"vnfProfileId": "spgw_profile",
+						"numberOfInstances": 1
+					},
+					{
+						"vnfProfileId": "oaisim_profile",
+						"numberOfInstances": 1
+					}
+				],
+				"virtualLinkToLevelMapping": [{
+						"virtualLinkProfileId": "vl_profile_mgt",
+						"bitRateRequirements": {
+							"root": "1",
+							"leaf": "1"
+						}
+					},
+					{
+						"virtualLinkProfileId": "vl_profile_S6a",
+						"bitRateRequirements": {
+							"root": "1",
+							"leaf": "1"
+						}
+					},
+					{
+						"virtualLinkProfileId": "vl_profile_S11",
+						"bitRateRequirements": {
+							"root": "1",
+							"leaf": "1"
+						}
+					},
+					{
+						"virtualLinkProfileId": "vl_profile_Sgi",
+						"bitRateRequirements": {
+							"root": "1",
+							"leaf": "1"
+						}
+					},
+					{
+						"virtualLinkProfileId": "vl_profile_S1c",
+						"bitRateRequirements": {
+							"root": "1",
+							"leaf": "1"
+						}
+					},
+					{
+						"virtualLinkProfileId": "vl_profile_S1u",
+						"bitRateRequirements": {
+							"root": "1",
+							"leaf": "1"
+						}
+					}
+				]
+			}],
+			"defaultNsInstantiationLevelId": "il_vEPC_default",
+			"nsProfile": [{
+				"nsProfileId": "ns_profile_vEpc",
+				"nsdId": "vEPC_v02",
+				"nsDfId": "df_vEPC",
+				"nsInstantiationLevelId": "il_vEPC_default",
+				"minNumberOfInstances": 1,
+				"maxNumberOfInstances": 1
+			}],
+			"dependencies": [{
+					"primaryId": ["hss_profile"],
+					"secondaryId": [
+						"mme_profile",
+						"spgw_profile",
+						"oaisim_profile"
+					]
+				},
+				{
+					"primaryId": ["mme_profile"],
+					"secondaryId": [
+						"spgw_profile",
+						"oaisim_profile"
+					]
+				},
+				{
+					"primaryId": ["spgw_profile"],
+					"secondaryId": ["oaisim_profile"]
+				}
+			]
+		}],
+		"security": {
+			"signature": "vEPC_NSD_SIGNATURE",
+			"algorithm": "vEPC_NSD_ALGORITHM",
+			"certificate": "vEPC_NSD_CERTIFICATE"
+		}
+	}
+}

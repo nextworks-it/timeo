@@ -1,0 +1,194 @@
+{
+	"vnfdId": "mme",
+	"vnfProvider": "OAI",
+	"vnfProductName": "mme",
+	"vnfSoftwareVersion": "0.1",
+	"vnfdVersion": "0.6",
+	"vnfProductInfoName": "vEPC OAI MME",
+	"vnfProductInfoDescription": "vEPC OAI Mobility Management Entity",
+	"vnfmInfo": ["vEPC_VNFM"],
+	"vdu": [{
+		"vduId": "mme_vdu",
+		"name": "mme",
+		"description": "VDU of the MME",
+		"intCpd": [{
+			"cpdId": "mmeMgtInt",
+			"layerProtocol": "IPV4",
+			"description": "Management CP of the MME",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": true,
+				"management": true,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}, {
+			"cpdId": "mmeS1cInt",
+			"layerProtocol": "IPV4",
+			"description": "CP for the S1-C interface of the MME",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": false,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}, {
+			"cpdId": "mmeS11Int",
+			"layerProtocol": "IPV4",
+			"description": "CP for the S11 interface of the MME",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": false,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}, {
+			"cpdId": "mmeS6aInt",
+			"layerProtocol": "IPV4",
+			"description": "CP for the S6-a interface of the MME",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": false,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}],
+		"virtualComputeDesc": "VCD_MME",
+		"virtualStorageDesc": ["VSD_MME"],
+		"swImageDesc": {
+			"id": "MME_SWID",
+			"name": "MME",
+			"version": "0.1",
+			"checksum": "TBD",
+			"containerFormat": "QCOW",
+			"diskFormat": "QCOW",
+			"minDisk": 11,
+			"minRam": 1,
+			"size": 10,
+			"swImage": "MME",
+			"operatingSystem": "Ubuntu-10.04"
+		},
+		"configurableProperties": {}
+	}],
+	"virtualComputeDesc": [{
+		"virtualComputeDescId": "VCD_MME",
+		"virtualMemory": {
+			"virtualMemSize": 2,
+			"virtualMemOversubscriptionPolicy": "asdasd",
+			"numaEnabled": false
+		},
+		"virtualCpu": {
+			"numVirtualCpu": 1,
+			"cpuArchitecture": "x86_64",
+			"virtualCpuClock": 0,
+			"virtualCpuOversubscriptionPolicy": "asdasd"
+		}
+	}],
+	"virtualStorageDesc": [{
+		"id": "VSD_MME",
+		"typeOfStorage": "VOLUME",
+		"sizeOfStorage": 10,
+		"rdmaEnabled": false,
+		"swImageDesc": "MME_SWID"
+	}],
+	"vnfExtCpd": [{
+		"cpdId": "mmeMgtExt",
+		"layerProtocol": "IPV4",
+		"description": "Management external CP of the MME",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": true,
+			"management": true,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "mmeMgtInt"
+	}, {
+		"cpdId": "mmeS1cExt",
+		"layerProtocol": "IPV4",
+		"description": "External CP for the S1-C interface of the MME",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": false,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "mmeS1cInt"
+	}, {
+		"cpdId": "mmeS6aExt",
+		"layerProtocol": "IPV4",
+		"description": "External CP for the S6-a interface of the MME",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": false,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "mmeS6aInt"
+	}, {
+		"cpdId": "mmeS11Ext",
+		"layerProtocol": "IPV4",
+		"description": "External CP for the S11 interface of the MME",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": false,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "mmeS11Int"
+	}],
+	"deploymentFlavour": [{
+		"flavourId": "df_mme",
+		"description": "Standard deployment flavour of the MME",
+		"defaultInstantiationLevelId": "il_mme",
+		"vduProfile": [{
+			"vduId": "mme_vdu",
+			"minNumberOfInstances": 1,
+			"maxNumberOfInstances": 1
+		}],
+		"instantiationLevel": [{
+			"levelId": "il_mme",
+			"description": "Standard instantiation level of the MME",
+			"vduLevel": [{
+				"vduId": "mme_vdu",
+				"numberOfInstances": 1
+			}]
+		}],
+		"vnfLcmOperationsConfiguration": {}
+	}],
+	"configurableProperties": {
+			"autoScalable": false,
+			"autoHealable": false,
+			"additionalConfigurableProperty": [
+				"vnf.mme.vdu.mme_vdu.hostname",
+				"vnf.hss.vdu.hss_vdu.hostname",
+				"vnf.mme.vdu.mme_vdu.intcp.mmeS1cInt.address",
+				"vnf.mme.vdu.mme_vdu.intcp.mmeS11Int.address",
+				"vnf.hss.vdu.hss_vdu.intcp.hssS6aInt.address",
+				"vnf.spgw.vdu.spgw_vdu.intcp.spgwS11Int.address",
+				"uservnf.hss.vdu.hss.domainname"
+			]
+	},
+	"modifiableAttributes": {},
+	"lifeCycleManagementScript": [{
+		"event": ["START_VNF_INSTANTIATION"],
+		"script": "#!/bin/bash \necho \"nameserver 8.8.8.8\" > /etc/resolv.conf \necho \"domain $$config$$domainname\" >> /etc/resolv.conf \necho \"$$config$$hostname\" > /etc/hostname \nhostnamectl set-hostname $$config$$hostname \necho \"127.0.0.1 localhost\" > /etc/hosts \necho \"127.0.1.1 $$config$$hostname.$$config$$domainname $$config$$hostname\" >> /etc/hosts \nip route del default \nip route add default via $$config$$managementGw \n"
+	}, {
+		"event": ["END_VNF_INSTANTIATION"],
+		"script": ""
+	}, {
+		"event": ["START_VNF_TERMINATION"],
+		"script": ""
+	}, {
+		"event": ["END_VNF_TERMINATION"],
+		"script": ""
+	}]
+}
