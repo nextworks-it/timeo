@@ -141,7 +141,13 @@ public class ResourceAllocationManager {
 			SdnControllerPlugin defaultSdnController = null;
 			try {
 				defaultVimPlugin = sbDriversManager.getDefaultVim();
-				defaultSdnController = sbDriversManager.getDefaultSdnController();
+				if (resourceComputationDbWrapper
+						.getNsResourceSchedulingSolution(nsInstanceId)
+						.getNetworkPaths()
+						.size()
+						!= 0) {
+					defaultSdnController = sbDriversManager.getDefaultSdnController();
+				}
 			} catch (NotExistingEntityException e) {
 				log.error("Unable to retrieve a default VIM or SDN controller.");
 				try {
