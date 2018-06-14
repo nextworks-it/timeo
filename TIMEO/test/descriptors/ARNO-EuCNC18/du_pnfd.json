@@ -1,0 +1,39 @@
+{
+	"pnfd": {
+		"pnfdId": "DU_v01",
+		"provider": "SSSA",
+		"version": "0.1",
+		"pnfExtCp": [{
+				"cpdId": "duRadioCp",
+				"description": "Distributed unit connection point towards the radio",
+				"layerProtocol": "IPV4",
+				"cpRole": "ROOT",
+				"addressData": [{
+					"addressType": "IP_ADDRESS",
+					"iPAddressAssignment": false,
+					"floatingIpActivated": true,
+					"iPAddressType": "IPv4",
+					"numberOfIpAddress": 1
+				}]
+			},
+			{
+				"cpdId": "duFronthaulCp",
+				"description": "Fronthaul connection point for the distributed unit",
+				"layerProtocol": "IPV4",
+				"cpRole": "ROOT",
+				"addressData": [{
+					"addressType": "IP_ADDRESS",
+					"iPAddressAssignment": false,
+					"floatingIpActivated": true,
+					"iPAddressType": "IPv4",
+					"numberOfIpAddress": 1
+				}]
+			}
+		],
+		"security": {
+			"signature": "DU_PNFD_SIGNATURE",
+			"algorithm": "DU_PNFD_ALGORITHM",
+			"certificate": "DU_PNFD_CERTIFICATE"
+		}
+	}
+}
