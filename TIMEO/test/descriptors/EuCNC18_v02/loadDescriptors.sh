@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# cd into the folder the script is in
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
   DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
@@ -10,8 +11,7 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 cd "$DIR"
 
-# Check timestamp
-./deploy_tars.sh
+# Ok, we're in the correct folder
 
 
 curl -v -X POST -d @createSpr1Vnfd.json http://localhost:8081/nfvo/vnfdManagement/vnfPackage --header "Content-Type:application/json"  || { echo "SPR1 not loaded!"; exit 1; }
