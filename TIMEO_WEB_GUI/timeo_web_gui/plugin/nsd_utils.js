@@ -265,7 +265,7 @@ function createNSDDetailsTable(tableId, data, resId) {
 
 function createNSDDetailsTableContents(data, btnFlag, resId, names, cbacks, columns) {
 	
-	//console.log(JSON.stringify(data,null,4));
+//	console.log(JSON.stringify(data,null,4));
 	
 	var btnText = '';
 	var text = '<tr>';
@@ -657,7 +657,7 @@ function showInstantiateNSModal(elemIds, data, resId) {
 }
 
 function createNSTopology(data) {
-//	console.log(JSON.stringify(data, null, 4));
+	console.log(JSON.stringify(data, null, 4));
 	
 	var nodes = [];
 	var edges = [];
@@ -670,13 +670,39 @@ function createNSTopology(data) {
 	
 	var vnfs = data['nsd']['vnfdId'];
 	var vnfProfiles = data['nsd']['nsDf'][0]['vnfProfile'];
+	var pnfs = data['nsd']['pnfdId'];
+	var pnfProfiles = data['nsd']['nsDf'][0]['pnfProfile'];
 	var vlProfiles = data['nsd']['nsDf'][0]['virtualLinkProfile'];
 		
 	for (var k in vlIds) {
 //		console.log(sapIds[j]);
 		//cy.add({ group: 'nodes', data: { id: vlIds[k], name: 'VLink - ' + vlIds[k], weight: 10, faveColor: '#EDA1ED', faveShape: 'ellipse' }});
 		nodes.push({ group: 'nodes', data: { id: vlIds[k], name: 'VLink - ' + vlIds[k], label: 'VLink - ' + vlIds[k], weight: 50, faveColor: '#fff', faveShape: 'ellipse' }, classes: 'bottom-center net'});
-	}	
+	}
+	for (var p in pnfs) {
+//		console.log(vnfs[i]);
+		nodes.push({ group: 'nodes', data: { id: pnfs[p], name: 'PNF - ' + pnfs[p], label: 'PNF - ' + pnfs[p], weight: 70, faveColor: '#fff', faveShape: 'ellipse' }, classes: 'bottom-center pnf'});
+		for (var l in pnfProfiles) {
+			if (pnfProfiles[l]['pnfdId'].indexOf(pnfs[p]) >= 0) {
+//				console.log(pnfProfiles[h]['pnfdId']);
+				var pnf_vlConns = [];
+				getValuesFromKeyPath(pnfProfiles[l], ['pnfVirtualLinkConnectivity', 'virtualLinkProfileId'], pnf_vlConns);
+//				console.log(pnf_vlConns);
+				for (var m in pnf_vlConns) {
+					for (var n in vlProfiles) {
+						if (pnf_vlConns[m] === vlProfiles[n]['virtualLinkProfileId']) {
+							//TODO: add link
+							var targetId = vlProfiles[n]['virtualLinkDescId'];
+//							console.log(targetId);
+							//cy.add({ group: 'edges', data: { source: pnfs[p], target: targetId, faveColor: '#6FB1FC', strength: 30 }});
+							edges.push({ group: 'edges', data: { source: pnfs[p], target: targetId, faveColor: '#706f6f', strength: 70 }});
+							//edges.push({ group: 'edges', data: { source: targetId, target: pnfs[p], faveColor: '#6FB1FC', strength: 70 }});
+						}
+					}
+				}
+			}
+		}		
+	}
 	for (var i in vnfs) {
 //		console.log(vnfs[i]);
 		nodes.push({ group: 'nodes', data: { id: vnfs[i], name: 'VNF - ' + vnfs[i], label: 'VNF - ' + vnfs[i], weight: 70, faveColor: '#fff', faveShape: 'ellipse' }, classes: 'bottom-center vnf'});
@@ -755,6 +781,12 @@ function createNSTopology(data) {
 			.selector('.vnf')
 				.css({
 					'background-image': '../../images/vnf_icon_80.png',
+					'width': 80,//'mapData(weight, 40, 80, 20, 60)',
+					'height': 80
+				})
+			.selector('.pnf')
+				.css({
+					'background-image': '../../images/pnf_icon_80.png',
 					'width': 80,//'mapData(weight, 40, 80, 20, 60)',
 					'height': 80
 				})

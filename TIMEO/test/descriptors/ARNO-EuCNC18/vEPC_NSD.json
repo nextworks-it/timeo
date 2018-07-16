@@ -6,6 +6,7 @@
 		"nsdName": "vEPC_TIMEO",
 		"nsdInvariantId": "vEPC",
 		"vnfdId": ["vEPC_VNF"],
+		"pnfdId": ["CU_v01"],
 		"sapd": [{
 				"cpdId": "mgtSap",
 				"description": "Management SAP for all the vEPC VNFs",
