@@ -62,6 +62,16 @@
 						]
 					}]
 				}],
+			"pnfProfile": [{
+				"pnfProfileId": "CU_profile",
+				"pnfdId": "CU_v01",
+				"pnfVirtualLinkConnectivity": [{
+					"virtualLinkProfileId": "vl_profile_mgt",
+					"cpdId": [
+						"cuManagementCp"
+					]
+				}]
+			}],
 			"virtualLinkProfile": [{
 				"virtualLinkProfileId": "vl_profile_mgt",
 				"virtualLinkDescId": "mgt",
