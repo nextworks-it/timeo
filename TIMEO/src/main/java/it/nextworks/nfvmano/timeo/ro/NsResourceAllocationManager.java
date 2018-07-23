@@ -77,6 +77,7 @@ import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateN
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsLinkPort;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsVirtualLinkInfo;
+import it.nextworks.nfvmano.libs.records.nsinfo.UserAccessInfo;
 import it.nextworks.nfvmano.libs.vrmanagement.interfaces.VirtualisedResourcesCapacityManagementConsumerInterface;
 import it.nextworks.nfvmano.libs.vrmanagement.interfaces.VirtualisedResourcesInformationManagementConsumerInterface;
 import it.nextworks.nfvmano.libs.vrmanagement.interfaces.elements.vnet.NetworkSubnet;
@@ -188,6 +189,8 @@ implements AsynchronousVimNotificationInterface,
 	
 	//Key: operation ID; value path ID
 	private Map<String, String> sdnControllerOperationMap = new HashMap<>();
+	
+	private List<UserAccessInfo> userAccessInfos = new ArrayList<>();
 	
 	public NsResourceAllocationManager(String nsInstanceId,
 			NsDbWrapper nsDbWrapper,
@@ -514,6 +517,7 @@ implements AsynchronousVimNotificationInterface,
 		//TODO: check status
 		try {
 			Nsd nsd = nsManagementEngine.retrieveNsd(nsInstanceId);
+			this.userAccessInfos = nsd.getUserAccessInfo(allocateVlsMsg.getRequest().getFlavourId(), allocateVlsMsg.getRequest().getNsInstantiationLevelId());
 			//TODO: at the moment it ignores bandwidth requirements and affinity constraints
 			List<NsVirtualLinkDesc> virtualLinkDesc = nsd.getVirtualLinkDesc();
 			for (NsVirtualLinkDesc nsVld : virtualLinkDesc) {
@@ -878,6 +882,7 @@ implements AsynchronousVimNotificationInterface,
 				log.debug("VNFD: " + vnfdId + " - FlavourID: " + vnfFlavourId + " - Number of instances: " + numInstances);
 				for (int i = 0; i<numInstances; i++) {
 					String vnfInstanceId = allocateVnf(vnfdId, vnfFlavourId, i, vnfInstantiationLevel, vnfProfile, nsDeploymentFlavour);
+					setVnfIdInUserInfo(vnfdId, vnfInstanceId, i);
 					log.debug("VNF index: " + i + " - VNF instance ID: " + vnfInstanceId);
 				}
 			}
@@ -938,7 +943,7 @@ implements AsynchronousVimNotificationInterface,
 			vnfOperationMap.put(operationId, vnfInstanceId);
 			vnfmOperationPollingManager.addOperation(operationId, OperationStatus.SUCCESSFULLY_DONE, vnfInstanceId, vnfm, this);
 			log.debug("Operation " + operationId + " added to the list of VNFM pending operations");
-
+			
 			return vnfInstanceId;
 		} catch (MethodNotImplementedException | MalformattedElementException e) {
 			log.error("Failure in VNF identifier creation");
@@ -1108,6 +1113,7 @@ implements AsynchronousVimNotificationInterface,
 				return;
 			} else if (operationStatus == OperationStatus.SUCCESSFULLY_DONE) {
 				log.debug("VNF " + vnfId + " has been successfully created at VNFM");
+				addVnfUserAccessInfoInDb(vnfId);
 				vnfOperationMap.remove(operationId);
 				pendingVnfmOperation.remove(operationId);
 				if (pendingVnfmOperation.isEmpty()) {
@@ -1390,6 +1396,36 @@ implements AsynchronousVimNotificationInterface,
 			log.error("Impossible to update internal DB about NS instantiation");
 		}
 		nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, actionType, false);
+	}
+	
+	private void setVnfIdInUserInfo(String vnfdId, String vnfId, int index) {
+		for (UserAccessInfo uai : this.userAccessInfos) {
+			if (vnfdId.equals(uai.getVnfdId())) {
+				if (index == 0) {
+					uai.setVnfId(vnfId);
+				} else {
+					this.userAccessInfos.add(new UserAccessInfo(uai.getSapdId(), uai.getVnfdId(), vnfId, uai.getVnfExtCpdId(), null));
+				}
+				return;
+			}
+		}
+	}
+	
+	private void addVnfUserAccessInfoInDb(String vnfId) {
+		ResourceAllocationUtilities resourceAllocationUtilities = new ResourceAllocationUtilities(vnfmMap, vnfdMap, defaultVimPlugin, null);
+		for (UserAccessInfo uai : this.userAccessInfos) {
+			//There could be more than one SAP for VNF, in case of several external CPs
+			if (vnfId.equals(uai.getVnfId())) {
+				String vnfExtCpdId = uai.getVnfExtCpdId();
+				try {
+					String address = resourceAllocationUtilities.getFloatingForExternalCp(vnfId, vnfExtCpdId);
+					uai.setAddress(address);
+					nsDbWrapper.addUserAccessInfo(nsInstanceId, uai.getSapdId(), uai.getVnfdId(), vnfId, vnfExtCpdId, address);
+				} catch (Exception e) {
+					log.debug(e.getMessage());
+				}
+			}
+		}
 	}
 	
 	//********************************* End of utilities methods ***********************************

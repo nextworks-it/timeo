@@ -197,7 +197,7 @@ public class ResourceAllocationUtilities {
 		}
 	}
 	
-	private String getFloatingForExternalCp(String vnfInstanceId, String extCpdId) throws Exception {
+	public String getFloatingForExternalCp(String vnfInstanceId, String extCpdId) throws Exception {
 		log.debug("Getting Floating IP associated to external connection point " + extCpdId + " in VNF " + vnfInstanceId);
 		
 		log.debug("Invoking VNFM to get info about VNF instance resources.");

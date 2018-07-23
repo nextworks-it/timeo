@@ -35,6 +35,7 @@ import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsLinkPort;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsVirtualLinkInfo;
+import it.nextworks.nfvmano.libs.records.nsinfo.SapInfo;
 
 
 @Service
@@ -59,6 +60,9 @@ public class NsDbWrapper {
 	
 	@Autowired
 	NfpRepository nfpRepository;
+	
+	@Autowired
+	SapInfoRepository sapInfoRepository;
 	
 	@Autowired
 	InternalOperationRepository internalOperationRepository;
@@ -104,7 +108,7 @@ public class NsDbWrapper {
 	
 	public synchronized String createNsInfo(String nsdInstanceId, Nsd nsd, String nsName, String nsDescription, String tenantId) {
 		log.debug("Creating new NS info entry in DB.");
-		NsInfo nsInfo = new NsInfo(null, nsName, nsDescription, nsdInstanceId, null, null, null, null, InstantiationState.NOT_INSTANTIATED, 
+		NsInfo nsInfo = new NsInfo(null, nsName, nsDescription, nsdInstanceId, null, null, null, InstantiationState.NOT_INSTANTIATED, 
 				null, null, tenantId, null);
 		nsInfoRepository.saveAndFlush(nsInfo);
 		String nsInstanceId = nsInfo.getId().toString();
@@ -275,6 +279,22 @@ public class NsDbWrapper {
 		log.debug("Removed NS Virtual Link " + nsVldId + " in NS instance " + nsInstanceId + " from DB");
 	}
 	
+	//*************************************  Methods related to NS User Access Info *********************************************
+	
+	public synchronized void addUserAccessInfo(String nsInstanceId, String sapdId, String vnfdId, String vnfId, String vnfExtCpdId, String address) throws NotExistingEntityException {
+		log.debug("Creating User Access Info for NS " + nsInstanceId + ". SAPD ID: " + sapdId + " - VNFD ID: " + vnfdId  + " - VNF ID: " + vnfId + " - VNF EXT CPD: " + vnfExtCpdId + " - IP: " + address);
+		SapInfo sapInfo = getSapInfo(nsInstanceId, sapdId);
+		sapInfo.addUserAccessInfo(sapdId, vnfdId, vnfId, vnfExtCpdId, address);
+		sapInfoRepository.saveAndFlush(sapInfo);
+		log.debug("User access info added in DB.");
+	}
+	
+	private SapInfo getSapInfo(String nsInstanceId, String sapdId) throws NotExistingEntityException {
+		Optional<SapInfo> sapInfoOpt = sapInfoRepository.findByNsInfoNsInstanceIdAndSapdId(nsInstanceId, sapdId);
+		if (sapInfoOpt.isPresent()) return sapInfoOpt.get();
+		else throw new NotExistingEntityException("SAP info for SAPD " + sapdId + " not available for NS instance " + nsInstanceId);
+	}
+	
 	//*************************************  Methods related to NS Link Ports ***************************************************
 	
 	public synchronized void createNsLinkPort(String nsInstanceId, String nsVldId, String cpId, ResourceHandle resourceHandle, boolean isSap, String portName) 
@@ -288,9 +308,9 @@ public class NsDbWrapper {
 		nsLinkPortRepository.saveAndFlush(port);
 		log.debug("NS link port created.");
 		NsInfo nsInfo = getNsInfo(nsInstanceId);
-		nsInfo.addSapInfo(resourceHandle.getResourceId(), cpId, portName, portName, null);
-		nsInfoRepository.saveAndFlush(nsInfo);
-		log.debug("SAP Info added in NS info");
+		SapInfo sapInfo = new SapInfo(nsInfo, resourceHandle.getResourceId(), cpId, portName, portName, null,  null);
+		sapInfoRepository.saveAndFlush(sapInfo);
+		log.debug("SAP Info added in DB");
 	}
 	
 	public synchronized void removeNsLinkPort(String nsInstanceId, String resourceId) throws NotExistingEntityException {
@@ -298,10 +318,12 @@ public class NsDbWrapper {
 		NsLinkPort port = getNsLinkPort(nsInstanceId, resourceId);
 		nsLinkPortRepository.delete(port);
 		log.debug("NS link port removed.");
-		NsInfo nsInfo = getNsInfo(nsInstanceId);
-		nsInfo.removeSapInfo(resourceId);
-		nsInfoRepository.saveAndFlush(nsInfo);
-		log.debug("SAP Info removed from NS info");
+		
+		Optional<SapInfo> sapInfo = sapInfoRepository.findBySapInstanceId(resourceId);
+		if (sapInfo.isPresent()) {
+			sapInfoRepository.delete(sapInfo.get());
+			log.debug("SAP Info removed from DB");
+		}
 	}
 	
 	public NsLinkPort getNsLinkPort(String nsInstanceId, String resourceId) throws NotExistingEntityException {
