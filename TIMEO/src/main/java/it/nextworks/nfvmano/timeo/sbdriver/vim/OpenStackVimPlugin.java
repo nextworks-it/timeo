@@ -1137,7 +1137,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 		Flavor flavor = null;
 		try {
 			flavor = os.compute().flavors()
-					.create(Builders.flavor().name(virtualComputeFlavor.getFlavourId()).disk(size)
+					.create(Builders.flavor().isPublic(false).name(virtualComputeFlavor.getFlavourId()).disk(size)
 							.ram(virtualComputeFlavor.getVirtualMemory().getVirtualMemSize()*1024)
 							.vcpus(virtualComputeFlavor.getVirtualCpu().getNumVirtualCpu()).build());
 			return flavor.getId();
