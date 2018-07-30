@@ -99,12 +99,9 @@ public class VimRepoWrapper {
 			}
 		}
 		
-		VirtualComputeFlavour target = new VirtualComputeFlavour(null, vcf.getAccelerationCapability(), vcf.getVirtualMemory(), vcf.getVirtualCpu(), vcf.getStorageAttributes());
+		VirtualComputeFlavour target = new VirtualComputeFlavour(vcf.getFlavourId(), vcf.getAccelerationCapability(), vcf.getVirtualMemory(), vcf.getVirtualCpu(), vcf.getStorageAttributes());
 		virtualComputeFlavourRepository.saveAndFlush(target);
-		Long id = target.getId();
-		String flavourId = id.toString();
-		target.setFlavourId(flavourId);
-		virtualComputeFlavourRepository.saveAndFlush(target);
+		String flavourId = target.getFlavourId();
 		log.debug("Virtual Compute Flavour stored. ID: " + flavourId);
 		List<VirtualNetworkInterfaceData> vnicData = vcf.getVirtualNetworkInterface();
 		for (VirtualNetworkInterfaceData vnicD : vnicData) {
