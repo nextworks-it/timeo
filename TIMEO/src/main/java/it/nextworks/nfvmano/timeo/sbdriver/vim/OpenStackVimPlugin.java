@@ -1355,18 +1355,33 @@ public class OpenStackVimPlugin extends VimPlugin {
 	@Override
 	public String createComputeFlavour(CreateComputeFlavourRequest request) 
 			throws MethodNotImplementedException, MalformattedElementException, FailedOperationException {
-		log.debug("Received request to create a new compute flavour");
+		log.debug("Received request for compute flavour ID");
 		VirtualComputeFlavour vcf = request.getFlavour();
 		if (vcf == null) {
 			log.error("Received null virtual compute flavour. Error.");
 			throw new MalformattedElementException("Received null virtual compute flavour. Error.");
 		}
 		try {
-			String flavourId = vimRepoWrapper.storeVirtualComputeFlavour(vcf);
-			log.debug("Virtual compute flavour created with ID " + flavourId);
-			return flavourId;
-		} catch (AlreadyExistingEntityException e) {
-			throw new FailedOperationException("Virtual compute flavour already existing.");
+			VirtualComputeFlavour oldVcf = vimRepoWrapper.retrieveVirtualComputeFlavour(vcf.getFlavourId());
+			log.debug("Found a virtual compute flavour with ID {}, checking equality.", vcf.getFlavourId());
+			if (!VimRepoWrapper.compareVcf(oldVcf, vcf)) {
+				log.error("ID '{}' is already used for a different vcf.", vcf.getFlavourId());
+				throw new FailedOperationException(
+						String.format("ID '%s' is already used for a different vcf", vcf.getFlavourId())
+				);
+			}
+			log.debug("Flavour {} already existing, reusing.", vcf.getFlavourId());
+			return vcf.getFlavourId();
+
+		} catch (NotExistingEntityException e) {
+			log.debug("Virtual compute flavour not yet existing, creating a new one.");
+			try {
+				String flavourId = vimRepoWrapper.storeVirtualComputeFlavour(vcf);
+				log.debug("Virtual compute flavour created with ID " + flavourId);
+				return flavourId;
+			} catch (AlreadyExistingEntityException e2) {
+				throw new FailedOperationException("Race condition: vcf created between polling and writing.");
+			}
 		}
 	}
 
