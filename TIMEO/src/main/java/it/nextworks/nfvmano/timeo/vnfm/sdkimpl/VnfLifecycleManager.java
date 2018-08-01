@@ -860,7 +860,7 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 				storageAttributes, 
 				virtualNetworkInterface);
 		
-		log.debug("Creating virtual compute flavour and getting its ID.");
+		log.debug("Computing virtual compute flavour ID.");
 		
 		String flavourId = vimPlugin.createComputeFlavour(new CreateComputeFlavourRequest(computeData));
 		
