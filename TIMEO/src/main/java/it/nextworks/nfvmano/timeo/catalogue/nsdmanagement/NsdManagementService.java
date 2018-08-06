@@ -656,8 +656,8 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 				queryResult.addAll(pnfdInfos);
 				log.debug("Added all PNFD infos found in DB");
 			} else {
-				log.error("Received query NSD with not supported filter.");
-				throw new MalformattedElementException("Received query NSD with not supported filter.");
+				log.error("Received query PNFD with not supported filter.");
+				throw new MalformattedElementException("Received query PNFD with not supported filter.");
 			}
 			return new QueryPnfdResponse(queryResult);
 		} else {
@@ -743,7 +743,7 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 		String pnfdId = input.getPnfdId();
 		String version = input.getVersion();
 		
-		Pnfd output = new Pnfd(pnfdId, input.getProvider(), version, input.getSecurity());
+		Pnfd output = new Pnfd(pnfdId, input.getProvider(), version, input.getSecurity(), input.getConfigurableProperty());
 		pnfdRepository.saveAndFlush(output);
 		
 		Pnfd createdPnfd = pnfdRepository.findByPnfdIdAndVersion(pnfdId, version).get();

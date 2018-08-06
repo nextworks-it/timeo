@@ -38,6 +38,7 @@ public class PnfInstance implements DescriptorInformationElement {
 	
 	private String pnfInstanceId;
 	private String pnfdId;
+	private String pnfdVersion;
 	private String description;
 	private String location;	//this will need to be updated
 	
@@ -54,15 +55,18 @@ public class PnfInstance implements DescriptorInformationElement {
 	 * 
 	 * @param pnfInstanceId ID of the PNF instance.
 	 * @param pnfdId ID of the PNFD defining the PNF.
+	 * @param pnfdVersion version of the PNFD defining the PNF.
 	 * @param description Description of the PNF instance.
 	 * @param location Geographical location where the PNF is deployed.
 	 */
 	public PnfInstance(String pnfInstanceId,
 			String pnfdId,
+			String pnfdVersion,
 			String description,
 			String location) {
 		this.pnfInstanceId = pnfInstanceId;
 		this.pnfdId = pnfdId;
+		this.pnfdVersion = pnfdVersion;
 		this.description = description;
 		this.location = location;
 	}
@@ -86,6 +90,14 @@ public class PnfInstance implements DescriptorInformationElement {
 	}
 
 
+
+	/**
+	 * @return the pnfdVersion
+	 */
+	@JsonProperty("pnfdVersion")
+	public String getPnfdVersion() {
+		return pnfdVersion;
+	}
 
 	/**
 	 * @return the description
@@ -127,6 +139,8 @@ public class PnfInstance implements DescriptorInformationElement {
 	@Override
 	public void isValid() throws MalformattedElementException {
 		if (pnfInstanceId == null) throw new MalformattedElementException("PNF instance without ID.");
+		if (pnfdId == null) throw new MalformattedElementException("PNF instance without PNFD ID.");
+		if (pnfdVersion == null) throw new MalformattedElementException("PNF instance without PNFD version.");
 		if ((ports == null) || (ports.isEmpty())) throw new MalformattedElementException("PNF instance without ports. At least one port is needed to access the PNF.");
 	}
 	

@@ -28,5 +28,8 @@ public final class NfvoConstants {
 	
 	public static final String vnfmQueueNamePrefix = "vnfm-in-";
 	public static final String vnfmQueueExchange = "vnfm-queue-exchange";
+	
+	public static final String pnfmQueueNamePrefix = "pnfm-in-";
+	public static final String pnfmQueueExchange = "pnfm-queue-exchange";
 
 }

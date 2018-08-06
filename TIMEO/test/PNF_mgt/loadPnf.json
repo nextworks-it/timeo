@@ -1,6 +1,7 @@
 {
 	"pnfInstanceId": "PNF_INSTANCE_001",
 	"pnfdId": "PNFD_001",
+	"pnfdVersion": "0.0.1",
 	"description": "TEST PNF",
 	"location": "TEST_LOCATION",
 	"ports": [{

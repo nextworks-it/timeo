@@ -25,7 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import it.nextworks.nfvmano.libs.catalogues.interfaces.elements.PnfdInfo;
 import it.nextworks.nfvmano.libs.common.elements.ResourceHandle;
+import it.nextworks.nfvmano.libs.common.enums.AddressType;
 import it.nextworks.nfvmano.libs.common.enums.InstantiationState;
 import it.nextworks.nfvmano.libs.common.enums.OperationStatus;
 import it.nextworks.nfvmano.libs.common.enums.VimResourceStatus;
@@ -35,7 +37,11 @@ import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsLinkPort;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsVirtualLinkInfo;
+import it.nextworks.nfvmano.libs.records.nsinfo.PnfExtCpInfo;
+import it.nextworks.nfvmano.libs.records.nsinfo.PnfInfo;
 import it.nextworks.nfvmano.libs.records.nsinfo.SapInfo;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PhysicalEquipmentPort;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
 
 
 @Service
@@ -103,6 +109,47 @@ public class NsDbWrapper {
 		}
 	}
 	
+	//************************************* Methods related to PNF INFOs ***************************************************
+	
+	public synchronized String createPnfInfo(String nsInstanceId, PnfdInfo pnfdInfo, PnfInstance pnfInstance, String pnfName, String pnfProfileId) throws NotExistingEntityException {
+		log.debug("Creating a new PNF info associated to PNF instance " + pnfInstance.getPnfInstanceId() + " and included in NS " + nsInstanceId);
+		NsInfo nsInfo = getNsInfo(nsInstanceId);
+		log.debug("Creating new entry in DB.");
+		List<PnfExtCpInfo> cpInfo = new ArrayList<>();
+		List<PhysicalEquipmentPort> peps = pnfInstance.getPorts();
+		for (PhysicalEquipmentPort p : peps) {
+			String ipAddress = p.getAddresses().get(AddressType.IP_ADDRESS);
+			String cpdId = p.getPortId();
+			cpInfo.add(new PnfExtCpInfo(cpdId, ipAddress));
+		}
+		PnfInfo pnfInfo = new PnfInfo(nsInfo, pnfInstance.getPnfInstanceId(), pnfName, pnfdInfo.getPnfdId(), pnfdInfo.getPnfdInfoId(), pnfProfileId, cpInfo);
+		pnfInfoRepository.saveAndFlush(pnfInfo);
+		String pnfInfoId = pnfInfo.getId().toString();
+		log.debug("Created PNF info entry with ID " + pnfInfoId);
+		return pnfInfoId;
+	}
+	
+	public PnfInfo getPnfInfo(String pnfInfoId) throws NotExistingEntityException {
+		log.debug("Retrieving PNF " + pnfInfoId + " from DB.");
+		Long id = Long.parseLong(pnfInfoId);
+		Optional<PnfInfo> pnfInfoOpt = pnfInfoRepository.findById(id);
+		if (pnfInfoOpt.isPresent()) return pnfInfoOpt.get();
+		else {
+			log.error("PNF info " + pnfInfoId + " not found");
+			throw new NotExistingEntityException("PNF info " + pnfInfoId + " not found");
+		}
+	}
+	
+	public List<PnfInfo> getAllPnfInfo() {
+		log.debug("Retrieving all PNF infos");
+		return pnfInfoRepository.findAll();
+	}
+	
+	public synchronized void deletePnfInfo(String pnfInfoId) throws NotExistingEntityException {
+		log.debug("Deleting PNF info " + pnfInfoId + " from DB");
+		PnfInfo pnfInfo = getPnfInfo(pnfInfoId);
+		pnfInfoRepository.delete(pnfInfo);
+	}
 	
 	//*************************************  Methods related to NS INFOs ***************************************************
 	

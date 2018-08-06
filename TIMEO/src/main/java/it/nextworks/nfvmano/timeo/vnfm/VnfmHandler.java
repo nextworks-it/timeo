@@ -34,8 +34,11 @@ import org.springframework.stereotype.Service;
 
 import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.NsdManagementService;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.PnfManagementService;
 import it.nextworks.nfvmano.timeo.catalogue.vnfpackagemanagement.VnfPackageManagementService;
 import it.nextworks.nfvmano.timeo.common.NfvoConstants;
+import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
 import it.nextworks.nfvmano.timeo.ro.VimResourcePollingManager;
 import it.nextworks.nfvmano.timeo.sbdriver.SbDriversManager;
 import it.nextworks.nfvmano.timeo.vnfm.repository.VnfDbWrapper;
@@ -74,7 +77,16 @@ public class VnfmHandler {
 	private VnfDbWrapper vnfDbWrapper;
 	
 	@Autowired
+	NsDbWrapper nsDbWrapper;
+	
+	@Autowired
+	NsdManagementService nsdManagement;
+	
+	@Autowired
 	private VnfPackageManagementService vnfPackageManagementService;
+
+	@Autowired
+	private PnfManagementService pnfManagementService;
 	
 	@Autowired
 	private VimResourcePollingManager vimResourcePollingManager;
@@ -171,7 +183,7 @@ public class VnfmHandler {
 	
 	private Vnfm instantiateVnfm(VnfmInfo vnfmInfo) throws MalformattedElementException {
 		if (vnfmInfo.getType().equals(VnfmType.SDK)) {
-			return new SdkVnfm(vnfmInfo, vnfDbWrapper, vnfPackageManagementService, vimResourcePollingManager, sbDriversManager, 
+			return new SdkVnfm(vnfmInfo, vnfDbWrapper, nsDbWrapper, nsdManagement, vnfPackageManagementService, pnfManagementService, vimResourcePollingManager, sbDriversManager, 
 					rabbitHost, rabbitTemplate, messageExchange, taskExecutor);
 		} if (vnfmInfo.getType().equals(VnfmType.REST)) {
 			throw new MalformattedElementException("At the moment REST VNFM type is not supported. Skipping.");

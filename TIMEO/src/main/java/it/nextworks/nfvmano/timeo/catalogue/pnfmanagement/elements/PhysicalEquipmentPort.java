@@ -41,7 +41,7 @@ public class PhysicalEquipmentPort implements DescriptorInformationElement {
 	@ManyToOne
 	private PnfInstance pnf;
 	
-	private String portId;
+	private String portId;	//this should correspond to a CPD ID of the PNFD
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ElementCollection(fetch=FetchType.EAGER)
@@ -96,7 +96,7 @@ public class PhysicalEquipmentPort implements DescriptorInformationElement {
 	public boolean isManagement() {
 		return management;
 	}
-
+	
 	@Override
 	public void isValid() throws MalformattedElementException {
 		if (portId == null) throw new MalformattedElementException("Physical equipment port without ID.");

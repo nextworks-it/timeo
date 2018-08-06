@@ -23,10 +23,12 @@ import org.slf4j.LoggerFactory;
 
 import it.nextworks.nfvmano.libs.orvnfm.vnflcm.interfaces.VnfLcmProviderInterface;
 import it.nextworks.nfvmano.libs.vnfconfig.interfaces.VnfConfigurationProviderInterface;
+import it.nextworks.nfvmano.timeo.vnfm.pnfm.PnfLcmProviderInterface;
 
 
 public abstract class Vnfm implements VnfLcmProviderInterface,
-	VnfConfigurationProviderInterface {
+	VnfConfigurationProviderInterface,
+	PnfLcmProviderInterface {
 
 	private static final Logger log = LoggerFactory.getLogger(Vnfm.class);
 	

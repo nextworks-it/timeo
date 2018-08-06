@@ -28,6 +28,7 @@ import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
+import it.nextworks.nfvmano.timeo.rc.elements.PnfAllocation;
 import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 
 
@@ -48,6 +49,9 @@ public class ResourceComputationDbWrapper {
 	@Autowired
 	NetworkPathHopRepository networkPathHopRepository;
 	
+	@Autowired
+	PnfAllocationRepository pnfAllocationRepository;
+	
 	public ResourceComputationDbWrapper() {	}
 	
 	public synchronized void addNewNsResourceSchedulingSolution(NsResourceSchedulingSolution input) throws AlreadyExistingEntityException {
@@ -64,6 +68,11 @@ public class ResourceComputationDbWrapper {
 				VnfResourceAllocation targetVra = new VnfResourceAllocation(output, vra.getVnfdId(), vra.getVnfIndex(), vra.getVduId(),
 						vra.getVduIndex(), vra.getVimId(), vra.getZoneId(), vra.getHostId());
 				vnfResourceAllocationRepository.saveAndFlush(targetVra);
+			}
+			List<PnfAllocation> pas = input.getPnfAllocation();
+			for (PnfAllocation pa : pas) {
+				PnfAllocation targetPa = new PnfAllocation(output, pa.getPnfdId(), pa.getPnfdVersion(), pa.getIndex(), pa.getPnfInstanceId(), pa.getPnfProfileId(), pa.getParameters());
+				pnfAllocationRepository.saveAndFlush(targetPa);
 			}
 			List<NetworkPath> nps = input.getNetworkPaths();
 			for (NetworkPath np : nps) {
@@ -118,6 +127,17 @@ public class ResourceComputationDbWrapper {
 			log.error("VNF resource allocation solution for NS instance " + nsInstanceId + ", VNFD ID " + vnfdId + " and index " + index + " not found");
 			throw new NotExistingEntityException("Solution not found.");
 		} else return res;
+	}
+	
+	/**
+	 * Retrieve a PNF allocation solution
+	 * 
+	 * @param nsInstanceId ID of the NS instance
+	 * @return the list of PNFs to be used for that NS instance
+	 */
+	public List<PnfAllocation> getPnfAllocation(String nsInstanceId) throws NotExistingEntityException {
+		log.debug("Retrieving PNF allocation solution from DB");
+		return pnfAllocationRepository.findByNsRssNsInstanceId(nsInstanceId);
 	}
 	
 	/**

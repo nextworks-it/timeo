@@ -82,7 +82,7 @@ public class PnfManagementService {
 			throw new AlreadyExistingEntityException("PNF instance with ID " + pnfInstance.getPnfInstanceId() + " already present in DB. Impossible to create a new one.");
 		log.debug("Adding PNF instance with ID " + pnfInstance.getPnfInstanceId() + " in DB.");
 		
-		PnfInstance target = new PnfInstance(pnfInstance.getPnfInstanceId(), pnfInstance.getPnfdId(), pnfInstance.getDescription(), pnfInstance.getLocation());
+		PnfInstance target = new PnfInstance(pnfInstance.getPnfInstanceId(), pnfInstance.getPnfdId(), pnfInstance.getPnfdVersion(), pnfInstance.getDescription(), pnfInstance.getLocation());
 		pnfInstanceRepository.saveAndFlush(target);
 		log.debug("PNF instance with ID " + pnfInstance.getPnfInstanceId() + " saved in DB.");
 		

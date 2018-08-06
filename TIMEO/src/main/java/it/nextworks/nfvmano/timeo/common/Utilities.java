@@ -48,6 +48,13 @@ public class Utilities {
 		return new Filter(filterParams);
 	}
 	
+	public static Filter buildPnfdFilter(String pnfdId, String pnfdVersion) {
+		Map<String, String> parameters = new HashMap<>();
+		parameters.put("PNFD_ID", pnfdId);
+		parameters.put("PNFD_VERSION", pnfdVersion);
+		return new Filter(parameters);
+	}
+	
 	public static Filter buildVimResourceFilter(VimResourceType type, String resourceId) {
 		Map<String,String> parameters = new HashMap<>();
 		switch (type) {
