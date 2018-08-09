@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import it.nextworks.nfvmano.libs.common.enums.LayerProtocol;
 import it.nextworks.nfvmano.timeo.common.emma.PowerState;
 
 /**
@@ -52,6 +53,8 @@ public class TopologyNode {
     public PowerState powerState;
 
     public Set<TopologyCp> cps;
+    
+    private Set<LayerProtocol> supportedProtocolLayers = new HashSet<>();
 
     public TopologyNode(String nodeId, Set<TopologyCp> cps,
                         int hddSize, int memory, int vCPUs,
@@ -82,6 +85,12 @@ public class TopologyNode {
 
     public TopologyNode(String nodeId, Set<TopologyCp> cps) {
         this(nodeId, cps, 0, 0, 0, 0, 0, PowerState.HIGH_POWER, null, null);
+        //this.availablePowerStates = Collections.emptySet();
+    }
+    
+    public TopologyNode(String nodeId, Set<TopologyCp> cps, Set<LayerProtocol> supportedProtocolLayers) {
+        this(nodeId, cps, 0, 0, 0, 0, 0, PowerState.HIGH_POWER, null, null);
+        if (supportedProtocolLayers != null) this.supportedProtocolLayers = supportedProtocolLayers;
         //this.availablePowerStates = Collections.emptySet();
     }
 
@@ -143,4 +152,13 @@ public class TopologyNode {
     public void setIdleVM(double idleVM) {
         this.idleVM.put("VM", idleVM);
     }
+
+	/**
+	 * @return the supportedProtocolLayers
+	 */
+	public Set<LayerProtocol> getSupportedProtocolLayers() {
+		return supportedProtocolLayers;
+	}
+    
+    
 }

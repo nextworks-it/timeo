@@ -164,7 +164,9 @@ public class SolutionParser {
                     link.linkId,
                     0,
                     first,
-                    last
+                    last,
+                    null,
+                    null
             ));
             hopNumber++;
             previous = link;

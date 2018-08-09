@@ -137,8 +137,10 @@ public class NetworkTopology {
 			TopologyLink reverseLink = new TopologyLink(
 					"rev_" + linkId, dest, source, destCp, sourceCp, power, bandwidth
 			);
-			sourceCp.incomingLink = reverseLink;
-			destCp.outgoingLink = reverseLink;
+			//sourceCp.incomingLink = reverseLink;
+			sourceCp.setIncomingLink(reverseLink);
+			//destCp.outgoingLink = reverseLink;
+			destCp.setOutgoingLink(reverseLink);
 			addLink(reverseLink);
 		}
 	}

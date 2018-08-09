@@ -248,7 +248,7 @@ public class RequestParser {
                         address, sapd.getCpdId()
                 ));
             }
-            TopologyNode node = cp.node;
+            TopologyNode node = cp.getNode();
             node.vCPUs = node.vCPUs + 1;
             node.memory = node.memory + 1;
             node.hddSize = node.hddSize + 1;
@@ -274,7 +274,7 @@ public class RequestParser {
                             compute.getMac(), compute.getHostId()
                     ));
                 }
-                TopologyNode node = cp.node;
+                TopologyNode node = cp.getNode();
                 node.idle = compute.getIdlePc();
                 node.hddSize = compute.getvDisk();
                 node.memory = compute.getvRam() / 1024;

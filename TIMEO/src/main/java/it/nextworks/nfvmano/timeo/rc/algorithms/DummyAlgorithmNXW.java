@@ -76,8 +76,8 @@ public class DummyAlgorithmNXW extends AbstractNsResourceAllocationAlgorithm {
 		npe1.add(npe1Src);
 		npe1.add(npe1Dst);
 		List<NetworkPathHop> nph1 = new ArrayList<>();
-		nph1.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:3", "openflow:1:5", incomingLinkId, outgoingLinkId, 0, true, false));
-		nph1.add(new NetworkPathHop(null, 1, "openflow:3", "openflow:3:4", "openflow:3:5", incomingLinkId, outgoingLinkId, 0, false, true));
+		nph1.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:3", "openflow:1:5", incomingLinkId, outgoingLinkId, 0, true, false, null, null));
+		nph1.add(new NetworkPathHop(null, 1, "openflow:3", "openflow:3:4", "openflow:3:5", incomingLinkId, outgoingLinkId, 0, false, true, null, null));
 		NetworkPath np1 = new NetworkPath(null, "NP_01_S6a_HSS-MME", npe1, nph1, "S6a", false);
 		networkPaths.add(np1);
 
@@ -88,8 +88,8 @@ public class DummyAlgorithmNXW extends AbstractNsResourceAllocationAlgorithm {
 		npe2.add(npe2Src);
 		npe2.add(npe2Dst);
 		List<NetworkPathHop> nph2 = new ArrayList<>();
-		nph2.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:3", "openflow:1:5", incomingLinkId, outgoingLinkId, 0, true, false));
-		nph2.add(new NetworkPathHop(null, 1, "openflow:3", "openflow:3:4", "openflow:3:5", incomingLinkId, outgoingLinkId, 0, false, true));
+		nph2.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:3", "openflow:1:5", incomingLinkId, outgoingLinkId, 0, true, false, null, null));
+		nph2.add(new NetworkPathHop(null, 1, "openflow:3", "openflow:3:4", "openflow:3:5", incomingLinkId, outgoingLinkId, 0, false, true, null, null));
 		NetworkPath np2 = new NetworkPath(null, "NP_02_S1c_OAISIM-MME", npe2, nph2, "S1c", false);
 		networkPaths.add(np2);
 
@@ -100,8 +100,8 @@ public class DummyAlgorithmNXW extends AbstractNsResourceAllocationAlgorithm {
 		npe3.add(npe3Src);
 		npe3.add(npe3Dst);
 		List<NetworkPathHop> nph3 = new ArrayList<>();
-		nph3.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:3", "openflow:1:5", incomingLinkId, outgoingLinkId, 0, true, false));
-		nph3.add(new NetworkPathHop(null, 1, "openflow:3", "openflow:3:4", "openflow:3:5", incomingLinkId, outgoingLinkId, 0, false, true));
+		nph3.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:3", "openflow:1:5", incomingLinkId, outgoingLinkId, 0, true, false, null, null));
+		nph3.add(new NetworkPathHop(null, 1, "openflow:3", "openflow:3:4", "openflow:3:5", incomingLinkId, outgoingLinkId, 0, false, true, null, null));
 		NetworkPath np3 = new NetworkPath(null, "NP_03_S1u_OAISIM-SPGW", npe3, nph3, "S1u", false);
 		networkPaths.add(np3);
 
@@ -112,8 +112,8 @@ public class DummyAlgorithmNXW extends AbstractNsResourceAllocationAlgorithm {
 		npe4.add(npe4Src);
 		npe4.add(npe4Dst);
 		List<NetworkPathHop> nph4 = new ArrayList<>();
-		nph4.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:3", "openflow:1:4", incomingLinkId, outgoingLinkId, 0, true, false));
-		nph4.add(new NetworkPathHop(null, 1, "openflow:2", "openflow:2:4", "openflow:2:9", incomingLinkId, outgoingLinkId, 0, false, true));
+		nph4.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:3", "openflow:1:4", incomingLinkId, outgoingLinkId, 0, true, false, null, null));
+		nph4.add(new NetworkPathHop(null, 1, "openflow:2", "openflow:2:4", "openflow:2:9", incomingLinkId, outgoingLinkId, 0, false, true, null, null));
 		NetworkPath np4 = new NetworkPath(null, "NP_04_Mgt_OAISIM-MgtSAP", npe4, nph4, "mgt", false);
 		networkPaths.add(np4);
 		
@@ -124,8 +124,8 @@ public class DummyAlgorithmNXW extends AbstractNsResourceAllocationAlgorithm {
 		npe5.add(npe5Src);
 		npe5.add(npe5Dst);
 		List<NetworkPathHop> nph5 = new ArrayList<>();
-		nph5.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:3", "openflow:1:4", incomingLinkId, outgoingLinkId, 0, true, false));
-		nph5.add(new NetworkPathHop(null, 1, "openflow:2", "openflow:2:4", "openflow:2:9", incomingLinkId, outgoingLinkId, 0, false, true));
+		nph5.add(new NetworkPathHop(null, 0, "openflow:1", "openflow:1:3", "openflow:1:4", incomingLinkId, outgoingLinkId, 0, true, false, null, null));
+		nph5.add(new NetworkPathHop(null, 1, "openflow:2", "openflow:2:4", "openflow:2:9", incomingLinkId, outgoingLinkId, 0, false, true, null, null));
 		NetworkPath np5 = new NetworkPath(null, "NP_05_Mgt_HSS-MgtSAP", npe5, nph5, "mgt", false);
 		networkPaths.add(np5);
 
@@ -136,8 +136,8 @@ public class DummyAlgorithmNXW extends AbstractNsResourceAllocationAlgorithm {
 		npe6.add(npe6Src);
 		npe6.add(npe6Dst);
 		List<NetworkPathHop> nph6 = new ArrayList<>();
-		nph6.add(new NetworkPathHop(null, 0, "openflow:3", "openflow:3:5", "openflow:3:3", incomingLinkId, outgoingLinkId, 0, true, false));
-		nph6.add(new NetworkPathHop(null, 1, "openflow:2", "openflow:2:3", "openflow:2:9", incomingLinkId, outgoingLinkId, 0, false, true));
+		nph6.add(new NetworkPathHop(null, 0, "openflow:3", "openflow:3:5", "openflow:3:3", incomingLinkId, outgoingLinkId, 0, true, false, null, null));
+		nph6.add(new NetworkPathHop(null, 1, "openflow:2", "openflow:2:3", "openflow:2:9", incomingLinkId, outgoingLinkId, 0, false, true, null, null));
 		NetworkPath np6 = new NetworkPath(null, "NP_06_Mgt_MME-MgtSAP", npe6, nph6, "mgt", false);
 		networkPaths.add(np6);
 
@@ -148,8 +148,8 @@ public class DummyAlgorithmNXW extends AbstractNsResourceAllocationAlgorithm {
 		npe7.add(npe7Src);
 		npe7.add(npe7Dst);
 		List<NetworkPathHop> nph7 = new ArrayList<>();
-		nph7.add(new NetworkPathHop(null, 0, "openflow:3", "openflow:3:5", "openflow:3:3", incomingLinkId, outgoingLinkId, 0, true, false));
-		nph7.add(new NetworkPathHop(null, 1, "openflow:2", "openflow:2:3", "openflow:2:9", incomingLinkId, outgoingLinkId, 0, false, true));
+		nph7.add(new NetworkPathHop(null, 0, "openflow:3", "openflow:3:5", "openflow:3:3", incomingLinkId, outgoingLinkId, 0, true, false, null, null));
+		nph7.add(new NetworkPathHop(null, 1, "openflow:2", "openflow:2:3", "openflow:2:9", incomingLinkId, outgoingLinkId, 0, false, true, null, null));
 		NetworkPath np7 = new NetworkPath(null, "NP_07_Mgt_SPGW-MgtSAP", npe7, nph7, "mgt", false);
 		networkPaths.add(np7);
 
@@ -160,8 +160,8 @@ public class DummyAlgorithmNXW extends AbstractNsResourceAllocationAlgorithm {
 		npe8.add(npe8Src);
 		npe8.add(npe8Dst);
 		List<NetworkPathHop> nph8 = new ArrayList<>();
-		nph8.add(new NetworkPathHop(null, 0, "openflow:3", "openflow:3:5", "openflow:3:3", incomingLinkId, outgoingLinkId, 0, true, false));
-		nph8.add(new NetworkPathHop(null, 1, "openflow:2", "openflow:2:3", "openflow:2:9", incomingLinkId, outgoingLinkId, 0, false, true));
+		nph8.add(new NetworkPathHop(null, 0, "openflow:3", "openflow:3:5", "openflow:3:3", incomingLinkId, outgoingLinkId, 0, true, false, null, null));
+		nph8.add(new NetworkPathHop(null, 1, "openflow:2", "openflow:2:3", "openflow:2:9", incomingLinkId, outgoingLinkId, 0, false, true, null, null));
 		NetworkPath np8 = new NetworkPath(null, "NP_07_Sgi_SPGW-SgiSAP", npe8, nph8, "Sgi", false);
 		networkPaths.add(np8);
 		

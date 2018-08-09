@@ -50,6 +50,9 @@ public class NetworkPathHop {
 	private boolean first;			//true if this is the first hop --> this can be removed
 	private boolean last;			//true if this is the last hop	--> this can be removed
 	
+	private String ingressServiceInterfacePoint;
+	private String egressServiceInterfacePoint;
+	
 	public NetworkPathHop() {
 		// TODO Auto-generated constructor stub
 	}
@@ -66,6 +69,8 @@ public class NetworkPathHop {
 	 * @param hopQueue hop egress queue
 	 * @param first true if this is the first hop
 	 * @param last true if this is the last hop
+	 * @param ingressServiceInterfacePoint ingress Service Interface Point - valid for first hop only - used when an ingress port can be associated to multiple service interface points as in TAPI 
+	 * @param egressServiceInterfacePoint egress Service Interface Point - valid for last hop only - used when an egress port can be associated to multiple service interface points as in TAPI
 	 */
 	public NetworkPathHop(NetworkPath np,
 			int hopNumber,
@@ -76,7 +81,9 @@ public class NetworkPathHop {
 			String outgoingLinkId,
 			int hopQueue,
 			boolean first,
-			boolean last) {
+			boolean last,
+			String ingressServiceInterfacePoint,
+			String egressServiceInterfacePoint) {
 		this.np = np;
 		this.hopNumber = hopNumber;
 		this.nodeId = nodeId;
@@ -87,6 +94,8 @@ public class NetworkPathHop {
 		this.hopQueue = hopQueue;
 		this.first = first;
 		this.last = last;
+		this.ingressServiceInterfacePoint = ingressServiceInterfacePoint;
+		this.egressServiceInterfacePoint = egressServiceInterfacePoint;
 	}
 
 	
@@ -150,6 +159,20 @@ public class NetworkPathHop {
 	 */
 	public boolean isLast() {
 		return last;
+	}
+
+	/**
+	 * @return the ingressServiceInterfacePoint
+	 */
+	public String getIngressServiceInterfacePoint() {
+		return ingressServiceInterfacePoint;
+	}
+
+	/**
+	 * @return the egressServiceInterfacePoint
+	 */
+	public String getEgressServiceInterfacePoint() {
+		return egressServiceInterfacePoint;
 	}
 
 

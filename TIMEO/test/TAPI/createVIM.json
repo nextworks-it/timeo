@@ -1,0 +1,16 @@
+{
+	"vimId": "OpenStack_local",
+    	"type": "OPENSTACK",
+    	"tenant": "6277ed8109924811943caa4bf711d6cd",
+    	"url": "http://10.0.7.14:5000/v3",
+    	"domain": "default",
+    	"username": "admin",
+    	"password": "nextworks",
+    	"defaultExternalNetworkId": "f6d58bd1-60d1-408d-b78b-3c397faf3919",
+   	 "defaultExternalRouterId": "e4846622-81a5-4246-b74e-c2054c3b8100",
+    	"providerId": "6277ed8109924811943caa4bf711d6cd",
+    	"networkNodeMacAddress": "5a:d9:b2:6f:8a:42",
+	"wrapperIp": "10.0.7.14",
+	"wrapperPort": "8888",
+	"keyPair": "eliankraja"
+}

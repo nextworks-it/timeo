@@ -42,6 +42,7 @@ import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnRepository;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.TaskExecutorRemovePath;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.TaskExecutorSetPowerStates;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.TaskExecutorSetupPath;
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.tapi.TapiSdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.DummyVimPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.OpenStackVimPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.Vim;
@@ -187,6 +188,8 @@ public class SbDriversManager {
 					taskExecutorSetPowerStates,
 					restTemplate
 			);
+		} else if (controller.getSdnControllerType().equals(SdnControllerType.SDN_CONTROLLER_TAPI)) {
+			return new TapiSdnControllerPlugin(controller, taskExecutor);
 		} else {
 			throw new MalformattedElementException("Unsupported SDN controller type. Skipping.");
 		}
@@ -226,6 +229,8 @@ public class SbDriversManager {
 			controllers = sdnRepository.findBySdnControllerType(SdnControllerType.SDN_CONTROLLER_DUMMY); 
 		} else if (defaultSdnControllerType.equals("OPENDAYLIGHT")) {
 			controllers = sdnRepository.findBySdnControllerType(SdnControllerType.SDN_CONTROLLER_OPENDAYLIGHT);
+		} else if (defaultSdnControllerType.equals("TAPI")) {
+			controllers = sdnRepository.findBySdnControllerType(SdnControllerType.SDN_CONTROLLER_TAPI);
 		} else {
 			throw new NotExistingEntityException("Unacceptable default SDN controller type.");
 		}

@@ -1,0 +1,8 @@
+{
+    "sdnControllerId": "TAPI_controller_local",
+    "sdnControllerType": "SDN_CONTROLLER_TAPI",
+    "url": "http://localhost:8182/restconf",
+    "username": "admin",
+    "password": "admin",
+    "vimId": "OpenStack_local"
+}

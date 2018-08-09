@@ -194,8 +194,10 @@ public class OpenDaylightPlugin extends SdnControllerPlugin {
                         LINK_BW
                 );
                 destination.addLink(newLink);
-                destination.getCpById(link.source.sourceTp).outgoingLink = newLink;
-                destination.getCpById(link.destination.destTp).incomingLink = newLink;
+                //destination.getCpById(link.source.sourceTp).outgoingLink = newLink;
+                destination.getCpById(link.source.sourceTp).setOutgoingLink(newLink);
+                //destination.getCpById(link.destination.destTp).incomingLink = newLink;
+                destination.getCpById(link.destination.destTp).setIncomingLink(newLink);
             }
         }
     }

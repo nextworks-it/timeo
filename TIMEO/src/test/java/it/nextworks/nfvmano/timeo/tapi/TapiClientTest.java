@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
@@ -29,10 +33,75 @@ import io.swagger.client.model.SdmTerminationPac;
 import io.swagger.client.model.ServiceInterfacePoint;
 import io.swagger.client.model.ServiceInterfacePointRef;
 import io.swagger.client.model.Topology;
+import it.nextworks.nfvmano.libs.common.enums.ResponseCode;
+import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
+import it.nextworks.nfvmano.timeo.rc.elements.NetworkTopology;
+import it.nextworks.nfvmano.timeo.sbdriver.SbDriversManager;
+import it.nextworks.nfvmano.timeo.sbdriver.VimManagementController;
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnController;
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerConsumerInterface;
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerType;
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPath;
 
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
 public class TapiClientTest {
-
+	
+	@Autowired
+	private SbDriversManager sbDriversManager;
+	
+	@Autowired
+	private VimManagementController vimManagementController;
+	
 	public TapiClientTest() { }
+	
+//	public class SdnControllerConsumer implements SdnControllerConsumerInterface {
+//		public void notifySdnControllerOperationResult(String operationId, ResponseCode responseCode, String errorMessage) {
+//			System.out.println("============================> Received notification about SDN controller operation result: operation-ID=" + operationId + " - result=" + responseCode.toString());
+//		}
+//	}
+//	
+//	@Test
+//	public void testAllTapiDriver() throws Exception {
+//		
+//		SdnController sdnController = new SdnController("TAPI_controller_local", 
+//				SdnControllerType.SDN_CONTROLLER_TAPI, 
+//				"http://localhost:8182/restconf", 
+//				"admin", 
+//				"admin", 
+//				"OpenStack_local");
+//		vimManagementController.createSdnController(sdnController);
+//		System.out.println("Loaded TAPI SDN controller");
+//		
+//		SdnControllerPlugin defPlugin = sbDriversManager.getDefaultSdnController();
+//		System.out.println("Got SDN controller plugin");
+//		
+//		//NetworkTopology networkTopology = defPlugin.getNetworkTopology();
+//		//System.out.println("Got topology");
+//		
+//		List<SbNetworkPath> networkPaths = new ArrayList<>();
+//		List<NetworkPathHop> hops = new ArrayList<>();
+//		NetworkPathHop hop1 = new NetworkPathHop(null, 0, null,		//ingress 
+//				null, null, null, null, 
+//				0, true, false, "sip-pe1-uni1", null);
+//		NetworkPathHop hop2 = new NetworkPathHop(null, 0, null, 	//egress
+//				null, null, null, null, 
+//				0, false, true, null, "sip-pe2-uni1");
+//		hops.add(hop1);
+//		hops.add(hop2);
+//		SbNetworkPath np = new SbNetworkPath("NP-1", "tenant-1", hops, null);
+//		networkPaths.add(np);
+//		String operationId = defPlugin.setupPaths(networkPaths, new SdnControllerConsumer());
+//		System.out.println("Sent request for path creation: returned operation ID " + operationId);
+//		
+//		Thread.sleep(5000);
+//		
+//		List<String> networkPathIds = new ArrayList<>();
+//		networkPathIds.add("NP-1");
+//		operationId = defPlugin.removePaths(networkPathIds, new SdnControllerConsumer());
+//		System.out.println("Sent request for path termination: returned operation ID " + operationId);
+//	}
 	
 	/*
 	@Test

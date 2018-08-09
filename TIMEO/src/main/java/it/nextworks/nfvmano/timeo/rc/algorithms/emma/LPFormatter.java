@@ -121,13 +121,13 @@ public class LPFormatter extends Formatter {
         }
         for (TopologyNode node : topology.nodes) {
             for (TopologyCp cp : node.cps) {
-                TopologyCp newCp = new TopologyCp(cp.node, cp.outgoingLink, cp.incomingLink, cp.address, cp.cpId);
+                TopologyCp newCp = new TopologyCp(cp.getNode(), cp.getOutgoingLink(), cp.getIncomingLink(), cp.address, cp.cpId);
                 nodeId2Node.get(node.nodeId).cps.add(newCp);
-                if (cp.outgoingLink != null) {
-                    linkId2Link.get(cp.outgoingLink.toString()).sourceCp = newCp;
+                if (cp.getOutgoingLink() != null) {
+                    linkId2Link.get(cp.getOutgoingLink().toString()).sourceCp = newCp;
                 }
-                if (cp.incomingLink != null) {
-                    linkId2Link.get(cp.incomingLink.toString()).destinationCp = newCp;
+                if (cp.getIncomingLink() != null) {
+                    linkId2Link.get(cp.getIncomingLink().toString()).destinationCp = newCp;
                 }
             }
         }

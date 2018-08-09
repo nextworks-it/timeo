@@ -15,6 +15,8 @@
 */
 package it.nextworks.nfvmano.timeo.rc.elements;
 
+import it.nextworks.nfvmano.libs.common.enums.LayerProtocol;
+
 /**
  * Created by Marco Capitani on 17/05/17.
  *
@@ -22,12 +24,14 @@ package it.nextworks.nfvmano.timeo.rc.elements;
  */
 public class TopologyCp {
 
-    public TopologyNode node;
-    public TopologyLink outgoingLink;
-    public TopologyLink incomingLink;
+    protected TopologyNode node;
+    protected TopologyLink outgoingLink;
+    protected TopologyLink incomingLink;
     public String cpId;
     public String address;
-    public String cpdId;
+    protected String cpdId;
+    
+    protected LayerProtocol layerProtocol;
 
     public TopologyCp(TopologyNode node, TopologyLink outgoingLink, TopologyLink incomingLink,
                       String address, String cpId, String cpdId) {
@@ -37,6 +41,7 @@ public class TopologyCp {
         this.address = address;
         this.cpId = cpId;
         this.cpdId = cpdId;
+        this.layerProtocol = LayerProtocol.NOT_SPECIFIED;
     }
 
     public TopologyCp(TopologyNode node, TopologyLink outgoingLink, TopologyLink incomingLink,
@@ -47,5 +52,93 @@ public class TopologyCp {
         this.address = address;
         this.cpId = cpId;
         this.cpdId = null;
+        this.layerProtocol = LayerProtocol.NOT_SPECIFIED;
     }
+    
+    public TopologyCp(TopologyNode node, LayerProtocol layerProtocol, TopologyLink outgoingLink, TopologyLink incomingLink,
+    		String address, String cpId, String cpdId) {
+    	this.node = node;
+    	this.outgoingLink = outgoingLink;
+    	this.incomingLink = incomingLink;
+    	this.address = address;
+    	this.cpId = cpId;
+    	this.cpdId = cpdId;
+    	this.layerProtocol = layerProtocol;
+    }
+
+    public TopologyCp(TopologyNode node, LayerProtocol layerProtocol, TopologyLink outgoingLink, TopologyLink incomingLink,
+    		String address, String cpId) {
+    	this.node = node;
+    	this.outgoingLink = outgoingLink;
+    	this.incomingLink = incomingLink;
+    	this.address = address;
+    	this.cpId = cpId;
+    	this.cpdId = null;
+    	this.layerProtocol = layerProtocol;
+    }
+
+	/**
+	 * @return the node
+	 */
+	public TopologyNode getNode() {
+		return node;
+	}
+
+	/**
+	 * @return the outgoingLink
+	 */
+	public TopologyLink getOutgoingLink() {
+		return outgoingLink;
+	}
+
+	/**
+	 * @return the incomingLink
+	 */
+	public TopologyLink getIncomingLink() {
+		return incomingLink;
+	}
+
+	/**
+	 * @return the cpId
+	 */
+	public String getCpId() {
+		return cpId;
+	}
+
+	/**
+	 * @return the address
+	 */
+	public String getAddress() {
+		return address;
+	}
+
+	/**
+	 * @return the cpdId
+	 */
+	public String getCpdId() {
+		return cpdId;
+	}
+
+	/**
+	 * @return the layerProtocol
+	 */
+	public LayerProtocol getLayerProtocol() {
+		return layerProtocol;
+	}
+
+	/**
+	 * @param outgoingLink the outgoingLink to set
+	 */
+	public void setOutgoingLink(TopologyLink outgoingLink) {
+		this.outgoingLink = outgoingLink;
+	}
+
+	/**
+	 * @param incomingLink the incomingLink to set
+	 */
+	public void setIncomingLink(TopologyLink incomingLink) {
+		this.incomingLink = incomingLink;
+	}
+    
+    
 }
