@@ -76,6 +76,11 @@ public class NsResourceSchedulingSolution {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<NetworkPath> networkPaths = new ArrayList<>();
 	
+	@OneToMany(mappedBy = "nsRss", cascade=CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<InterDcNetworkPath> interDcNetworkPaths = new ArrayList<>();
+	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
@@ -157,6 +162,7 @@ public class NsResourceSchedulingSolution {
 	 * @param vnfResourceAllocation information about the allocation of computing resources for the VNFs
 	 * @param pnfAllocation information about the PNF selected for the NS
 	 * @param networkPaths information about the allocation of network resources for the NS virtual links
+	 * @param interDcNetworkPath information about the allocation of transport path in inter-DC domains
 	 * @param solutionFound true if a suitable resource allocation solution has been found
 	 * @param networkNodesToBeActivated network nodes to be activated
 	 * @param computeNodesToBeActivated compute nodes to be activated
@@ -165,6 +171,7 @@ public class NsResourceSchedulingSolution {
 			List<VnfResourceAllocation> vnfResourceAllocation,
 			List<PnfAllocation> pnfAllocation,
 			List<NetworkPath> networkPaths,
+			List<InterDcNetworkPath> interDcNetworkPaths,
 			boolean solutionFound,
 			List<String> networkNodesToBeActivated,
 			Map<String,String> computeNodesToBeActivated) {
@@ -172,6 +179,7 @@ public class NsResourceSchedulingSolution {
 		if (vnfResourceAllocation != null) this.vnfResourceAllocation = vnfResourceAllocation;
 		if (pnfAllocation != null) this.pnfAllocation = pnfAllocation;
 		if (networkPaths != null) this.networkPaths = networkPaths;
+		if (interDcNetworkPaths != null) this.interDcNetworkPaths = interDcNetworkPaths;
 		this.solutionFound = solutionFound;
 		if (networkNodesToBeActivated != null) this.networkNodesToBeActivated = networkNodesToBeActivated;
 		if (computeNodesToBeActivated != null) this.computeNodesToBeActivated = computeNodesToBeActivated;
@@ -241,6 +249,13 @@ public class NsResourceSchedulingSolution {
 	
 	
 	
+	/**
+	 * @return the interDcNetworkPaths
+	 */
+	public List<InterDcNetworkPath> getInterDcNetworkPaths() {
+		return interDcNetworkPaths;
+	}
+
 	/**
 	 * @return the pnfAllocation
 	 */

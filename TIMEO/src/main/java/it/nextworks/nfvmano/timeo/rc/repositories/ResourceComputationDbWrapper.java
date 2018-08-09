@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import it.nextworks.nfvmano.libs.common.exceptions.AlreadyExistingEntityException;
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
+import it.nextworks.nfvmano.timeo.rc.elements.InterDcNetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
@@ -51,6 +52,9 @@ public class ResourceComputationDbWrapper {
 	
 	@Autowired
 	PnfAllocationRepository pnfAllocationRepository;
+	
+	@Autowired
+	InterDcNetworkPathRepository interDcNetworkPathRepository;
 	
 	public ResourceComputationDbWrapper() {	}
 	
@@ -81,6 +85,18 @@ public class ResourceComputationDbWrapper {
 				List<NetworkPathHop> hops = np.getHops();
 				for (NetworkPathHop hop : hops) {
 					NetworkPathHop targetHop = new NetworkPathHop(targetNp, hop.getHopNumber(), hop.getNodeId(), hop.getIngressPortId(),
+							hop.getEgressPortId(), hop.getIncomingLinkId(), hop.getOutgoingLinkId(), hop.getHopQueue(), hop.isFirst(), hop.isLast(), 
+							hop.getIngressServiceInterfacePoint(), hop.getEgressServiceInterfacePoint());
+					networkPathHopRepository.saveAndFlush(targetHop);
+				}
+			}
+			List<InterDcNetworkPath> idnps = input.getInterDcNetworkPaths();
+			for (InterDcNetworkPath idnp : idnps) {
+				InterDcNetworkPath targetIdnp = new InterDcNetworkPath(output, idnp.getNetworkPathId());
+				interDcNetworkPathRepository.saveAndFlush(targetIdnp);
+				List<NetworkPathHop> hops = idnp.getHops();
+				for (NetworkPathHop hop : hops) {
+					NetworkPathHop targetHop = new NetworkPathHop(targetIdnp, hop.getHopNumber(), hop.getNodeId(), hop.getIngressPortId(),
 							hop.getEgressPortId(), hop.getIncomingLinkId(), hop.getOutgoingLinkId(), hop.getHopQueue(), hop.isFirst(), hop.isLast(), 
 							hop.getIngressServiceInterfacePoint(), hop.getEgressServiceInterfacePoint());
 					networkPathHopRepository.saveAndFlush(targetHop);

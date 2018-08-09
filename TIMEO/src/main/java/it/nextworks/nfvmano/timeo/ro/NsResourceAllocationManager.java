@@ -103,6 +103,7 @@ import it.nextworks.nfvmano.timeo.catalogue.vnfpackagemanagement.VnfPackageManag
 import it.nextworks.nfvmano.timeo.common.Utilities;
 import it.nextworks.nfvmano.timeo.nso.NsManagementEngine;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
+import it.nextworks.nfvmano.timeo.rc.elements.InterDcNetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathEndPoint;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
@@ -738,10 +739,18 @@ implements AsynchronousVimNotificationInterface,
 			if (!(schedulingSolution.isSolutionFound())) manageError("Solution not found for the given NS instance ID. No paths are removed.", AllocationMessageType.SETUP_UNDERLYING_CONNECTIVITY);
 			
 			List<NetworkPath> networkPaths = schedulingSolution.getNetworkPaths();
-			log.debug("Found " + networkPaths.size() + " network paths to be removed.");
+			List<InterDcNetworkPath> idnps = schedulingSolution.getInterDcNetworkPaths();
+			log.debug("Found " + networkPaths.size() + " network paths and " + idnps.size() + " interDC network paths to be removed");
+			List<String> npIds = new ArrayList<>();
 			for (NetworkPath np : networkPaths) {
-				String npId = np.getNetworkPathId();
-				log.debug("Processing network path " + npId);
+				npIds.add(np.getNetworkPathId());
+			}
+			for (InterDcNetworkPath idnp : idnps) {
+				npIds.add(idnp.getNetworkPathId());
+			}
+			
+			for (String npId : npIds) {
+				log.debug("Processing path " + npId);
 				List<String> networkPathIds = new ArrayList<>();
 				networkPathIds.add(npId);
 				String sdnOperationId = defaultSdnControllerPlugin.removePaths(networkPathIds, this);
@@ -750,7 +759,7 @@ implements AsynchronousVimNotificationInterface,
 				sdnControllerOperationMap.put(sdnOperationId, npId);
 				log.debug("Added SDN controller operation " + sdnOperationId + " in internal list." );
 			}
-			if (networkPaths.size() == 0) {
+			if ((networkPaths.size() == 0) && (idnps.size() == 0)) {
 				log.debug("No network paths to tear down.");
 				internalStatus = ResourceAllocationStatus.TERMINATED_NETWORK_CONNECTIONS;
 				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.REMOVE_UNDERLYING_CONNECTIVITY, true);
@@ -768,12 +777,17 @@ implements AsynchronousVimNotificationInterface,
 		log.debug("Starting setup of underlying network connectivity");
 		internalStatus = ResourceAllocationStatus.CREATING_NETWORK_CONNECTIONS;
 		try {
+			NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
+			String tenantId = nsInfo.getTenantId();
+			log.debug("Tenant ID: " + tenantId);
+		
 
 			NsResourceSchedulingSolution schedulingSolution = resourceComputationDbWrapper.getNsResourceSchedulingSolution(nsInstanceId);
 			if (!(schedulingSolution.isSolutionFound())) manageError("Solution not found for the given NS instance ID", AllocationMessageType.SETUP_UNDERLYING_CONNECTIVITY);
 			
 			List<NetworkPath> networkPaths = schedulingSolution.getNetworkPaths();
-			log.debug("Found " + networkPaths.size() + " network paths to be allocated");
+			List<InterDcNetworkPath> idnps = schedulingSolution.getInterDcNetworkPaths();
+			log.debug("Found " + networkPaths.size() + " network paths and " + idnps.size() + " interDC network paths to be allocated");
 			for (NetworkPath np : networkPaths) {
 				String npId = np.getNetworkPathId();
 				log.debug("Processing network path " + npId);
@@ -785,11 +799,6 @@ implements AsynchronousVimNotificationInterface,
 				log.debug("VLAN ID: " + vlanId);
 				
 				log.debug("Retrieving data related to VNF instances.");
-				NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
-				
-				String tenantId = nsInfo.getTenantId();
-				log.debug("Tenant ID: " + tenantId);
-
 				log.debug("Reading info about path edges.");
 				
 				List<NetworkPathEndPoint> endPoints = np.getEndPoints();
@@ -815,14 +824,24 @@ implements AsynchronousVimNotificationInterface,
 				SbNetworkPath sbNp = new SbNetworkPath(npId, tenantId, hops, trafficClassifier);
 				targetNetworkPath.add(sbNp);
 				log.debug("Built network path.");
-				String sdnOperationId = defaultSdnControllerPlugin.setupPaths(targetNetworkPath, this);
-				log.debug("Request sent to SDN controller: operationID = " + sdnOperationId);
-				pendingSdnControllerOperations.add(sdnOperationId);
-				sdnControllerOperationMap.put(sdnOperationId, npId);
-				log.debug("Added SDN controller operation " + sdnOperationId + " in internal list." );
+				invokeSdnControllerCreateNetworkPath(targetNetworkPath, npId);
 			}
-			if (networkPaths.size() == 0) {
-				log.debug("No network path have to be instantiated.");
+			
+			for (InterDcNetworkPath idnp : idnps) {
+				String npId = idnp.getNetworkPathId();
+				log.debug("Processing interDC network path " + npId);
+				List<NetworkPathHop> hops = idnp.getHops();
+				log.debug("Found " + hops.size() + " hops.");
+				//TODO: classifiers for inter-DC paths are still to be discussed
+				List<SbNetworkPath> targetNetworkPath = new ArrayList<>();
+				SbNetworkPath sbNp = new SbNetworkPath(npId, tenantId, hops, null);
+				targetNetworkPath.add(sbNp);
+				log.debug("Built interDC network path.");
+				invokeSdnControllerCreateNetworkPath(targetNetworkPath, npId);
+			}
+			
+			if ((networkPaths.size() == 0) && (idnps.size() == 0)) {
+				log.debug("No network paths or interDC network paths have to be instantiated.");
 				internalStatus = ResourceAllocationStatus.CREATED_NETWORK_CONNECTIONS;
 				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.SETUP_UNDERLYING_CONNECTIVITY, true);
 			} else {
@@ -833,6 +852,14 @@ implements AsynchronousVimNotificationInterface,
 			rollback();
 			return;
 		}
+	}
+	
+	private void invokeSdnControllerCreateNetworkPath(List<SbNetworkPath> targetNetworkPath, String networkPathId) throws Exception {
+		String sdnOperationId = defaultSdnControllerPlugin.setupPaths(targetNetworkPath, this);
+		log.debug("Request sent to SDN controller: operationID = " + sdnOperationId);
+		pendingSdnControllerOperations.add(sdnOperationId);
+		sdnControllerOperationMap.put(sdnOperationId, networkPathId);
+		log.debug("Added SDN controller operation " + sdnOperationId + " in internal list." );
 	}
 	
 	private void terminatePnfsInternal() {

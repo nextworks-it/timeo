@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import it.nextworks.nfvmano.timeo.rc.algorithms.AlgorithmType;
+import it.nextworks.nfvmano.timeo.rc.algorithms.BluespaceStaticAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithm5tonic;
 import it.nextworks.nfvmano.timeo.rc.algorithms.VEPCStaticAlgorithmArno;
 import it.nextworks.nfvmano.timeo.rc.algorithms.dijkstra.DijkstraAlgorithm;
@@ -485,6 +486,8 @@ public class ResourceSchedulingManager {
 				return new DijkstraAlgorithm();
 			case VEPC_STATIC_ARNO:
 				return new VEPCStaticAlgorithmArno();
+			case BLUESPACE_STATIC_NXW:
+				return new BluespaceStaticAlgorithm();
 			default:
 				log.error("Algorithm type {} not yet implemented.", type);
 				throw new AlgorithmNotAvailableException();

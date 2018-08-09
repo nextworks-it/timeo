@@ -85,7 +85,7 @@ public class TapiClientTest {
 //		NetworkPathHop hop1 = new NetworkPathHop(null, 0, null,		//ingress 
 //				null, null, null, null, 
 //				0, true, false, "sip-pe1-uni1", null);
-//		NetworkPathHop hop2 = new NetworkPathHop(null, 0, null, 	//egress
+//		NetworkPathHop hop2 = new NetworkPathHop(null, 1, null, 	//egress
 //				null, null, null, null, 
 //				0, false, true, null, "sip-pe2-uni1");
 //		hops.add(hop1);

@@ -39,6 +39,10 @@ public class NetworkPathHop {
 	@ManyToOne
 	@JsonIgnore
 	private NetworkPath np;
+	
+	@ManyToOne
+	@JsonIgnore
+	private InterDcNetworkPath idnp;
 
 	private int hopNumber;			//hop number					--> this can be removed
 	private String nodeId;			//ID of the network node
@@ -72,6 +76,46 @@ public class NetworkPathHop {
 	 * @param ingressServiceInterfacePoint ingress Service Interface Point - valid for first hop only - used when an ingress port can be associated to multiple service interface points as in TAPI 
 	 * @param egressServiceInterfacePoint egress Service Interface Point - valid for last hop only - used when an egress port can be associated to multiple service interface points as in TAPI
 	 */
+	public NetworkPathHop(int hopNumber,
+			String nodeId,
+			String ingressPortId,
+			String egressPortId,
+			String incomingLinkId,
+			String outgoingLinkId,
+			int hopQueue,
+			boolean first,
+			boolean last,
+			String ingressServiceInterfacePoint,
+			String egressServiceInterfacePoint) {
+		this.hopNumber = hopNumber;
+		this.nodeId = nodeId;
+		this.incomingLinkId = incomingLinkId;
+		this.ingressPortId = ingressPortId;
+		this.egressPortId = egressPortId;
+		this.outgoingLinkId = outgoingLinkId;
+		this.hopQueue = hopQueue;
+		this.first = first;
+		this.last = last;
+		this.ingressServiceInterfacePoint = ingressServiceInterfacePoint;
+		this.egressServiceInterfacePoint = egressServiceInterfacePoint;
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param np network path this hop belongs to
+	 * @param hopNumber hop number
+	 * @param nodeId ID of the network node
+	 * @param ingressPortId ID of the ingress port
+	 * @param egressPortId ID of the egress port
+	 * @param incomingLinkId ID of the incoming link
+	 * @param outgoingLinkId ID of the outgoing link
+	 * @param hopQueue hop egress queue
+	 * @param first true if this is the first hop
+	 * @param last true if this is the last hop
+	 * @param ingressServiceInterfacePoint ingress Service Interface Point - valid for first hop only - used when an ingress port can be associated to multiple service interface points as in TAPI 
+	 * @param egressServiceInterfacePoint egress Service Interface Point - valid for last hop only - used when an egress port can be associated to multiple service interface points as in TAPI
+	 */
 	public NetworkPathHop(NetworkPath np,
 			int hopNumber,
 			String nodeId,
@@ -85,6 +129,48 @@ public class NetworkPathHop {
 			String ingressServiceInterfacePoint,
 			String egressServiceInterfacePoint) {
 		this.np = np;
+		this.hopNumber = hopNumber;
+		this.nodeId = nodeId;
+		this.incomingLinkId = incomingLinkId;
+		this.ingressPortId = ingressPortId;
+		this.egressPortId = egressPortId;
+		this.outgoingLinkId = outgoingLinkId;
+		this.hopQueue = hopQueue;
+		this.first = first;
+		this.last = last;
+		this.ingressServiceInterfacePoint = ingressServiceInterfacePoint;
+		this.egressServiceInterfacePoint = egressServiceInterfacePoint;
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param idnp interDC network path this hop belongs to
+	 * @param hopNumber hop number
+	 * @param nodeId ID of the network node
+	 * @param ingressPortId ID of the ingress port
+	 * @param egressPortId ID of the egress port
+	 * @param incomingLinkId ID of the incoming link
+	 * @param outgoingLinkId ID of the outgoing link
+	 * @param hopQueue hop egress queue
+	 * @param first true if this is the first hop
+	 * @param last true if this is the last hop
+	 * @param ingressServiceInterfacePoint ingress Service Interface Point - valid for first hop only - used when an ingress port can be associated to multiple service interface points as in TAPI 
+	 * @param egressServiceInterfacePoint egress Service Interface Point - valid for last hop only - used when an egress port can be associated to multiple service interface points as in TAPI
+	 */
+	public NetworkPathHop(InterDcNetworkPath idnp,
+			int hopNumber,
+			String nodeId,
+			String ingressPortId,
+			String egressPortId,
+			String incomingLinkId,
+			String outgoingLinkId,
+			int hopQueue,
+			boolean first,
+			boolean last,
+			String ingressServiceInterfacePoint,
+			String egressServiceInterfacePoint) {
+		this.idnp = idnp;
 		this.hopNumber = hopNumber;
 		this.nodeId = nodeId;
 		this.incomingLinkId = incomingLinkId;

@@ -155,7 +155,6 @@ public class SolutionParser {
             boolean first = hopNumber == 0;
             boolean last = !iterator.hasNext();
             nphs.add(new NetworkPathHop(
-                    null,
                     hopNumber,
                     link.source.nodeId,
                     previous.destinationCp.cpId,
