@@ -1,0 +1,7 @@
+{
+	"name": "CDN origin server",
+	"version": "0.1",
+	"provider": "NXW",
+	"checksum": "...",
+	"vnfPackagePath": "http://localhost/CDN_ORIGIN.tar"
+}
