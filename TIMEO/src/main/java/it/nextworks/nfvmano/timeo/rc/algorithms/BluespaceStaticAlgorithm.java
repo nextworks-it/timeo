@@ -43,7 +43,7 @@ public class BluespaceStaticAlgorithm extends AbstractNsResourceAllocationAlgori
 			String vduId = vnfd.getVdu().get(0).getVduId();
 			int vduIndex = 0;
 			String vimId = "OpenStack_local";
-			String zoneId = "zoneOne";
+			String zoneId = "netdev5";
 			String hostId = "compute1";
 			
 			VnfResourceAllocation vra = new VnfResourceAllocation(null, vnfdId, vnfIndex, vduId, vduIndex, vimId, zoneId, hostId);

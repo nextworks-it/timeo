@@ -855,6 +855,11 @@ implements AsynchronousVimNotificationInterface,
 	}
 	
 	private void invokeSdnControllerCreateNetworkPath(List<SbNetworkPath> targetNetworkPath, String networkPathId) throws Exception {
+		if (defaultSdnControllerPlugin == null) 
+			log.error("SDN controller plugin not found");
+		else {
+			log.debug("Found SDN controller plugin " + defaultSdnControllerPlugin.getSbDriverId());
+		}
 		String sdnOperationId = defaultSdnControllerPlugin.setupPaths(targetNetworkPath, this);
 		log.debug("Request sent to SDN controller: operationID = " + sdnOperationId);
 		pendingSdnControllerOperations.add(sdnOperationId);

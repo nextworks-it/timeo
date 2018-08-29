@@ -141,11 +141,16 @@ public class ResourceAllocationManager {
 			SdnControllerPlugin defaultSdnController = null;
 			try {
 				defaultVimPlugin = sbDriversManager.getDefaultVim();
-				if (resourceComputationDbWrapper
+				if ((resourceComputationDbWrapper
 						.getNsResourceSchedulingSolution(nsInstanceId)
 						.getNetworkPaths()
 						.size()
-						!= 0) {
+						!= 0) || 
+						(resourceComputationDbWrapper
+								.getNsResourceSchedulingSolution(nsInstanceId)
+								.getInterDcNetworkPaths()
+								.size()
+								!= 0)) {
 					defaultSdnController = sbDriversManager.getDefaultSdnController();
 				}
 			} catch (NotExistingEntityException e) {

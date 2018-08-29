@@ -189,6 +189,7 @@ public class SbDriversManager {
 					restTemplate
 			);
 		} else if (controller.getSdnControllerType().equals(SdnControllerType.SDN_CONTROLLER_TAPI)) {
+			log.debug("Built TAPI SDN controller");
 			return new TapiSdnControllerPlugin(controller, taskExecutor);
 		} else {
 			throw new MalformattedElementException("Unsupported SDN controller type. Skipping.");
