@@ -1,0 +1,140 @@
+{
+	"vnfdId": "frontend",
+	"vnfProvider": "NXW",
+	"vnfProductName": "frontend",
+	"vnfSoftwareVersion": "0.1",
+	"vnfdVersion": "0.1",
+	"vnfProductInfoName": "vCDN frontend",
+	"vnfProductInfoDescription": "vCDN FrontEnd",
+	"vnfmInfo": ["vEPC_VNFM"],
+	"vdu": [{
+		"vduId": "frontend_vdu",
+		"name": "frontend",
+		"description": "VDU of the frontend",
+		"intCpd": [{
+			"cpdId": "frontMgtInt",
+			"layerProtocol": "IPV4",
+			"description": "Management CP of the Frontend",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": true,
+				"management": true,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}, {
+			"cpdId": "frontDistInt",
+			"layerProtocol": "IPV4",
+			"description": "CP for the media content distribution",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": true,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}],
+		"virtualComputeDesc": "VCD_frontend",
+		"virtualStorageDesc": ["VSD_frontend"],
+		"swImageDesc": {
+			"id": "CDN_FrontEnd_SWID",
+			"name": "cirros",
+			"version": "0.1",
+			"checksum": "TBD",
+			"containerFormat": "QCOW",
+			"diskFormat": "QCOW",
+			"minDisk": 1,
+			"minRam": 1,
+			"size": 1,
+			"swImage": "cirros",
+			"operatingSystem": "CirrOS"
+		},
+		"configurableProperties": {}
+	}],
+	"virtualComputeDesc": [{
+		"virtualComputeDescId": "VCD_frontend",
+		"virtualMemory": {
+			"virtualMemSize": 1,
+			"virtualMemOversubscriptionPolicy": "asdasd",
+			"numaEnabled": false
+		},
+		"virtualCpu": {
+			"numVirtualCpu": 1,
+			"cpuArchitecture": "x86_64",
+			"virtualCpuClock": 0,
+			"virtualCpuOversubscriptionPolicy": "asdasd"
+		}
+		
+	}],
+	"virtualStorageDesc": [{
+		"id": "VSD_frontend",
+		"typeOfStorage": "VOLUME",
+		"sizeOfStorage": 1,
+		"swImageDesc": "CDN_FrontEnd_SWID"
+	}],
+	"vnfExtCpd": [{
+		"cpdId": "frontMgtExt",
+		"layerProtocol": "IPV4",
+		"description": "Management external CP of the CDN frontend",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": true,
+			"management": true,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "frontMgtInt"
+	}, {
+		"cpdId": "frontDistExt",
+		"layerProtocol": "IPV4",
+		"description": "External CP for the media content distribution",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": true,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "frontDistInt"
+	}],
+	"deploymentFlavour": [{
+		"flavourId": "df_frontend",
+		"description": "Standard deployment flavour of the CDN frontend",
+		"vduProfile": [{
+			"vduId": "frontend_vdu",
+			"minNumberOfInstances": 1,
+			"maxNumberOfInstances": 1
+		}],
+		"instantiationLevel": [{
+			"levelId": "il_frontend",
+			"description": "Standard instantiation level of the CDN frontend",
+			"vduLevel": [{
+				"vduId": "frontend_vdu",
+				"numberOfInstances": 1
+			}]
+		}],
+		"vnfLcmOperationsConfiguration": {}
+	}],
+	"configurableProperties": {
+			"autoScalable": false,
+			"autoHealable": false,
+			"additionalConfigurableProperty": [
+			]
+	},
+	"modifiableAttributes": {},
+	"lifeCycleManagementScript": [{
+		"event": ["START_VNF_INSTANTIATION"],
+		"script": ""
+	}, {
+		"event": ["END_VNF_INSTANTIATION"],
+		"script": ""
+	}, {
+		"event": ["START_VNF_TERMINATION"],
+		"script": ""
+	}, {
+		"event": ["END_VNF_TERMINATION"],
+		"script": ""
+	}]
+}

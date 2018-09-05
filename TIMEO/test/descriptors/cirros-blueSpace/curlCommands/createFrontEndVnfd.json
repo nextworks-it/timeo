@@ -1,0 +1,7 @@
+{
+	"name": "webserver",
+	"version": "0.1",
+	"provider": "NXW",
+	"checksum": "...",
+	"vnfPackagePath": "http://localhost/CDN_FRONTEND.tar"
+}

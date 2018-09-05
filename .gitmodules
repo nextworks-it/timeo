@@ -1,0 +1,3 @@
+[submodule "TIMEO_WEB_GUI/gentelella"]
+	path = TIMEO_WEB_GUI/gentelella
+	url = https://github.com/puikinsh/gentelella.git

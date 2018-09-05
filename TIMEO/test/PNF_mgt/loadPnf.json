@@ -1,0 +1,22 @@
+{
+	"pnfInstanceId": "PNF_INSTANCE_001",
+	"pnfdId": "PNFD_001",
+	"pnfdVersion": "0.0.1",
+	"description": "TEST PNF",
+	"location": "TEST_LOCATION",
+	"ports": [{
+		"portId": "PORT_001",
+		"addresses": {
+			"MAC_ADDRESS": "MAC",
+			"IP_ADDRESS": "192.168.0.1" 
+		},
+		"management": true
+	}, {
+		"portId": "PORT_002",
+		"addresses": {
+			"MAC_ADDRESS": "MAC",
+			"IP_ADDRESS": "192.168.0.2" 
+		},
+		"management": false
+	}]
+}

@@ -1,0 +1,163 @@
+{
+	"vnfdId": "cache2",
+	"vnfProvider": "NXW",
+	"vnfProductName": "CDN cache 2",
+	"vnfSoftwareVersion": "0.1",
+	"vnfdVersion": "0.1",
+	"vnfProductInfoName": "vCDN cache",
+	"vnfProductInfoDescription": "vCDN Cache",
+	"vnfmInfo": ["vEPC_VNFM"],
+	"vdu": [{
+		"vduId": "cache2_vdu",
+		"name": "cache2",
+		"description": "VDU of the second cache",
+		"intCpd": [{
+			"cpdId": "cache2MgtInt",
+			"layerProtocol": "IPV4",
+			"description": "Management CP of the 2nd cache",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": true,
+				"management": true,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}, {
+			"cpdId": "cache2DistInt",
+			"layerProtocol": "IPV4",
+			"description": "CP for the cache media content to be distributed",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": false,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}, {
+			"cpdId": "cache2DataInt",
+			"layerProtocol": "IPV4",
+			"description": "CP for the cache media content to be retrieved",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": false,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}],
+		"virtualComputeDesc": "VCD_cache2",
+		"virtualStorageDesc": ["VSD_cache2"],
+		"swImageDesc": {
+			"id": "CDN_cache2_SWID",
+			"name": "cirros",
+			"version": "0.1",
+			"checksum": "TBD",
+			"containerFormat": "QCOW",
+			"diskFormat": "QCOW",
+			"minDisk": 1,
+			"minRam": 1,
+			"size": 5,
+			"swImage": "cirros",
+			"operatingSystem": "CirrOS"
+		},
+		"configurableProperties": {}
+	}],
+	"virtualComputeDesc": [{
+		"virtualComputeDescId": "VCD_cache2",
+		"virtualMemory": {
+			"virtualMemSize": 1,
+			"virtualMemOversubscriptionPolicy": "asdasd",
+			"numaEnabled": false
+		},
+		"virtualCpu": {
+			"numVirtualCpu": 1,
+			"cpuArchitecture": "x86_64",
+			"virtualCpuClock": 0,
+			"virtualCpuOversubscriptionPolicy": "asdasd"
+		}
+		
+	}],
+	"virtualStorageDesc": [{
+		"id": "VSD_cache2",
+		"typeOfStorage": "VOLUME",
+		"sizeOfStorage": 1,
+		"swImageDesc": "CDN_cache2_SWID"
+	}],
+	"vnfExtCpd": [{
+		"cpdId": "cache2MgtExt",
+		"layerProtocol": "IPV4",
+		"description": "Management external CP of the 2nd CDN cache",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": true,
+			"management": true,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "cache2MgtInt"
+	}, {
+		"cpdId": "cache2DistExt",
+		"layerProtocol": "IPV4",
+		"description": "External CP for the 2nd cache media content to be distributed",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": false,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "cache2DistInt"
+	}, {
+		"cpdId": "cache2DataExt",
+		"layerProtocol": "IPV4",
+		"description": "External CP for the 2nd cache media content to be retrieved",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": false,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "cache2DataInt"
+	}],
+	"deploymentFlavour": [{
+		"flavourId": "df_cache2",
+		"description": "Standard deployment flavour of the 2nd CDN cache",
+		"vduProfile": [{
+			"vduId": "cache2_vdu",
+			"minNumberOfInstances": 1,
+			"maxNumberOfInstances": 1
+		}],
+		"instantiationLevel": [{
+			"levelId": "il_cache2",
+			"description": "Standard instantiation level of the 2nd CDN cache",
+			"vduLevel": [{
+				"vduId": "cache2_vdu",
+				"numberOfInstances": 1
+			}]
+		}],
+		"vnfLcmOperationsConfiguration": {}
+	}],
+	"configurableProperties": {
+			"autoScalable": false,
+			"autoHealable": false,
+			"additionalConfigurableProperty": [
+			]
+	},
+	"modifiableAttributes": {},
+	"lifeCycleManagementScript": [{
+		"event": ["START_VNF_INSTANTIATION"],
+		"script": ""
+	}, {
+		"event": ["END_VNF_INSTANTIATION"],
+		"script": ""
+	}, {
+		"event": ["START_VNF_TERMINATION"],
+		"script": ""
+	}, {
+		"event": ["END_VNF_TERMINATION"],
+		"script": ""
+	}]
+}

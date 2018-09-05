@@ -1,0 +1,139 @@
+{
+	"vnfdId": "originserver",
+	"vnfProvider": "NXW",
+	"vnfProductName": "CDN origin server",
+	"vnfSoftwareVersion": "0.1",
+	"vnfdVersion": "0.1",
+	"vnfProductInfoName": "vCDN origin server",
+	"vnfProductInfoDescription": "vCDN Origin Server",
+	"vnfmInfo": ["vEPC_VNFM"],
+	"vdu": [{
+		"vduId": "orgSrv_vdu",
+		"name": "originserver",
+		"description": "VDU of the origing server",
+		"intCpd": [{
+			"cpdId": "orgSrvMgtInt",
+			"layerProtocol": "IPV4",
+			"description": "Management CP of the origin server",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": true,
+				"management": true,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}, {
+			"cpdId": "orgSrvDataInt",
+			"layerProtocol": "IPV4",
+			"description": "CP for the origin server media content",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": false,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}],
+		"virtualComputeDesc": "VCD_orgSrv",
+		"virtualStorageDesc": ["VCD_orgSrv"],
+		"swImageDesc": {
+			"id": "CDN_orgSrv_SWID",
+			"name": "cirros",
+			"version": "0.1",
+			"checksum": "TBD",
+			"containerFormat": "QCOW",
+			"diskFormat": "QCOW",
+			"minDisk": 1,
+			"minRam": 1,
+			"size": 1,
+			"swImage": "cirros",
+			"operatingSystem": "CirrOS"
+		},
+		"configurableProperties": {}
+	}],
+	"virtualComputeDesc": [{
+		"virtualComputeDescId": "VCD_orgSrv",
+		"virtualMemory": {
+			"virtualMemSize": 1,
+			"virtualMemOversubscriptionPolicy": "asdasd",
+			"numaEnabled": false
+		},
+		"virtualCpu": {
+			"numVirtualCpu": 1,
+			"cpuArchitecture": "x86_64",
+			"virtualCpuClock": 0,
+			"virtualCpuOversubscriptionPolicy": "asdasd"
+		}
+		
+	}],
+	"virtualStorageDesc": [{
+		"id": "VSD_orgSrv",
+		"typeOfStorage": "VOLUME",
+		"sizeOfStorage": 1,
+		"swImageDesc": "CDN_orgSrv_SWID"
+	}],
+	"vnfExtCpd": [{
+		"cpdId": "orgSrvMgtExt",
+		"layerProtocol": "IPV4",
+		"description": "Management external CP of the Origin Server",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": true,
+			"management": true,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "orgSrvMgtInt"
+	}, {
+		"cpdId": "orgSrvDataExt",
+		"layerProtocol": "IPV4",
+		"description": "External CP for the origin server media content",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": false,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "orgSrvDataInt"
+	}],
+	"deploymentFlavour": [{
+		"flavourId": "df_orgSrv",
+		"description": "Standard deployment flavour of the CDN origin server",
+		"vduProfile": [{
+			"vduId": "orgSrv_vdu",
+			"minNumberOfInstances": 1,
+			"maxNumberOfInstances": 1
+		}],
+		"instantiationLevel": [{
+			"levelId": "il_orgSrv",
+			"description": "Standard instantiation level of the CDN origin server",
+			"vduLevel": [{
+				"vduId": "orgSrv_vdu",
+				"numberOfInstances": 1
+			}]
+		}],
+		"vnfLcmOperationsConfiguration": {}
+	}],
+	"configurableProperties": {
+			"autoScalable": false,
+			"autoHealable": false,
+			"additionalConfigurableProperty": []
+	},
+	"modifiableAttributes": {},
+	"lifeCycleManagementScript": [{
+		"event": ["START_VNF_INSTANTIATION"],
+		"script": ""
+	}, {
+		"event": ["END_VNF_INSTANTIATION"],
+		"script": ""
+	}, {
+		"event": ["START_VNF_TERMINATION"],
+		"script": ""
+	}, {
+		"event": ["END_VNF_TERMINATION"],
+		"script": ""
+	}]
+}

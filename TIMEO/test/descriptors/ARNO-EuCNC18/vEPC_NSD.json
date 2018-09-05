@@ -1,0 +1,122 @@
+{
+	"nsd": {
+		"nsdIdentifier": "vEPC_v01",
+		"designer": "Nextworks",
+		"version": "0.1",
+		"nsdName": "vEPC_TIMEO",
+		"nsdInvariantId": "vEPC",
+		"vnfdId": ["vEPC_VNF"],
+		"pnfdId": ["CU_v01"],
+		"sapd": [{
+				"cpdId": "mgtSap",
+				"description": "Management SAP for all the vEPC VNFs",
+				"layerProtocol": "IPV4",
+				"cpRole": "ROOT",
+				"addressData": [{
+					"addressType": "IP_ADDRESS",
+					"iPAddressAssignment": false,
+					"floatingIpActivated": true,
+					"iPAddressType": "IPv4",
+					"numberOfIpAddress": 1
+				}],
+				"sapAddressAssignment": false,
+				"nsVirtualLinkDescId": "mgt"
+			}
+		],
+		"virtualLinkDesc": [{
+			"virtualLinkDescId": "mgt",
+			"virtualLinkDescProvider": "NXW",
+			"virtuaLinkDescVersion": "0.1",
+			"connectivityType": {
+				"layerProtocol": "IPV4"
+			},
+			"virtualLinkDf": [{
+				"flavourId": "df_mgt",
+				"qos": {
+					"latency": 0,
+					"packetDelayVariation": 0,
+					"packetLossRatio": 0,
+					"priority": 0
+				},
+				"serviceAvaibilityLevel": "LEVEL_1",
+				"bitrateRequirements": {
+					"root": 4,
+					"leaf": 1
+				}
+			}],
+			"description": "Management network"
+		}],
+		"nsDf": [{
+			"nsDfId": "df_vEPC",
+			"flavourKey": "df_vEPC",
+			"vnfProfile": [{
+					"vnfProfileId": "vEPC_profile",
+					"vnfdId": "vEPC_VNF",
+					"flavourId": "df_vEPC",
+					"instantiationLevel": "il_vEPC",
+					"minNumberOfInstances": 1,
+					"maxNumberOfInstances": 1,
+					"nsVirtualLinkConnectivity": [{
+						"virtualLinkProfileId": "vl_profile_mgt",
+						"cpdId": [
+							"vEPCMgtExt"
+						]
+					}]
+				}],
+			"pnfProfile": [{
+				"pnfProfileId": "CU_profile",
+				"pnfdId": "CU_v01",
+				"pnfVirtualLinkConnectivity": [{
+					"virtualLinkProfileId": "vl_profile_mgt",
+					"cpdId": [
+						"cuManagementCp"
+					]
+				}]
+			}],
+			"virtualLinkProfile": [{
+				"virtualLinkProfileId": "vl_profile_mgt",
+				"virtualLinkDescId": "mgt",
+				"flavourId": "df_mgt",
+				"maxBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				},
+				"minBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				}
+			}],
+			"nsInstantiationLevel": [{
+				"nsLevelId": "il_vEPC",
+				"description": "Small instantiation level for the vEPC",
+				"vnfToLevelMapping": [{
+						"vnfProfileId": "vEPC_profile",
+						"numberOfInstances": 1
+					}],
+				"virtualLinkToLevelMapping": [{
+						"virtualLinkProfileId": "vl_profile_mgt",
+						"bitRateRequirements": {
+							"root": "1",
+							"leaf": "1"
+						}
+					}
+				]
+			}],
+			"defaultNsInstantiationLevelId": "il_vEPC",
+			"nsProfile": [{
+				"nsProfileId": "ns_profile_vEPC",
+				"nsdId": "vEPC_v01",
+				"nsDfId": "df_vEPC",
+				"nsInstantiationLevelId": "il_vEPC",
+				"minNumberOfInstances": 1,
+				"maxNumberOfInstances": 1
+			}],
+			"dependencies": []
+		}],
+		"security": {
+			"signature": "vCDN_NSD_SIGNATURE",
+			"algorithm": "vCDN_NSD_ALGORITHM",
+			"certificate": "vCDN_NSD_CERTIFICATE"
+		}
+	}
+}

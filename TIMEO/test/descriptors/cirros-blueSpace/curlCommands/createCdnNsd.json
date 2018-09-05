@@ -1,0 +1,321 @@
+{
+	"nsd": {
+		"nsdIdentifier": "vCDN_v01",
+		"designer": "Nextworks",
+		"version": "0.1",
+		"nsdName": "vCDN_NXW_TIMEO",
+		"nsdInvariantId": "vCDN_NXW_TIMEO_v01",
+		"vnfdId": ["frontend", "cache1", "cache2", "originserver"],
+		"sapd": [{
+				"cpdId": "mgtSap",
+				"description": "Management SAP for all the vCDN VNFs",
+				"layerProtocol": "IPV4",
+				"cpRole": "ROOT",
+				"addressData": [{
+					"addressType": "IP_ADDRESS",
+					"iPAddressAssignment": false,
+					"floatingIpActivated": true,
+					"iPAddressType": "IPv4",
+					"numberOfIpAddress": 1
+				}],
+				"sapAddressAssignment": false,
+				"nsVirtualLinkDescId": "mgt"
+			},
+			{
+				"cpdId": "videoSap",
+				"description": "SAP interconnecting to the CDN clients",
+				"layerProtocol": "IPV4",
+				"cpRole": "ROOT",
+				"addressData": [{
+					"addressType": "IP_ADDRESS",
+					"iPAddressAssignment": false,
+					"floatingIpActivated": true,
+					"iPAddressType": "IPv4",
+					"numberOfIpAddress": 1
+				}],
+				"sapAddressAssignment": false,
+				"nsVirtualLinkDescId": "VideoDistribution"
+			}
+		],
+		"virtualLinkDesc": [{
+			"virtualLinkDescId": "mgt",
+			"virtualLinkDescProvider": "NXW",
+			"virtuaLinkDescVersion": "0.1",
+			"connectivityType": {
+				"layerProtocol": "IPV4"
+			},
+			"virtualLinkDf": [{
+				"flavourId": "df_mgt",
+				"qos": {
+					"latency": 0,
+					"packetDelayVariation": 0,
+					"packetLossRatio": 0,
+					"priority": 0
+				},
+				"serviceAvaibilityLevel": "LEVEL_1",
+				"bitrateRequirements": {
+					"root": 4,
+					"leaf": 1
+				}
+			}],
+			"description": "Management network"
+		}, {
+			"virtualLinkDescId": "VideoDistribution",
+			"virtualLinkDescProvider": "NXW",
+			"virtuaLinkDescVersion": "0.1",
+			"connectivityType": {
+				"layerProtocol": "IPV4"
+			},
+			"virtualLinkDf": [{
+				"flavourId": "df_VideoDistribution",
+				"qos": {
+					"latency": 0,
+					"packetDelayVariation": 0,
+					"packetLossRatio": 0,
+					"priority": 0
+				},
+				"serviceAvaibilityLevel": "LEVEL_1",
+				"bitrateRequirements": {
+					"root": 2,
+					"leaf": 2
+				}
+			}],
+			"description": "Network for video distribution"
+		}, {
+			"virtualLinkDescId": "VideoData",
+			"virtualLinkDescProvider": "NXW",
+			"virtuaLinkDescVersion": "0.1",
+			"connectivityType": {
+				"layerProtocol": "IPV4"
+			},
+			"virtualLinkDf": [{
+				"flavourId": "df_VideoData",
+				"qos": {
+					"latency": 0,
+					"packetDelayVariation": 0,
+					"packetLossRatio": 0,
+					"priority": 0
+				},
+				"serviceAvaibilityLevel": "LEVEL_1",
+				"bitrateRequirements": {
+					"root": 8,
+					"leaf": 8
+				}
+			}],
+			"description": "Network for retrieving videos from origin server"
+		}],
+		"nsDf": [{
+			"nsDfId": "df_vCDN",
+			"flavourKey": "df_vCDN",
+			"vnfProfile": [{
+					"vnfProfileId": "frontend_profile",
+					"vnfdId": "frontend",
+					"flavourId": "df_frontend",
+					"instantiationLevel": "il_frontend",
+					"minNumberOfInstances": 1,
+					"maxNumberOfInstances": 1,
+					"nsVirtualLinkConnectivity": [{
+							"virtualLinkProfileId": "vl_profile_mgt",
+							"cpdId": [
+								"frontMgtExt"
+							]
+						},
+						{
+							"virtualLinkProfileId": "vl_profile_VideoDistribution",
+							"cpdId": [
+								"frontDistExt"
+							]
+						}
+					]
+				},
+				{
+					"vnfProfileId": "orgSrv_profile",
+					"vnfdId": "originserver",
+					"flavourId": "df_orgSrv",
+					"instantiationLevel": "il_orgSrv",
+					"minNumberOfInstances": 1,
+					"maxNumberOfInstances": 1,
+					"nsVirtualLinkConnectivity": [{
+						"virtualLinkProfileId": "vl_profile_mgt",
+						"cpdId": [
+							"orgSrvMgtExt"
+						]
+					},
+					{
+						"virtualLinkProfileId": "vl_profile_VideoData",
+						"cpdId": [
+							"orgSrvDataExt"
+						]
+					}]
+				},
+				{
+					"vnfProfileId": "cache1_profile",
+					"vnfdId": "cache1",
+					"flavourId": "df_cache1",
+					"instantiationLevel": "il_cache1",
+					"minNumberOfInstances": 1,
+					"maxNumberOfInstances": 1,
+					"nsVirtualLinkConnectivity": [{
+							"virtualLinkProfileId": "vl_profile_mgt",
+							"cpdId": [
+								"cache1MgtExt"
+							]
+						},
+						{
+							"virtualLinkProfileId": "vl_profile_VideoData",
+							"cpdId": [
+								"cache1DataExt"
+							]
+						},
+						{
+							"virtualLinkProfileId": "vl_profile_VideoDistribution",
+							"cpdId": [
+								"cache1DistExt"
+							]
+						}
+					]
+				},
+				{
+					"vnfProfileId": "cache2_profile",
+					"vnfdId": "cache2",
+					"flavourId": "df_cache2",
+					"instantiationLevel": "il_cache2",
+					"minNumberOfInstances": 1,
+					"maxNumberOfInstances": 1,
+					"nsVirtualLinkConnectivity": [{
+							"virtualLinkProfileId": "vl_profile_mgt",
+							"cpdId": [
+								"cache2MgtExt"
+							]
+						},
+						{
+							"virtualLinkProfileId": "vl_profile_VideoData",
+							"cpdId": [
+								"cache2DataExt"
+							]
+						},
+						{
+							"virtualLinkProfileId": "vl_profile_VideoDistribution",
+							"cpdId": [
+								"cache2DistExt"
+							]
+						}
+					]
+				}],
+			"virtualLinkProfile": [{
+				"virtualLinkProfileId": "vl_profile_mgt",
+				"virtualLinkDescId": "mgt",
+				"flavourId": "df_mgt",
+				"maxBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				},
+				"minBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				}
+			},
+			{
+				"virtualLinkProfileId": "vl_profile_VideoData",
+				"virtualLinkDescId": "VideoData",
+				"flavourId": "df_VideoData",
+				"maxBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				},
+				"minBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				}
+			},
+			{
+				"virtualLinkProfileId": "vl_profile_VideoDistribution",
+				"virtualLinkDescId": "VideoDistribution",
+				"flavourId": "df_VideoDistribution",
+				"maxBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				},
+				"minBitrateRequirements": {
+					"root": "1",
+					"leaf": "1"
+				}
+			}],
+			"nsInstantiationLevel": [{
+				"nsLevelId": "il_vCDN",
+				"description": "Instantiation level for the vCDN",
+				"vnfToLevelMapping": [{
+						"vnfProfileId": "frontend_profile",
+						"numberOfInstances": 1
+					},
+					{
+						"vnfProfileId": "orgSrv_profile",
+						"numberOfInstances": 1
+					},
+					{
+						"vnfProfileId": "cache1_profile",
+						"numberOfInstances": 1
+					},
+					{
+						"vnfProfileId": "cache2_profile",
+						"numberOfInstances": 1
+					}
+				],
+				"virtualLinkToLevelMapping": [{
+						"virtualLinkProfileId": "vl_profile_mgt",
+						"bitRateRequirements": {
+							"root": "1",
+							"leaf": "1"
+						}
+					},
+					{
+						"virtualLinkProfileId": "vl_profile_VideoData",
+						"bitRateRequirements": {
+							"root": "1",
+							"leaf": "1"
+						}
+					},
+					{
+						"virtualLinkProfileId": "vl_profile_VideoDistribution",
+						"bitRateRequirements": {
+							"root": "1",
+							"leaf": "1"
+						}
+					}
+				]
+			}],
+			"defaultNsInstantiationLevelId": "il_vCDN",
+			"nsProfile": [{
+				"nsProfileId": "ns_profile_vCdn",
+				"nsdId": "vCDN_v01",
+				"nsDfId": "df_vCDN",
+				"nsInstantiationLevelId": "il_vCDN",
+				"minNumberOfInstances": 1,
+				"maxNumberOfInstances": 1
+			}],
+			"dependencies": [{
+					"primaryId": ["cache1_profile"],
+					"secondaryId": [
+						"cache1_profile",
+						"cache2_profile",
+						"frontend_profile"
+					]
+				},
+				{
+					"primaryId": ["cache2_profile"],
+					"secondaryId": ["frontend_profile",
+						"cache1_profile"]
+				},
+				{
+					"primaryId": ["cache1_profile"],
+					"secondaryId": ["frontend_profile"]
+				}
+			]
+		}],
+		"security": {
+			"signature": "vCDN_NSD_SIGNATURE",
+			"algorithm": "vCDN_NSD_ALGORITHM",
+			"certificate": "vCDN_NSD_CERTIFICATE"
+		}
+	}
+}

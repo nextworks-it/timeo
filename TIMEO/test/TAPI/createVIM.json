@@ -1,0 +1,17 @@
+{
+	"vimId": "OpenStack_local",
+    	"type": "OPENSTACK",
+    	"tenant": "6e69009efdbd4590854c396c7efc1a09",
+    	"url": "http://10.0.7.4:5000/v3",
+    	"domain": "default",
+    	"username": "timeo",
+    	"password": "timeo",
+    	"defaultExternalNetworkId": "d5949397-d93a-4573-823a-ee683d23df2e",
+   	"defaultExternalRouterId": "61b1ac8e-b1e4-421b-97ce-90287fa3ccc5",
+    	"providerId": "6e69009efdbd4590854c396c7efc1a09",
+    	"networkNodeMacAddress": "5a:d9:b2:6f:8a:42",
+	"wrapperIp": "10.0.7.4",
+	"wrapperPort": "8888",
+	"keyPair": "timeo"
+}
+
