@@ -1,0 +1,17 @@
+{
+	"vimId": "OpenStack_local",
+    	"type": "OPENSTACK",
+    	"tenant": "e3a6af6c7a3544ccba91ee5da9e88b06",
+    	"url": "http://10.1.1.73:5000/v3",
+    	"domain": "default",
+    	"username": "ecoc_demo",
+    	"password": "ecoc_demo",
+    	"defaultExternalNetworkId": "2d979e3a-cdec-4b2a-957b-b71719e93aed",
+   	"defaultExternalRouterId": "b839ec7a-1f9f-4675-88ea-84eb1a912bb7",
+    	"providerId": "e3a6af6c7a3544ccba91ee5da9e88b06",
+    	"networkNodeMacAddress": "5a:d9:b2:6f:8a:42",
+	"wrapperIp": "10.1.1.73",
+	"wrapperPort": "8888",
+	"keyPair": "nextworks"
+}
+

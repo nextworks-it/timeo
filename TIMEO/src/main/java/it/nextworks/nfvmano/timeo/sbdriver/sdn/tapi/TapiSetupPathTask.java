@@ -84,8 +84,8 @@ public class TapiSetupPathTask implements Runnable {
 			//TODO: at the moment the capacity is static. To be read dynamically and encoded in the SbNetworkPath
 			Capacity requestedCapacity = new Capacity();
 			CapacityValue totalSize = new CapacityValue();
-			totalSize.setUnit(CapacityValue.UnitEnum.GBPS);
-			totalSize.setValue("1");
+			totalSize.setUnit(CapacityValue.UnitEnum.MBPS);
+			totalSize.setValue("100");
 			requestedCapacity.setTotalSize(totalSize);
 			connectivityService.setRequestedCapacity(requestedCapacity);
 			log.debug("Capacity statically set.");
@@ -94,7 +94,7 @@ public class TapiSetupPathTask implements Runnable {
 			SdmTerminationPac includeCore = new SdmTerminationPac();
 			includeCore.setCoreId("1");
 			FrequencySlot fs = new FrequencySlot();
-			fs.setSlotId("155");
+			fs.setSlotId("1");
 			includeCore.addSelectedFrequencySlotItem(fs);
 			connectivityService.setIncludeCore(includeCore);
 			log.debug("SDM info statically set.");
@@ -123,7 +123,7 @@ public class TapiSetupPathTask implements Runnable {
 		ConnectivityServiceEndPoint csEp = new ConnectivityServiceEndPoint();
 		csEp.setDirection(DirectionEnum.BIDIRECTIONAL);
 		csEp.setLayerProtocolName(ConnectivityServiceEndPoint.LayerProtocolNameEnum.ETH);
-		csEp.setLocalId(localId);
+		//csEp.setLocalId(localId);
 		csEp.setRole(ConnectivityServiceEndPoint.RoleEnum.SYMMETRIC);
 		String siprString = "/restconf/config/context/service-interface-point/" + sipUuid;
 		csEp.setServiceInterfacePoint(siprString);

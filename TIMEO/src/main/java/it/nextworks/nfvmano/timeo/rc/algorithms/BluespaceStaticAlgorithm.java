@@ -43,8 +43,8 @@ public class BluespaceStaticAlgorithm extends AbstractNsResourceAllocationAlgori
 			String vduId = vnfd.getVdu().get(0).getVduId();
 			int vduIndex = 0;
 			String vimId = "OpenStack_local";
-			String zoneId = "netdev5";
-			String hostId = "compute1";
+			String zoneId = "nova";
+			String hostId = "NUC-Openstack";
 			
 			VnfResourceAllocation vra = new VnfResourceAllocation(null, vnfdId, vnfIndex, vduId, vduIndex, vimId, zoneId, hostId);
 			vnfResourceAllocation.add(vra);
@@ -61,7 +61,7 @@ public class BluespaceStaticAlgorithm extends AbstractNsResourceAllocationAlgori
 				0, 
 				true, 
 				false, 
-				"sip-pe1-uni1", 
+				"10.1.7.66_65536", 
 				null);
 		NetworkPathHop hop2 = new NetworkPathHop(1, 
 				"00:00:34:97:f6:5c:6d:e1", 					//node ID
@@ -73,7 +73,7 @@ public class BluespaceStaticAlgorithm extends AbstractNsResourceAllocationAlgori
 				false, 
 				true, 
 				null, 
-				"sip-pe2-uni1");
+				"10.1.7.83_1");
 		hops.add(hop1);
 		hops.add(hop2);
 		InterDcNetworkPath idnp = new InterDcNetworkPath(networkPathId, hops);

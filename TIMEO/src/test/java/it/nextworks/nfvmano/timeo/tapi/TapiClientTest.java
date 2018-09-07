@@ -267,7 +267,7 @@ public class TapiClientTest {
 				SdmTerminationPac includeCore = new SdmTerminationPac();
 				includeCore.setCoreId("1");
 				FrequencySlot fs = new FrequencySlot();
-				fs.setSlotId("155");
+				fs.setSlotId("1");
 				includeCore.addSelectedFrequencySlotItem(fs);
 				connectivityService.setIncludeCore(includeCore);
 				
