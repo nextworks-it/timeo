@@ -3,37 +3,46 @@
 		"pnfdId": "CU_v01",
 		"provider": "SSSA",
 		"version": "0.1",
-		"pnfExtCp": [{
+		"pnfExtCp": [
+			{
 				"cpdId": "cuManagementCp",
 				"description": "Management connection point for the central unit",
 				"layerProtocol": "IPV4",
 				"cpRole": "ROOT",
-				"addressData": [{
-					"addressType": "IP_ADDRESS",
-					"iPAddressAssignment": false,
-					"floatingIpActivated": true,
-					"iPAddressType": "IPv4",
-					"numberOfIpAddress": 1
-				}]
+				"addressData": [
+					{
+						"addressType": "IP_ADDRESS",
+						"iPAddressAssignment": false,
+						"floatingIpActivated": true,
+						"iPAddressType": "IPv4",
+						"numberOfIpAddress": 1,
+						"management": true
+					}
+				]
 			},
 			{
 				"cpdId": "cuFronthaulCp",
 				"description": "Fronthaul connection point for the central unit",
 				"layerProtocol": "IPV4",
 				"cpRole": "ROOT",
-				"addressData": [{
-					"addressType": "IP_ADDRESS",
-					"iPAddressAssignment": false,
-					"floatingIpActivated": true,
-					"iPAddressType": "IPv4",
-					"numberOfIpAddress": 1
-				}]
+				"addressData": [
+					{
+						"addressType": "IP_ADDRESS",
+						"iPAddressAssignment": false,
+						"floatingIpActivated": true,
+						"iPAddressType": "IPv4",
+						"numberOfIpAddress": 1
+					}
+				]
 			}
 		],
 		"security": {
 			"signature": "CU_PNFD_SIGNATURE",
 			"algorithm": "CU_PNFD_ALGORITHM",
 			"certificate": "CU_PNFD_CERTIFICATE"
-		}
+		},
+		"configurableProperty": [
+			"vnf.vEPC_VNF.vdu.vEPC_vdu.extCp.vEPCMgtExt.floating"
+		]
 	}
 }
