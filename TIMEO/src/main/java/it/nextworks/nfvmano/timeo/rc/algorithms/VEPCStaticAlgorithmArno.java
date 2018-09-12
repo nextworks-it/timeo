@@ -21,10 +21,7 @@ import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
 import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
-import it.nextworks.nfvmano.timeo.rc.elements.InterDcNetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
-import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathEndPoint;
-import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.PnfAllocation;
 import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
@@ -77,8 +74,6 @@ public class VEPCStaticAlgorithmArno extends AbstractNsResourceAllocationAlgorit
 				Collections.emptyMap()
 		));
 
-		List<InterDcNetworkPath> interNP = new ArrayList<>();
-
 //		computeNodesToBeActivated.put("hulk","OpenStack_local");
 //		computeNodesToBeActivated.put("wasp","OpenStack_local");
 
@@ -87,7 +82,6 @@ public class VEPCStaticAlgorithmArno extends AbstractNsResourceAllocationAlgorit
 				vnfResourceAllocation,
 				pnfs,
 				networkPaths,
-				interNP,
 				true,
 				networkNodesToBeActivated,
 				computeNodesToBeActivated
