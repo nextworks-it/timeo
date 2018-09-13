@@ -232,7 +232,7 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 		ObjectMapper mapper = Utilities.buildObjectMapper();
 		try {
 			String json = mapper.writeValueAsString(ackMessage);
-			String topic = "vnflifecycle.notifyVnfConfigResult." + pnfId;
+			String topic = "pnflifecycle.notifyVnfConfigResult." + pnfId;
 			rabbitTemplate.convertAndSend(messageExchange.getName(), topic, json);
 			log.debug("Sent internal message with ACK for PNF configuration");
 		} catch (JsonProcessingException e) {

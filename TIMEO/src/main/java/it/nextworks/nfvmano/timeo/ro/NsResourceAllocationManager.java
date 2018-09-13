@@ -1065,7 +1065,7 @@ implements AsynchronousVimNotificationInterface,
 			}
 			
 			for (PnfInfo pi : pnfInfo) {
-				String pnfId = pi.getPnfdInfoId();
+				String pnfId = pi.getId().toString();
 				log.debug("Processing configuration for PNF info " + pnfId);
 				Pnfd pnfd = pnfdMap.get(pnfId);
 				log.debug("PNFD ID " + pnfd.getPnfdId());

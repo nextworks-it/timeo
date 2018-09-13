@@ -54,7 +54,7 @@ public class VEPCStaticAlgorithmArno extends AbstractNsResourceAllocationAlgorit
 		List<VnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
 		List<NetworkPath> networkPaths = new ArrayList<>();
 		
-		VnfResourceAllocation vra1 = new VnfResourceAllocation(null, "vEPC_VNF", 0, "vEPC_vdu", 0, "OpenStack_local", "nova", "ONOSSONA");
+		VnfResourceAllocation vra1 = new VnfResourceAllocation(null, "vEPC", 0, "vEPC_vdu", 0, "OpenStack_local", "nova", "ONOSSONA");
 		
 		vnfResourceAllocation.add(vra1);
 
