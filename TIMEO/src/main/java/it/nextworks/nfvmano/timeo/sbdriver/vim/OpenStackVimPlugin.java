@@ -1094,7 +1094,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 	 * @return
 	 * @throws FailedOperationException
 	 */
-	private String getFlavour(VirtualComputeFlavour virtualComputeFlavor) throws FailedOperationException {
+	private String getFlavour(VirtualComputeFlavour virtualComputeFlavor, String name) throws FailedOperationException {
 		OSClientV3 os = null;
 		if (token == null || token.getExpires().compareTo(new Date()) < 0) {
 			log.debug("Token has expired, generating a new one");
@@ -1137,7 +1137,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 		Flavor flavor = null;
 		try {
 			flavor = os.compute().flavors()
-					.create(Builders.flavor().isPublic(false).name(virtualComputeFlavor.getFlavourId()).disk(size)
+					.create(Builders.flavor().isPublic(true).name(name).disk(size)
 							.ram(virtualComputeFlavor.getVirtualMemory().getVirtualMemSize()*1024)
 							.vcpus(virtualComputeFlavor.getVirtualCpu().getNumVirtualCpu()).build());
 			return flavor.getId();
@@ -1486,7 +1486,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 //			throw new FailedOperationException("VM already instantiated");
 //		}
 
-		String flavorID = getFlavour(virtualComputeFlavour);
+		String flavorID = getFlavour(virtualComputeFlavour, request.getComputeName());
 		if (flavorID == null) {
 			log.error("An error occurred during flavor creation");
 			throw new FailedOperationException("An error occurred during flavor creation");
