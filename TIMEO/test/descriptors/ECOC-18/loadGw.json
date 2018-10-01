@@ -1,0 +1,15 @@
+{
+	"pnfInstanceId": "GW_INSTANCE_001",
+	"pnfdId": "GW_v01",
+	"pnfdVersion": "0.1",
+	"description": "TEST GW",
+	"location": "ARNO",
+	"ports": [{
+		"portId": "port1",
+		"addresses": {
+			"MAC_ADDRESS": "fa:12:ed:34:2f:1e",
+			"IP_ADDRESS": "10.10.20.1"
+		},
+		"management": true
+	}]
+}

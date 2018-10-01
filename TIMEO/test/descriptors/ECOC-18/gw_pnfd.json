@@ -1,0 +1,49 @@
+{
+	"pnfd": {
+		"pnfdId": "GW_v01",
+		"provider": "SSSA",
+		"version": "0.1",
+		"pnfExtCp": [
+			{
+				"cpdId": "gwManagementCp",
+				"description": "Management connection point for the gateway",
+				"layerProtocol": "IPV4",
+				"cpRole": "ROOT",
+				"addressData": [
+					{
+						"addressType": "IP_ADDRESS",
+						"iPAddressAssignment": false,
+						"floatingIpActivated": true,
+						"iPAddressType": "IPv4",
+						"numberOfIpAddress": 1,
+						"management": true
+					}
+				]
+			},
+			{
+				"cpdId": "gwExternalCp",
+				"description": "Internet-facing connection point for the gateway",
+				"layerProtocol": "IPV4",
+				"cpRole": "ROOT",
+				"addressData": [
+					{
+						"addressType": "IP_ADDRESS",
+						"iPAddressAssignment": false,
+						"floatingIpActivated": true,
+						"iPAddressType": "IPv4",
+						"numberOfIpAddress": 1
+					}
+				]
+			}
+		],
+		"security": {
+			"signature": "GW_PNFD_SIGNATURE",
+			"algorithm": "GW_PNFD_ALGORITHM",
+			"certificate": "GW_PNFD_CERTIFICATE"
+		},
+		"configurableProperty": [
+			"vnf.vEPC.vdu.vEPC_vdu.extcp.S1Ext.floating",
+			"vnf.vEPC.vdu.vEPC_vdu.intcp.vEPCMgtInt.address"
+		]
+	}
+}
