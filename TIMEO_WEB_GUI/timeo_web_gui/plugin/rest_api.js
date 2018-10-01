@@ -188,7 +188,6 @@ function deleteRequestToURL(resourceUrl, resId, okMsg, errMsg, callback) {
 			/*if (callback)
 				callback(true, resId, okMsg);*/
 			//hideProgress();
-            console.log("DEBUG");
 			refresh(false);
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {

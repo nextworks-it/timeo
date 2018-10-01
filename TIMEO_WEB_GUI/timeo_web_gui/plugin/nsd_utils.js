@@ -108,7 +108,7 @@ function instantiateNSD(formIds, resId, nsdInfoId) {
 			}
 		}
 		if (!found) {
-			var jsonParam = JSON.parse('{}');
+			var jsonParam = {};
 			jsonParam['vnfProfileId'] = profile;		
 			var paramsMap = {};	
 			paramsMap[key] = value;		

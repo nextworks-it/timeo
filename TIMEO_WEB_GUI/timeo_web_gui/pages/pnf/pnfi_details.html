@@ -22,14 +22,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>TIMEO | App Instances</title>
+    <title>TIMEO | PNF Instance Details</title>
 
     <!--#include virtual="/timeo_web_gui/templates/scripts_head.html" -->
 
     <!-- TIMEO Scripts -->
     <script src="../../plugin/rest_api.js"></script>
     <script src="../../plugin/utils.js"></script>
-    <script src="../../plugin/app_utils.js"></script>
+    <script src="../../plugin/pnfi_utils.js"></script>
   </head>
 
   <body class="nav-md">
@@ -40,33 +40,53 @@
 
         <!-- page content -->
         <div class="right_col" role="main">
-          <div class="">
-            <div class="row">
-              <div class="col-md-12">
-              </div>
-            </div>
-          
-            <div class="row">
-              <div class="col-md-12">
-              </div>
-            </div>
-      
-            <div class="row">
-              <div class="col-md-4">
-              </div>
-      
-              <div class="col-md-4">
-              </div>
-      
-              <div class="col-md-4">
-              </div>
-            </div>
+			<div class="">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="x_panel">
+							 <div class="x_title">
+								<h2>Physical Network Function Instance<small> details</small></h2>
+								<ul class="nav navbar-right panel_toolbox">
+									<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+									</li>
+								</ul>
+								<div class="clearfix"></div>
+								</div>
+								<div class="x_content">
+									<table class="table table-hover" id="pnfInstanceDetailsTable">
+										<script>readPNFInstance("pnfInstanceDetailsTable","response");</script>
+									</table>
+								</div>
+							</div>
+						</div>
+						<div class="clearfix">
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+				  <div class="col-md-12">
+				  </div>
+				</div>
+	
+				<div class="row">
+				  <div class="col-md-4">
             
-            <div class="row">
-              <div class="col-md-6" id="response">
-              </div>
-            </div>    
+				  </div>
+	
+				  <div class="col-md-4">
+				  </div>
+	
+				  <div class="col-md-4">
+				  </div>
+				</div>
+        
+        <div class="row">
+          <div class="col-md-6" id="response">
           </div>
+        </div>
+        
+			</div>
         </div>
         <!-- /page content -->
 
