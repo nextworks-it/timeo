@@ -41,10 +41,10 @@ import java.util.Map;
  * @author nextworks
  *
  */
-public class VEPCStaticAlgorithmArno extends AbstractNsResourceAllocationAlgorithm {
+public class VEPCStaticAlgorithmNXW extends AbstractNsResourceAllocationAlgorithm {
 
-	public VEPCStaticAlgorithmArno() {
-		super(AlgorithmType.VEPC_STATIC_ARNO);
+	public VEPCStaticAlgorithmNXW() {
+		super(AlgorithmType.VEPC_STATIC_NXW);
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class VEPCStaticAlgorithmArno extends AbstractNsResourceAllocationAlgorit
 		List<VnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
 		List<NetworkPath> networkPaths = new ArrayList<>();
 		
-		VnfResourceAllocation vra1 = new VnfResourceAllocation(null, "vEPC", 0, "vEPC_vdu", 0, "OpenStack_local", "nova", "ONOSSONA");
+		VnfResourceAllocation vra1 = new VnfResourceAllocation(null, "vEPC", 0, "vEPC_vdu", 0, "OpenStack_local", "netdev5", "compute1");
 		
 		vnfResourceAllocation.add(vra1);
 
@@ -71,16 +71,6 @@ public class VEPCStaticAlgorithmArno extends AbstractNsResourceAllocationAlgorit
 				0,
 				"CU_INSTANCE_001",
 				"CU_profile",
-				Collections.emptyMap()
-		));
-
-		pnfs.add(new PnfAllocation(
-				null,
-				"GW_v01",
-				"0.1",
-				1,
-				"GW_INSTANCE_001",
-				"GW_profile",
 				Collections.emptyMap()
 		));
 

@@ -841,7 +841,7 @@ implements AsynchronousVimNotificationInterface,
 			NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
 			List<PnfInfo> pnfInfo = nsInfo.getPnfInfo();
 			for (PnfInfo pi : pnfInfo) {
-				String pnfId = pi.getPnfdInfoId();
+				String pnfId = pi.getId().toString();
 				log.debug("Removing PNF info " + pnfId);
 				Vnfm vnfm = pnfmMap.get(pnfId);
 				vnfm.deletePnfIdentifier(pnfId);
