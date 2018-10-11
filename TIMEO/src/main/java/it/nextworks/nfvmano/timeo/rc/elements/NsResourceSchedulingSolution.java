@@ -162,7 +162,7 @@ public class NsResourceSchedulingSolution {
 	 * @param vnfResourceAllocation information about the allocation of computing resources for the VNFs
 	 * @param pnfAllocation information about the PNF selected for the NS
 	 * @param networkPaths information about the allocation of network resources for the NS virtual links
-	 * @param interDcNetworkPath information about the allocation of transport path in inter-DC domains
+	 * @param interDcNetworkPaths information about the allocation of transport path in inter-DC domains
 	 * @param solutionFound true if a suitable resource allocation solution has been found
 	 * @param networkNodesToBeActivated network nodes to be activated
 	 * @param computeNodesToBeActivated compute nodes to be activated
@@ -289,8 +289,8 @@ public class NsResourceSchedulingSolution {
 	/**
 	 * Returns all the VNF resource allocation for a given VNFD ID
 	 * 
-	 * @param vnfdId
-	 * @return
+	 * @param vnfdId the VNFD ID
+	 * @return the {@link VnfResourceAllocation} for the given VNFD
 	 */
 	public List<VnfResourceAllocation> getVnfResourceAllocationForVnfd(String vnfdId) {
 		List<VnfResourceAllocation> result = new ArrayList<>();
