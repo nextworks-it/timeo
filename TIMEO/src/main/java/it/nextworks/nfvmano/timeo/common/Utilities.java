@@ -55,6 +55,12 @@ public class Utilities {
 		return new Filter(parameters);
 	}
 	
+	public static Filter buildNsInfoFilter(String nsInstanceId) {
+		Map<String, String> parameters = new HashMap<>();
+		parameters.put("NS_ID", nsInstanceId);
+		return new Filter(parameters);
+	}
+	
 	public static Filter buildVimResourceFilter(VimResourceType type, String resourceId) {
 		Map<String,String> parameters = new HashMap<>();
 		switch (type) {

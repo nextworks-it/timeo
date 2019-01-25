@@ -1088,6 +1088,18 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 								nsP.getNsInstantiationLevelId(), nsP.getMinNumberOfInstances(), nsP.getMaxNumberOfInstances(), nsP.getAffinityOrAntiaffinityGroupId());
 						nsProfileRepository.saveAndFlush(nsProfileTarget);
 						log.debug("Stored NS profile " + nsP.getNsProfileId());
+						
+						List<NsVirtualLinkConnectivity> vlConns = nsP.getNsVirtualLinkConnectivity();
+						if (vlConns != null) {
+							log.debug("Storing NS VL connectivity for NS profile");
+							for (NsVirtualLinkConnectivity vlConn : vlConns) {
+								NsVirtualLinkConnectivity vlConnTarget = new NsVirtualLinkConnectivity(nsProfileTarget, vlConn.getVirtualLinkProfileId(),
+										vlConn.getCpdId());
+								nsVlConnectivityRepository.saveAndFlush(vlConnTarget);
+							}
+							log.debug("Stored NS VL connectivity for NS profile");
+						}
+						
 					}
 					log.debug("Stored all NS profiles");
 				}
