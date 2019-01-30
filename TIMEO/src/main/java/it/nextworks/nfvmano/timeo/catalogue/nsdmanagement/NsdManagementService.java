@@ -1010,7 +1010,7 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 							log.error("NS Forwarding Path " + nfpdId + " already existing. Impossible to load a new one.");
 							throw new AlreadyExistingEntityException("NS Forwarding Path " + nsdId + " already existing.");
 						}
-						Nfpd nfpdTarget = new Nfpd(target, nfpdId, nfpd.getCpd());
+						Nfpd nfpdTarget = new Nfpd(target, nfpdId, nfpd.getCpd(), nfpd.getQos());
 						forwardingPathRepository.saveAndFlush(nfpdTarget);
 						log.debug("Stored forwarding path " + nfpdId);
 						if (nfpd.getNfpRule() != null) {
