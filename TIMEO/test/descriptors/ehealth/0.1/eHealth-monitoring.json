@@ -63,25 +63,6 @@
     "nsVirtualLinkDescId" : "mgt_ehealth_mon_vl"
   } ],
   "virtualLinkDesc" : [ {
-    "virtualLinkDescId" : "data_ehealth_mon_vl",
-    "virtualLinkDescProvider" : "Nextworks",
-    "virtuaLinkDescVersion" : "0.1",
-    "connectivityType" : {
-      "layerProtocol" : "IPV4",
-      "flowPattern" : null
-    },
-    "virtualLinkDf" : [ {
-      "flavourId" : "data_ehealth_mon_vl_vldf",
-      "qos" : {
-        "latency" : 0,
-        "packetDelayVariation" : 0,
-        "packetLossRatio" : 0,
-        "priority" : 0
-      },
-      "serviceAvaibilityLevel" : "LEVEL_1"
-    } ],
-    "description" : "data vLink"
-  }, {
     "virtualLinkDescId" : "mgt_ehealth_mon_vl",
     "virtualLinkDescProvider" : "Nextworks",
     "virtuaLinkDescVersion" : "0.1",
@@ -100,14 +81,33 @@
       "serviceAvaibilityLevel" : "LEVEL_1"
     } ],
     "description" : "mgt vLink"
+  }, {
+    "virtualLinkDescId" : "data_ehealth_mon_vl",
+    "virtualLinkDescProvider" : "Nextworks",
+    "virtuaLinkDescVersion" : "0.1",
+    "connectivityType" : {
+      "layerProtocol" : "IPV4",
+      "flowPattern" : null
+    },
+    "virtualLinkDf" : [ {
+      "flavourId" : "data_ehealth_mon_vl_vldf",
+      "qos" : {
+        "latency" : 0,
+        "packetDelayVariation" : 0,
+        "packetLossRatio" : 0,
+        "priority" : 0
+      },
+      "serviceAvaibilityLevel" : "LEVEL_1"
+    } ],
+    "description" : "data vLink"
   } ],
   "nsDf" : [ {
     "nsDfId" : "eHealth-Mon-NS_df",
     "flavourKey" : "eHealth-Mon-NS_df",
     "virtualLinkProfile" : [ {
-      "virtualLinkProfileId" : "s1c_s1u_vepc_vl_profile",
-      "virtualLinkDescId" : "s1c_s1u_vepc_vl",
-      "flavourId" : "s1c_s1u_vepc_vlvldf",
+      "virtualLinkProfileId" : "mgt_ehealth_mon_vl_profile",
+      "virtualLinkDescId" : "mgt_ehealth_mon_vl",
+      "flavourId" : "mgt_ehealth_mon_vl_vldf",
       "maxBitrateRequirements" : {
         "root" : "1",
         "leaf" : "1"
@@ -117,57 +117,9 @@
         "leaf" : "1"
       }
     }, {
-      "virtualLinkProfileId" : "sgi_vepc_vl_profile",
-      "virtualLinkDescId" : "sgi_vepc_vl",
-      "flavourId" : "sgi_vepc_vlvldf",
-      "maxBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      },
-      "minBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      }
-    }, {
-      "virtualLinkProfileId" : "s5_vepc_vl_profile",
-      "virtualLinkDescId" : "s5_vepc_vl",
-      "flavourId" : "s5_vepc_vlvldf",
-      "maxBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      },
-      "minBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      }
-    }, {
-      "virtualLinkProfileId" : "s11_vepc_vl_profile",
-      "virtualLinkDescId" : "s11_vepc_vl",
-      "flavourId" : "s11_vepc_vlvldf",
-      "maxBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      },
-      "minBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      }
-    }, {
-      "virtualLinkProfileId" : "s6a_vepc_vl_profile",
-      "virtualLinkDescId" : "s6a_vepc_vl",
-      "flavourId" : "s6a_vepc_vlvldf",
-      "maxBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      },
-      "minBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      }
-    }, {
-      "virtualLinkProfileId" : "mgt_vepc_vl_profile",
-      "virtualLinkDescId" : "mgt_vepc_vl",
-      "flavourId" : "mgt_vepc_vlvldf",
+      "virtualLinkProfileId" : "data_ehealth_mon_vl_profile",
+      "virtualLinkDescId" : "data_ehealth_mon_vl",
+      "flavourId" : "data_ehealth_mon_vl_vldf",
       "maxBitrateRequirements" : {
         "root" : "1",
         "leaf" : "1"

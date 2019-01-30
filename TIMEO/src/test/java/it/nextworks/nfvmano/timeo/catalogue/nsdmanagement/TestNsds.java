@@ -28,6 +28,7 @@ import it.nextworks.nfvmano.libs.descriptors.nsd.VnfToLevelMapping;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +75,10 @@ public class TestNsds {
                 virtualLinkId,
                 subCpdId
         );
+    }
+
+    private NsVirtualLinkDesc makeVld(Map.Entry<String, String> entry) {
+        return makeVld(entry.getKey(), entry.getValue());
     }
 
     private NsVirtualLinkDesc makeVld(String vldId, String description) {
@@ -149,7 +154,7 @@ public class TestNsds {
                 Collections.emptyList(),
                 nsMapping.entrySet()
                         .stream()
-                        .map(e-> makeVlConn(e.getKey(), e.getValue(), NsProfile.class))
+                        .map(e -> makeVlConn(e.getKey(), e.getValue(), NsProfile.class))
                         .collect(Collectors.toList())
         );
     }
@@ -167,7 +172,7 @@ public class TestNsds {
                 Collections.emptyList(),
                 vlMapping.entrySet()
                         .stream()
-                        .map(e-> makeVlConn(e.getKey(), e.getValue(), VnfProfile.class))
+                        .map(e -> makeVlConn(e.getKey(), e.getValue(), VnfProfile.class))
                         .collect(Collectors.toList())
         );
     }
@@ -207,7 +212,7 @@ public class TestNsds {
                 (NsDf) null,
                 vldId + "_profile",
                 vldId,
-                vldId + "vldf",
+                vldId + "_vldf",
                 Collections.emptyList(),
                 Collections.emptyList(),
                 new LinkBitrateRequirements(
@@ -243,7 +248,7 @@ public class TestNsds {
                                 e.getValue()
                         ))
                         .collect(Collectors.toList())
-                );
+        );
     }
 
     private NsDf makeNsDf(
@@ -252,6 +257,7 @@ public class TestNsds {
             Map<String, Integer> nsMapping,
             List<VnfProfile> vnfProfiles,
             List<NsProfile> nsProfiles,
+            Collection<String> vldIds,
             List<Dependencies> dependencies
     ) {
         return new NsDf(
@@ -260,14 +266,7 @@ public class TestNsds {
                 nsdId + "_df",
                 vnfProfiles,
                 Collections.emptyList(),
-                Arrays.asList(
-                        makeVLProfile("s1c_s1u_vepc_vl"),
-                        makeVLProfile("sgi_vepc_vl"),
-                        makeVLProfile("s5_vepc_vl"),
-                        makeVLProfile("s11_vepc_vl"),
-                        makeVLProfile("s6a_vepc_vl"),
-                        makeVLProfile("mgt_vepc_vl")
-                ),
+                vldIds.stream().map(this::makeVLProfile).collect(Collectors.toList()),
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.singletonList(
@@ -327,6 +326,14 @@ public class TestNsds {
                         )
                 )
         );
+        Map<String, String> vlds = new HashMap<>();
+        vlds.put("s1c_s1u_vepc_vl", "s1c/u vLink");
+        vlds.put("sgi_vepc_vl", "sgi vLink");
+        vlds.put("s5_vepc_vl", "s5 vLink");
+        vlds.put("s11_vepc_vl", "s11 vLink");
+        vlds.put("s6a_vepc_vl", "s6a vLink");
+        vlds.put("mgt_vepc_vl", "Management vLink");
+
         Nsd nsd = new Nsd(
                 nsdId,
                 "UC3M-Nextworks",
@@ -370,32 +377,7 @@ public class TestNsds {
                                 null
                         )
                 ),
-                Arrays.asList(
-                        makeVld(
-                                "s1c_s1u_vepc_vl",
-                                "s1c/u vLink"
-                        ),
-                        makeVld(
-                                "sgi_vepc_vl",
-                                "sgi vLink"
-                        ),
-                        makeVld(
-                                "s5_vepc_vl",
-                                "s5 vLink"
-                        ),
-                        makeVld(
-                                "s11_vepc_vl",
-                                "s11 vLink"
-                        ),
-                        makeVld(
-                                "s6a_vepc_vl",
-                                "s6a vLink"
-                        ),
-                        makeVld(
-                                "mgt_vepc_vl",
-                                "Management vLink"
-                        )
-                ),
+                vlds.entrySet().stream().map(this::makeVld).collect(Collectors.toList()),
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList(),
@@ -407,6 +389,7 @@ public class TestNsds {
                                 Collections.emptyMap(),
                                 vnfProfiles,
                                 Collections.emptyList(),
+                                vlds.keySet(),
                                 Collections.emptyList()
                         )
                 ),
@@ -443,6 +426,9 @@ public class TestNsds {
                         )
                 )
         );
+        Map<String, String> vlds = new HashMap<>();
+        vlds.put("data_ehealth_mon_be_vl", "data vLink");
+        vlds.put("mgt_ehealth_mon_be_vl", "mgt vLink");
         Nsd nsd = new Nsd(
                 nsdId,
                 "UC3M-Nextworks",
@@ -470,16 +456,7 @@ public class TestNsds {
                                 null
                         )
                 ),
-                Arrays.asList(
-                        makeVld(
-                                "data_ehealth_mon_be_vl",
-                                "data vLink"
-                        ),
-                        makeVld(
-                                "mgt_ehealth_mon_be_vl",
-                                "mgt vLink"
-                        )
-                ),
+                vlds.entrySet().stream().map(this::makeVld).collect(Collectors.toList()),
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList(),
@@ -491,6 +468,7 @@ public class TestNsds {
                                 Collections.emptyMap(),
                                 vnfProfiles,
                                 Collections.emptyList(),
+                                vlds.keySet(),
                                 Collections.emptyList()
                         )
                 ),
@@ -528,6 +506,10 @@ public class TestNsds {
                         )
                 )
         );
+        Map<String, String> vlds = new HashMap<>();
+        vlds.put("sgi_ehealth_emergency_edge_vl", "sgi vLink");
+        vlds.put("s5_ehealth_emergency_edge_vl", "s5 vLink");
+        vlds.put("mgt_ehealth_emergency_edge_vl", "mgt vLink");
         Nsd nsd = new Nsd(
                 nsdId,
                 "UC3M-Nextworks",
@@ -563,20 +545,7 @@ public class TestNsds {
                                 null
                         )
                 ),
-                Arrays.asList(
-                        makeVld(
-                                "sgi_ehealth_emergency_edge_vl",
-                                "sgi vLink"
-                        ),
-                        makeVld(
-                                "s5_ehealth_emergency_edge_vl",
-                                "s5 vLink"
-                        ),
-                        makeVld(
-                                "mgt_ehealth_emergency_edge_vl",
-                                "mgt vLink"
-                        )
-                ),
+                vlds.entrySet().stream().map(this::makeVld).collect(Collectors.toList()),
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList(),
@@ -588,6 +557,7 @@ public class TestNsds {
                                 Collections.emptyMap(),
                                 vnfProfiles,
                                 Collections.emptyList(),
+                                vlds.keySet(),
                                 Collections.emptyList()
                         )
                 ),
@@ -628,6 +598,9 @@ public class TestNsds {
                         )
                 )
         );
+        Map<String, String> vlds = new HashMap<>();
+        vlds.put("data_ehealth_mon_vl", "data vLink");
+        vlds.put("mgt_ehealth_mon_vl", "mgt vLink");
         Nsd nsd = new Nsd(
                 nsdId,
                 "UC3M-Nextworks",
@@ -671,16 +644,7 @@ public class TestNsds {
                                 null
                         )
                 ),
-                Arrays.asList(
-                        makeVld(
-                                "data_ehealth_mon_vl",
-                                "data vLink"
-                        ),
-                        makeVld(
-                                "mgt_ehealth_mon_vl",
-                                "mgt vLink"
-                        )
-                ),
+                vlds.entrySet().stream().map(this::makeVld).collect(Collectors.toList()),
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList(),
@@ -692,6 +656,7 @@ public class TestNsds {
                                 nsMapping,
                                 Collections.emptyList(),
                                 nsProfiles,
+                                vlds.keySet(),
                                 Collections.emptyList()
                         )
                 ),
@@ -734,6 +699,10 @@ public class TestNsds {
                         )
                 )
         );
+        Map<String, String> vlds = new HashMap<>();
+        vlds.put("s5_ehealth_emergency_vl", "s5 vLink");
+        vlds.put("sgi_ehealth_emergency_vl", "sgi vLink");
+        vlds.put("mgt_ehealth_emergency_vl", "mgt vLink");
         Nsd nsd = new Nsd(
                 nsdId,
                 "UC3M-Nextworks",
@@ -761,20 +730,7 @@ public class TestNsds {
                                 null
                         )
                 ),
-                Arrays.asList(
-                        makeVld(
-                                "s5_ehealth_emergency_vl",
-                                "s5 vLink"
-                        ),
-                        makeVld(
-                                "sgi_ehealth_emergency_vl",
-                                "sgi vLink"
-                        ),
-                        makeVld(
-                                "mgt_ehealth_emergency_vl",
-                                "mgt vLink"
-                        )
-                ),
+                vlds.entrySet().stream().map(this::makeVld).collect(Collectors.toList()),
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList(),
@@ -786,6 +742,7 @@ public class TestNsds {
                                 nsMapping,
                                 Collections.emptyList(),
                                 nsProfiles,
+                                vlds.keySet(),
                                 Collections.emptyList()
                         )
                 ),

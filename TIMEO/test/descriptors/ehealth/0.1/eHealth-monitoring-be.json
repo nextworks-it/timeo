@@ -106,9 +106,9 @@
       } ]
     } ],
     "virtualLinkProfile" : [ {
-      "virtualLinkProfileId" : "s1c_s1u_vepc_vl_profile",
-      "virtualLinkDescId" : "s1c_s1u_vepc_vl",
-      "flavourId" : "s1c_s1u_vepc_vlvldf",
+      "virtualLinkProfileId" : "data_ehealth_mon_be_vl_profile",
+      "virtualLinkDescId" : "data_ehealth_mon_be_vl",
+      "flavourId" : "data_ehealth_mon_be_vl_vldf",
       "maxBitrateRequirements" : {
         "root" : "1",
         "leaf" : "1"
@@ -118,57 +118,9 @@
         "leaf" : "1"
       }
     }, {
-      "virtualLinkProfileId" : "sgi_vepc_vl_profile",
-      "virtualLinkDescId" : "sgi_vepc_vl",
-      "flavourId" : "sgi_vepc_vlvldf",
-      "maxBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      },
-      "minBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      }
-    }, {
-      "virtualLinkProfileId" : "s5_vepc_vl_profile",
-      "virtualLinkDescId" : "s5_vepc_vl",
-      "flavourId" : "s5_vepc_vlvldf",
-      "maxBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      },
-      "minBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      }
-    }, {
-      "virtualLinkProfileId" : "s11_vepc_vl_profile",
-      "virtualLinkDescId" : "s11_vepc_vl",
-      "flavourId" : "s11_vepc_vlvldf",
-      "maxBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      },
-      "minBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      }
-    }, {
-      "virtualLinkProfileId" : "s6a_vepc_vl_profile",
-      "virtualLinkDescId" : "s6a_vepc_vl",
-      "flavourId" : "s6a_vepc_vlvldf",
-      "maxBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      },
-      "minBitrateRequirements" : {
-        "root" : "1",
-        "leaf" : "1"
-      }
-    }, {
-      "virtualLinkProfileId" : "mgt_vepc_vl_profile",
-      "virtualLinkDescId" : "mgt_vepc_vl",
-      "flavourId" : "mgt_vepc_vlvldf",
+      "virtualLinkProfileId" : "mgt_ehealth_mon_be_vl_profile",
+      "virtualLinkDescId" : "mgt_ehealth_mon_be_vl",
+      "flavourId" : "mgt_ehealth_mon_be_vl_vldf",
       "maxBitrateRequirements" : {
         "root" : "1",
         "leaf" : "1"
