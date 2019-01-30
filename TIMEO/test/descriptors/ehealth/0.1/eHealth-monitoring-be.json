@@ -96,7 +96,7 @@
       "flavourId" : "SERVER_VNF_df",
       "instantiationLevel" : "SERVER_VNF_il",
       "minNumberOfInstances" : 1,
-      "maxNumberOfInstances" : 1,
+      "maxNumberOfInstances" : 3,
       "nsVirtualLinkConnectivity" : [ {
         "virtualLinkProfileId" : "data_ehealth_mon_be_vl_profile",
         "cpdId" : [ "central_data_extcp" ]
@@ -131,7 +131,7 @@
       }
     } ],
     "nsInstantiationLevel" : [ {
-      "nsLevelId" : "eHealth-BE_il",
+      "nsLevelId" : "eHealth-BE_il_small",
       "description" : "eHealth-BE instantiation level",
       "vnfToLevelMapping" : [ {
         "vnfProfileId" : "SERVER_VNF_profile",
@@ -140,8 +140,28 @@
         "vnfProfileId" : "LB_VNF_profile",
         "numberOfInstances" : 1
       } ]
+    }, {
+      "nsLevelId" : "eHealth-BE_il_medium",
+      "description" : "eHealth-BE instantiation level",
+      "vnfToLevelMapping" : [ {
+        "vnfProfileId" : "SERVER_VNF_profile",
+        "numberOfInstances" : 2
+      }, {
+        "vnfProfileId" : "LB_VNF_profile",
+        "numberOfInstances" : 1
+      } ]
+    }, {
+      "nsLevelId" : "eHealth-BE_il_big",
+      "description" : "eHealth-BE instantiation level",
+      "vnfToLevelMapping" : [ {
+        "vnfProfileId" : "SERVER_VNF_profile",
+        "numberOfInstances" : 3
+      }, {
+        "vnfProfileId" : "LB_VNF_profile",
+        "numberOfInstances" : 1
+      } ]
     } ],
-    "defaultNsInstantiationLevelId" : "eHealth-BE_il"
+    "defaultNsInstantiationLevelId" : "eHealth-BE_il_small"
   } ],
   "security" : {
     "signature" : "SIGNATURE",
