@@ -136,27 +136,27 @@
       "nsLevelId" : "eHealth-emergency-NS_il_small",
       "description" : "eHealth-emergency-NS small instantiation level",
       "nsToLevelMapping" : [ {
-        "nsProfileId" : "eHealth-EDGE_profile",
+        "nsProfileId" : "eHealth-EDGE_profile_default",
         "numberOfInstances" : 1
       }, {
         "nsProfileId" : "eHealth-Mon-NS_profile_small",
         "numberOfInstances" : 1
       } ]
-    } , {
+    }, {
       "nsLevelId" : "eHealth-emergency-NS_il_medium",
       "description" : "eHealth-emergency-NS medium instantiation level",
       "nsToLevelMapping" : [ {
-        "nsProfileId" : "eHealth-EDGE_profile",
+        "nsProfileId" : "eHealth-EDGE_profile_default",
         "numberOfInstances" : 1
       }, {
         "nsProfileId" : "eHealth-Mon-NS_profile_medium",
         "numberOfInstances" : 1
       } ]
-    } , {
+    }, {
       "nsLevelId" : "eHealth-emergency-NS_il_big",
       "description" : "eHealth-emergency-NS big instantiation level",
       "nsToLevelMapping" : [ {
-        "nsProfileId" : "eHealth-EDGE_profile",
+        "nsProfileId" : "eHealth-EDGE_profile_default",
         "numberOfInstances" : 1
       }, {
         "nsProfileId" : "eHealth-Mon-NS_profile_big",
@@ -216,10 +216,10 @@
         "cpdId" : [ "mgt_ehealth_mon_sap" ]
       } ]
     }, {
-      "nsProfileId" : "eHealth-EDGE_profile",
+      "nsProfileId" : "eHealth-EDGE_profile_default",
       "nsdId" : "eHealth-EDGE",
       "nsDfId" : "eHealth-EDGE_df",
-      "nsInstantiationLevelId" : "eHealth-EDGE_il",
+      "nsInstantiationLevelId" : "eHealth-EDGE_il_default",
       "minNumberOfInstances" : 1,
       "maxNumberOfInstances" : 1,
       "nsVirtualLinkConnectivity" : [ {

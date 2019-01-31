@@ -25,6 +25,7 @@ import it.nextworks.nfvmano.libs.descriptors.nsd.Sapd;
 import it.nextworks.nfvmano.libs.descriptors.nsd.SecurityParameters;
 import it.nextworks.nfvmano.libs.descriptors.nsd.VnfProfile;
 import it.nextworks.nfvmano.libs.descriptors.nsd.VnfToLevelMapping;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -142,13 +143,19 @@ public class TestNsds {
         }
     }
 
-    private NsProfile makeNsProfile(String nsdId, int minInst, int maxInst, Map<String, List<String>> nsMapping) {
+    private NsProfile makeNsProfile(
+            String nsdId,
+            String nsIlName, // just "default" or "small"
+            int minInst,
+            int maxInst,
+            Map<String, List<String>> nsMapping
+    ) {
         return new NsProfile(
                 null,
-                nsdId + "_profile",
+                nsdId + "_profile_" + nsIlName,
                 nsdId,
                 nsdId + "_df",
-                nsdId + "_il",
+                nsdId + "_il_" + nsIlName,
                 minInst,
                 maxInst,
                 Collections.emptyList(),
@@ -225,14 +232,14 @@ public class TestNsds {
     }
 
     private NsLevel makeNsLevel(
-            String nsdId,
+            String nsLevelId,
             String description,
             Map<String, Integer> vnfMapping,
-            Map<String, Integer> nsMapping
+            Map<String, String> nsMapping
     ) {
         return new NsLevel(
                 (NsDf) null,
-                nsdId + "_il",
+                nsLevelId,
                 description,
                 vnfMapping.entrySet()
                         .stream()
@@ -244,8 +251,8 @@ public class TestNsds {
                 nsMapping.entrySet()
                         .stream()
                         .map(e -> new NsToLevelMapping(
-                                e.getKey() + "_profile",
-                                e.getValue()
+                                e.getValue(),
+                                1
                         ))
                         .collect(Collectors.toList())
         );
@@ -253,13 +260,22 @@ public class TestNsds {
 
     private NsDf makeNsDf(
             String nsdId,
-            Map<String, Integer> vnfMapping,
-            Map<String, Integer> nsMapping,
+            Map<String, Map<String, Integer>> vnfMapping,
+            Map<String, Map<String, String>> nsMapping,
             List<VnfProfile> vnfProfiles,
             List<NsProfile> nsProfiles,
             Collection<String> vldIds,
             List<Dependencies> dependencies
     ) {
+        Assert.assertEquals(vnfMapping.keySet(), nsMapping.keySet());
+        String defaultIl;
+        if (vnfMapping.containsKey("default")) {
+            defaultIl = nsdId + "_il_default";
+        } else if (vnfMapping.containsKey("small")) {
+            defaultIl = nsdId + "_il_small";
+        } else {
+            throw new IllegalArgumentException("Cannot determine default IL");
+        }
         return new NsDf(
                 null,
                 nsdId + "_df",
@@ -269,15 +285,15 @@ public class TestNsds {
                 vldIds.stream().map(this::makeVLProfile).collect(Collectors.toList()),
                 Collections.emptyList(),
                 Collections.emptyList(),
-                Collections.singletonList(
+                vnfMapping.keySet().stream().map(name ->
                         makeNsLevel(
-                                nsdId,
-                                nsdId + " instantiation level",
-                                vnfMapping,
-                                nsMapping
+                                nsdId + "_il_" + name,
+                                nsdId + " " + name + " instantiation level",
+                                vnfMapping.get(name),
+                                nsMapping.get(name)
                         )
-                ),
-                nsdId + "_il",
+                ).collect(Collectors.toList()),
+                defaultIl,
                 nsProfiles,
                 dependencies
         );
@@ -288,8 +304,10 @@ public class TestNsds {
         String nsdId = "eHealth-vEPC";
         String nsdVersion = "0.1";
         List<String> vnfs = Arrays.asList("MME_VNF", "HSS_VNF", "S-GW_VNF", "P-GW_VNF");
-        Map<String, Integer> vnfMapping = vnfs.stream().collect(Collectors.toMap(Function.identity(), _p -> 1));
-        vnfMapping.put("S-GW_VNF", 3);
+        Map<String, Integer> auxVnfMapping = vnfs.stream().collect(Collectors.toMap(Function.identity(), _p -> 1));
+        auxVnfMapping.put("S-GW_VNF", 3);
+        Map<String, Map<String, Integer>> vnfMapping = Collections.singletonMap("default", auxVnfMapping);
+        Map<String, Map<String, String>> nsMapping = Collections.singletonMap("default", Collections.emptyMap());
         List<VnfProfile> vnfProfiles = Arrays.asList(
                 makeVnfProfile(
                         "MME_VNF",
@@ -386,7 +404,7 @@ public class TestNsds {
                         makeNsDf(
                                 nsdId,
                                 vnfMapping,
-                                Collections.emptyMap(),
+                                nsMapping,
                                 vnfProfiles,
                                 Collections.emptyList(),
                                 vlds.keySet(),
@@ -409,7 +427,23 @@ public class TestNsds {
         String nsdId = "eHealth-BE";
         String nsdVersion = "0.1";
         List<String> vnfs = Arrays.asList("LB_VNF", "SERVER_VNF");
-        Map<String, Integer> vnfMapping = vnfs.stream().collect(Collectors.toMap(Function.identity(), _p -> 1));
+
+        // Vnf mappings
+        Map<String, Integer> smallVnfMapping = vnfs.stream().collect(Collectors.toMap(Function.identity(), _p -> 1));
+        Map<String, Integer> mediumVnfMapping = vnfs.stream().collect(Collectors.toMap(Function.identity(), _p -> 1));
+        mediumVnfMapping.put("SERVER_VNF", 2);
+        Map<String, Integer> bigVnfMapping = vnfs.stream().collect(Collectors.toMap(Function.identity(), _p -> 1));
+        bigVnfMapping.put("SERVER_VNF", 3);
+        Map<String, Map<String, Integer>> vnfMapping = new HashMap<>();
+        vnfMapping.put("small", smallVnfMapping);
+        vnfMapping.put("medium", mediumVnfMapping);
+        vnfMapping.put("big", bigVnfMapping);
+
+        Map<String, Map<String, String>> nsMapping = new HashMap<>();
+        nsMapping.put("small", Collections.emptyMap());
+        nsMapping.put("medium", Collections.emptyMap());
+        nsMapping.put("big", Collections.emptyMap());
+
         List<VnfProfile> vnfProfiles = Arrays.asList(
                 makeVnfProfile(
                         "LB_VNF",
@@ -420,6 +454,8 @@ public class TestNsds {
                 ),
                 makeVnfProfile(
                         "SERVER_VNF",
+                        1,
+                        3,
                         makeVlMapping(
                                 "data_ehealth_mon_be_vl->central_data_extcp",
                                 "mgt_ehealth_mon_be_vl->central_mgt_extcp"
@@ -465,7 +501,7 @@ public class TestNsds {
                         makeNsDf(
                                 nsdId,
                                 vnfMapping,
-                                Collections.emptyMap(),
+                                nsMapping,
                                 vnfProfiles,
                                 Collections.emptyList(),
                                 vlds.keySet(),
@@ -488,7 +524,9 @@ public class TestNsds {
         String nsdId = "eHealth-EDGE";
         String nsdVersion = "0.1";
         List<String> vnfs = Arrays.asList("E-SERVER_VNF", "E-PGW_VNF");
-        Map<String, Integer> vnfMapping = vnfs.stream().collect(Collectors.toMap(Function.identity(), _p -> 1));
+        Map<String, Integer> auxVnfMapping = vnfs.stream().collect(Collectors.toMap(Function.identity(), _p -> 1));
+        Map<String, Map<String, Integer>> vnfMapping = Collections.singletonMap("default", auxVnfMapping);
+        Map<String, Map<String, String>> nsMapping = Collections.singletonMap("default", Collections.emptyMap());
         List<VnfProfile> vnfProfiles = Arrays.asList(
                 makeVnfProfile(
                         "E-PGW_VNF",
@@ -554,7 +592,7 @@ public class TestNsds {
                         makeNsDf(
                                 nsdId,
                                 vnfMapping,
-                                Collections.emptyMap(),
+                                nsMapping,
                                 vnfProfiles,
                                 Collections.emptyList(),
                                 vlds.keySet(),
@@ -577,10 +615,49 @@ public class TestNsds {
         String nsdId = "eHealth-Mon-NS";
         String nsdVersion = "0.1";
         List<String> nss = Arrays.asList("eHealth-BE", "eHealth-vEPC");
-        Map<String, Integer> nsMapping = nss.stream().collect(Collectors.toMap(Function.identity(), _p -> 1));
+
+        Map<String, Map<String, Integer>> vnfMapping = new HashMap<>();
+        vnfMapping.put("small", Collections.emptyMap());
+        vnfMapping.put("medium", Collections.emptyMap());
+        vnfMapping.put("big", Collections.emptyMap());
+
+        // NsMappings
+        Map<String, String> smallNsMapping = new HashMap<>();
+        smallNsMapping.put("eHealth-vEPC", "eHealth-vEPC_profile_default");
+        smallNsMapping.put("eHealth-BE", "eHealth-BE_profile_small");
+        Map<String, String> mediumNsMapping = new HashMap<>(smallNsMapping);
+        mediumNsMapping.put("eHealth-BE", "eHealth-BE_profile_medium");
+        Map<String, String> bigNsMapping = new HashMap<>(smallNsMapping);
+        bigNsMapping.put("eHealth-BE", "eHealth-BE_profile_big");
+        Map<String, Map<String, String>> nsMapping = new HashMap<>();
+        nsMapping.put("small", smallNsMapping);
+        nsMapping.put("medium", mediumNsMapping);
+        nsMapping.put("big", bigNsMapping);
+
         List<NsProfile> nsProfiles = Arrays.asList(
                 makeNsProfile(
                         "eHealth-BE",
+                        "small",
+                        1,
+                        1,
+                        makeVlMapping(
+                                "data_eHealth_mon_vl->data_ehealth_mon_be_sap",
+                                "mgt_eHealth_mon_vl->mgt_ehealth_mon_be_sap"
+                        )
+                ),
+                makeNsProfile(
+                        "eHealth-BE",
+                        "medium",
+                        1,
+                        1,
+                        makeVlMapping(
+                                "data_eHealth_mon_vl->data_ehealth_mon_be_sap",
+                                "mgt_eHealth_mon_vl->mgt_ehealth_mon_be_sap"
+                        )
+                ),
+                makeNsProfile(
+                        "eHealth-BE",
+                        "big",
                         1,
                         1,
                         makeVlMapping(
@@ -590,6 +667,7 @@ public class TestNsds {
                 ),
                 makeNsProfile(
                         "eHealth-vEPC",
+                        "default",
                         1,
                         1,
                         makeVlMapping(
@@ -652,7 +730,7 @@ public class TestNsds {
                 Collections.singletonList(
                         makeNsDf(
                                 nsdId,
-                                Collections.emptyMap(),
+                                vnfMapping,
                                 nsMapping,
                                 Collections.emptyList(),
                                 nsProfiles,
@@ -676,10 +754,50 @@ public class TestNsds {
         String nsdId = "eHealth-emergency-NS";
         String nsdVersion = "0.1";
         List<String> nss = Arrays.asList("eHealth-Mon-NS", "eHealth-EDGE");
-        Map<String, Integer> nsMapping = nss.stream().collect(Collectors.toMap(Function.identity(), _p -> 1));
+
+        Map<String, Map<String, Integer>> vnfMapping = new HashMap<>();
+        vnfMapping.put("small", Collections.emptyMap());
+        vnfMapping.put("medium", Collections.emptyMap());
+        vnfMapping.put("big", Collections.emptyMap());
+        // NSMapping
+        Map<String, String> smallNsMapping = new HashMap<>();
+        smallNsMapping.put("eHealth-EDGE", "eHealth-EDGE_profile_default");
+        smallNsMapping.put("eHealth-Mon-NS", "eHealth-Mon-NS_profile_small");
+        Map<String, String> mediumNsMapping = new HashMap<>(smallNsMapping);
+        mediumNsMapping.put("eHealth-Mon-NS", "eHealth-Mon-NS_profile_medium");
+        Map<String, String> bigNsMapping = new HashMap<>(smallNsMapping);
+        bigNsMapping.put("eHealth-Mon-NS", "eHealth-Mon-NS_profile_big");
+        Map<String, Map<String, String>> nsMapping = new HashMap<>();
+        nsMapping.put("small", smallNsMapping);
+        nsMapping.put("medium", mediumNsMapping);
+        nsMapping.put("big", bigNsMapping);
+
         List<NsProfile> nsProfiles = Arrays.asList(
                 makeNsProfile(
                         "eHealth-Mon-NS",
+                        "small",
+                        1,
+                        1,
+                        makeVlMapping(
+                                "s5_ehealth_emergency_vl->s5_ehealth_mon_sap",
+                                "sgi_ehealth_emergency_vl->sgi_ehealth_mon_sap",
+                                "mgt_ehealth_emergency_vl->mgt_ehealth_mon_sap"
+                        )
+                ),
+                makeNsProfile(
+                        "eHealth-Mon-NS",
+                        "medium",
+                        1,
+                        1,
+                        makeVlMapping(
+                                "s5_ehealth_emergency_vl->s5_ehealth_mon_sap",
+                                "sgi_ehealth_emergency_vl->sgi_ehealth_mon_sap",
+                                "mgt_ehealth_emergency_vl->mgt_ehealth_mon_sap"
+                        )
+                ),
+                makeNsProfile(
+                        "eHealth-Mon-NS",
+                        "big",
                         1,
                         1,
                         makeVlMapping(
@@ -690,6 +808,7 @@ public class TestNsds {
                 ),
                 makeNsProfile(
                         "eHealth-EDGE",
+                        "default",
                         1,
                         1,
                         makeVlMapping(
@@ -738,7 +857,7 @@ public class TestNsds {
                 Collections.singletonList(
                         makeNsDf(
                                 nsdId,
-                                Collections.emptyMap(),
+                                vnfMapping,
                                 nsMapping,
                                 Collections.emptyList(),
                                 nsProfiles,

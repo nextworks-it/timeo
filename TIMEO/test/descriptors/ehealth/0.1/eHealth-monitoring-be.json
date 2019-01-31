@@ -132,30 +132,30 @@
     } ],
     "nsInstantiationLevel" : [ {
       "nsLevelId" : "eHealth-BE_il_small",
-      "description" : "eHealth-BE instantiation level",
+      "description" : "eHealth-BE small instantiation level",
       "vnfToLevelMapping" : [ {
         "vnfProfileId" : "SERVER_VNF_profile",
         "numberOfInstances" : 1
-      }, {
-        "vnfProfileId" : "LB_VNF_profile",
-        "numberOfInstances" : 1
-      } ]
-    }, {
-      "nsLevelId" : "eHealth-BE_il_medium",
-      "description" : "eHealth-BE instantiation level",
-      "vnfToLevelMapping" : [ {
-        "vnfProfileId" : "SERVER_VNF_profile",
-        "numberOfInstances" : 2
       }, {
         "vnfProfileId" : "LB_VNF_profile",
         "numberOfInstances" : 1
       } ]
     }, {
       "nsLevelId" : "eHealth-BE_il_big",
-      "description" : "eHealth-BE instantiation level",
+      "description" : "eHealth-BE big instantiation level",
       "vnfToLevelMapping" : [ {
         "vnfProfileId" : "SERVER_VNF_profile",
         "numberOfInstances" : 3
+      }, {
+        "vnfProfileId" : "LB_VNF_profile",
+        "numberOfInstances" : 1
+      } ]
+    }, {
+      "nsLevelId" : "eHealth-BE_il_medium",
+      "description" : "eHealth-BE medium instantiation level",
+      "vnfToLevelMapping" : [ {
+        "vnfProfileId" : "SERVER_VNF_profile",
+        "numberOfInstances" : 2
       }, {
         "vnfProfileId" : "LB_VNF_profile",
         "numberOfInstances" : 1

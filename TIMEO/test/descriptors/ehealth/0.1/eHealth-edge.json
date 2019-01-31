@@ -179,8 +179,8 @@
       }
     } ],
     "nsInstantiationLevel" : [ {
-      "nsLevelId" : "eHealth-EDGE_il",
-      "description" : "eHealth-EDGE instantiation level",
+      "nsLevelId" : "eHealth-EDGE_il_default",
+      "description" : "eHealth-EDGE default instantiation level",
       "vnfToLevelMapping" : [ {
         "vnfProfileId" : "E-PGW_VNF_profile",
         "numberOfInstances" : 1
@@ -189,7 +189,7 @@
         "numberOfInstances" : 1
       } ]
     } ],
-    "defaultNsInstantiationLevelId" : "eHealth-EDGE_il"
+    "defaultNsInstantiationLevelId" : "eHealth-EDGE_il_default"
   } ],
   "security" : {
     "signature" : "SIGNATURE",

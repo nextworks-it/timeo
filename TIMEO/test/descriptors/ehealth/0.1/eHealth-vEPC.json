@@ -326,8 +326,8 @@
       }
     } ],
     "nsInstantiationLevel" : [ {
-      "nsLevelId" : "eHealth-vEPC_il",
-      "description" : "eHealth-vEPC instantiation level",
+      "nsLevelId" : "eHealth-vEPC_il_default",
+      "description" : "eHealth-vEPC default instantiation level",
       "vnfToLevelMapping" : [ {
         "vnfProfileId" : "S-GW_VNF_profile",
         "numberOfInstances" : 3
@@ -342,7 +342,7 @@
         "numberOfInstances" : 1
       } ]
     } ],
-    "defaultNsInstantiationLevelId" : "eHealth-vEPC_il"
+    "defaultNsInstantiationLevelId" : "eHealth-vEPC_il_default"
   } ],
   "security" : {
     "signature" : "SIGNATURE",
