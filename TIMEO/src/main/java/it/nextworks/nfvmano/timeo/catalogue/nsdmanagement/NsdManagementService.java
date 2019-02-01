@@ -61,9 +61,13 @@ import it.nextworks.nfvmano.libs.descriptors.common.elements.LifeCycleManagement
 import it.nextworks.nfvmano.libs.descriptors.common.elements.Rule;
 import it.nextworks.nfvmano.libs.descriptors.common.elements.VirtualLinkDf;
 import it.nextworks.nfvmano.libs.descriptors.common.elements.VirtualLinkProfile;
+import it.nextworks.nfvmano.libs.descriptors.nsd.AutoscalingAction;
+import it.nextworks.nfvmano.libs.descriptors.nsd.AutoscalingRuleCondition;
+import it.nextworks.nfvmano.libs.descriptors.nsd.AutoscalingRuleCriteria;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Dependencies;
 import it.nextworks.nfvmano.libs.descriptors.nsd.MonitoredData;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nfpd;
+import it.nextworks.nfvmano.libs.descriptors.nsd.NsAutoscalingRule;
 import it.nextworks.nfvmano.libs.descriptors.nsd.NsDf;
 import it.nextworks.nfvmano.libs.descriptors.nsd.NsLevel;
 import it.nextworks.nfvmano.libs.descriptors.nsd.NsProfile;
@@ -75,16 +79,21 @@ import it.nextworks.nfvmano.libs.descriptors.nsd.PnfExtCpd;
 import it.nextworks.nfvmano.libs.descriptors.nsd.PnfProfile;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Pnfd;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Sapd;
+import it.nextworks.nfvmano.libs.descriptors.nsd.ScaleNsToLevelData;
 import it.nextworks.nfvmano.libs.descriptors.nsd.VirtualLinkToLevelMapping;
 import it.nextworks.nfvmano.libs.descriptors.nsd.VnfProfile;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Vnffgd;
 import it.nextworks.nfvmano.libs.descriptors.onboardedvnfpackage.OnboardedVnfPkgInfo;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.VnfConfigurableProperties;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.AutoscalingActionRepository;
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.AutoscalingRuleConditionRepository;
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.AutoscalingRuleCriteriaRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.DependenciesRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.InternalNsdInfo;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.MonitoredDataRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.NfpdRepository;
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.NsAutoscalingRuleRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.NsLevelRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.NsProfileRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.NsScalingAspectRepository;
@@ -101,6 +110,7 @@ import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.PnfdInfoR
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.PnfdRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.RuleRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.SapdRepository;
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.ScaleNsToLevelDataRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.VirtualLinkDfRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.VirtualLinkProfileRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.VirtualLinkToLevelMappingRepository;
@@ -196,6 +206,21 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 	
 	@Autowired
 	PnfExtCpdRepository pnfExtCpdRepository;
+	
+	@Autowired
+	AutoscalingActionRepository autoscalingActionRepository;
+	
+	@Autowired
+	AutoscalingRuleConditionRepository autoscalingRuleConditionRepository;
+	
+	@Autowired
+	AutoscalingRuleCriteriaRepository autoscalingRuleCriteriaRepository;
+	
+	@Autowired
+	NsAutoscalingRuleRepository nsAutoscalingRuleRepository;
+	
+	@Autowired
+	ScaleNsToLevelDataRepository scaleNsToLevelDataRepository;
 	
 	@Autowired
 	private VnfPackageManagementService vnfPackageManagement;
@@ -1047,10 +1072,37 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 	private void storeRule(Nsd input, Nsd output) throws AlreadyExistingEntityException {
 		if (input.getAutoScalingRule() != null) {
 			log.debug("Storing NSD autoscaling rules");
-			List<Rule> rules = input.getAutoScalingRule();
-			for (Rule r : rules) {
-				Rule targetRule = new Rule(output);
-				ruleRepository.saveAndFlush(targetRule);
+			List<NsAutoscalingRule> rules = input.getAutoScalingRule();
+			for (NsAutoscalingRule r : rules) {
+				NsAutoscalingRule targetRule = new NsAutoscalingRule(output, r.getRuleId());
+				nsAutoscalingRuleRepository.saveAndFlush(targetRule);
+				
+				List<AutoscalingRuleCondition> ruleConditions = r.getRuleConditions();
+				for (AutoscalingRuleCondition arc : ruleConditions) {
+					AutoscalingRuleCondition targetArc = new AutoscalingRuleCondition(targetRule, arc.getName(), arc.getScalingType(), arc.isEnabled(), arc.getScaleInOperationType(), 
+							arc.getScaleOutOperationType(), arc.getThresholdTime(), arc.getCooldownTime(), arc.getInitialInstantiationLevel());
+					autoscalingRuleConditionRepository.saveAndFlush(targetArc);
+					
+					List<AutoscalingRuleCriteria> scalingCriteria = arc.getScalingCriteria();
+					for (AutoscalingRuleCriteria sc : scalingCriteria) {
+						AutoscalingRuleCriteria targetSc = new AutoscalingRuleCriteria(targetArc, sc.getName(), sc.getScaleInThreshold(), sc.getScaleInRelationalOperation(),
+								sc.getScaleOutThreshold(), sc.getScaleOutRelationalOperation(), sc.getNsMonitoringParamRef());
+						autoscalingRuleCriteriaRepository.saveAndFlush(targetSc);
+					}
+				}
+				
+				List<AutoscalingAction> ruleActions = r.getRuleActions();
+				for (AutoscalingAction aa : ruleActions) {
+					AutoscalingAction targetAa = new AutoscalingAction(targetRule, aa.getScaleType());
+					autoscalingActionRepository.saveAndFlush(targetAa);
+					
+					ScaleNsToLevelData scaleNsToLevelData = aa.getScaleNsToLevelData();
+					if (scaleNsToLevelData != null) {
+						ScaleNsToLevelData sntldTarget = new ScaleNsToLevelData(targetAa, scaleNsToLevelData.getNsInstantiationLevel(), scaleNsToLevelData.getNsScaleInfo());
+						scaleNsToLevelDataRepository.saveAndFlush(sntldTarget);
+					}
+				}
+				
 				log.debug("Stored NSD autoscaling rule");
 			}
 			log.debug("All autoscaling rules have been stored");
