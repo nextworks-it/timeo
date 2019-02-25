@@ -1,0 +1,10 @@
+{
+  "indicatorInformation":
+  [
+    {"indicatorId": "operationMode", "indicatorValue": "3"},
+    {"indicatorId": "subCarrierNumber", "indicatorValue": "1024"},
+    {"indicatorId": "pilotSpacing", "indicatorValue": "512"},
+    {"indicatorId": "modulationScheme", "indicatorValue": "2"},
+    {"indicatorId": "intermediateFrequency", "indicatorValue": "4000000"}
+  ]
+}
