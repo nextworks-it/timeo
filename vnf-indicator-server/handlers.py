@@ -344,7 +344,7 @@ class VnfIndicatorHandler(RequestHandler):
         #         }
         #     ]
         # }
-        request: HTTPServerRequest = self.request
+        request = self.request  # type: HTTPServerRequest
         d_body = loads(request.body)
         print(d_body)
         for block in d_body['indicatorInformation']:
