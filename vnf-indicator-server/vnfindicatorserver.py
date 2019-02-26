@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from tornado.ioloop import IOLoop
 from tornado.web import Application, StaticFileHandler
 
-from oaps.handlers import HelpHandler, IndicatorRepo, VnfIndicatorHandler, VnfOneIndicatorHandler
+from handlers import HelpHandler, IndicatorRepo, VnfIndicatorHandler, VnfOneIndicatorHandler
 
 
 def make_app(vnf_name: str = "VNF") -> Application:

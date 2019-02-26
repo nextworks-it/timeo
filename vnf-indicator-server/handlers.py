@@ -1,5 +1,4 @@
 from json import loads, dumps
-from typing import Dict
 
 from tornado.httputil import HTTPServerRequest
 from tornado.web import RequestHandler
@@ -17,10 +16,10 @@ class HelpHandler(RequestHandler):
 
     # noinspection PyAttributeOutsideInit
     def initialize(self) -> None:
-        self.doc: Doc = Doc()
+        self.doc = Doc()
         self.nesting_level = 0
         self.f_nesting = 0
-        self.footer: Doc = Doc()
+        self.footer = Doc()
         self.footnote_counter = 1
         self.footer.stag('hr')
         self.footer.nl()
@@ -135,7 +134,7 @@ class HelpHandler(RequestHandler):
                 href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css"
             )
             line('title', 'General purpose VNF indicator server')
-            request: HTTPServerRequest = self.request
+            request = self.request  # type: HTTPServerRequest
             uri = request.protocol + '://' + request.host + '/favicon.png'
             stag(
                 'link',
@@ -178,7 +177,7 @@ class HelpHandler(RequestHandler):
             self.go_in()
             text('To retrieve VNF indicator values from this server, perform an HTTP GET request to ')
 
-            request: HTTPServerRequest = self.request
+            request = self.request  # type: HTTPServerRequest
             uri = request.protocol + '://' + request.host + '/vnfind/v1'
             line('a', uri, href=uri)
             text('.')
@@ -220,7 +219,7 @@ class HelpHandler(RequestHandler):
             self.go_in()
             text('To set the VNF indicator values returned by the server, send a POST request to ')
 
-            request: HTTPServerRequest = self.request
+            request = self.request  # type: HTTPServerRequest
             uri = request.protocol + '://' + request.host + '/vnfind/v1/<indicator-id>'
             line('a', uri, href=uri)
             text('.')
@@ -280,7 +279,7 @@ class IndicatorRepo(object):
     def put_indicator(self, indicator_id: str, value: str) -> None:
         self.data[indicator_id] = value
 
-    def get_all_indicators(self) -> Dict[str, str]:
+    def get_all_indicators(self) -> dict:  # Dict[str, str]
         return self.data
 
 
@@ -295,7 +294,7 @@ class VnfOneIndicatorHandler(RequestHandler):
 
     def post(self, indicator_id):
         self.log.debug('Got POST for "{}".', indicator_id)
-        request: HTTPServerRequest = self.request
+        request = self.request  # type: HTTPServerRequest
         d_body = loads(request.body)
         ind_id = d_body.get('indicatorId', None)
         if ind_id is not None and ind_id != indicator_id:
@@ -355,7 +354,7 @@ class VnfIndicatorHandler(RequestHandler):
 
     def post(self):
         self.log.debug('Got GetIndicatorValue request.')
-        request: HTTPServerRequest = self.request
+        request = self.request  # type: HTTPServerRequest
         d_body = loads(request.body)
         if d_body['filter'] is not None:
             self.set_status(501)
