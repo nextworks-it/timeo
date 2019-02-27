@@ -175,15 +175,21 @@ class HelpHandler(RequestHandler):
         line('h3', id='nbi', text_content='North bound interface')
         with tag('p'):
             self.go_in()
-            text('To retrieve VNF indicator values from this server, perform an HTTP GET request to ')
+            text('To check VNF indicator values from this server, perform an HTTP GET request to ')
 
             request = self.request  # type: HTTPServerRequest
             uri = request.protocol + '://' + request.host + '/vnfind/v1'
             line('a', uri, href=uri)
             text('.')
             self.go_out()
+        line(
+            'p',
+            'The actual call performed by the PNFM will be a POST request to the same URL with body '
+        )
+        with tag('pre'):
+            self.doc.asis('{"filter": null}')
         self.nl()
-        line('p', 'The format is as follows:')
+        line('p', 'The format of the response is as follows:')
         self.format_example()
 
     def format_example(self):
@@ -295,7 +301,7 @@ class VnfOneIndicatorHandler(RequestHandler):
     def post(self, indicator_id):
         self.log.debug('Got POST for "{}".', indicator_id)
         request = self.request  # type: HTTPServerRequest
-        d_body = loads(request.body)
+        d_body = loads(request.body.decode())
         ind_id = d_body.get('indicatorId', None)
         if ind_id is not None and ind_id != indicator_id:
             self.log.warning("Indicator Id in path different from payload: '{}' vs '{}'", indicator_id, ind_id)
@@ -321,6 +327,21 @@ class VnfIndicatorHandler(RequestHandler):
 
     log = get_logger('VnfIndicatorHandler')
 
+    def get(self):
+        self.log.debug('Received call GET indicators')
+        inds = self.repo.get_all_indicators()
+        ind_info_content = [
+            {
+                "vnfInstanceId": self.vnf_name,
+                "indicatorId": name,
+                "indicatorValue": value,
+                "indicatorName": name
+            }
+            for name, value in inds.items()
+        ]
+        self.log.debug('Returning {} indicator values', len(ind_info_content))
+        self.write({"indicatorInformation": ind_info_content})
+
     # noinspection PyMethodOverriding,PyAttributeOutsideInit
     def initialize(self, repo: IndicatorRepo, vnf_name: str):
         self.repo = repo
@@ -345,7 +366,7 @@ class VnfIndicatorHandler(RequestHandler):
         #     ]
         # }
         request = self.request  # type: HTTPServerRequest
-        d_body = loads(request.body)
+        d_body = loads(request.body.decode())
         print(d_body)
         for block in d_body['indicatorInformation']:
             key, value = str(block['indicatorId']), str(block['indicatorValue'])
@@ -353,10 +374,10 @@ class VnfIndicatorHandler(RequestHandler):
             self.repo.put_indicator(key, value)
 
     def post(self):
-        self.log.debug('Got GetIndicatorValue request.')
+        self.log.debug('Got POST GetIndicatorValue request.')
         request = self.request  # type: HTTPServerRequest
-        d_body = loads(request.body)
-        if d_body['filter'] is not None:
+        d_body = loads(request.body.decode())
+        if d_body.get('filter', None) is not None:
             self.set_status(501)
             self.clear()
             self.finish(
