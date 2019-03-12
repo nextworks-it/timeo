@@ -145,6 +145,28 @@
 			<artifactId>commons-compress</artifactId>
 			<version>1.2</version>
 		</dependency>
+
+		<!-- Json schema doc -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-jsonSchema</artifactId>
+			<version>2.9.8</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Swagger autodoc -->
+
+		<!--dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.9.2</version>
+		</dependency-->
 		
 		<!-- Openstack4j dependency -->
 		<dependency>
