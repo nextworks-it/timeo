@@ -1077,19 +1077,18 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 				NsAutoscalingRule targetRule = new NsAutoscalingRule(output, r.getRuleId());
 				nsAutoscalingRuleRepository.saveAndFlush(targetRule);
 				
-				List<AutoscalingRuleCondition> ruleConditions = r.getRuleConditions();
-				for (AutoscalingRuleCondition arc : ruleConditions) {
-					AutoscalingRuleCondition targetArc = new AutoscalingRuleCondition(targetRule, arc.getName(), arc.getScalingType(), arc.isEnabled(), arc.getScaleInOperationType(), 
-							arc.getScaleOutOperationType(), arc.getThresholdTime(), arc.getCooldownTime(), arc.getInitialInstantiationLevel());
-					autoscalingRuleConditionRepository.saveAndFlush(targetArc);
-					
-					List<AutoscalingRuleCriteria> scalingCriteria = arc.getScalingCriteria();
-					for (AutoscalingRuleCriteria sc : scalingCriteria) {
-						AutoscalingRuleCriteria targetSc = new AutoscalingRuleCriteria(targetArc, sc.getName(), sc.getScaleInThreshold(), sc.getScaleInRelationalOperation(),
-								sc.getScaleOutThreshold(), sc.getScaleOutRelationalOperation(), sc.getNsMonitoringParamRef());
-						autoscalingRuleCriteriaRepository.saveAndFlush(targetSc);
-					}
+				AutoscalingRuleCondition ruleConditions = r.getRuleConditions();
+				AutoscalingRuleCondition targetArc = new AutoscalingRuleCondition(targetRule, ruleConditions.getName(), ruleConditions.getScalingType(), ruleConditions.isEnabled(), ruleConditions.getScaleInOperationType(), 
+						ruleConditions.getScaleOutOperationType(), ruleConditions.getThresholdTime(), ruleConditions.getCooldownTime(), ruleConditions.getInitialInstantiationLevel());
+				autoscalingRuleConditionRepository.saveAndFlush(targetArc);
+
+				List<AutoscalingRuleCriteria> scalingCriteria = ruleConditions.getScalingCriteria();
+				for (AutoscalingRuleCriteria sc : scalingCriteria) {
+					AutoscalingRuleCriteria targetSc = new AutoscalingRuleCriteria(targetArc, sc.getName(), sc.getScaleInThreshold(), sc.getScaleInRelationalOperation(),
+							sc.getScaleOutThreshold(), sc.getScaleOutRelationalOperation(), sc.getNsMonitoringParamRef());
+					autoscalingRuleCriteriaRepository.saveAndFlush(targetSc);
 				}
+
 				
 				List<AutoscalingAction> ruleActions = r.getRuleActions();
 				for (AutoscalingAction aa : ruleActions) {
