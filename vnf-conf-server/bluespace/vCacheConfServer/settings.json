@@ -1,0 +1,10 @@
+{
+  "port": 8888,
+  "script": "/opt/vCacheConfServer/configureCache.sh",
+  "params": [
+    "vnf.hss.vdu.hss_vdu.hostname",
+    "uservnf.hss.vdu.hss.domainname",
+    "vnf.spgw.vdu.spgw_vdu.intcp.spgwS1uInt.address",
+    "vnf.mme.vdu.mme_vdu.hostname"
+  ]
+}
