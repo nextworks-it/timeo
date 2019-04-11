@@ -430,6 +430,7 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 				if ( !(cpd.getAddressData().isEmpty()) && (cpd.getAddressData().get(0).isManagement())) {
 					log.debug("The instantiated port is for management access to the VNF");
 					String floatingIp = port.getMetadata().get("FLOATING_IP_ADDRESS");
+					vnfDbWrapper.setManagementIp(vnfInstanceId, floatingIp);
 					log.debug("IP to access the VNF: " + floatingIp);
 					this.vnfDriver = new RestVnfDriver(vnfInstanceId, floatingIp, restTemplate, taskExecutor);
 					log.debug("Created VNF driver");

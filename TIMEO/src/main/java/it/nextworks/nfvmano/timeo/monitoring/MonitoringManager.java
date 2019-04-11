@@ -1,8 +1,6 @@
 package it.nextworks.nfvmano.timeo.monitoring;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -10,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import it.nextworks.nfvmano.libs.common.elements.Filter;
 import it.nextworks.nfvmano.libs.common.exceptions.AlreadyExistingEntityException;
 import it.nextworks.nfvmano.libs.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
@@ -29,11 +26,11 @@ import it.nextworks.nfvmano.libs.monit.interfaces.messages.DeleteThresholdsReque
 import it.nextworks.nfvmano.libs.monit.interfaces.messages.DeleteThresholdsResponse;
 import it.nextworks.nfvmano.libs.monit.interfaces.messages.QueryPmJobResponse;
 import it.nextworks.nfvmano.libs.monit.interfaces.messages.QueryThresholdResponse;
-import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.QueryNsResponse;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
-import it.nextworks.nfvmano.timeo.common.Utilities;
 import it.nextworks.nfvmano.timeo.monitoring.interfaces.NsMonitoringActivationInterface;
 import it.nextworks.nfvmano.timeo.nso.NsLifecycleService;
+import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
+import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
 
 /**
  * Service which handles the creation of the monitoring jobs and subscriptions for the monitoring
@@ -53,6 +50,15 @@ public class MonitoringManager implements NsMonitoringActivationInterface, Perfo
 	
 	@Autowired
 	NsLifecycleService nsLifecycleService;
+	
+	@Autowired
+	NsDbWrapper nsDbWrapper;
+	
+	@Autowired
+	MonitoringDriversManager monitoringDriver;
+	
+	@Autowired
+	VnfmHandler vnfmHandler;
 
 	private Map<String, NsMonitoringManager> nsMonitoringManagers = new HashMap<>(); //Key: NS_instance_ID
 	
@@ -133,24 +139,12 @@ public class MonitoringManager implements NsMonitoringActivationInterface, Perfo
 		if ((nsInstanceId == null) || (nsd==null)) throw new MalformattedElementException("Received activate NS request with null parameters");
 		if (this.nsMonitoringManagers.containsKey(nsInstanceId)) 
 			throw new AlreadyExistingEntityException("Monitoring already active for NS instance " + nsInstanceId + ". ");
-		List<NsInfo> nsInfos = nsLifecycleService.queryNs(new GeneralizedQueryRequest(Utilities.buildNsInfoFilter(nsInstanceId), new ArrayList<>())).getQueryNsResult();
-		if (nsInfos.isEmpty()) 
-			throw new NotExistingEntityException("Received request to activate monitoring for a not existing Network Service");
-		NsMonitoringManager nsMonitoringManager = new NsMonitoringManager(nsInstanceId, nsd);
+		NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
+		NsMonitoringManager nsMonitoringManager = new NsMonitoringManager(nsInstanceId, nsd, 
+				this.nsLifecycleService, this.nsDbWrapper, this.monitoringDriver, this.vnfmHandler);
 		log.debug("Instantiated new NS Monitoring Manager for NS instance " + nsInstanceId);
-	
-		
-		// TODO Auto-generated method stub
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		throw new MethodNotImplementedException("Method not implemented");
+		nsMonitoringManager.activateNsMonitoring(nsInfo);
+	    log.debug("Activated monitoring for NS instance " + nsInstanceId);
 	}
 	
 	@Override
