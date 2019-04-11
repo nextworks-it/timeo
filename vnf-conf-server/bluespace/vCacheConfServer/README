@@ -1,0 +1,8 @@
+Preconditions:
+$ pip3 install tornado
+$ pip3 install yattag
+
+Operating:
+Run with
+$ python3 server.py
+and see help via browser at 'http://localhost:8888'
