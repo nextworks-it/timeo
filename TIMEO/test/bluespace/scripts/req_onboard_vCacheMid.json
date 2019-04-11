@@ -1,0 +1,7 @@
+{
+	"name": "CDN vCacheMid",
+	"version": "0.1",
+	"provider": "NXW",
+	"checksum": "VNFD_TEST_001_checksum",
+	"vnfPackagePath": "http://localhost/vnfd/vnfd_vCacheMid_v01.tar"
+}

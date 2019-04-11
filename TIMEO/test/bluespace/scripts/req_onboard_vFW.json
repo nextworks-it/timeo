@@ -1,0 +1,7 @@
+{
+	"name": "CDN vFW",
+	"version": "0.1",
+	"provider": "NXW",
+	"checksum": "VNFD_TEST_001_checksum",
+	"vnfPackagePath": "http://localhost/vnfd/vnfd_vFW_v01.tar"
+}
