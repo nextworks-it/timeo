@@ -459,6 +459,68 @@
 			"signature": "vCDN_NSD_SIGNATURE",
 			"algorithm": "vCDN_NSD_ALGORITHM",
 			"certificate": "vCDN_NSD_CERTIFICATE"
+		},
+		"monitoredInfo": [{
+			"monitoringParameter": {
+				"monitoringParameterId": "mp_CurrentClientConnections.vCacheEdge_1_01",
+				"name": "CurrentClientConnections.vCacheEdge_1",
+				"performanceMetric": "CurrentClientConnections.vCacheEdge_1_01"
+			}
+		}, {
+			"monitoringParameter": {
+				"monitoringParameterId": "mp_CompletedRequests.vCacheEdge_1_01",
+				"name": "CurrentClientConnections.vCacheEdge_1",
+				"performanceMetric": "CompletedRequests.vCacheEdge_1_01"
+			}
+		}, {
+			"monitoringParameter": {
+				"monitoringParameterId": "mp_TotalHits.vCacheEdge_1_01",
+				"name": "TotalHits.vCacheEdge_1",
+				"performanceMetric": "TotalHits.vCacheEdge_1_01"
+			}
+		}, {
+			"monitoringParameter": {
+				"monitoringParameterId": "mp_CurrentClientConnections.vCacheEdge_2_01",
+				"name": "CurrentClientConnections.vCacheEdge_2",
+				"performanceMetric": "CurrentClientConnections.vCacheEdge_2_01"
+			}
+		}, {
+			"monitoringParameter": {
+				"monitoringParameterId": "mp_CompletedRequests.vCacheEdge_2_01",
+				"name": "CurrentClientConnections.vCacheEdge_1",
+				"performanceMetric": "CompletedRequests.vCacheEdge_2_01"
+			}
+		}, {
+			"monitoringParameter": {
+				"monitoringParameterId": "mp_TotalHits.vCacheEdge_2_01",
+				"name": "TotalHits.vCacheEdge_2",
+				"performanceMetric": "TotalHits.vCacheEdge_2_01"
+			}
 		}
+
+		],
+		"autoScalingRule" : [{
+			"ruleId": "ar1",
+			"ruleConditions": [{
+				"name": "cache1-overload",
+				"scalingType": "AUTOMATED_SCALING",
+				"enabled": true,
+				"thresholdTime": 150,
+				"cooldownTime": 60,
+				"initialInstantiationLevel": "il_vCDN_small",
+				"scalingCriteria": [{
+					"name": "cache-overload",
+					"scaleOutThreshold": "75",
+					"scaleOutRelationalOperation": "GT",
+					"nsMonitoringParamRef": "mp_CurrentClientConnections.vCacheEdge_1_01"
+				}]
+			}],
+			"ruleActions": [{
+				"scaleType": "SCALE_NS",
+				"scaleNsToLevelData": {
+					"nsInstantiationLevel": "il_vCDN_big"
+				}
+			}]
+		}]
 	}
 }
