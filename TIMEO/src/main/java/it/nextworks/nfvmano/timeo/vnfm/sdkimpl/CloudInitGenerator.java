@@ -59,6 +59,11 @@ public class CloudInitGenerator {
 				.filter(entry -> (entry.getKey().startsWith("uservnf") && (entry.getKey().endsWith("domainname"))))
 				.map(Map.Entry<String,String>::getValue)
 				.collect(Collectors.toList());
+		Map<String, String> userVnfParameters = userConfig.entrySet()
+				.stream()
+				.filter(entry->(entry.getKey().startsWith("uservnf")))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
 		if (!(userConfigDomain.isEmpty())) {
 			String d = userConfigDomain.get(0);
 			log.debug("The domain name is set from the user: " + d);
@@ -75,6 +80,9 @@ public class CloudInitGenerator {
 		}
 		for (Map.Entry<String, String> e : gwAddresses.entrySet()) {
 			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$extCp." + e.getKey() + ".gateway", e.getValue());
+		}
+		for (Map.Entry<String, String> e : userVnfParameters.entrySet()){
+			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$" + e.getKey(), e.getValue());
 		}
 		resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$managementGw", gatewayIpManagement);
 		log.debug("Resulting cloud init script: \n" + resultingScript);
