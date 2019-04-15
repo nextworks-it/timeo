@@ -57,6 +57,7 @@ create_vnfm(){
 create_nsi_id(){
 
     export NSI_ID=$(curl -v -X POST -d @${SCRIPTS_FOLDER}/req_create_NSI_Id.json http://$timeo:8081/nfvo/nsLifecycle/ns --header "Content-Type:application/json")
+    echo $NSI_ID
 }
 
 instantiate_nsi(){
