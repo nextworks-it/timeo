@@ -39,10 +39,21 @@ onboard_nsd(){
 }
 
 
+onboard_pnfd(){
+    curl -v -X POST -d @${DESCRIPTORS_FOLDER}/pnfd_pDNSjson http://$timeo:8081/nfvo/nsdManagement/pnfd --header "Content-Type:application/json" || { echo "DU not loaded!"; exit 1; }
+
+}
+
+create_pnf(){
+    curl -v -d @${SCRIPTS_FOLDER}/req_create_pDNS.json -X POST http://localhost:8081/nfvo/pnfInstanceManagement/pnf --header "Content-Type:application/json"
+
+}
 create_vim(){
     curl -v -X POST -d @${SCRIPTS_FOLDER}/req_create_VIM.json http://$timeo:8081/nfvo/vimManagement/vim --header "Content-Type:application/json"
 
 }
+
+
 
 create_tenant(){
 
