@@ -56,7 +56,7 @@
     "virtualStorageDesc": ["VSD_vCacheEdge_2"],
     "swImageDesc": {
       "id": "vCDN_vCacheEdge_2_SWID",
-      "name": "vCache-ubuntu-54-shrink",
+      "name": "vCache-bluespace-20190416",
       "version": "0.1",
       "checksum": "TBD",
       "containerFormat": "QCOW",
@@ -64,7 +64,7 @@
       "minDisk": 1,
       "minRam": 1,
       "size": 20,
-      "swImage": "vCache-ubuntu-54-shrink",
+      "swImage": "vCache-bluespace-20190416",
       "operatingSystem": "ubuntu-server"
     },
     "configurableProperties": {}

@@ -1,25 +1,10 @@
 {
   "pnfd": {
-    "pnfdId": "DNS_v01",
+    "pnfdId": "pDNS_v01",
     "provider": "NXW",
     "version": "0.1",
     "pnfExtCp": [
-      {
-        "cpdId": "dns_mgmt",
-        "description": "Management connection point for the DNS",
-        "layerProtocol": "IPV4",
-        "cpRole": "ROOT",
-        "addressData": [
-          {
-            "addressType": "IP_ADDRESS",
-            "iPAddressAssignment": false,
-            "floatingIpActivated": true,
-            "iPAddressType": "IPv4",
-            "numberOfIpAddress": 1,
-            "management": true
-          }
-        ]
-      },
+
       {
         "cpdId": "dns_users",
         "description": "Connection point for the gateway towards the users",
@@ -42,8 +27,11 @@
       "certificate": "GW_PNFD_CERTIFICATE"
     },
     "configurableProperty": [
-      "vnf.vEPC.vdu.vEPC_vdu.extcp.S1Ext.floating",
-      "vnf.vEPC.vdu.vEPC_vdu.intcp.vEPCMgtInt.address"
+      "vnf.vCacheEdge_1_01.vdu.vCacheEdge_1_vdu.extcp.vCacheEdge_1_users_ext.floating",
+      "vnf.vCacheEdge_2_01.vdu.vCacheEdge_2_vdu.extcp.vCacheEdge_2_users_ext.floating",
+      "vnf.vCacheEdge_1_01.vdu.vCacheEdge_1_vdu.hostname",
+      "vnf.vCacheEdge_2_01.vdu.vCacheEdge_2_vdu.hostname",
+      "uservnf.origin_fqdn"
     ]
   }
 }
