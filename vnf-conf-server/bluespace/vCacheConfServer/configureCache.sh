@@ -4,7 +4,8 @@ export origin_fqdn=${uservnf_origin_fqdn}
 export origin_port=${uservnf_origin_port}
 export origin_address=${uservnf_origin_address}
 export remap_fqdn=origin.${origin_fqdn}
-cache_host=$(hostname)
+#Dns hosts do not allow '_'
+cache_host=$(hostname | sed -r 's/[^[:alnum:]]//g' | sed -e 's/\(.*\)/\L\1/')
 date > /tmp/cache.log
 env >> /tmp/cache.log
 template_folder=/opt/vCacheConfServer/templates
