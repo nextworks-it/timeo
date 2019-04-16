@@ -7,8 +7,8 @@
 	"ports": [{
 		"portId": "dns_users",
 		"addresses": {
-			"MAC_ADDRESS": "fa:16:3e:e6:19:c8",
-			"IP_ADDRESS": "10.0.6.22"
+			"MAC_ADDRESS": "fa:16:3e:53:a5:4f",
+			"IP_ADDRESS": "10.0.8.42"
 		},
 		"management": true
 	}]

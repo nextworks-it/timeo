@@ -1,12 +1,12 @@
 {
 	"nsd": {
-		"nsdIdentifier": "vCDN_v01",
+		"nsdIdentifier": "vCDN_pnf_v01",
 		"designer": "NXW",
 		"version": "0.1",
 		"nsdName": "vCDN_TIMEO_BLUESPACE",
 		"nsdInvariantId": "vCDN_TIMEO_BLUESPACE_01",
 		"vnfdId": ["vCacheMid_01", "vCacheEdge_1_01", "vCacheEdge_2_01"],
-		"pnfdId": ["pDNS_01"],
+		"pnfdId": ["pDNS_v01"],
 		"sapd": [
 			{
 				"cpdId": "sap_mgmt",
@@ -233,6 +233,16 @@
 						}
 					]
 				}],
+			"pnfProfile": [{
+				"pnfProfileId": "pDNS_profile",
+				"pnfdId": "pDNS_v01",
+				"pnfVirtualLinkConnectivity": [{
+					"virtualLinkProfileId": "vl_profile_mgmt",
+					"cpdId": [
+						"dns_users"
+					]
+				}]
+			}],
 			"virtualLinkProfile": [
 				{
 					"virtualLinkProfileId": "vl_profile_mgmt",
@@ -466,7 +476,7 @@
 		],
 		"autoScalingRule" : [{
 			"ruleId": "ar1",
-			"ruleConditions": [{
+			"ruleConditions": {
 				"name": "cache1-overload",
 				"scalingType": "AUTOMATED_SCALING",
 				"enabled": true,
@@ -479,7 +489,7 @@
 					"scaleOutRelationalOperation": "GT",
 					"nsMonitoringParamRef": "mp_CurrentClientConnections.vCacheEdge_1_01"
 				}]
-			}],
+			},
 			"ruleActions": [{
 				"scaleType": "SCALE_NS",
 				"scaleNsToLevelData": {

@@ -14,7 +14,7 @@
           {
             "addressType": "IP_ADDRESS",
             "iPAddressAssignment": false,
-            "floatingIpActivated": true,
+            "floatingIpActivated": false,
             "iPAddressType": "IPv4",
             "numberOfIpAddress": 1
           }

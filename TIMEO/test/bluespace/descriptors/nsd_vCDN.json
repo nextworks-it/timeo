@@ -501,7 +501,7 @@
 		],
 		"autoScalingRule" : [{
 			"ruleId": "ar1",
-			"ruleConditions": [{
+			"ruleConditions": {
 				"name": "cache1-overload",
 				"scalingType": "AUTOMATED_SCALING",
 				"enabled": true,
@@ -514,7 +514,7 @@
 					"scaleOutRelationalOperation": "GT",
 					"nsMonitoringParamRef": "mp_CurrentClientConnections.vCacheEdge_1_01"
 				}]
-			}],
+			},
 			"ruleActions": [{
 				"scaleType": "SCALE_NS",
 				"scaleNsToLevelData": {
