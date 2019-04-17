@@ -1,21 +1,52 @@
-# import uuid
-# import re
 import json
-import subprocess
-# from wsgiref import headers
-# from tornado.httpclient import AsyncHTTPClient
-# from tornado.httpclient import HTTPRequest
-# from tornado.stack_context import ExceptionStackContext
 import tornado.web
 import logging
 import requests
-import sys
 import re
 
+# This agent interfaces TIMEO with the bind-rest API server.
+# @Author: j.brenes
+# uservnf.add_dns_hosts / uservnf.rm_dns_hosts are required to identify the desired actions
 
+# usage: curl -X PATCH \
+#   http://10.0.8.42:8888/vnfconfig/v1/configuration \
+#   -H 'Content-Type: application/json' \
+#   -H 'Postman-Token: 359cf56a-c732-4030-8757-7b6fdcac4777' \
+#   -H 'cache-control: no-cache' \
+#   -d '{
+# 	"vnfConfigurationData": {
+# 		"cpConfiguration": [],
+# 		"dhcpServer": "null",
+# 		"vnfSpecificData": [
+# 			{
+# 				"key": "uservnf.origin_fqdn",
+# 				"value": "bluespace.lab"
+# 			},{
+# 				"key": "vnf.vCacheEdge_1_01.vdu.vCacheEdge_1_vdu.hostname",
+# 				"value": "vCacheEdge_1492"
+# 			},{
+# 				"key": "vnf.vCacheEdge_1_01.vdu.vCacheEdge_1_vdu.extcp.vCacheEdge_1_users_ext.floating",
+# 				"value": "10.0.6.21"
+# 			},{
+# 				"key": "uservnf.add_dns_hosts",
+# 				"value": "true"
+# 			},{
+# 				"key": "uservnf.rm_dns_hosts",
+# 				"value": "true"
+# 			}
+#
+#
+# 		]
+# 	},
+# 	"vnfcConfigurationData": [],
+# 	"vnfInstanceId": "553"
+# }'
+#
+#
 
 
 class AvailableAPI(tornado.web.RequestHandler):
+
     def get(self):
         self.write('GET /  \n\tTo get this menu'
                    '\n\nPATCH vnfconfig/v1/configuration\n\tTo modify the configuration')
@@ -28,7 +59,7 @@ class ModifyConfiguration(tornado.web.RequestHandler):
             body = self.request.body.decode('utf-8')
             data = json.loads(body)
             result = extract_parameters(data)
-            print result
+            logging.debug(result)
             response = {
                 "vnfConfigurationData": {
                     "cpConfiguration": [],
@@ -39,84 +70,93 @@ class ModifyConfiguration(tornado.web.RequestHandler):
             }
             self.set_header("Access-Control-Allow-Origin", "*")
             self.set_header('Content-Type', 'application/json')
-            execute_configuration_script(result)
+            if "uservnf.rm_dns_hosts" in result:
+                rm_hosts()
+            if "uservnf.add_dns_hosts" in result:
+                add_hosts(result)
+
+            if not ("uservnf.rm_dns_hosts" in result or "uservnf.add_dns_hosts" in result):
+                raise Exception("Unidentified method request")
+
             self.set_status(200)
             self.write(response)
         except Exception as e:
-            print "ERROR"+str(e)
+            logging.error( "ERROR"+str(e))
             self.set_status(400)
             self.set_header('Content-Type', 'application/json')
             self.write(str(e))
             return
 
 
-
-
-application = tornado.web.Application([
-    (r"/", AvailableAPI),
-    (r"/vnfconfig/v1/configuration", ModifyConfiguration),
-])
-
-
-
 def extract_parameters(payload):
-    output = []
+
     try:
         data = payload.get('vnfConfigurationData').get('vnfSpecificData')
         data_dict = {x['key']: x['value'] for x in data}
         return data_dict
     except KeyError as e:
-        logger.warning('Error: {}', e)
-        logger.debug('Details:', exc_info=e)
+        logging.warning('Error: {}', e)
+        logging.debug('Details:', exc_info=e)
         raise ValueError('Property not found: {}'.format(e))
     except Exception as e:
-        logger.warning('Error: {}', e)
-        logger.debug('Details:', exc_info=e)
+        logging.warning('Error: {}', e)
+        logging.debug('Details:', exc_info=e)
         raise ValueError(str(e))
-    return output
 
 
-def execute_configuration_script(data, rest_url=None):
-    print "execute_configuration"
+def rm_hosts(rest_url=None):
+
+    logging.debug("rm hosts")
+    headers = {"Content-Type": "application/json", "X-Api-Key": "secret"}
+    url = "http://localhost:9999/dns" if rest_url is None else rest_url
+    for host in added_hosts:
+        logging.debug( "rm host %s"%host)
+        delete_data = {"hostname": host}
+        response=requests.delete(url, headers=headers, data=json.dumps(delete_data))
+        if response.status_code!=200:
+            raise Exception(response.json)
+
+
+def add_hosts(data, rest_url=None):
+
+    logging.debug("add_hosts")
     vnfdid_hostname= {}
     vnfdid_floating ={}
     headers = {"Content-Type": "application/json", "X-Api-Key": "secret"}
     url = "http://localhost:9999/dns" if rest_url is None else rest_url
     for key, value in data.iteritems():
-        #keys should be vnf.<vnfdId>.vdu.<vdu>.extcp.<cpId>.floating and vnf.<vnfdId>.vdu.<vdu>.hostname",
+        # keys should be vnf.<vnfdId>.vdu.<vdu>.extcp.<cpId>.floating and vnf.<vnfdId>.vdu.<vdu>.hostname",
         key_split = key.split(".")
 
-        if key_split[0]=="vnf" and key_split[-1]=="hostname":
+        if key_split[0] == "vnf" and key_split[-1] == "hostname":
             vnfdid_hostname[key_split[1]]= re.sub(r'[^a-zA-Z0-9]','', value)
-        elif key_split[0]=="vnf" and key_split[-1]=="floating":
+        elif key_split[0] == "vnf" and key_split[-1] == "floating":
             vnfdid_floating[key_split[1]]=value
 
     for vnfdid, hostname in vnfdid_hostname.iteritems():
         full_hostname= hostname+"."+data["uservnf.origin_fqdn"]
         request_data = {"hostname": full_hostname, "ip":vnfdid_floating[vnfdid]}
         response=requests.post(url, headers=headers, data=json.dumps(request_data))
-        print "hostname:%s ip:%s"%(full_hostname, vnfdid_floating[vnfdid])
-        print response.json()
-        if response.status_code != 200:
+        logging.debug("hostname:%s ip:%s"%(full_hostname, vnfdid_floating[vnfdid]))
+        logging.debug(response.json())
+        if response.status_code == 200:
+            added_hosts.append(full_hostname)
+        else:
             raise Exception(response.json)
 
 
+# Store the hosts to be flushed when instantiating a new service.
+added_hosts = []
 
-def test():
-    data = {"vnf.vCacheEdge_1_01.vdu.vCacheEdge_1_vdu.extcp.vCacheEdge_1_users_ext.floating": "10.0.5.15", "vnf.vCacheEdge_1_01.vdu.vCacheEdge_1_vdu.hostname":"vcacheedge_451",
-            "uservnf.origin_fqdn":"bluespace.lab"}
-    execute_configuration_script(data, rest_url="http://10.0.6.22:9999/dns")
-
+application = tornado.web.Application([
+    (r"/", AvailableAPI),
+    (r"/vnfconfig/v1/configuration", ModifyConfiguration),
+])
 
 if __name__ == "__main__":
-    try:
-        if len(sys.argv) > 1 and sys.argv[1] == "-d":
-            test()
-        else:
-            application.listen('8888')
-            print "Staring server at port 8888"
-            tornado.ioloop.IOLoop.instance().start()
-            print "Server started"
-	#execute_configuration_script({"juan":"test1", "test": "test2"})
-    except KeyboardInterrupt:
-        tornado.ioloop.IOLoop.instance().stop()
+
+    logging.basicConfig(filename='/var/log/VnfServer/server.log',level=logging.DEBUG)
+    application.listen('8888')
+    logging.debug("Staring server at port 8888")
+    tornado.ioloop.IOLoop.instance().start()
+    logging.debug("Server started")

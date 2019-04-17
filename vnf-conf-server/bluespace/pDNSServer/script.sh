@@ -6,7 +6,7 @@ if [ -z /var/log/VnfServer ]; then
 fi
 
 if [ -z "${PORT}" ]; then
-        python /opt/vCacheConfServer/server.py &
+        python /opt/pDNSConfServer/server.py &
         echo "Running server.py on " `date` >> /var/log/VnfServer/server.py.log
 fi
 exit 0
