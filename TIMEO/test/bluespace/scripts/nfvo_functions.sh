@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export timeo=1.1.1.1
-export timeo_user=ubuntu
+export timeo=192.168.217.2
+export timeo_user=jbrenes
 export SCRIPTS_FOLDER=$(pwd)/scripts
 export DESCRIPTORS_FOLDER=$(pwd)/descriptors
 generate_tar(){
@@ -36,16 +36,27 @@ onboard_vnfds(){
 
 onboard_nsd(){
     curl -v -X POST -d @${DESCRIPTORS_FOLDER}/nsd_vCDN.json http://$timeo:8081/nfvo/nsdManagement/nsd --header "Content-Type:application/json"
+    export current_NSD=$(curl -v -X POST -d @${DESCRIPTORS_FOLDER}/nsd_vCDN_pnf.json http://$timeo:8081/nfvo/nsdManagement/nsd --header "Content-Type:application/json")
+    echo current_NSD $current_NSD
 }
 
 
 onboard_pnfd(){
-    curl -v -X POST -d @${DESCRIPTORS_FOLDER}/pnfd_pDNSjson http://$timeo:8081/nfvo/nsdManagement/pnfd --header "Content-Type:application/json" || { echo "DU not loaded!"; exit 1; }
+    curl -v -X POST -d @${DESCRIPTORS_FOLDER}/pnfd_pDNS.json http://$timeo:8081/nfvo/nsdManagement/pnfd --header "Content-Type:application/json" || { echo "DU not loaded!"; exit 1; }
 
 }
 
+onboard_vCDN(){
+    onboard_vnfds
+    onboard_pnfd
+    onboard_nsd
+
+
+}
+
+
 create_pnf(){
-    curl -v -d @${SCRIPTS_FOLDER}/req_create_pDNS.json -X POST http://localhost:8081/nfvo/pnfInstanceManagement/pnf --header "Content-Type:application/json"
+    curl -v -d @${SCRIPTS_FOLDER}/req_create_pDNS.json -X POST http://$timeo:8081/nfvo/pnfInstanceManagement/pnf --header "Content-Type:application/json"
 
 }
 create_vim(){
@@ -65,8 +76,16 @@ create_vnfm(){
     curl -v -X POST -d @${SCRIPTS_FOLDER}/req_create_VNFM.json http://$timeo:8081/nfvo/vnfmManagement/vnfm --header "Content-Type:application/json"
 }
 
-create_nsi_id(){
+create_vCDN_inf(){
+    create_vnfm
+    create_vim
+    create_tenant
+    create_pnf
+}
 
+create_nsi_id(){
+    export NSD_ID=$1
+    envsubst < ${SCRIPTS_FOLDER}/req_create_NSI_Id_template.json > ${SCRIPTS_FOLDER}/req_create_NSI_Id.json
     export NSI_ID=$(curl -v -X POST -d @${SCRIPTS_FOLDER}/req_create_NSI_Id.json http://$timeo:8081/nfvo/nsLifecycle/ns --header "Content-Type:application/json")
     echo $NSI_ID
 }
@@ -78,14 +97,10 @@ instantiate_nsi(){
 }
 
 test_cdn(){
-    generate_tar
-    copy_tar
-    onboard_vnfds
-    onboard_nsd
-    create_tenant
-    create_vim
-    create_vnfm
-    create_nsi_id
-    instantiate_nsi
+   onboard_vCDN
+   create_vCDN_inf
+   create_nsi_id $current_NSD
+   instantiate_nsi
+
 
 }

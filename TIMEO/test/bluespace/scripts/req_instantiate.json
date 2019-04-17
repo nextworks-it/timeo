@@ -1,7 +1,7 @@
 {
-  "nsInstanceId": "405",
+  "nsInstanceId": "477",
   "flavourId": "df_vCDN",
-  "nsInstantiationLevelId": "il_vCDN_small",
+  "nsInstantiationLevelId": "il_vCDN_big",
   "sapData": [
     {
       "sapdId": "sap_mgmt",
@@ -25,8 +25,14 @@
       "additionalParam": {
         "uservnf.origin_port": "32400",
         "uservnf.origin_address": "10.0.8.39",
-        "uservnf.origin_fqdn": "bluespace.nextworks.it"
+        "uservnf.origin_fqdn": "bluespace.lab",
+        "uservnf.timeo_address": "10.0.2.161"
       }
     }
-  ]
+  ],
+  "additionalParamForNs": {
+    "uservnf.add_dns_hosts": "true",
+    "uservnf.rm_dns_hosts": "true"
+
+  }
 }
