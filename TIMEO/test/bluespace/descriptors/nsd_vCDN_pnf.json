@@ -6,7 +6,7 @@
 		"nsdName": "vCDN_TIMEO_BLUESPACE",
 		"nsdInvariantId": "vCDN_TIMEO_BLUESPACE_01",
 		"vnfdId": ["vCacheMid_01", "vCacheEdge_1_01", "vCacheEdge_2_01"],
-		"pnfdId": ["pDNS_v01"],
+		"pnfdId": ["pDNS_v01", "pOrigin_v01"],
 		"sapd": [
 			{
 				"cpdId": "sap_mgmt",
@@ -241,8 +241,16 @@
 					"cpdId": [
 						"dns_users"
 					]
-				}]
-			}],
+				}]},{
+				"pnfProfileId": "pOrigin_profile",
+				"pnfdId": "pOrigin_v01",
+				"pnfVirtualLinkConnectivity": [{
+					"virtualLinkProfileId": "vl_profile_mgmt",
+					"cpdId": [
+						"origin_caches"
+					]
+				}]}
+			],
 			"virtualLinkProfile": [
 				{
 					"virtualLinkProfileId": "vl_profile_mgmt",
