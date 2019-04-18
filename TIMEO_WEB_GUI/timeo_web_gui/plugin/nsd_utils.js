@@ -198,6 +198,10 @@ function getVNFsUserParameters(nsdId, callback, param) {
 	getJsonFromURL('http://' + nfvoAddr + ':' + nfvoPort + '/nfvo/nsdManagement/nsd/' + nsdId + '/internal/vnfsuserparameters', nsdId, callback, param, null, null);
 }
 
+function getNSUserParameters(nsdId, callback, param) {
+	getJsonFromURL('http://' + nfvoAddr + ':' + nfvoPort + '/nfvo/nsdManagement/nsd/' + nsdId + '/internal/nsuserparameters', nsdId, callback, param, null, null);
+}
+
 function createNSDTable(tableId, data, resId) {
 //	console.log("NSDs: " + JSON.stringify(data,null,4));
     var table = document.getElementById(tableId);
@@ -421,9 +425,7 @@ function createNSInstantiateModalDialogs(nsdInfoId, data) {
 						<div id="instantiateNSD-userParams_modalForm_' + nsdInfoId + '">\
 						  <h4 class="modal-title" id="myModalLabel">VNFs Parameters</h4>\
 						</div>\
-						<div id="instantiateNSD-pnfUserParams_modalForm_' + nsdInfoId + '">\
-                        						  <h4 class="modal-title" id="myModalLabel">PNFs Parameters</h4>\
-                        </div>\
+
                       </form>\
                     </div>\
                   </div>\
@@ -582,9 +584,9 @@ function fillNSInstantiationForm(data, formIds, nsdInfoId) {
 	}
 	
 	if (data[0] === null || data[0] === undefined) {
-		getVNFsUserParameters(data['nsdInfoId'], fillNSInstantiationForm_step2, formIds[3]);
+		getNSUserParameters(data['nsdInfoId'], fillNSInstantiationForm_step2, formIds[3]);
 	} else {
-		getVNFsUserParameters(data[0]['nsdInfoId'], fillNSInstantiationForm_step2, formIds[3]);
+		getNSUserParameters(data[0]['nsdInfoId'], fillNSInstantiationForm_step2, formIds[3]);
 	}
 }
 
