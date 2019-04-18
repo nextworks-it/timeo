@@ -254,6 +254,20 @@ public class NsdManagementRestController {
 		}
 		return new ResponseEntity<Map<String, String>>(response, HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "/nsd/{nsdInfoId}/internal/pnfuserparameters", method = RequestMethod.GET)
+	public ResponseEntity<?> queryNsUserParameters (@PathVariable String nsdInfoId) {
+		log.debug("Received NS user parameters request for NSD" + nsdInfoId);
+
+		Map<String, String> response = null;
+		try {
+			response = nsdManagement.findPnfUserParameters(nsdInfoId);
+		} catch (NotExistingEntityException e) {
+			log.error("Not able to find NSD " + nsdInfoId);
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<Map<String, String>>(response, HttpStatus.OK);
+	}
 	
 	@RequestMapping(value = "/pnfd", method = RequestMethod.POST)
 	public ResponseEntity<?> onBoardPnfd(@RequestBody OnboardPnfdRequest request) {
