@@ -1,11 +1,12 @@
 {
 	"nsd": {
-		"nsdIdentifier": "vCDN_v01",
+		"nsdIdentifier": "vCDN_pnf_v01",
 		"designer": "NXW",
 		"version": "0.1",
 		"nsdName": "vCDN_TIMEO_BLUESPACE",
 		"nsdInvariantId": "vCDN_TIMEO_BLUESPACE_01",
-		"vnfdId": ["vDNS_01", "vCacheMid_01", "vCacheEdge_1_01", "vCacheEdge_2_01"],
+		"vnfdId": ["vCacheMid_01", "vCacheEdge_1_01", "vCacheEdge_2_01"],
+		"pnfdId": ["pDNS_v01", "pOrigin_v01"],
 		"sapd": [
 			{
 				"cpdId": "sap_mgmt",
@@ -154,26 +155,6 @@
 			"vnfProfile": [
 
 				{
-				"vnfProfileId": "vDNS_profile",
-				"vnfdId": "vDNS_01",
-				"flavourId": "df_vDNS",
-				"instantiationLevel": "il_vDNS",
-				"minNumberOfInstances": 1,
-				"maxNumberOfInstances": 1,
-				"nsVirtualLinkConnectivity": [{
-						"virtualLinkProfileId": "vl_profile_mgmt",
-						"cpdId": [
-							"vDNS_mgmt_ext"
-						]
-					},{
-						"virtualLinkProfileId": "vl_profile_users",
-						"cpdId": [
-							"vDNS_users_ext"
-						]
-					}
-				]
-				},
-				{
 					"vnfProfileId": "vCacheMid_profile",
 					"vnfdId": "vCacheMid_01",
 					"flavourId": "df_vCacheMid",
@@ -252,6 +233,24 @@
 						}
 					]
 				}],
+			"pnfProfile": [{
+				"pnfProfileId": "pDNS_profile",
+				"pnfdId": "pDNS_v01",
+				"pnfVirtualLinkConnectivity": [{
+					"virtualLinkProfileId": "vl_profile_mgmt",
+					"cpdId": [
+						"dns_users"
+					]
+				}]},{
+				"pnfProfileId": "pOrigin_profile",
+				"pnfdId": "pOrigin_v01",
+				"pnfVirtualLinkConnectivity": [{
+					"virtualLinkProfileId": "vl_profile_mgmt",
+					"cpdId": [
+						"origin_caches"
+					]
+				}]}
+			],
 			"virtualLinkProfile": [
 				{
 					"virtualLinkProfileId": "vl_profile_mgmt",
@@ -313,10 +312,6 @@
 					"vnfToLevelMapping": [
 
 						{
-							"vnfProfileId": "vDNS_profile",
-							"numberOfInstances": 1
-						},
-						{
 							"vnfProfileId": "vCacheMid_profile",
 							"numberOfInstances": 1
 						},
@@ -365,10 +360,6 @@
 					"description": "Small instantiation level for the vCDN",
 					"vnfToLevelMapping": [
 
-						{
-							"vnfProfileId": "vDNS_profile",
-							"numberOfInstances": 1
-						},
 						{
 							"vnfProfileId": "vCacheMid_profile",
 							"numberOfInstances": 1
@@ -431,14 +422,6 @@
 				}
 			],
 			"dependencies": [
-				{
-					"primaryId": ["vDNS_profile"],
-					"secondaryId": [
-						"vCacheMid_profile",
-						"vCacheEdge_1_profile",
-						"vCacheEdge_2_profile"
-					]
-				},
 				{
 					"primaryId": ["vCacheMid_profile"],
 					"secondaryId": [

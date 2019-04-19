@@ -54,7 +54,7 @@
     "virtualStorageDesc": ["VSD_vCacheMid"],
     "swImageDesc": {
       "id": "vCDN_vCacheMid_SWID",
-      "name": "vCache-ubuntu-54-shrink",
+      "name": "vCache-bluespace-20190416",
       "version": "0.1",
       "checksum": "TBD",
       "containerFormat": "QCOW",
@@ -62,7 +62,7 @@
       "minDisk": 1,
       "minRam": 1,
       "size": 20,
-      "swImage": "vCache-ubuntu-54-shrink",
+      "swImage": "vCache-bluespace-20190416",
       "operatingSystem": "ubuntu-server"
     },
     "configurableProperties": {}
@@ -153,13 +153,14 @@
     "additionalConfigurableProperty": [
       "uservnf.origin_port",
       "uservnf.origin_address",
-      "uservnf.origin_fqdn"
+      "uservnf.origin_fqdn",
+      "uservnf.timeo_address"
     ]
   },
   "modifiableAttributes": {},
   "lifeCycleManagementScript": [{
     "event": ["START_VNF_INSTANTIATION"],
-    "script": "#!/bin/bash \necho \"nameserver 8.8.8.8\" > /etc/resolv.conf \necho \"domain $$config$$domainname\" >> /etc/resolv.conf \necho \"$$config$$hostname\" > /etc/hostname \nhostnamectl set-hostname $$config$$hostname \necho \"127.0.0.1 localhost\" > /etc/hosts \necho \"127.0.1.1 $$config$$hostname.$$config$$domainname $$config$$hostname\" >> /etc/hosts \nroute add -host 10.0.2.161 gw $$config$$managementGw \nroute del default gw $$config$$managementGw \n route add default gw $$config$$extCp.vCacheMid_origin_ext.gateway\n"
+    "script": "#!/bin/bash \necho \"nameserver 8.8.8.8\" > /etc/resolv.conf \necho \"domain $$config$$domainname\" >> /etc/resolv.conf \necho \"$$config$$hostname\" > /etc/hostname \nhostnamectl set-hostname $$config$$hostname \necho \"127.0.0.1 localhost\" > /etc/hosts \necho \"127.0.1.1 $$config$$hostname.$$config$$domainname $$config$$hostname\" >> /etc/hosts \nroute add -host $$config$$uservnf.timeo_address gw $$config$$managementGw \nroute del default gw $$config$$managementGw \n route add default gw $$config$$extCp.vCacheMid_origin_ext.gateway\n"
   }, {
     "event": ["END_VNF_INSTANTIATION"],
     "script": ""

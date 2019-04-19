@@ -17,21 +17,14 @@ package it.nextworks.nfvmano.timeo.rc.algorithms;
 
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
 import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
-import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
-import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathEndPoint;
-import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
-import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
-import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
+import it.nextworks.nfvmano.timeo.rc.elements.*;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
 
@@ -66,6 +59,16 @@ public class CdnStaticAlgorithmBluespaceNXW extends AbstractNsResourceAllocation
         vnfResourceAllocation.add(vra2);
         vnfResourceAllocation.add(vra3);
         vnfResourceAllocation.add(vra4);
+        List<PnfAllocation> pnfs = new ArrayList<>();
+        pnfs.add(new PnfAllocation(
+                null,
+                "pDNS_v01",
+                "0.1",
+                0,
+                "pDNS_INSTANCE_001",
+                "pDNS_profile",
+                Collections.emptyMap()
+        ));
 
         if (request.getNsInstantiationLevelId().equals("il_vCDN_big")) vnfResourceAllocation.add(vra5);
 
@@ -78,6 +81,7 @@ public class CdnStaticAlgorithmBluespaceNXW extends AbstractNsResourceAllocation
         return new NsResourceSchedulingSolution(
                 request.getNsInstanceId(),
                 vnfResourceAllocation,
+                pnfs,
                 networkPaths,
                 true,
                 networkNodesToBeActivated,
