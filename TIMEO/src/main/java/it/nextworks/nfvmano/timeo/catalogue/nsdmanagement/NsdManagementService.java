@@ -1516,6 +1516,7 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 
 	public Map<String, String> findPnfUserParameters(String nsdInfoId) throws NotExistingEntityException {
 		List<String> pnfsParameters = new ArrayList<>();
+
 		Map<String, String> pnfsParametersMap = new HashMap<>();
 
 		InternalNsdInfo iNsdInfo = null;
@@ -1527,11 +1528,12 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 			PnfdInfo pnfdInfo = buildPnfdInfo(pnfdInfoId);
 			Pnfd pnfd = pnfdInfo.getPnfd();
 			//TODO: verify this j.brenes
-			String pnfdInfoName = pnfdInfo.getName();
+			String pnfdId = pnfdInfo.getPnfdId();
+			//String pnfdInfoName = "TEST";
 			List<String> configurableProperty = pnfd.getConfigurableProperty();
 			if (configurableProperty != null){
 				for( String pnfPorperty : configurableProperty ){
-					pnfsParametersMap.put(pnfPorperty, pnfdInfoName);
+					pnfsParametersMap.put(pnfPorperty, pnfdId);
 				}
 			}
 
