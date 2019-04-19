@@ -35,7 +35,7 @@ public class DummyMonitoringDriver extends MonitoringAbstractDriver {
 
 	
 	@Override
-	public MonitoringGui buildMonitoringGui(List<String> pmJobIds, Tenant tenant) throws MethodNotImplementedException,
+	public MonitoringGui buildMonitoringGui(List<String> pmJobIds, Tenant tenant, Map<String, String> metadata) throws MethodNotImplementedException,
 			NotExistingEntityException, FailedOperationException, MalformattedElementException {
 		//TODO:
 				throw new MethodNotImplementedException("Method not implemented");

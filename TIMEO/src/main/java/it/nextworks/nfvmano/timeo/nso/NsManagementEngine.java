@@ -33,6 +33,7 @@ import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -52,6 +53,7 @@ import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.NsdManagementService;
 import it.nextworks.nfvmano.timeo.common.NfvoConstants;
 import it.nextworks.nfvmano.timeo.common.Utilities;
+import it.nextworks.nfvmano.timeo.monitoring.MonitoringManager;
 import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationReleaseMessage;
@@ -98,6 +100,10 @@ public class NsManagementEngine {
 	@Autowired
 	ResourceAllocationManager resourceAllocationManager;
 	
+	@Autowired
+	@Lazy(value=true)
+	MonitoringManager monitoringManager;
+	
 	//internal map of NS Managers
 	//each NS Manager is created when a new NS istance ID is created and removed when the NS instance ID is removed
 	private Map<String, NsManager> nsManagers = new HashMap<>();
@@ -117,7 +123,8 @@ public class NsManagementEngine {
 	 */
 	public void initNewNsManager(String nsInstanceId) {
 		log.debug("Initializing new NS manager for NS instance " + nsInstanceId);
-		NsManager nsManager = new NsManager(nsInstanceId, resourceSchedulingManager, nsDbWrapper, resourceAllocationManager);
+		NsManager nsManager = new NsManager(nsInstanceId, resourceSchedulingManager, nsDbWrapper, 
+				resourceAllocationManager, monitoringManager, this);
 		createQueue(nsInstanceId, nsManager);
 		this.nsManagers.put(nsInstanceId, nsManager);
 	}

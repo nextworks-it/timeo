@@ -232,6 +232,14 @@ public class NsDbWrapper {
 		log.debug("Instantiation state set");
 	}
 	
+	public synchronized void setNsInfoMonitoringUrl(String nsInstanceId, String monitoringUrl) throws NotExistingEntityException {
+		log.debug("Setting monitoring URL for NS instance " + nsInstanceId);
+		NsInfo nsInfo = getNsInfo(nsInstanceId);
+		nsInfo.setMonitoringDashboardUrl(monitoringUrl);
+		nsInfoRepository.saveAndFlush(nsInfo);
+		log.debug("Monitoring URL set");
+	}
+	
 	//*************************************  Methods related to NS Virtual Link INFOs ***************************************************
 	
 	public synchronized void createNsVirtualLinkInfo(String nsInstanceId, String nsVldId, ResourceHandle resourceHandle, int segmentId) 

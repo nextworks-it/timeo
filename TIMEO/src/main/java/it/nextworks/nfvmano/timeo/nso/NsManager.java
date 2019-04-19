@@ -28,7 +28,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.nextworks.nfvmano.libs.common.enums.InstantiationState;
 import it.nextworks.nfvmano.libs.common.enums.OperationStatus;
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
+import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.timeo.common.exception.WrongInternalStatusException;
+import it.nextworks.nfvmano.timeo.monitoring.MonitoringManager;
 import it.nextworks.nfvmano.timeo.nso.messages.EngineMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.EngineMessageType;
 import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
@@ -59,16 +61,22 @@ public class NsManager {
 	NsDbWrapper nsDbWrapper;
 	ResourceSchedulingManager resourceSchedulingManager;
 	ResourceAllocationManager resourceAllocationManager;
+	NsManagementEngine nsManagementEngine;
+	MonitoringManager monitoringManager;
 	
 	public NsManager(String nsInstanceId,
 			ResourceSchedulingManager resourceSchedulingManager,
 			NsDbWrapper nsDbWrapper,
-			ResourceAllocationManager resourceAllocationManager) {
+			ResourceAllocationManager resourceAllocationManager,
+			MonitoringManager monitoringManager,
+			NsManagementEngine nsManagementEngine) {
 		this.nsInstanceId = nsInstanceId;
 		this.internalStatus = InternalNsStatus.TO_BE_INSTANTIATED;
 		this.resourceSchedulingManager = resourceSchedulingManager;
 		this.nsDbWrapper = nsDbWrapper;
 		this.resourceAllocationManager = resourceAllocationManager;
+		this.monitoringManager = monitoringManager;
+		this.nsManagementEngine = nsManagementEngine;
 	}
 
 	/**
@@ -400,6 +408,9 @@ public class NsManager {
 		if (internalStatus != InternalNsStatus.CONFIGURING_VNFS) throw new WrongInternalStatusException();
 		internalStatus = InternalNsStatus.ALLOCATED;
 		try {
+			Nsd nsd = nsManagementEngine.retrieveNsd(nsInstanceId);
+			monitoringManager.activateNsMonitoring(nsInstanceId, nsd);
+			log.debug("Requested monitoring activation for NS instance " + nsInstanceId);
 			nsDbWrapper.setNsInfoInstantiationState(nsInstanceId, InstantiationState.INSTANTIATED);
 			log.debug("NS service " + nsInstanceId + " successfully instantiated. DB updated");
 		} catch (Exception e) {

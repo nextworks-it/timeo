@@ -79,9 +79,9 @@ MonitoringElaborationInterface, MonitoringGuiManagementInterface {
 	}
 	
 	@Override
-	public MonitoringGui buildMonitoringGui(List<String> pmJobIds, Tenant tenant) throws MethodNotImplementedException,
+	public MonitoringGui buildMonitoringGui(List<String> pmJobIds, Tenant tenant, Map<String, String> metadata) throws MethodNotImplementedException,
 			NotExistingEntityException, FailedOperationException, MalformattedElementException {
-		return monitoringDriver.buildMonitoringGui(pmJobIds, tenant);
+		return monitoringDriver.buildMonitoringGui(pmJobIds, tenant, metadata);
 	}
 
 	@Override

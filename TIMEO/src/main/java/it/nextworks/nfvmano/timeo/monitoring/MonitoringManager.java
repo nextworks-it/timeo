@@ -6,6 +6,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
 import it.nextworks.nfvmano.libs.common.exceptions.AlreadyExistingEntityException;
@@ -28,7 +30,6 @@ import it.nextworks.nfvmano.libs.monit.interfaces.messages.QueryPmJobResponse;
 import it.nextworks.nfvmano.libs.monit.interfaces.messages.QueryThresholdResponse;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.timeo.monitoring.interfaces.NsMonitoringActivationInterface;
-import it.nextworks.nfvmano.timeo.nso.NsLifecycleService;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
 import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
 
@@ -44,12 +45,10 @@ import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
  *
  */
 @Service
+@EnableAsync
 public class MonitoringManager implements NsMonitoringActivationInterface, PerformanceManagementProviderInterface {
 	
 	private static final Logger log = LoggerFactory.getLogger(MonitoringManager.class);
-	
-	@Autowired
-	NsLifecycleService nsLifecycleService;
 	
 	@Autowired
 	NsDbWrapper nsDbWrapper;
@@ -132,6 +131,7 @@ public class MonitoringManager implements NsMonitoringActivationInterface, Perfo
 	}
 
 	@Override
+	@Async
 	public void activateNsMonitoring(String nsInstanceId, Nsd nsd) 
 			throws MethodNotImplementedException, AlreadyExistingEntityException, NotExistingEntityException, FailedOperationException,
 		MalformattedElementException {
@@ -141,7 +141,7 @@ public class MonitoringManager implements NsMonitoringActivationInterface, Perfo
 			throw new AlreadyExistingEntityException("Monitoring already active for NS instance " + nsInstanceId + ". ");
 		NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
 		NsMonitoringManager nsMonitoringManager = new NsMonitoringManager(nsInstanceId, nsd, 
-				this.nsLifecycleService, this.nsDbWrapper, this.monitoringDriver, this.vnfmHandler);
+				this.nsDbWrapper, this.monitoringDriver, this.vnfmHandler);
 		log.debug("Instantiated new NS Monitoring Manager for NS instance " + nsInstanceId);
 		nsMonitoringManager.activateNsMonitoring(nsInfo);
 	    log.debug("Activated monitoring for NS instance " + nsInstanceId);

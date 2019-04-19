@@ -34,8 +34,9 @@ import it.nextworks.nfvmano.libs.monit.interfaces.messages.QueryThresholdRespons
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.libs.records.vnfinfo.VnfInfo;
 import it.nextworks.nfvmano.timeo.common.Utilities;
-import it.nextworks.nfvmano.timeo.nso.NsLifecycleService;
+import it.nextworks.nfvmano.timeo.monitoring.elements.MonitoringGui;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
+import it.nextworks.nfvmano.timeo.tenant.Tenant;
 import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
 
 
@@ -63,39 +64,39 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 	private String nsInstanceId;
 	private Nsd nsd;
 	
-	NsLifecycleService nsLifecycleService;
-	
 	NsDbWrapper nsDbWrapper;
 	
 	MonitoringDriversManager monitoringDriver;
 	
 	VnfmHandler vnfmHandler;
 	
-	//Key: pm job ID; Value: Monitoring Parameter ID
+	//Key: pm job ID; Value: Monitoring Parameter ID - This is for pm jobs associated to the NSD monitoring parameters
 	private Map<String, String> pmJobIdToMpIdMap = new HashMap<>();
 	
-	//Key: Monitoring Parameter ID; Value: pm job ID
+	//Key: Monitoring Parameter ID; Value: pm job ID - This is for pm jobs associated to the NSD monitoring parameters
 	private Map<String, String> mpIdToPmJobIdMap = new HashMap<>();
+	
+	//This list includes the pm jobs associated to NSD monitoring parameters or the ones requested out of the NS instance management
+	private List<String> pmJobIds = new ArrayList<>();
+	
+	private MonitoringGui monitoringGui;
 	
 	/**
 	 * Constructor
 	 * 
 	 * @param nsInstanceId ID of the NS instance which is monitored
 	 * @param nsd NS Descriptor of the NS instance which is monitored
-	 * @param nsLifecycleService service used to manage the NS instance
 	 * @param nsDbWrapper service used to retrieve information related to the NS instance
 	 * @param monitoringDriver service used to access the monitoring platform
 	 * @param vnfmHandler service handling all the VNFMs
 	 */
 	public NsMonitoringManager(String nsInstanceId, 
 			Nsd nsd, 
-			NsLifecycleService nsLifecycleService, 
 			NsDbWrapper nsDbWrapper,
 			MonitoringDriversManager monitoringDriver,
 			VnfmHandler vnfmHandler) {
 		this.nsInstanceId = nsInstanceId;
 		this.nsd = nsd;
-		this.nsLifecycleService = nsLifecycleService;
 		this.nsDbWrapper = nsDbWrapper;
 		this.monitoringDriver = monitoringDriver;
 		this.vnfmHandler = vnfmHandler;
@@ -126,7 +127,15 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 			}
 		}
 		log.debug("Finished creation of monitoring jobs for NS instance " + nsInstanceId);
-		throw new MethodNotImplementedException("Method not implemented");
+		log.debug("Starting building monitoring dashboard for NS instance " + nsInstanceId);
+		buildMonitoringDashboard();
+		String url = monitoringGui.getUrl();
+		try {
+			nsDbWrapper.setNsInfoMonitoringUrl(nsInstanceId, url);
+		} catch (NotExistingEntityException e) {
+			log.error("Impossible to set URL for NS instance " + nsInstanceId + e.getMessage());
+		}
+		log.debug("Finished creation of monitoring dashboard for NS instance " + nsInstanceId);
 	}
 	
 	/**
@@ -155,7 +164,9 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 	@Override
 	public String createPmJob(CreatePmJobRequest request)
 			throws MethodNotImplementedException, FailedOperationException, MalformattedElementException {
-		throw new MethodNotImplementedException("Method not implemented");
+		String pmJobId = monitoringDriver.createPmJob(request);
+		pmJobIds.add(pmJobId);
+		return pmJobId;
 	}
 
 	@Override
@@ -262,13 +273,13 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 		if (vnfInfo != null) log.debug("VNF info correctly retrieved.");
 		else throw new NotExistingEntityException("Unable to find VNF info with ID " + vnfInfoId);
 		
-		ObjectSelection resourceSelector = new ObjectSelection();
+		ObjectSelection vnfSelector = new ObjectSelection();
 		if ( (metricType.equals("VcpuUsageMean")) || (metricType.equals("VmemoryUsageMean")) || (metricType.equals("VdiskUsageMean"))) {
 			List<MonitoringObjectType> objectType = new ArrayList<>();
 			List<String> objectInstanceId = new ArrayList<>();
-			objectType.add(MonitoringObjectType.VM);
-			objectInstanceId.add(vnfInfo.getInstantiatedVnfInfo().getVnfcResourceInfo().get(0).getComputeResource().getResourceId());
-			resourceSelector = new ObjectSelection(objectType, null, objectInstanceId);
+			objectType.add(MonitoringObjectType.VNF);
+			objectInstanceId.add(vnfInfoId);
+			vnfSelector = new ObjectSelection(objectType, null, objectInstanceId);
 		} else if (metricType.equals("ByteIncoming")) {
 			throw new MethodNotImplementedException("ByteIncoming metric not yet supported");
 		} else throw new MalformattedElementException(metricType + " not supported");
@@ -276,11 +287,15 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 		
 		List<String> performanceMetric = new ArrayList<>();
 		performanceMetric.add(metricType);
+		//workaround to provide NSD name and NS ID
+		List<String> performanceMetricGroup = new ArrayList<>();
+		performanceMetric.add(vnfInfo.getVnfdId());
+		performanceMetricGroup.add(nsInstanceId);
 		CreatePmJobRequest pmJobRequest = new CreatePmJobRequest(null,	//NS selector
-				resourceSelector, 										//resource selector
-				null,													//VNF selector 
+				null, 													//resource selector
+				vnfSelector,											//VNF selector 
 				performanceMetric, 										//performance metric
-				null,					 								//performance metric group
+				performanceMetricGroup,					 				//performance metric group
 				0, 														//collection period
 				0, 														//reporting period
 				null);													//reporting boundary
@@ -292,6 +307,21 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 		log.debug("Updated internal maps with PM job and MP IDs");
 	}
 
-	
+	private void buildMonitoringDashboard() throws FailedOperationException {
+		log.debug("Building monitoring dashboard for NS " + nsInstanceId);
+		try {
+			String tenantId = nsDbWrapper.getNsInfo(nsInstanceId).getTenantId();
+			Map<String, String> metadata = new HashMap<>();
+			metadata.put("NSD_ID", nsd.getNsdName());
+			metadata.put("NS_ID", nsInstanceId);
+			MonitoringGui mg = monitoringDriver.buildMonitoringGui(pmJobIds, new Tenant(tenantId, null), metadata);
+			log.debug("Built monitoring GUI");
+			monitoringGui = mg;
+			log.debug("Stored info about monitoring GUI");
+		} catch (Exception e) {
+			log.error("Error while building monitoring dashboard: " + e.getMessage());
+			throw new FailedOperationException("Error while building monitoring dashboard: " + e.getMessage());
+		}
+	}
 	
 }

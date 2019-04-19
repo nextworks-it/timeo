@@ -202,7 +202,14 @@
 			<version>0.6.1</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/javaoctave/javaoctave-0.6.1.jar</systemPath>
-		</dependency>		
+		</dependency>
+		
+		<!-- For Client to monitoring config manager -->
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-java-client-monit-config-manager</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 		
 	</dependencies>
 
