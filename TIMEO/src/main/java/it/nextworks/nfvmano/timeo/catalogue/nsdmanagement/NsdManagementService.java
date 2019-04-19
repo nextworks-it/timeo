@@ -1528,12 +1528,12 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 			PnfdInfo pnfdInfo = buildPnfdInfo(pnfdInfoId);
 			Pnfd pnfd = pnfdInfo.getPnfd();
 			//TODO: verify this j.brenes
-			//String pnfdInfoName = pnfdInfo.getName();
-			String pnfdInfoName = "TEST";
+			String pnfdId = pnfdInfo.getPnfdId();
+			//String pnfdInfoName = "TEST";
 			List<String> configurableProperty = pnfd.getConfigurableProperty();
 			if (configurableProperty != null){
 				for( String pnfPorperty : configurableProperty ){
-					pnfsParametersMap.put(pnfPorperty, pnfdInfoName);
+					pnfsParametersMap.put(pnfPorperty, pnfdId);
 				}
 			}
 
