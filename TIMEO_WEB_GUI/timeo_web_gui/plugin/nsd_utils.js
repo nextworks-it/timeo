@@ -425,7 +425,6 @@ function createNSInstantiateModalDialogs(nsdInfoId, data) {
 						<div id="instantiateNSD-userParams_modalForm_' + nsdInfoId + '">\
 						  <h4 class="modal-title" id="myModalLabel">VNFs Parameters</h4>\
 						</div>\
-
                       </form>\
                     </div>\
                   </div>\
