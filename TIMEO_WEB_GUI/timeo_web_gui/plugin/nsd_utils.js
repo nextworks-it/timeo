@@ -423,7 +423,7 @@ function createNSInstantiateModalDialogs(nsdInfoId, data) {
 						  <h4 class="modal-title" id="myModalLabel">SAP</h4>\
 						</div>\
 						<div id="instantiateNSD-userParams_modalForm_' + nsdInfoId + '">\
-						  <h4 class="modal-title" id="myModalLabel">VNFs Parameters</h4>\
+						  <h4 class="modal-title" id="myModalLabel">User Parameters</h4>\
 						</div>\
                       </form>\
                     </div>\
@@ -654,7 +654,7 @@ function showInstantiateNSModal(elemIds, data, resId) {
 		var nsdInput = document.getElementById(elemIds[1]);
 		nsdInput.value = nsdId;
 		var modalDiv = document.getElementById(elemIds[0]);
-		modalDiv.style = 'display:block';
+		modalDiv.style = 'display:block; overflow-y:auto;';
 	} else {
 		showResultMessage(false, resId, 'Unable to create NSD Id');
 	}
