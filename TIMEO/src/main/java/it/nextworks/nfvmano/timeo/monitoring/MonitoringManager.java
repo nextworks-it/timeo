@@ -154,12 +154,21 @@ public class MonitoringManager implements NsMonitoringActivationInterface, Perfo
 		throw new MethodNotImplementedException("Method not implemented");
 	}
 
+	//This cannot be asynch since monitoring must be de-activated before starting to terminate the service.
 	@Override
 	public void deactivateNsMonitoring(String nsInstanceId) 
 			throws MethodNotImplementedException, NotExistingEntityException, FailedOperationException,
 		MalformattedElementException {
-		// TODO Auto-generated method stub
-		throw new MethodNotImplementedException("Method not implemented");
+		if (nsMonitoringManagers.containsKey(nsInstanceId)) {
+			log.debug("Disactivating NS monitoring for NS instance " + nsInstanceId);
+			nsMonitoringManagers.get(nsInstanceId).deactivateNsMonitoring();
+			log.debug("NS monitoring disactivated for NS instance " + nsInstanceId);
+		} else {
+			log.debug("NS monitoring not active for NS instance " + nsInstanceId + ". Nothing to do");
+			return;
+		}
+		nsMonitoringManagers.remove(nsInstanceId);
+		log.debug("Monitoring manager for NS instance " + nsInstanceId + " removed.");
 	}
 
 }

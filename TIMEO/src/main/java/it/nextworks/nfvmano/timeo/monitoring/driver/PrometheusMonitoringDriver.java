@@ -165,8 +165,21 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 	@Override
 	public void removeMonitoringGui(String guiId) throws MethodNotImplementedException, NotExistingEntityException,
 			FailedOperationException, MalformattedElementException {
-		//TODO:
-				throw new MethodNotImplementedException("Method not implemented");
+		log.debug("Removing monitoring GUI with ID " + guiId);
+		try {
+			dashboardApi.deleteDashboard(guiId);
+			log.debug("Dashboard removed from Prometheus");
+			monitoringGui.remove(guiId);
+			List<String> pmJobIdsInGui = dashboardIdToPmJobId.get(guiId);
+			for (String pmJobId : pmJobIdsInGui) {
+				pmJobIdToDashboardId.remove(pmJobId);
+			}
+			dashboardIdToPmJobId.remove(guiId);
+			log.debug("Dashboard removed from internal maps.");
+		} catch (ApiException e) {
+			log.error("API exception while invoking Monitoring Config Manager client: " + e.getMessage());
+			throw new FailedOperationException("API exception while invoking Monitoring Config Manager client: " + e.getMessage());
+		}
 	}
 
 	@Override
@@ -253,8 +266,56 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 	@Override
 	public DeletePmJobResponse deletePmJob(DeletePmJobRequest request) throws MethodNotImplementedException,
 			FailedOperationException, MalformattedElementException, NotExistingEntityException {
-		//TODO:
-				throw new MethodNotImplementedException("Method not implemented");
+		log.debug("Removing pm jobs.");
+		List<String> removed = new ArrayList<>();
+		List<String> toBeRemoved = request.getPmJobId();
+		for (String pmJobId : toBeRemoved) {
+			log.debug("Removing pm job " + pmJobId);
+			String exporterId = pmJobIdToExporterId.get(pmJobId);
+			log.debug("Exporter associated to pm job " + pmJobId + ": " + exporterId);
+			List<String> pmJobsInExp = exporterIdToPmJob.get(exporterId);
+			pmJobsInExp.remove(pmJobId);
+			pmJobIdToExporterId.remove(pmJobId);
+			PmJob pmJob = pmJobs.get(pmJobId);
+			ExporterType exporterType = ExporterType.UNDEFINED;
+			try {
+				exporterType = PrometheusMapper.readPrometheusExporterInfo(pmJob.getObjectSelector().getObjectType().get(0), pmJob.getPerformanceMetric().get(0)).getType();
+			} catch (Exception e) {
+				log.error("Impossible to determine exporter type: " + e.getMessage());
+			}
+			pmJobs.remove(pmJobId);
+			log.debug("PM job removed from internal structures.");
+			if (pmJobIdToDashboardId.containsKey(pmJobId)) {
+				//TODO: check if we need to update dashboard at this stage.
+				log.debug("PM job " + pmJobId + " associated to dashboard.");
+				String guiId = pmJobIdToDashboardId.get(pmJobId);
+				List<String> pmJobsInGui = dashboardIdToPmJobId.get(guiId);
+				pmJobsInGui.remove(pmJobId);
+				dashboardIdToPmJobId.replace(guiId, pmJobsInGui);
+				pmJobIdToDashboardId.remove(pmJobId);
+				log.debug("Removed association PM job - dashboard from internal structure.");
+			}
+			if (pmJobsInExp.isEmpty()) {
+				log.debug("Exporter " + exporterId + " no more in use. It can be removed.");
+				try {
+					exporterApi.deleteExporter(exporterId);
+					log.debug("Exporter " + exporterId + " removed from Prometheus.");
+				} catch (ApiException e) {
+					log.error("Failed to remove exporter " + exporterId + " from Prometheus. Continuing to remove internally.");
+				}
+				exporterIdToPmJob.remove(exporterId);
+				String vnfId = exporterIdToVnfId.get(exporterId);
+				if (exporterType.equals(ExporterType.NODE_EXPORTER)) vnfInstanceToNodeExporterMap.remove(vnfId);
+				else if (exporterType.equals(ExporterType.TELEGRAF_EXPORTER)) vnfInstanceToTelegrahExporterMap.remove(vnfId);
+				log.debug("Removed exporter from internal maps.");
+			} else {
+				log.debug("Exporter " + exporterId + " still serving " + pmJobsInExp.size() + " pm jobs. It cannot be removed.");
+				exporterIdToPmJob.replace(exporterId, pmJobsInExp);
+				log.debug("Exporter map updated.");
+			}
+			removed.add(pmJobId);
+		}
+		return new DeletePmJobResponse(removed);
 	}
 
 	@Override

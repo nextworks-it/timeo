@@ -157,8 +157,50 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 	 * @throws FailedOperationException if the operation fails
 	 */
 	public void deactivateNsMonitoring() throws MethodNotImplementedException, FailedOperationException {
-		//TODO:
-		throw new MethodNotImplementedException("Method not implemented");
+		log.debug("Disactivating NS monitoring for NS instance " + nsInstanceId);
+		log.debug("Removing monitoring GUI");
+		if (monitoringGui != null) {
+			try {
+				removeMonitoringDashboard();
+				monitoringGui = null;
+			} catch (FailedOperationException e) {
+				log.debug("Monitoring dashboard removal failed. Proceeding with removing pm jobs.");
+			}
+			try {
+				nsDbWrapper.setNsInfoMonitoringUrl(nsInstanceId, null);
+				log.debug("Monitoring URL removed from NS info for NS instance " + nsInstanceId);
+			} catch (NotExistingEntityException e) {
+				log.error("Impossible to remove monitoring URL for NS instance " + nsInstanceId + e.getMessage());
+			}
+			log.debug("Monitoring GUI removed.");
+		} else {
+			log.debug("Monitoring GUI not available. Nothing to remove.");
+		}
+		
+		List<String> toBeRemoved = new ArrayList<>();
+		for (String pmJobId : pmJobIds) toBeRemoved.add(pmJobId);
+		
+		for (String pmJobId : toBeRemoved) {
+			log.debug("Removing pm job with ID " + pmJobId);
+			List<String> pms = new ArrayList<>();
+			pms.add(pmJobId);
+			DeletePmJobRequest deleteRequest = new DeletePmJobRequest(pms);
+			try {
+				DeletePmJobResponse response = deletePmJob(deleteRequest);
+				if (response.getDeletedPmJobId().get(0).equals(pmJobId)) 
+					log.error("Impossible to delete PM job " + pmJobId + ". Skipping it.");
+				if (pmJobIdToMpIdMap.containsKey(pmJobId)) {
+					log.debug("PM job associated to NS monitoring parameter. Removing from internal maps.");
+					String mpId = pmJobIdToMpIdMap.get(pmJobId);
+					mpIdToPmJobIdMap.remove(mpId);
+					pmJobIdToMpIdMap.remove(pmJobId);
+					log.debug("PM job removed from internal maps.");
+				}
+				log.debug("PM job " + pmJobId + " deleted");
+			} catch (Exception e) {
+				log.debug("Failed to delete PM job " + pmJobId);
+			}
+		}
 	}
 
 	@Override
@@ -172,7 +214,9 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 	@Override
 	public DeletePmJobResponse deletePmJob(DeletePmJobRequest request) throws MethodNotImplementedException,
 			FailedOperationException, MalformattedElementException, NotExistingEntityException {
-		throw new MethodNotImplementedException("Method not implemented");
+		DeletePmJobResponse response = monitoringDriver.deletePmJob(request);
+		pmJobIds.remove(request.getPmJobId().get(0));
+		return response;
 	}
 
 	@Override
@@ -321,6 +365,18 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 		} catch (Exception e) {
 			log.error("Error while building monitoring dashboard: " + e.getMessage());
 			throw new FailedOperationException("Error while building monitoring dashboard: " + e.getMessage());
+		}
+	}
+	
+	private void removeMonitoringDashboard() throws FailedOperationException {
+		log.debug("Removing monitoring dashboard for NS " + nsInstanceId);
+		String mgId = monitoringGui.getGuiId();
+		log.debug("Removing monitoring dashboard with ID " + mgId);
+		try {
+			monitoringDriver.removeMonitoringGui(mgId);
+		} catch (Exception e) {
+			log.debug("Failed monitoring GUI removal on monitoring driver: " + e.getMessage());
+			throw new FailedOperationException("Failed monitoring GUI removal on monitoring driver: " + e.getMessage());
 		}
 	}
 	

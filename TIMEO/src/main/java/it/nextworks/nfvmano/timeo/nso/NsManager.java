@@ -354,6 +354,13 @@ public class NsManager {
 	private void terminateNs(TerminateNsRequestMessage message) throws WrongInternalStatusException {
 		if (!((internalStatus == InternalNsStatus.ALLOCATED) || (internalStatus == InternalNsStatus.FAILED))) throw new WrongInternalStatusException();
 		log.debug("Starting procedure to terminate a new Network Service.");
+		internalStatus = InternalNsStatus.TERMINATING_MONITORING;
+		//TODO: check if we really need to make this asynchronous...
+		try {
+			monitoringManager.deactivateNsMonitoring(nsInstanceId);
+		} catch (Exception e) {
+			log.error("Failure while deactivating monitoring for NS instance " + nsInstanceId + ". Continuing termination.");
+		}
 		internalStatus = InternalNsStatus.TERMINATING_VNFS;
 		resourceAllocationManager.terminateVnfs(nsInstanceId, message.getOperationId(), message);	
 	}
