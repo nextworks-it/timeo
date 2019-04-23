@@ -210,11 +210,16 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 		if (os == null) throw new MalformattedElementException("PM job request without object selection.");
 		
 		String metricType = request.getPerformanceMetric().get(0);
+		log.debug("C1");
 		MonitoringObjectType mot = request.getVnfSelector().getObjectType().get(0);
+		log.debug("C2");
 		String vnfInstanceId = request.getVnfSelector().getObjectInstanceId().get(0);
+		log.debug("C3");
 		
 		String vnfdId = request.getPerformanceMetricGroup().get(0);
+		log.debug("C4");
 		String nsInstanceId = request.getPerformanceMetricGroup().get(1);
+		log.debug("C5");
 		
 		log.debug("PM job parameters - Metric type: " + metricType + " - Monitoring object type: " + mot + " - VNF ID: " + vnfInstanceId + " - VNFD ID: " + vnfdId + " - NS Instance ID: " + nsInstanceId);
 		
