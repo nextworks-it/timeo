@@ -122,7 +122,7 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 				if (md.getVnfIndicatorInfo() != null) startMonitoringJobForVnfIndicator(md.getVnfIndicatorInfo(), nsInfo);
 				if (md.getMonitoringParameter() != null) startMonitoringJobForMonitoringParameter(md.getMonitoringParameter(), nsInfo);
 			} catch (Exception e) {
-				log.error("Error while starting a monitoring job. Skipping it.");
+				log.error("Error while starting a monitoring job: " + e.getMessage() + ". Skipping it.");
 				log.error(e.getMessage());
 			}
 		}
@@ -318,7 +318,10 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 		else throw new NotExistingEntityException("Unable to find VNF info with ID " + vnfInfoId);
 		
 		ObjectSelection vnfSelector = new ObjectSelection();
-		if ( (metricType.equals("VcpuUsageMean")) || (metricType.equals("VmemoryUsageMean")) || (metricType.equals("VdiskUsageMean"))) {
+		//TODO: this must be updated
+		if ( (metricType.equals("VcpuUsageMean")) || (metricType.equals("VmemoryUsageMean")) || (metricType.equals("VdiskUsageMean"))
+				|| (metricType.equals("CurrentClientConnections")) || (metricType.equals("CurrentActiveClientConnections")) || (metricType.equals("UserAgentCurrentConnectionsCount"))
+				|| (metricType.equals("CompletedRequests")) || (metricType.equals("TotalHits")) || (metricType.equals("CacheRamUsed"))) {
 			List<MonitoringObjectType> objectType = new ArrayList<>();
 			List<String> objectInstanceId = new ArrayList<>();
 			objectType.add(MonitoringObjectType.VNF);

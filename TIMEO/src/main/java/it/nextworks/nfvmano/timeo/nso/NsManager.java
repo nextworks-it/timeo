@@ -391,7 +391,7 @@ public class NsManager {
 		//what to do if it is the same? 
 		//identify the delta - new VNFs? new VLs? - and invoke the scheduling manager
 		NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
-		
+		//afkjdg
 	}
 	
 	private void instantiateNs(InstantiateNsRequestMessage message) throws WrongInternalStatusException {

@@ -45,7 +45,7 @@ import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
  *
  */
 @Service
-@EnableAsync
+@EnableAsync(proxyTargetClass=true)
 public class MonitoringManager implements NsMonitoringActivationInterface, PerformanceManagementProviderInterface {
 	
 	private static final Logger log = LoggerFactory.getLogger(MonitoringManager.class);
