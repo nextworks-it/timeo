@@ -192,10 +192,11 @@ public class NsDbWrapper {
 		}
 	}
 	
-	public synchronized void setNsInfoDeploymentFlavour(String nsInstanceId, String dfId) throws NotExistingEntityException {
+	public synchronized void setNsInfoDeploymentFlavour(String nsInstanceId, String dfId, String instantiationLevelId) throws NotExistingEntityException {
 		log.debug("Setting deployment flavour " + dfId + " for NS instance " + nsInstanceId);
 		NsInfo nsInfo = getNsInfo(nsInstanceId);
 		nsInfo.setFlavourId(dfId);
+		nsInfo.setInstantiationLevel(instantiationLevelId);
 		nsInfoRepository.saveAndFlush(nsInfo);
 		log.debug("Deployment flavour set for NS instance " + nsInstanceId);
 	}

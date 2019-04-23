@@ -32,6 +32,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 @JsonSubTypes({
 	@Type(value = InstantiateNsRequestMessage.class, 	name = "INSTANTIATE_REQUEST"),
 	@Type(value = TerminateNsRequestMessage.class, 	name = "TERMINATE_REQUEST"),
+	@Type(value = ScaleNsRequestMessage.class, 	name = "SCALE_REQUEST"),
 	@Type(value = NotifyComputationResultMessage.class, 	name = "NOTIFY_COMPUTATION"),
 	@Type(value = NotifyComputationReleaseMessage.class, 	name = "NOTIFY_COMPUTATION_RELEASE"),
 	@Type(value = NotifyAllocationResultMessage.class, 	name = "NOTIFY_ALLOCATION"),

@@ -29,6 +29,7 @@ import it.nextworks.nfvmano.libs.common.enums.InstantiationState;
 import it.nextworks.nfvmano.libs.common.enums.OperationStatus;
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
+import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.timeo.common.exception.WrongInternalStatusException;
 import it.nextworks.nfvmano.timeo.monitoring.MonitoringManager;
 import it.nextworks.nfvmano.timeo.nso.messages.EngineMessage;
@@ -36,6 +37,7 @@ import it.nextworks.nfvmano.timeo.nso.messages.EngineMessageType;
 import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationResultMessage;
+import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
 import it.nextworks.nfvmano.timeo.rc.ResourceSchedulingManager;
@@ -57,6 +59,7 @@ public class NsManager {
 	private InternalNsStatus internalStatus;
 	private InstantiateNsRequestMessage instantiateMessage;
 	private TerminateNsRequestMessage terminateMessage;
+	private ScaleNsRequestMessage scaleMessage;
 	
 	NsDbWrapper nsDbWrapper;
 	ResourceSchedulingManager resourceSchedulingManager;
@@ -102,7 +105,7 @@ public class NsManager {
 				//TODO: message to be moved in DB for persistency issues
 				this.instantiateMessage = instantiateMsg;
 				try {
-					nsDbWrapper.setNsInfoDeploymentFlavour(nsInstanceId, instantiateMsg.getRequest().getFlavourId());
+					nsDbWrapper.setNsInfoDeploymentFlavour(nsInstanceId, instantiateMsg.getRequest().getFlavourId(), instantiateMsg.getRequest().getNsInstantiationLevelId());
 					Map<String, String> configurationParameters = instantiateMsg.getRequest().getConfigurationParameterList();
 					nsDbWrapper.setNsInfoConfigurationParameters(nsInstanceId, configurationParameters);
 					instantiateNs(instantiateMsg);
@@ -114,6 +117,22 @@ public class NsManager {
 					log.error("NS instance not found");
 					nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "NS instance not found in DB.");
 					internalStatus = InternalNsStatus.FAILED;
+				}
+				break;
+			}
+			
+			case SCALE_NS_REQUEST: {
+				log.trace("START SCALE NS FOR NS " + nsInstanceId);
+				log.debug("Received scale NS message with operation ID " + operationId);
+				if (internalStatus != InternalNsStatus.ALLOCATED) {
+					log.error("Received scaling request when the service is not in stable status. Ignoring.");
+					nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received scaling message in wrong status");
+				}
+				ScaleNsRequestMessage scaleMsg = (ScaleNsRequestMessage)em;
+				try {
+					scaleNs(scaleMsg);
+				} catch(Exception e) {
+					//TODO:
 				}
 				break;
 			}
@@ -353,7 +372,7 @@ public class NsManager {
 	
 	private void terminateNs(TerminateNsRequestMessage message) throws WrongInternalStatusException {
 		if (!((internalStatus == InternalNsStatus.ALLOCATED) || (internalStatus == InternalNsStatus.FAILED))) throw new WrongInternalStatusException();
-		log.debug("Starting procedure to terminate a new Network Service.");
+		log.debug("Starting procedure to terminate Network Service.");
 		internalStatus = InternalNsStatus.TERMINATING_MONITORING;
 		//TODO: check if we really need to make this asynchronous...
 		try {
@@ -365,11 +384,21 @@ public class NsManager {
 		resourceAllocationManager.terminateVnfs(nsInstanceId, message.getOperationId(), message);	
 	}
 	
+	private void scaleNs(ScaleNsRequestMessage message) throws NotExistingEntityException {
+		//TODO:
+		log.debug("Starting procedure to scale network service.");
+		//check if the target instantiation level is different from the current one
+		//what to do if it is the same? 
+		//identify the delta - new VNFs? new VLs? - and invoke the scheduling manager
+		NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
+		
+	}
+	
 	private void instantiateNs(InstantiateNsRequestMessage message) throws WrongInternalStatusException {
 		if (internalStatus != InternalNsStatus.TO_BE_INSTANTIATED) throw new WrongInternalStatusException();
 		log.debug("Starting procedure to instantiate a new Network Service.");
 		//TODO: Here it should check if the VNFs and PNFs defined in the instantiate NS request are available
-		//At the moment we are assuming no PNFs are supported and all the VNFs should be created from scratch.
+		//At the moment we are assuming all the VNFs should be created from scratch.
 		internalStatus = InternalNsStatus.COMPUTING_RESOURCES;
 		try {
 			resourceSchedulingManager.reserveResources(message);
