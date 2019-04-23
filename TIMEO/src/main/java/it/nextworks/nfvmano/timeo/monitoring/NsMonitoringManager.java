@@ -336,7 +336,7 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 		performanceMetric.add(metricType);
 		//workaround to provide NSD name and NS ID
 		List<String> performanceMetricGroup = new ArrayList<>();
-		performanceMetric.add(vnfInfo.getVnfdId());
+		performanceMetricGroup.add(vnfInfo.getVnfdId());
 		performanceMetricGroup.add(nsInstanceId);
 		CreatePmJobRequest pmJobRequest = new CreatePmJobRequest(null,	//NS selector
 				null, 													//resource selector
