@@ -386,7 +386,12 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 	private void storePmJobInfo(PmJob pmJob, String exporterId, String vnfInstanceId) {
 		String pmJobId = pmJob.getPmJobId();
 		pmJobIdToExporterId.put(pmJobId, exporterId);
-		exporterIdToPmJob.get(exporterId).add(pmJobId);
+		List<String> exporterPMJobList =  exporterIdToPmJob.get(exporterId);
+		if(!exporterIdToPmJob.containsKey(exporterId)){
+			exporterPMJobList = new ArrayList<String>();
+		}
+		exporterPMJobList.add(pmJobId);
+		exporterIdToPmJob.replace(exporterId,exporterPMJobList);
 		pmJobs.put(pmJobId, pmJob);
 		if (vnfInstanceId != null) exporterIdToVnfId.put(exporterId, vnfInstanceId);
 		log.debug("Stored info about pm job " + pmJobId);
