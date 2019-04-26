@@ -21,6 +21,7 @@ import okio.Okio;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
+import java.nio.charset.StandardCharsets;
 
 import javax.net.ssl.*;
 import java.io.File;
@@ -986,7 +987,11 @@ public class ApiClient {
                 reqBody = null;
             } else {
                 // use an empty request body (for POST, PUT and PATCH)
-                reqBody = RequestBody.create(MediaType.parse(contentType), "");
+                //TODO: j.brenes
+                Charset charset = Charset.forName(StandardCharsets.UTF_8.name());
+                byte[] bytes = requestBody.getBytes(charset);
+                reqBody = RequestBody.create(MediaType.parse(contentType), bytes);
+                //reqBody = RequestBody.create(MediaType.parse(contentType), "");
             }
         } else {
             reqBody = serialize(body, contentType);
