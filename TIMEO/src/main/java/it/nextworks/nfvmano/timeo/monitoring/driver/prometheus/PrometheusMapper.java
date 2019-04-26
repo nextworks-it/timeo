@@ -44,12 +44,12 @@ public class PrometheusMapper {
 		vnfMetricsQueriesMap.put("VdiskUsageMean", "node_filesystem_avail_bytes{mountpoint=\"/\", job=\"$$configExp\"} / node_filesystem_size_bytes{mountpoint=\"/\", job=\"$$configExp\"} * 100");
 		//TODO: to be fixed how to pass parameters
 		vnfMetricsQueriesMap.put("ByteIncoming", "rate(node_network_receive_bytes_total{device=\"<NIC_name>\", job=\"$$configExp\"}[1m]");
-		vnfMetricsQueriesMap.put("CurrentClientConnections", "current_client_connections{job=\"$$configExp\"}");
-		vnfMetricsQueriesMap.put("CurrentActiveClientConnections", "current_active_client_connections{job=\"$$configExp\"}");
-		vnfMetricsQueriesMap.put("UserAgentCurrentConnectionsCount", "user_agent_current_connections_count{job=\"$$configExp\"}");
-		vnfMetricsQueriesMap.put("CompletedRequests", "completed_requests{job=\"$$configExp\"}");
-		vnfMetricsQueriesMap.put("TotalHits", "trafficserver_total_hits{job=\"$$configExp\"}");
-		vnfMetricsQueriesMap.put("CacheRamUsed", "trafficserver_stats_cache_ram_bytes_used{job=\"$$configExp\"}");
+		vnfMetricsQueriesMap.put("CurrentClientConnections", "trafficserver_stats_http_current_client_connections{job=\"$$configExp\"}");
+		vnfMetricsQueriesMap.put("CurrentActiveClientConnections", "trafficserver_stats_http_current_active_client_connections{job=\"$$configExp\"}");
+		vnfMetricsQueriesMap.put("UserAgentCurrentConnectionsCount", "trafficserver_stats_http_user_agent_current_connections_count{job=\"$$configExp\"}");
+		vnfMetricsQueriesMap.put("CompletedRequests", "trafficserver_stats_http_completed_requests{job=\"$$configExp\"}");
+		vnfMetricsQueriesMap.put("TotalHits", "trafficserver_stats_hostdb_cache_total_hits{job=\"$$configExp\"}");
+		vnfMetricsQueriesMap.put("CacheRamUsed", "trafficserver_stats_cache_ram_cache_bytes_used{job=\"$$configExp\"}");
 		prometheusQueriesMapper.put(motQueryVnf, vnfMetricsQueriesMap);
 	}
 	
