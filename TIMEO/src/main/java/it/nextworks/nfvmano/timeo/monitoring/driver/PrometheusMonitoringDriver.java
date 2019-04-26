@@ -256,6 +256,7 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 					log.debug("A new telegraf exporter is required.");
 					String exporterId = instantiateExporter(ExporterType.TELEGRAF_EXPORTER, vnfInstanceId, nsInstanceId, vnfdId);
 					vnfInstanceToTelegrahExporterMap.put(vnfInstanceId, exporterId);
+
 					PmJob pmJob = buildPmJob(os, metricType, request.getCollectionPeriod(), request.getReportingPeriod());
 					storePmJobInfo(pmJob, exporterId, vnfInstanceId);
 					return pmJob.getPmJobId();
@@ -402,11 +403,14 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 		ep.setAddress(vnfIpAddress);
 		ep.setPort(port);
 		eps.add(ep);
+		exporterDescription.setName(type.toString()+vnfInstanceId+"_"+vnfdId);
 		exporterDescription.setEndpoint(eps);
 		exporterDescription.setNsId(nsId);
 		exporterDescription.setVnfdId(vnfdId);
+		exporterDescription.setCollectionPeriod(1);
 		try {
 			Exporter exporter = exporterApi.postExporter(exporterDescription);
+			log.debug("Returned exporter: " + exporter.toString());
 			String exporterId = exporter.getExporterId();
 			log.debug("Created exporter " + exporterId + " with type " + type + " for VNF instance " + vnfInstanceId);
 			return exporterId;
