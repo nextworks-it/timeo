@@ -105,16 +105,20 @@ def extract_parameters(payload):
 
 
 def rm_hosts(rest_url=None):
-
+    global added_hosts
     logging.debug("rm hosts")
     headers = {"Content-Type": "application/json", "X-Api-Key": "secret"}
     url = "http://localhost:9999/dns" if rest_url is None else rest_url
+    hosts_not_removed = []
     for host in added_hosts:
         logging.debug( "rm host %s"%host)
         delete_data = {"hostname": host}
         response=requests.delete(url, headers=headers, data=json.dumps(delete_data))
         if response.status_code!=200:
+            hosts_not_removed.append(host)
             raise Exception(response.json)
+
+    added_hosts=hosts_not_removed
 
 
 def add_hosts(data, rest_url=None):

@@ -26,7 +26,8 @@
         "uservnf.origin_port": "32400",
         "uservnf.origin_address": "10.0.8.39",
         "uservnf.origin_fqdn": "bluespace.lab",
-        "uservnf.timeo_address": "10.0.2.161"
+        "uservnf.timeo_address": "10.0.2.161",
+        "uservnf.monitoring_address": "10.0.8.46"
       }
     }
   ],
