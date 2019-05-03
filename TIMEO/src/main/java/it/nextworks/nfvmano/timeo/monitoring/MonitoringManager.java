@@ -144,6 +144,7 @@ public class MonitoringManager implements NsMonitoringActivationInterface, Perfo
 				this.nsDbWrapper, this.monitoringDriver, this.vnfmHandler);
 		log.debug("Instantiated new NS Monitoring Manager for NS instance " + nsInstanceId);
 		nsMonitoringManager.activateNsMonitoring(nsInfo);
+		this.nsMonitoringManagers.put(nsInstanceId,nsMonitoringManager);
 	    log.debug("Activated monitoring for NS instance " + nsInstanceId);
 	}
 	
