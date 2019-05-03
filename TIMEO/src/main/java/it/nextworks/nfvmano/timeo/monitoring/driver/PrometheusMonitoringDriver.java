@@ -394,7 +394,7 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 		exporterIdToPmJob.replace(exporterId,exporterPMJobList);
 		pmJobs.put(pmJobId, pmJob);
 		if (vnfInstanceId != null) exporterIdToVnfId.put(exporterId, vnfInstanceId);
-		log.debug("Stored info about pm job " + pmJobId);
+		log.debug("Stored info about pm job: " + pmJobId+" exporter: "+exporterId);
 	}
 	
 	private String instantiateExporter(ExporterType type, String vnfInstanceId, String nsId, String vnfdId) 
