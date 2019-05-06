@@ -44,6 +44,7 @@ import it.nextworks.nfvmano.timeo.monitoring.driver.prometheus.PrometheusMapper;
 import it.nextworks.nfvmano.timeo.monitoring.elements.MonitoringGui;
 import it.nextworks.nfvmano.timeo.tenant.Tenant;
 import it.nextworks.nfvmano.timeo.vnfm.repository.VnfDbWrapper;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Monitoring driver that interacts with a Prometheus monitoring platform through a configuration manager.
@@ -61,6 +62,10 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 	private ExporterApi exporterApi;
 	
 	private DashboardApi dashboardApi;
+
+	//URL to be appended to the dashboard URL in case it is missing
+	@Value("${timeo.grafana.url}")
+	private String grafanaUrl;
 	
 	private AlertApi alertApi;
 	
@@ -147,6 +152,10 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 			Dashboard dashboard = dashboardApi.postDashboard(dd);
 			String dashboardId = dashboard.getDashboardId();
 			String url = dashboard.getUrl();
+			if(!url.startsWith("http")){
+				log.debug("Appending grafana url to dashboard url");
+				url=grafanaUrl+url;
+			}
 			log.debug("Created dashboard with ID " + dashboardId + " with URL: " + url);
 			MonitoringGui mg = new MonitoringGui(dashboardId, url);
 			dashboardIdToPmJobId.put(dashboardId, pmJobIds);
