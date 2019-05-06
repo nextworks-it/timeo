@@ -15,19 +15,30 @@
 */
 package it.nextworks.nfvmano.timeo.vnfm.sdkimpl;
 
-import java.util.List;
-import java.util.Map;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ResourceUtils;
 
 
 public class CloudInitGenerator {
 
 	private static final Logger log = LoggerFactory.getLogger(CloudInitGenerator.class);
-	
-	public CloudInitGenerator() { }
+
+	public CloudInitGenerator() {
+
+	}
 	
 	/**
 	 * Method to create the cloud init script with the right parameters
@@ -39,6 +50,19 @@ public class CloudInitGenerator {
 	 * @return the modified cloud init script
 	 */
 	public static String fillInCloudInitScript(String originalScript, String hostname, String domainName, Map<String, String> ipAddresses, String gatewayIpManagement, Map<String, String> userConfig, Map<String, String > floatingIps, Map<String, String> gwAddresses) {
+		Properties properties = new Properties();
+		try {
+			File file = ResourceUtils.getFile("classpath:application.properties");
+			InputStream in = new FileInputStream(file);
+			properties.load(in);
+		} catch (IOException e) {
+			log.error("Reading configuration file:"+e.getMessage());
+		}
+		HashMap<String, String> uservnfToConfigMapping = new HashMap<>();
+		uservnfToConfigMapping.put("uservnf.timeo_address", "timeo.address");
+		uservnfToConfigMapping.put("uservnf.monitoring_address", "timeo.monitoring.url");
+
+		List<String> configParametersToAdd = new ArrayList<>(uservnfToConfigMapping.keySet());
 		log.debug("Processing cloud init script");
 		log.debug("Original script: \n" + originalScript);
 		log.debug("Hostname: " + hostname);
@@ -82,7 +106,19 @@ public class CloudInitGenerator {
 			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$extCp." + e.getKey() + ".gateway", e.getValue());
 		}
 		for (Map.Entry<String, String> e : userVnfParameters.entrySet()){
-			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$" + e.getKey(), e.getValue());
+			if(e.getValue()!=null && e.getValue()!="" ){
+				resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$" + e.getKey(), e.getValue());
+				configParametersToAdd.remove(e.getKey());
+			}
+
+		}
+		for (String uservnfParameter : configParametersToAdd){
+			String configValue = properties.getProperty(uservnfToConfigMapping.get(uservnfParameter));
+			String processedValue = configValue;
+			if(uservnfParameter=="uservnf.monitoring_address"){
+				processedValue=getMonitoringAddressFromUrl(configValue);
+			}
+			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$" + uservnfParameter, processedValue);
 		}
 		resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$managementGw", gatewayIpManagement);
 		log.debug("Resulting cloud init script: \n" + resultingScript);
@@ -128,6 +164,30 @@ public class CloudInitGenerator {
 				b.append(ch);
 		}
 		return b.toString();
+	}
+
+
+	/**
+	 * Method to extract the address of the monitoring platform
+	 *
+	 * @param url	string with the monitoring URL
+	 * @return	address from the monitoring
+	 */
+
+	private static String getMonitoringAddressFromUrl(String url){
+
+		try {
+			InetAddress ip = InetAddress.getByName(new URL(url).getHost());
+			return ip.getHostAddress();
+		} catch (UnknownHostException e) {
+			log.error("Reading monitoring url");
+			log.error(e.getMessage());
+			return null;
+		} catch (MalformedURLException e) {
+			log.error("Reading monitoring url");
+			log.error(e.getMessage());
+			return null;
+		}
 	}
 
 }
