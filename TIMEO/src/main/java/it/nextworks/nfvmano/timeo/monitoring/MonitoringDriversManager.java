@@ -54,7 +54,12 @@ MonitoringElaborationInterface, MonitoringGuiManagementInterface {
 	
 	@Value("${timeo.monitoring.url}")
 	private String monitoringUrl;
-	
+
+
+	//URL to be appended to the dashboard URL in case it is missing
+	@Value("${timeo.grafana.url}")
+	private String grafanaUrl;
+
 	@Autowired
 	private VnfDbWrapper vnfDbWrapper;
 	
