@@ -154,7 +154,8 @@
       "uservnf.origin_port",
       "uservnf.origin_address",
       "uservnf.origin_fqdn",
-      "uservnf.timeo_address"
+      "uservnf.timeo_address",
+      "uservnf.monitoring_address"
     ]
   },
   "modifiableAttributes": {},
