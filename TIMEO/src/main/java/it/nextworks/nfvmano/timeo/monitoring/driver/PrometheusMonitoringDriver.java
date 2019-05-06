@@ -63,10 +63,8 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 	
 	private DashboardApi dashboardApi;
 
-	//URL to be appended to the dashboard URL in case it is missing
-	@Value("${timeo.grafana.url}")
 	private String grafanaUrl;
-	
+
 	private AlertApi alertApi;
 	
 	//key: ID of the VNF instance; Value: ID of the node exporter created for that VNF instance
@@ -97,7 +95,7 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 	//key: ID of the dashboard; Value: details of the dashboard
 	private Map<String, MonitoringGui> monitoringGui = new HashMap<>();
 	
-	public PrometheusMonitoringDriver(String monitoringPlatformUrl, VnfDbWrapper vnfDbWrapper) {
+	public PrometheusMonitoringDriver(String monitoringPlatformUrl, VnfDbWrapper vnfDbWrapper, String grafanaUrl) {
 		super(MonitoringDriverType.PROMETHEUS, monitoringPlatformUrl);
 		this.vnfDbWrapper = vnfDbWrapper;
 		exporterApi = new ExporterApi();
@@ -108,6 +106,7 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 		exporterApi.setApiClient(apiClient);
 		dashboardApi.setApiClient(apiClient);
 		alertApi.setApiClient(apiClient);
+		this.grafanaUrl=grafanaUrl;
 	}
 	
 	@Override
