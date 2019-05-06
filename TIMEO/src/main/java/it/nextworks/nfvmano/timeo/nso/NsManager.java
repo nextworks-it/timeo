@@ -60,6 +60,8 @@ public class NsManager {
 	private InstantiateNsRequestMessage instantiateMessage;
 	private TerminateNsRequestMessage terminateMessage;
 	private ScaleNsRequestMessage scaleMessage;
+	private String timeoAddress;
+	private String monitoringAddress;
 	
 	NsDbWrapper nsDbWrapper;
 	ResourceSchedulingManager resourceSchedulingManager;
@@ -72,7 +74,9 @@ public class NsManager {
 			NsDbWrapper nsDbWrapper,
 			ResourceAllocationManager resourceAllocationManager,
 			MonitoringManager monitoringManager,
-			NsManagementEngine nsManagementEngine) {
+			NsManagementEngine nsManagementEngine,
+			String timeoAddress,
+			String monitoringAddress) {
 		this.nsInstanceId = nsInstanceId;
 		this.internalStatus = InternalNsStatus.TO_BE_INSTANTIATED;
 		this.resourceSchedulingManager = resourceSchedulingManager;
@@ -80,6 +84,8 @@ public class NsManager {
 		this.resourceAllocationManager = resourceAllocationManager;
 		this.monitoringManager = monitoringManager;
 		this.nsManagementEngine = nsManagementEngine;
+		this.monitoringAddress = monitoringAddress;
+		this.timeoAddress = timeoAddress;
 	}
 
 	/**
@@ -107,6 +113,10 @@ public class NsManager {
 				try {
 					nsDbWrapper.setNsInfoDeploymentFlavour(nsInstanceId, instantiateMsg.getRequest().getFlavourId(), instantiateMsg.getRequest().getNsInstantiationLevelId());
 					Map<String, String> configurationParameters = instantiateMsg.getRequest().getConfigurationParameterList();
+					if (!(configurationParameters.containsKey("uservnf.timeo_address")))
+						configurationParameters.put("uservnf.timeo_address", timeoAddress);
+					if (!(configurationParameters.containsKey("uservnf.monitoring_address")))
+						configurationParameters.put("uservnf.monitoring_address", monitoringAddress);
 					nsDbWrapper.setNsInfoConfigurationParameters(nsInstanceId, configurationParameters);
 					instantiateNs(instantiateMsg);
 				} catch (WrongInternalStatusException e) {

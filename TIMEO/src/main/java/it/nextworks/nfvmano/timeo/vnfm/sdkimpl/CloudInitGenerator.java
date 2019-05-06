@@ -58,11 +58,7 @@ public class CloudInitGenerator {
 		} catch (IOException e) {
 			log.error("Reading configuration file:"+e.getMessage());
 		}
-		HashMap<String, String> uservnfToConfigMapping = new HashMap<>();
-		uservnfToConfigMapping.put("uservnf.timeo_address", "timeo.address");
-		uservnfToConfigMapping.put("uservnf.monitoring_address", "timeo.monitoring.url");
 
-		List<String> configParametersToAdd = new ArrayList<>(uservnfToConfigMapping.keySet());
 		log.debug("Processing cloud init script");
 		log.debug("Original script: \n" + originalScript);
 		log.debug("Hostname: " + hostname);
@@ -106,19 +102,10 @@ public class CloudInitGenerator {
 			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$extCp." + e.getKey() + ".gateway", e.getValue());
 		}
 		for (Map.Entry<String, String> e : userVnfParameters.entrySet()){
-			if(e.getValue()!=null && e.getValue()!="" ){
-				resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$" + e.getKey(), e.getValue());
-				configParametersToAdd.remove(e.getKey());
-			}
 
-		}
-		for (String uservnfParameter : configParametersToAdd){
-			String configValue = properties.getProperty(uservnfToConfigMapping.get(uservnfParameter));
-			String processedValue = configValue;
-			if(uservnfParameter=="uservnf.monitoring_address"){
-				processedValue=getMonitoringAddressFromUrl(configValue);
-			}
-			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$" + uservnfParameter, processedValue);
+				resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$" + e.getKey(), e.getValue());
+
+
 		}
 		resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$managementGw", gatewayIpManagement);
 		log.debug("Resulting cloud init script: \n" + resultingScript);
@@ -167,27 +154,6 @@ public class CloudInitGenerator {
 	}
 
 
-	/**
-	 * Method to extract the address of the monitoring platform
-	 *
-	 * @param url	string with the monitoring URL
-	 * @return	address from the monitoring
-	 */
 
-	private static String getMonitoringAddressFromUrl(String url){
-
-		try {
-			InetAddress ip = InetAddress.getByName(new URL(url).getHost());
-			return ip.getHostAddress();
-		} catch (UnknownHostException e) {
-			log.error("Reading monitoring url");
-			log.error(e.getMessage());
-			return null;
-		} catch (MalformedURLException e) {
-			log.error("Reading monitoring url");
-			log.error(e.getMessage());
-			return null;
-		}
-	}
 
 }

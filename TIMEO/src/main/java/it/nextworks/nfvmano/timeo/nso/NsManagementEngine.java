@@ -15,6 +15,10 @@
 */
 package it.nextworks.nfvmano.timeo.nso;
 
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,7 +114,14 @@ public class NsManagementEngine {
 	@Autowired
 	@Lazy(value=true)
 	MonitoringManager monitoringManager;
-	
+
+	@Value("${timeo.address}")
+	private String timeoAddress;
+
+
+	@Value("${timeo.monitoring.url}")
+	private String monitoringUrl;
+
 	//internal map of NS Managers
 	//each NS Manager is created when a new NS istance ID is created and removed when the NS instance ID is removed
 	private Map<String, NsManager> nsManagers = new HashMap<>();
@@ -131,7 +142,7 @@ public class NsManagementEngine {
 	public void initNewNsManager(String nsInstanceId) {
 		log.debug("Initializing new NS manager for NS instance " + nsInstanceId);
 		NsManager nsManager = new NsManager(nsInstanceId, resourceSchedulingManager, nsDbWrapper, 
-				resourceAllocationManager, monitoringManager, this);
+				resourceAllocationManager, monitoringManager, this, timeoAddress, getAddressFromUrl(monitoringUrl));
 		createQueue(nsInstanceId, nsManager);
 		this.nsManagers.put(nsInstanceId, nsManager);
 	}
@@ -354,6 +365,29 @@ public class NsManagementEngine {
 	    container.setQueueNames(queueName);
 	    container.start();
 	    log.debug("Queue created");
+	}
+
+
+	/**
+	 * Method to extract the host address of an URL
+	 *
+	 * @param url	string with the URL
+	 * @return	address from the URL
+	 */
+	private String getAddressFromUrl(String url){
+
+		try {
+			InetAddress ip = InetAddress.getByName(new URL(url).getHost());
+			return ip.getHostAddress();
+		} catch (UnknownHostException e) {
+			log.error("Reading monitoring url");
+			log.error(e.getMessage());
+			return null;
+		} catch (MalformedURLException e) {
+			log.error("Reading monitoring url");
+			log.error(e.getMessage());
+			return null;
+		}
 	}
 	
 }
