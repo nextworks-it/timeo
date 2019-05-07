@@ -50,14 +50,6 @@ public class CloudInitGenerator {
 	 * @return the modified cloud init script
 	 */
 	public static String fillInCloudInitScript(String originalScript, String hostname, String domainName, Map<String, String> ipAddresses, String gatewayIpManagement, Map<String, String> userConfig, Map<String, String > floatingIps, Map<String, String> gwAddresses) {
-		Properties properties = new Properties();
-		try {
-			File file = ResourceUtils.getFile("classpath:application.properties");
-			InputStream in = new FileInputStream(file);
-			properties.load(in);
-		} catch (IOException e) {
-			log.error("Reading configuration file:"+e.getMessage());
-		}
 
 		log.debug("Processing cloud init script");
 		log.debug("Original script: \n" + originalScript);
