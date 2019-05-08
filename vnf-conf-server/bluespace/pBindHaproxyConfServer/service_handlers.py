@@ -2,7 +2,7 @@ from log import get_logger
 import shlex
 from subprocess import Popen, PIPE, STDOUT
 from shutil import copyfile
-
+import re
 class BindHandler:
 
     __instance = None
@@ -84,6 +84,10 @@ class BindHandler:
         for host in self.zone_hosts[zone]:
             self.remove_host(host,zone)
 
+    @staticmethod
+    def sanitize_hostname(hostname):
+        return re.sub(r'[^a-zA-Z0-9]','', hostname)
+
     def process(self, parameters):
         self.logger.debug("process")
         if "uservnf.origin_fqdn" in parameters:
@@ -101,7 +105,7 @@ class BindHandler:
             key_split = key.split(".")
             if key_split[-1]=="hostname":
                 vdu = key_split[1]
-                to_add_hosts[vdu]=value
+                to_add_hosts[vdu]= BindHandler.sanitize_hostname(value)
             elif key_split[-1]=="floating":
                 vdu = key_split[1]
                 to_add_adds[vdu]=value
@@ -233,7 +237,8 @@ class HAProxyHandler:
         for key, value in parameters.iteritems():
             key_split = key.split(".")
             if key_split[-1]=="hostname":
-                self.add_host("%s.%s"%(value, zone), zone, self.max_port)
+                hostname = BindHandler.sanitize_hostname(value)
+                self.add_host("%s.%s"%(hostname, zone), zone, self.max_port)
                 self.max_port+=1
 
         self.__create_config()
