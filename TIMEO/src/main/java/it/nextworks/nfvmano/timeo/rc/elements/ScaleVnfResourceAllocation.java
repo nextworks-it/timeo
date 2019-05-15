@@ -40,7 +40,7 @@ public class ScaleVnfResourceAllocation {
 	
 	@ManyToOne
 	@JsonIgnore
-	private ScaleNsResourceAllocation diffNsRss;
+	private ScaleNsResourceAllocation sNSRA;
 	
 	//input
 	private String vnfdId;	//VNFD of the VNF
@@ -77,7 +77,7 @@ public class ScaleVnfResourceAllocation {
 			String vimId,
 			String zoneId,
 			String hostId) {
-		this.diffNsRss = diffNsRss;
+		this.sNSRA = diffNsRss;
 		this.vnfdId = vnfdId;
 		this.vnfIndex = vnfIndex;
 		this.vduId = vduId;
