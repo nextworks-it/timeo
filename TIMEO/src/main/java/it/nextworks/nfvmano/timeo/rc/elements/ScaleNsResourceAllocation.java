@@ -29,6 +29,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
@@ -57,6 +58,9 @@ public class ScaleNsResourceAllocation {
     private Long id;
 	
 	private String nsInstanceId;
+	
+	@OneToOne
+	private NsScaleSchedulingSolution nsSSS;
 	
 	@OneToMany(mappedBy = "sNSRA", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)

@@ -48,7 +48,7 @@ public class NsScaleSchedulingSolution {
 	private NsResourceSchedulingSolution postScaleResourceSolution;
 
 	//Contains the resources to be allocated by the scaling
-	@OneToOne(fetch=FetchType.EAGER, mappedBy="nsScaleSchedulingSolution", cascade=CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(fetch=FetchType.EAGER, mappedBy="nsSSS", cascade=CascadeType.ALL, orphanRemoval = true)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private ScaleNsResourceAllocation scaleNsResourceAllocation;
 
