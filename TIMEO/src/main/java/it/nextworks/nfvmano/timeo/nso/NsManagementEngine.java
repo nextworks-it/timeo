@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import it.nextworks.nfvmano.timeo.rc.elements.NsScaleSchedulingSolution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.BindingBuilder;
@@ -268,6 +269,19 @@ public class NsManagementEngine {
 		} else {
 			log.error("Network service " + nsInstanceId + " not existing. Nothing to do.");
 		}
+	}
+
+
+	/**
+	 * Process a message about the computation result for a scale allocation solution
+	 *
+	 * @param nsInstanceId
+	 * @param operationId
+	 * @param solution
+	 */
+	public void notifyScaleComputationResult(String nsInstanceId, String operationId, NsScaleSchedulingSolution solution){
+		//TODO: j.brenes
+
 	}
 	
 	public void notifyResourceComputationRelease(String nsInstanceId, String operationId, boolean successful) {

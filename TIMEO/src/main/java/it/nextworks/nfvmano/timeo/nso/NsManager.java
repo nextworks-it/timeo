@@ -18,6 +18,13 @@ package it.nextworks.nfvmano.timeo.nso;
 import java.io.IOException;
 import java.util.Map;
 
+import it.nextworks.nfvmano.libs.common.enums.NsScaleType;
+import it.nextworks.nfvmano.libs.common.exceptions.MethodNotImplementedException;
+import it.nextworks.nfvmano.libs.descriptors.nsd.NsDf;
+import it.nextworks.nfvmano.libs.descriptors.nsd.NsLevel;
+import it.nextworks.nfvmano.libs.descriptors.nsd.ScaleNsToLevelData;
+import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.elements.ScaleNsData;
+import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.ScaleNsRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -394,14 +401,27 @@ public class NsManager {
 		resourceAllocationManager.terminateVnfs(nsInstanceId, message.getOperationId(), message);	
 	}
 	
-	private void scaleNs(ScaleNsRequestMessage message) throws NotExistingEntityException {
+	private void scaleNs(ScaleNsRequestMessage message) throws NotExistingEntityException, MethodNotImplementedException {
 		//TODO:
 		log.debug("Starting procedure to scale network service.");
 		//check if the target instantiation level is different from the current one
 		//what to do if it is the same? 
 		//identify the delta - new VNFs? new VLs? - and invoke the scheduling manager
 		NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
-		//afkjdg
+		ScaleNsRequest sRequest = message.getRequest();
+		ScaleNsData sData = sRequest.getScaleNsData();
+		ScaleNsToLevelData sNsLevelData = sData.getScaleNsToLevelData();
+
+		//TODO: To be verified
+		String currentLevel =  nsInfo.getNsScaleStatus().get(0).getNsScaleLevelId();
+		internalStatus = InternalNsStatus.COMPUTING_SCALING_RESOURCES;
+		if(currentLevel!= sNsLevelData.getNsInstantiationLevel() ){
+			resourceSchedulingManager.scaleResources(message);
+		}else{
+			//TODO: what happens if it is the same instantiation level?
+		}
+
+
 	}
 	
 	private void instantiateNs(InstantiateNsRequestMessage message) throws WrongInternalStatusException {
