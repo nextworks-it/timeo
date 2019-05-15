@@ -23,11 +23,15 @@ import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
+import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.ScaleNsRequest;
+import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
+import it.nextworks.nfvmano.timeo.catalogue.vnfpackagemanagement.VnfPackageManagementService;
 import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
+import it.nextworks.nfvmano.timeo.common.exception.ScaleAllocationSolutionNotFound;
 import it.nextworks.nfvmano.timeo.rc.elements.*;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
-
+import org.springframework.util.CollectionUtils;
 
 /**
  * This is just a sample algorithm class that provides a static solution.
@@ -87,6 +91,29 @@ public class CdnStaticAlgorithmBluespaceNXW extends AbstractNsResourceAllocation
                 networkNodesToBeActivated,
                 computeNodesToBeActivated
         );
+    }
+    
+    @Override
+    public NsScaleSchedulingSolution computeNsScaleAllocationSolution(ScaleNsRequest request, NsInfo nsi,
+			Nsd nsd, Map<Vnfd, Map<String, String>> vnfds, VimPlugin vimPlugin,  SdnControllerPlugin sdnPlugin, 
+			VnfPackageManagementService vnfService
+			) throws NotExistingEntityException, ScaleAllocationSolutionNotFound
+
+    {
+    	//Look for the missing vnfdIds
+    	List<ScaleVnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
+    	String instantiationLevel = request.getScaleNsData().getScaleNsToLevelData().getNsInstantiationLevel();
+    	if( instantiationLevel =="il_vCDN_big") {
+    		ScaleVnfResourceAllocation vra = new ScaleVnfResourceAllocation(null, "vCacheEdge_2_01", 0, "vCacheEdge_2_vdu", 0, "OpenStack_local", "netdev5", "compute1");
+    		vnfResourceAllocation.add(vra);
+    		ScaleNsResourceAllocation sNRA = new ScaleNsResourceAllocation(request.getNsInstanceId(), vnfResourceAllocation, null, null, true, null, null);
+    		return new NsScaleSchedulingSolution(request.getNsInstanceId(), null, null, null, null, null,sNRA, true);
+    	}else
+    		throw new ScaleAllocationSolutionNotFound("Method not implemented");
+    	
+    	
+    	
+    	
     }
 
 }

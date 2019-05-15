@@ -1,21 +1,23 @@
 /*
-* Copyright 2018 Nextworks s.r.l.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2018 Nextworks s.r.l.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package it.nextworks.nfvmano.timeo.rc.repositories;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -28,7 +30,9 @@ import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
+import it.nextworks.nfvmano.timeo.rc.elements.NsScaleSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.PnfAllocation;
+import it.nextworks.nfvmano.timeo.rc.elements.ScaleVnfResourceAllocation;
 import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 
 
@@ -36,24 +40,66 @@ import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 public class ResourceComputationDbWrapper {
 
 	private static final Logger log = LoggerFactory.getLogger(ResourceComputationDbWrapper.class);
-	
+
 	@Autowired
 	NetworkPathRepository networkPathRepository;
-	
+
 	@Autowired
 	NsResourceSchedulingSolutionRepository nsResourceSchedulingSolutionRepository;
 	
 	@Autowired
+	NsScaleSchedulingSolutionRepository nsScaleSchedulingSolutionRepository;
+
+	@Autowired
 	VnfResourceAllocationRepository vnfResourceAllocationRepository;
-	
+
 	@Autowired
 	NetworkPathHopRepository networkPathHopRepository;
-	
+
 	@Autowired
 	PnfAllocationRepository pnfAllocationRepository;
-	
+
 	public ResourceComputationDbWrapper() {	}
-	
+
+	public synchronized void addNewNsScaleSchedulingSolution(NsScaleSchedulingSolution input) throws NotExistingEntityException, AlreadyExistingEntityException {
+		log.debug("Storing new NS scale scheduling solution in DB");
+		
+		List<VnfResourceAllocation> overallVnfds = new ArrayList<>();
+		ArrayList<String> addedVnfds = new ArrayList<>();
+		NsResourceSchedulingSolution currentSolution;
+
+		currentSolution = getNsResourceSchedulingSolution(input.getNsInstanceId());
+		for(ScaleVnfResourceAllocation vnfRA : input.getDiffScaleResourceSolution().getVnfResourceAllocation() ){
+			overallVnfds.add(vnfRA.getVnfResourceAllocation());
+			addedVnfds.add(vnfRA.getVnfdId());
+
+		}
+		for(VnfResourceAllocation vnfRA : currentSolution.getVnfResourceAllocation()){
+			if(!addedVnfds.contains(vnfRA.getVnfdId())){
+				overallVnfds.add(vnfRA);
+			}
+		}
+		//TODO: implement PNF, networkPaths, comuteNodes, NetworkNodes deallocation
+		List<PnfAllocation> overallPnfs = currentSolution.getPnfAllocation();
+		List<NetworkPath> overallNetworkPaths = currentSolution.getNetworkPaths();
+		Map<String,String> overallComputeNodes = currentSolution.getComputeNodesToBeActivated();
+		List<String> overallNetworkNodes = currentSolution.getNetworkNodesToBeActivated();
+		this.removeNsResourceSchedulingSolution(input.getNsInstanceId());
+		this.addNewNsResourceSchedulingSolution(new NsResourceSchedulingSolution
+				(input.getNsInstanceId(),
+						overallVnfds,
+						overallPnfs,
+						overallNetworkPaths,
+						input.isSolutionFound(),
+						overallNetworkNodes,
+						overallComputeNodes));
+
+		input.setPostScaleResourceSolution(this.getNsResourceSchedulingSolution(input.getNsInstanceId()));
+		nsScaleSchedulingSolutionRepository.saveAndFlush(input);
+
+
+	}
+
 	public synchronized void addNewNsResourceSchedulingSolution(NsResourceSchedulingSolution input) throws AlreadyExistingEntityException {
 		log.debug("Storing new NS resource scheduling solution in DB");
 		if (nsResourceSchedulingSolutionRepository.findByNsInstanceId(input.getNsInstanceId()).isPresent()) {
@@ -88,7 +134,7 @@ public class ResourceComputationDbWrapper {
 			log.debug("NS resource scheduling solution for NS instance " + input.getNsInstanceId() + " saved in DB");
 		}
 	}
-	
+
 	public NsResourceSchedulingSolution getNsResourceSchedulingSolution(String nsInstanceId) throws NotExistingEntityException {
 		log.debug("Retrieving NS resource scheduling solution from DB");
 		Optional<NsResourceSchedulingSolution> solOpt = nsResourceSchedulingSolutionRepository.findByNsInstanceId(nsInstanceId);
@@ -98,19 +144,19 @@ public class ResourceComputationDbWrapper {
 			throw new NotExistingEntityException("NS resource scheduling solution not found for NS instance " + nsInstanceId);
 		}
 	}
-	
+
 	public List<NsResourceSchedulingSolution> getAllNsResourceSchedulingSolutions() {
 		log.debug("Retrieving all NS resource scheduling solution from DB");
 		return nsResourceSchedulingSolutionRepository.findAll();
 	}
-	
+
 	public synchronized void removeNsResourceSchedulingSolution(String nsInstanceId) throws NotExistingEntityException {
 		log.debug("Removing NS resource scheduling solution from DB");
 		NsResourceSchedulingSolution solution = getNsResourceSchedulingSolution(nsInstanceId);
 		nsResourceSchedulingSolutionRepository.delete(solution);
 		log.debug("NS resource scheduling solution removed from DB");
 	}
-	
+
 	/**
 	 * Retrieve a VNF resource allocation solution
 	 * 
@@ -128,7 +174,7 @@ public class ResourceComputationDbWrapper {
 			throw new NotExistingEntityException("Solution not found.");
 		} else return res;
 	}
-	
+
 	/**
 	 * Retrieve a PNF allocation solution
 	 * 
@@ -139,7 +185,7 @@ public class ResourceComputationDbWrapper {
 		log.debug("Retrieving PNF allocation solution from DB");
 		return pnfAllocationRepository.findByNsRssNsInstanceId(nsInstanceId);
 	}
-	
+
 	/**
 	 * Retrieve the list of VNF allocation solution which are using a given compute node (identified by VIM ID and HOST ID), excepting the 
 	 * ones related to a given NS instance ID
@@ -152,7 +198,7 @@ public class ResourceComputationDbWrapper {
 	public List<VnfResourceAllocation> getRemainingVnfAllocationsOnHost(String nsInstanceId, String vimId, String hostId) {
 		return vnfResourceAllocationRepository.findByNsRssNsInstanceIdNotAndVimIdAndHostId(nsInstanceId, vimId, hostId);
 	}
-	
+
 	/**
 	 * Retrieves the list of network path hops on a given network node but not associated to network paths belonging to a given NS instance ID
 	 * 

@@ -13,24 +13,16 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package it.nextworks.nfvmano.timeo.nso;
+package it.nextworks.nfvmano.timeo.rc.repositories;
 
-public enum InternalNsStatus {
 
-	TO_BE_INSTANTIATED,
-	COMPUTING_RESOURCES,
-	ALLOCATING_NS_VLS,
-	CREATING_VNFS,
-	CONFIGURING_VNFS,
-	CREATING_CONNECTIVITY,
-	ALLOCATED,
-	TERMINATING_MONITORING,
-	TERMINATING_VNFS,
-	TERMINATING_CONNECTIVITY,
-	REMOVING_NS_VLS,
-	RELEASING_COMPUTED_RESOURCES,
-	TERMINATED,
-	FAILED,
-	COMPUTING_SCALING_RESOURCES,
+
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import it.nextworks.nfvmano.timeo.rc.elements.ScaleVnfResourceAllocation;
+
+
+public interface ScaleVnfResourceAllocationRepository extends JpaRepository<ScaleVnfResourceAllocation, Long> {
 	
 }
