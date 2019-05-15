@@ -44,7 +44,7 @@ public class NsScaleSchedulingSolution {
 
 	private String nsInstanceId;
 
-
+	@OneToOne
 	private NsResourceSchedulingSolution postScaleResourceSolution;
 
 	//Contains the resources to be allocated by the scaling
