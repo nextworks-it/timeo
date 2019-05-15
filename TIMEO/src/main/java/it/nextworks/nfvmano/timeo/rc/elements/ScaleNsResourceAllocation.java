@@ -58,17 +58,17 @@ public class ScaleNsResourceAllocation {
 	
 	private String nsInstanceId;
 	
-	@OneToMany(mappedBy = "nsRss", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy = "sNSRA", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<ScaleVnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "nsRss", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy = "sNSRA", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<PnfAllocation> pnfAllocation = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "nsRss", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy = "sNSRA", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<NetworkPath> networkPaths = new ArrayList<>();
