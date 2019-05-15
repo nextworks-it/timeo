@@ -15,7 +15,9 @@
 */
 package it.nextworks.nfvmano.timeo.rc.repositories;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -48,9 +50,7 @@ public class ResourceComputationDbWrapper {
 	@Autowired
 	NsScaleSchedulingSolutionRepository nsScaleSchedulingSolutionRepository;
 
-	@Autowired
-	VnfResourceAllocationRepository vnfResourceAllocationRepository;
-	
+		
 	@Autowired
 	ScaleVnfResourceAllocationRepository scaleVnfResourceAllocationRepository;
 
