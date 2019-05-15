@@ -45,8 +45,9 @@ public class NsScaleSchedulingSolution {
 	private String nsInstanceId;
 
 
-	@OneToOne(fetch=FetchType.EAGER, mappedBy="post", cascade=CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval = true)
 	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JoinColumn(name = "resourceSolution", referencedColumnName = "id")
 	private NsResourceSchedulingSolution postScaleResourceSolution;
 
 	//Contains the resources to be allocated by the scaling
