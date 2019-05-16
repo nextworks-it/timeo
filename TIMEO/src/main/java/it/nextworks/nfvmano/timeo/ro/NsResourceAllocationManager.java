@@ -1020,7 +1020,7 @@ implements AsynchronousVimNotificationInterface,
 			NsLevel nsLevel = nsDeploymentFlavour.getNsLevel(nsInstantiationLevel);
 			
 			NsScaleSchedulingSolution scaleSolution = resourceComputationDbWrapper.getNsScaleSchedulingSolution(nsInstanceId);
-			List<ScaleVnfResourceAllocation> vnfsToScale = scaleSolution.getDiffScaleResourceSolution().getVnfResourceAllocation(); 
+			List<ScaleVnfResourceAllocation> vnfsToScale = scaleSolution.getScaleNsResourceAllocation().getVnfResourceAllocation(); 
 			List<VnfToLevelMapping> origVnfLevels = nsLevel.getVnfToLevelMapping();
 			log.debug("The requested NS Level includes " + origVnfLevels.size() + " VNFs.");
 			List<VnfToLevelMapping> vnfLevels = Utilities.orderVnfsBasedOnDependencies(origVnfLevels, nsDeploymentFlavour.getDependencies());
