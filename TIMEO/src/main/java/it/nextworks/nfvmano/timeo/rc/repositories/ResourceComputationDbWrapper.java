@@ -75,7 +75,7 @@ public class ResourceComputationDbWrapper {
 		List<VnfResourceAllocation> overallVnfds = new ArrayList<>();
 		ArrayList<String> addedVnfds = new ArrayList<>();
 		NsResourceSchedulingSolution currentSolution = getNsResourceSchedulingSolution(input.getNsInstanceId());
-		for(ScaleVnfResourceAllocation vnfRA : input.getDiffScaleResourceSolution().getVnfResourceAllocation() ){
+		for(ScaleVnfResourceAllocation vnfRA : input.getScaleNsResourceAllocation().getVnfResourceAllocation() ){
 			overallVnfds.add(vnfRA.getVnfResourceAllocation());
 			addedVnfds.add(vnfRA.getVnfdId());
 

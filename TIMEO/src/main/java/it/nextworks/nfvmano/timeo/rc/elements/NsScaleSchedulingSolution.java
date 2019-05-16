@@ -154,7 +154,7 @@ public class NsScaleSchedulingSolution {
 	 * 
 	 * @return the resource differential reservation solution after the scaling
 	 */
-	public ScaleNsResourceAllocation getDiffScaleResourceSolution() {
+	public ScaleNsResourceAllocation getScaleNsResourceAllocation() {
 		return scaleNsResourceAllocation;
 	}
 

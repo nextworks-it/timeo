@@ -481,7 +481,7 @@ public class ResourceSchedulingManager {
 	
 	private void switchOnComputeNodes(NsScaleSchedulingSolution solution) throws FailedOperationException {
 		log.debug("Starting procedure to switch on compute nodes due to scaling procedure");
-		Map<String,String> computeNodesToBeActivated = solution.getDiffScaleResourceSolution().getComputeNodesToBeActivated();
+		Map<String,String> computeNodesToBeActivated = solution.getScaleNsResourceAllocation().getComputeNodesToBeActivated();
 		switchOnComputeNodes(computeNodesToBeActivated);
 		
 	}
@@ -509,7 +509,7 @@ public class ResourceSchedulingManager {
 	
 	private void switchOnNetworkNodes(NsScaleSchedulingSolution solution) throws FailedOperationException{
 		log.debug("Starting procedure to switch on network nodes for scale");
-		List<String> networkNodesToBeActivated = solution.getDiffScaleResourceSolution().getNetworkNodesToBeActivated();
+		List<String> networkNodesToBeActivated = solution.getScaleNsResourceAllocation().getNetworkNodesToBeActivated();
 		this.switchOnNetworkNodes(networkNodesToBeActivated);
 	}
 	
