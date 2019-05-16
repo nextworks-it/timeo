@@ -178,7 +178,7 @@ public class NsManager {
 				NotifyScaleResultMessage notifyMsg = (NotifyScaleResultMessage)em;
 				if (notifyMsg.getSolution().isSolutionFound()) {
 					try {
-						allocateNsVlsResources(operationId);
+						allocateScaleVnfs(operationId);
 					} catch (WrongInternalStatusException e) {
 						log.error("Received notify computation result message in wrong status");
 						nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify computation result message in wrong status");
