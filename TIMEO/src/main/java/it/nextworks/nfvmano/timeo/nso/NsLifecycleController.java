@@ -153,7 +153,7 @@ public class NsLifecycleController {
 				}
 
 
-				if(sNsLevelData.getNsScaleInfo()!=null){
+				if(!CollectionUtils.isEmpty(sNsLevelData.getNsScaleInfo())){
 					log.error("Unsupported request NsScaleInfo null");
 					return new ResponseEntity<String>("Unsupported request NsScaleInfo null", HttpStatus.BAD_REQUEST);
 				}
