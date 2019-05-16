@@ -410,8 +410,8 @@ public class ResourceSchedulingManager {
 			if (scaleSolution.isSolutionFound()) {
 
 				log.debug("Solution found");
-				resourceComputationDbWrapper.removeNsResourceSchedulingSolution(nsInstanceId);
-				resourceComputationDbWrapper.addNewNsResourceSchedulingSolution(scaleSolution.getPostScaleResourceSolution());
+				
+				resourceComputationDbWrapper.addNewNsScaleSchedulingSolution(scaleSolution);
 
 				if ((computingPowerAdaptation) || (networkPowerAdaptation)) {
 					adjustPowerState(msg.getRequest().getNsInstanceId(), msg.getOperationId(), scaleSolution);
