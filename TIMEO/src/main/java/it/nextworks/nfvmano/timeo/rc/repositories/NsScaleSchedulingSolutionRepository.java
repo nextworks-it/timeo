@@ -19,11 +19,11 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-
+import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.NsScaleSchedulingSolution;
 
 public interface NsScaleSchedulingSolutionRepository extends JpaRepository<NsScaleSchedulingSolution, Long>{
 
-	
+	Optional<NsScaleSchedulingSolution> findByNsInstanceId(String nsInstanceId);
 	
 }

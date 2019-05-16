@@ -67,7 +67,11 @@ public class ResourceComputationDbWrapper {
 
 	public synchronized void addNewNsScaleSchedulingSolution(NsScaleSchedulingSolution input) throws NotExistingEntityException, AlreadyExistingEntityException {
 		log.debug("Storing new NS scale scheduling solution in DB");
-		
+		Optional<NsScaleSchedulingSolution> currentSS = nsScaleSchedulingSolutionRepository.findByNsInstanceId(input.getNsInstanceId());
+		if(currentSS.isPresent()) {
+			log.debug("removing previous solution");
+			nsScaleSchedulingSolutionRepository.delete(currentSS.get());
+		}
 		List<VnfResourceAllocation> overallVnfds = new ArrayList<>();
 		ArrayList<String> addedVnfds = new ArrayList<>();
 		NsResourceSchedulingSolution currentSolution = getNsResourceSchedulingSolution(input.getNsInstanceId());
@@ -144,6 +148,16 @@ public class ResourceComputationDbWrapper {
 			return solOpt.get(); 
 		} else {
 			throw new NotExistingEntityException("NS resource scheduling solution not found for NS instance " + nsInstanceId);
+		}
+	}
+	
+	public NsScaleSchedulingSolution getNsScaleSchedulingSolution(String nsInstanceId) throws NotExistingEntityException {
+		log.debug("Retrieving NS scale scheduling solution from DB");
+		Optional<NsScaleSchedulingSolution> solOpt = nsScaleSchedulingSolutionRepository.findByNsInstanceId(nsInstanceId);
+		if (solOpt.isPresent()) {
+			return solOpt.get(); 
+		} else {
+			throw new NotExistingEntityException("NS scale scheduling solution not found for NS instance " + nsInstanceId);
 		}
 	}
 	

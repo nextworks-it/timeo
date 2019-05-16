@@ -69,6 +69,7 @@ import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationReleaseMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationResultMessage;
+import it.nextworks.nfvmano.timeo.nso.messages.NotifyScaleResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
@@ -280,7 +281,21 @@ public class NsManagementEngine {
 	 * @param solution
 	 */
 	public void notifyScaleComputationResult(String nsInstanceId, String operationId, NsScaleSchedulingSolution solution){
-		//TODO: j.brenes
+		log.debug("Received notification about scale allocation computation result for network service " + nsInstanceId);
+		if (this.nsManagers.containsKey(nsInstanceId)) {
+			NotifyScaleResultMessage internalMessage = new NotifyScaleResultMessage(nsInstanceId, operationId, solution);
+			String topic = "lifecycle.notifyScaleSolution." + nsInstanceId;
+			ObjectMapper mapper = Utilities.buildObjectMapper();
+			try {
+				String json = mapper.writeValueAsString(internalMessage);
+				rabbitTemplate.convertAndSend(messageExchange.getName(), topic, json);
+				log.debug("Sent internal message with notification of resource scale solution for network service " + nsInstanceId);
+			} catch (JsonProcessingException e) {
+				log.error("Error while translating internal notify computation result message in Json format.");
+			}
+		} else {
+			log.error("Network service " + nsInstanceId + " not existing. Nothing to do.");
+		}
 
 	}
 	

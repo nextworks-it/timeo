@@ -76,6 +76,7 @@ import it.nextworks.nfvmano.libs.orvnfm.vnflcm.interfaces.messages.ModifyVnfInfo
 import it.nextworks.nfvmano.libs.orvnfm.vnflcm.interfaces.messages.TerminateVnfRequest;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.elements.SapData;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
+import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.ScaleNsRequest;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsLinkPort;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsVirtualLinkInfo;
@@ -107,7 +108,9 @@ import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathEndPoint;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
+import it.nextworks.nfvmano.timeo.rc.elements.NsScaleSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.PnfAllocation;
+import it.nextworks.nfvmano.timeo.rc.elements.ScaleVnfResourceAllocation;
 import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 import it.nextworks.nfvmano.timeo.rc.repositories.ResourceComputationDbWrapper;
 import it.nextworks.nfvmano.timeo.ro.messages.AllocateNsVlsMessage;
@@ -117,6 +120,7 @@ import it.nextworks.nfvmano.timeo.ro.messages.AllocationMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.AllocationMessageType;
 import it.nextworks.nfvmano.timeo.ro.messages.ConfigureVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.DestroyUnderlyingConnectivityMessage;
+import it.nextworks.nfvmano.timeo.ro.messages.ScaleVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.SdnControllerOperationAckMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.SetupUnderlyingConnectivityMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.TerminateNsVlsMessage;
@@ -169,6 +173,8 @@ implements AsynchronousVimNotificationInterface,
 	private VnfmOperationPollingManager vnfmOperationPollingManager;
 	
 	private InstantiateNsRequest originalRequest;
+	
+	private ScaleNsRequest lastScaleRequest;
 	
 	private VnfPackageManagementService vnfPackageManagement;
 	
@@ -287,6 +293,22 @@ implements AsynchronousVimNotificationInterface,
 				this.originalRequest = allocateVnfMsg.getRequest();
 				allocateVnfsInternal(allocateVnfMsg);
 				allocatePnfInfosInternal(allocateVnfMsg);
+				break;
+			}
+			case SCALE_VNF: {
+				log.debug("Received request for VNF scaling");
+				log.trace("START SCALE VNFS");
+				//TODO: j.brenes verify this
+				if (internalStatus != ResourceAllocationStatus.CREATED_VNF){
+					log.error("Wrong status. Discarding message.");
+					return;
+				}
+				ScaleVnfMessage scaleVnfMsg = (ScaleVnfMessage)allocateMessage;
+				this.currentOperationId = scaleVnfMsg.getOperationId();
+				this.lastScaleRequest = scaleVnfMsg.getRequest();
+				scaleVnfsInternal(scaleVnfMsg);
+				//TODO: implement pnfinfo scaling
+				//scalePnfInfosInternal(allocateVnfMsg);
 				break;
 			}
 			
@@ -980,6 +1002,64 @@ implements AsynchronousVimNotificationInterface,
 			return;
 		} catch (FailedOperationException e) {
 			manageError("Unable to instantiate VNF: " + e.getMessage(), AllocationMessageType.ALLOCATE_VNF);
+			rollback();
+			return;
+		}
+	}
+	
+	private void scaleVnfsInternal(ScaleVnfMessage scaleVnfMessage) {
+		log.debug("Starting scaling of VNFs for NS instance " + nsInstanceId);
+		internalStatus = ResourceAllocationStatus.SCALING_VNF;
+		try {			
+			Nsd nsd = nsManagementEngine.retrieveNsd(nsInstanceId);
+			NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
+			
+			NsDf nsDeploymentFlavour = nsd.getNsDeploymentFlavour(nsInfo.getFlavourId());
+			String nsInstantiationLevel = scaleVnfMessage.getRequest().getScaleNsData().getScaleNsToLevelData().getNsInstantiationLevel();
+			log.debug("Ns Instantiation Level ID: " + nsInstantiationLevel);
+			NsLevel nsLevel = nsDeploymentFlavour.getNsLevel(nsInstantiationLevel);
+			
+			NsScaleSchedulingSolution scaleSolution = resourceComputationDbWrapper.getNsScaleSchedulingSolution(nsInstanceId);
+			List<ScaleVnfResourceAllocation> vnfsToScale = scaleSolution.getDiffScaleResourceSolution().getVnfResourceAllocation(); 
+			List<VnfToLevelMapping> origVnfLevels = nsLevel.getVnfToLevelMapping();
+			log.debug("The requested NS Level includes " + origVnfLevels.size() + " VNFs.");
+			List<VnfToLevelMapping> vnfLevels = Utilities.orderVnfsBasedOnDependencies(origVnfLevels, nsDeploymentFlavour.getDependencies());
+			log.debug("The ordered NS Level includes " + vnfLevels.size() + " VNFs.");
+			for (VnfToLevelMapping vnf : vnfLevels) {
+				//TODO j.brenes check this
+				if(vnf != null){
+					VnfProfile vnfProfile = nsDeploymentFlavour.getVnfProfile(vnf.getVnfProfileId());
+					log.debug("Analyzing VNF profile " + vnf.getVnfProfileId());
+					int numInstances = vnf.getNumberOfInstances();
+					
+					String vnfdId = vnfProfile.getVnfdId();
+					ScaleVnfResourceAllocation vnfdScale = vnfsToScale.stream()
+							.filter(rA->vnfdId.equals(rA.getVnfdId()))
+							.findAny()
+							.orElse(null);
+					if(vnfdScale!=null) {
+						log.debug("Found vnfd to be instantiated during scale procedure");
+						String vnfFlavourId = vnfProfile.getFlavourId();
+						String vnfInstantiationLevel = vnfProfile.getInstantiationLevel();
+						log.debug("VNFD: " + vnfdId + " - FlavourID: " + vnfFlavourId + " - Number of instances: " + numInstances);
+						for (int i = 0; i<numInstances; i++) {
+							String vnfInstanceId = allocateVnf(vnfdId, vnfFlavourId, i, vnfInstantiationLevel, vnfProfile, nsDeploymentFlavour);
+							setVnfIdInUserInfo(vnfdId, vnfInstanceId, i);
+							log.debug("VNF index: " + i + " - VNF instance ID: " + vnfInstanceId);
+						}
+					}
+					
+				}
+
+			}
+			log.debug("All VNF instantiation requests have been sent for NS " + nsInstanceId);
+			
+		} catch (NotExistingEntityException e) {
+			manageError("Unable to find entity: " + e.getMessage(), AllocationMessageType.SCALE_VNF);
+			rollback();
+			return;
+		} catch (FailedOperationException e) {
+			manageError("Unable to scale VNF: " + e.getMessage(), AllocationMessageType.SCALE_VNF);
 			rollback();
 			return;
 		}

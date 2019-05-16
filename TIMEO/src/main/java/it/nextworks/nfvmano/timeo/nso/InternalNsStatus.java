@@ -32,5 +32,6 @@ public enum InternalNsStatus {
 	TERMINATED,
 	FAILED,
 	COMPUTING_SCALING_RESOURCES,
+	SCALING_VNFS,
 	
 }

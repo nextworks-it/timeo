@@ -33,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 	@Type(value = AllocateNsVlsMessage.class, 	name = "ALLOCATE_NS_VLS"),
 	@Type(value = AllocateVimNetResourceAckMessage.class, 	name = "VIM_ACK_ALLOCATE_VNET_RESOURCE"),
 	@Type(value = AllocateVnfMessage.class, 	name = "ALLOCATE_VNF"),
+	@Type(value = ScaleVnfMessage.class, 	name = "SCALE_VNF"),
 	@Type(value = ConfigureVnfMessage.class, 	name = "CONFIGURE_VNF"),
 	@Type(value = VnfmOperationAckMessage.class, 	name = "VNFM_OPERATION_ACK"),
 	@Type(value = SetupUnderlyingConnectivityMessage.class, 	name = "SETUP_UNDERLYING_CONNECTIVITY"),

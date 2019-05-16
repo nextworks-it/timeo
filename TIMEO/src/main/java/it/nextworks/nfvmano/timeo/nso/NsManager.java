@@ -44,6 +44,7 @@ import it.nextworks.nfvmano.timeo.nso.messages.EngineMessageType;
 import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationResultMessage;
+import it.nextworks.nfvmano.timeo.nso.messages.NotifyScaleResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
@@ -172,6 +173,25 @@ public class NsManager {
 				}
 				break;
 			}
+			case NOTIFY_SCALE_RESULT: {
+				log.debug("Received scale computation result message with operation ID " + operationId);
+				NotifyScaleResultMessage notifyMsg = (NotifyScaleResultMessage)em;
+				if (notifyMsg.getSolution().isSolutionFound()) {
+					try {
+						allocateNsVlsResources(operationId);
+					} catch (WrongInternalStatusException e) {
+						log.error("Received notify computation result message in wrong status");
+						nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify computation result message in wrong status");
+						this.internalStatus = InternalNsStatus.FAILED;
+					}
+				} else {
+					log.error("Resource computation failed. Setting internal status to failed.");
+					this.internalStatus=InternalNsStatus.FAILED;
+					//TODO: should we somehow remove this NS Manager instance?
+				}
+				break;
+			}
+
 			
 			case NOTIFY_ALLOCATION_RESULT: {
 				log.debug("Received resource allocation result message with operation ID " + operationId);
@@ -310,7 +330,7 @@ public class NsManager {
 					}
 					break;
 				}
-
+				
 				default:
 					break;
 				}
@@ -343,6 +363,7 @@ public class NsManager {
 				}
 				break;
 			}
+			
 			
 			default: {
 				log.error("Received message with not supported type");
@@ -449,6 +470,15 @@ public class NsManager {
 		log.debug("Starting procedure to instantiate VNFs");
 		internalStatus = InternalNsStatus.CREATING_VNFS;
 		resourceAllocationManager.allocateVnf(nsInstanceId, operationId, instantiateMessage);
+	}
+	
+	private void allocateScaleVnfs(String operationId) throws WrongInternalStatusException {
+		if (internalStatus != InternalNsStatus.COMPUTING_SCALING_RESOURCES) throw new WrongInternalStatusException();
+		log.debug("Starting procedure to scale VNFs");
+		internalStatus = InternalNsStatus.SCALING_VNFS;
+		resourceAllocationManager.scaleVnf(nsInstanceId, operationId, scaleMessage);
+		
+		
 	}
 	
 	private void configureVnfs(String operationId) throws WrongInternalStatusException {
