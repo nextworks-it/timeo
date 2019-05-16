@@ -115,6 +115,7 @@ public class NsScaleSchedulingSolution {
 		if (networkPathsToDeallocate != null) this.networkPathsToDeallocate = networkPathsToDeallocate;
 		if (networkNodesToBeDeactivated != null) this.networkNodesToBeDeactivated = networkNodesToBeDeactivated;
 		if (computeNodesToBeDeactivated != null) this.computeNodesToBeDeactivated = computeNodesToBeDeactivated;
+		if (scaleNsResourceAllocation!=null) this.scaleNsResourceAllocation=scaleNsResourceAllocation;
 		this.solutionFound = solutionFound;
 	}
 
