@@ -103,7 +103,7 @@ public class CdnStaticAlgorithmBluespaceNXW extends AbstractNsResourceAllocation
     	//Look for the missing vnfdIds
     	List<ScaleVnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
     	String instantiationLevel = request.getScaleNsData().getScaleNsToLevelData().getNsInstantiationLevel();
-    	if( instantiationLevel =="il_vCDN_big") {
+    	if( instantiationLevel.contentEquals("il_vCDN_big")) {
     		ScaleVnfResourceAllocation vra = new ScaleVnfResourceAllocation(null, "vCacheEdge_2_01", 0, "vCacheEdge_2_vdu", 0, "OpenStack_local", "netdev5", "compute1");
     		vnfResourceAllocation.add(vra);
     		ScaleNsResourceAllocation sNRA = new ScaleNsResourceAllocation(request.getNsInstanceId(), vnfResourceAllocation, null, null, true, null, null);
