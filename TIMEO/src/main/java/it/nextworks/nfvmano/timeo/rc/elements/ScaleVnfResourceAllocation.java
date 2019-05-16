@@ -140,6 +140,7 @@ public class ScaleVnfResourceAllocation {
 	/**
 	 * @return the equivalent VnfResourceAllocation
 	 */
+	@JsonIgnore
 	public VnfResourceAllocation getVnfResourceAllocation() {
 		return new VnfResourceAllocation(null, this.vnfdId, this.vnfIndex, this.vduId,this.vduIndex, 
 				this.vimId,this.zoneId, this.hostId);
