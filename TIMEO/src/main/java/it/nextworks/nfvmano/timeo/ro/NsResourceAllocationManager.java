@@ -299,7 +299,7 @@ implements AsynchronousVimNotificationInterface,
 				log.debug("Received request for VNF scaling");
 				log.trace("START SCALE VNFS");
 				//TODO: j.brenes verify this
-				if (internalStatus != ResourceAllocationStatus.CREATED_VNF){
+				if (internalStatus != ResourceAllocationStatus.CONFIGURED_VNF){
 					log.error("Wrong status. Discarding message.");
 					return;
 				}
