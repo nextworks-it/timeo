@@ -64,7 +64,7 @@ public class ScaleNsResourceAllocation {
 	
 	
 
-	@OneToMany(mappedBy = "sNSRA", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy = "scaleNsResourceAllocation", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<ScaleVnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
@@ -116,7 +116,13 @@ public class ScaleNsResourceAllocation {
 			List<String> networkNodesToBeActivated,
 			Map<String,String> computeNodesToBeActivated) {
 		
-		if (vnfResourceAllocation != null) this.vnfResourceAllocation = vnfResourceAllocation;
+		if (vnfResourceAllocation != null) {
+			this.vnfResourceAllocation = vnfResourceAllocation;
+			for(ScaleVnfResourceAllocation sVnfRa : this.vnfResourceAllocation) {
+				sVnfRa.setScaleNsResourceAllocation(this);
+			}
+			
+		}
 		if (pnfAllocation != null) this.pnfAllocation = pnfAllocation;
 		if (networkPaths != null) this.networkPaths = networkPaths;
 		this.solutionFound = solutionFound;

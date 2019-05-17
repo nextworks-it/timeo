@@ -40,7 +40,7 @@ public class ScaleVnfResourceAllocation {
 	
 	@ManyToOne
 	@JsonIgnore
-	private ScaleNsResourceAllocation sNSRA;
+	private ScaleNsResourceAllocation scaleNsResourceAllocation;
 	
 	//input
 	private String vnfdId;	//VNFD of the VNF
@@ -60,7 +60,7 @@ public class ScaleVnfResourceAllocation {
 	/**
 	 * Constructor
 	 * 
-	 * @param nsRss			NS resource scheduling solution this VNF allocation belongs to
+	 * @param scaleNsResourceAllocation			NS resource scheduling solution this VNF allocation belongs to
 	 * @param vnfdId		ID of the VNFD the target VM is related to
 	 * @param vnfIndex		index of the VNF within the NS
 	 * @param vduId			ID of the VDU within the VNFD that will run on the target VM
@@ -69,7 +69,7 @@ public class ScaleVnfResourceAllocation {
 	 * @param zoneId		ID of the zone where the VM must be placed, within the given VIM
 	 * @param hostId		ID of the host where the VM must be placed, within the given VIM
 	 */
-	public ScaleVnfResourceAllocation(ScaleNsResourceAllocation diffNsRss,
+	public ScaleVnfResourceAllocation(ScaleNsResourceAllocation scaleNsResourceAllocation,
 			String vnfdId,
 			int vnfIndex,
 			String vduId,
@@ -77,7 +77,7 @@ public class ScaleVnfResourceAllocation {
 			String vimId,
 			String zoneId,
 			String hostId) {
-		this.sNSRA = diffNsRss;
+		this.scaleNsResourceAllocation = scaleNsResourceAllocation;
 		this.vnfdId = vnfdId;
 		this.vnfIndex = vnfIndex;
 		this.vduId = vduId;
@@ -85,6 +85,20 @@ public class ScaleVnfResourceAllocation {
 		this.vimId = vimId;
 		this.zoneId = zoneId;
 		this.hostId = hostId;
+	}
+
+	/**
+	 * @return the scaleNsResourceAllocation
+	 */
+	public ScaleNsResourceAllocation getScaleNsResourceAllocation() {
+		return scaleNsResourceAllocation;
+	}
+
+	/**
+	 * @param scaleNsResourceAllocation the scaleNsResourceAllocation to set
+	 */
+	public void setScaleNsResourceAllocation(ScaleNsResourceAllocation scaleNsResourceAllocation) {
+		this.scaleNsResourceAllocation = scaleNsResourceAllocation;
 	}
 
 	/**
