@@ -32,6 +32,7 @@ import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.NsScaleSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.PnfAllocation;
+import it.nextworks.nfvmano.timeo.rc.elements.ScaleNsResourceAllocation;
 import it.nextworks.nfvmano.timeo.rc.elements.ScaleVnfResourceAllocation;
 import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 
@@ -49,6 +50,9 @@ public class ResourceComputationDbWrapper {
 	
 	@Autowired
 	NsScaleSchedulingSolutionRepository nsScaleSchedulingSolutionRepository;
+	
+	@Autowired
+	ScaleNsResourceAllocationRepository scaleNsResourceAllocationRepository;
 
 		
 	@Autowired
@@ -101,6 +105,7 @@ public class ResourceComputationDbWrapper {
 						overallComputeNodes));
 
 		input.setPostScaleResourceSolution(this.getNsResourceSchedulingSolution(input.getNsInstanceId()));
+		scaleNsResourceAllocationRepository.saveAndFlush(input.getScaleNsResourceAllocation());
 		nsScaleSchedulingSolutionRepository.saveAndFlush(input);
 
 
