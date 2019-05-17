@@ -60,8 +60,10 @@ public class ScaleNsResourceAllocation {
 	
 		
 	@OneToOne
-	private NsScaleSchedulingSolution nsSSS;
+	private NsScaleSchedulingSolution nsScaleSchedulingSolution;
 	
+	
+
 	@OneToMany(mappedBy = "sNSRA", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@LazyCollection(LazyCollectionOption.FALSE)
@@ -205,6 +207,22 @@ public class ScaleNsResourceAllocation {
 			if (vra.getVnfdId().equals(vnfdId)) result.add(vra);
 		}
 		return result;
+	}
+	
+	/**
+	 * @return the nsScaleSchedulingSolution
+	 */
+	public NsScaleSchedulingSolution getNsScaleSchedulingSolution() {
+		return nsScaleSchedulingSolution;
+	}
+
+
+
+	/**
+	 * @param nsScaleSchedulingSolution the nsScaleSchedulingSolution to set
+	 */
+	public void setNsScaleSchedulingSolution(NsScaleSchedulingSolution nsScaleSchedulingSolution) {
+		this.nsScaleSchedulingSolution = nsScaleSchedulingSolution;
 	}
 	
 

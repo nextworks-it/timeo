@@ -48,7 +48,7 @@ public class NsScaleSchedulingSolution {
 	private NsResourceSchedulingSolution postScaleResourceSolution;
 
 	//Contains the resources to be allocated by the scaling
-	@OneToOne(fetch=FetchType.EAGER, mappedBy="nsSSS", cascade=CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(fetch=FetchType.EAGER, mappedBy="nsScaleSchedulingSolution", cascade=CascadeType.ALL, orphanRemoval = true)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private ScaleNsResourceAllocation scaleNsResourceAllocation;
 
@@ -115,7 +115,10 @@ public class NsScaleSchedulingSolution {
 		if (networkPathsToDeallocate != null) this.networkPathsToDeallocate = networkPathsToDeallocate;
 		if (networkNodesToBeDeactivated != null) this.networkNodesToBeDeactivated = networkNodesToBeDeactivated;
 		if (computeNodesToBeDeactivated != null) this.computeNodesToBeDeactivated = computeNodesToBeDeactivated;
-		if (scaleNsResourceAllocation!=null) this.scaleNsResourceAllocation=scaleNsResourceAllocation;
+		if (scaleNsResourceAllocation!=null) {
+			this.scaleNsResourceAllocation=scaleNsResourceAllocation;
+			this.scaleNsResourceAllocation.setNsScaleSchedulingSolution(this);
+		}
 		this.solutionFound = solutionFound;
 	}
 
