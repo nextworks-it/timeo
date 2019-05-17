@@ -106,7 +106,7 @@ public class CdnStaticAlgorithmBluespaceNXW extends AbstractNsResourceAllocation
     	if( instantiationLevel.equals("il_vCDN_big")) {
     		ScaleVnfResourceAllocation vra = new ScaleVnfResourceAllocation(null, "vCacheEdge_2_01", 0, "vCacheEdge_2_vdu", 0, "OpenStack_local", "netdev5", "compute1");
     		vnfResourceAllocation.add(vra);
-    		ScaleNsResourceAllocation sNRA = new ScaleNsResourceAllocation(request.getNsInstanceId(), vnfResourceAllocation, null, null, true, null, null);
+    		ScaleNsResourceAllocation sNRA = new ScaleNsResourceAllocation(vnfResourceAllocation, null, null, true, null, null);
     		return new NsScaleSchedulingSolution(request.getNsInstanceId(), null, null, null, null, null,sNRA, true);
     	}else
     		throw new ScaleAllocationSolutionNotFound("Method not implemented");

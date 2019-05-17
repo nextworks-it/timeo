@@ -105,8 +105,15 @@ public class ResourceComputationDbWrapper {
 						overallComputeNodes));
 
 		input.setPostScaleResourceSolution(this.getNsResourceSchedulingSolution(input.getNsInstanceId()));
-		scaleNsResourceAllocationRepository.saveAndFlush(input.getScaleNsResourceAllocation());
+		log.debug("Storing nsScaleSolution");
 		nsScaleSchedulingSolutionRepository.saveAndFlush(input);
+		log.debug("Storing ScaleNsResourceAllocation");
+		scaleNsResourceAllocationRepository.saveAndFlush(input.getScaleNsResourceAllocation());
+		for(ScaleVnfResourceAllocation sVnf : input.getScaleNsResourceAllocation().getVnfResourceAllocation()) {
+			log.debug("Storing ScaleVnfResourceAllocation");
+			scaleVnfResourceAllocationRepository.saveAndFlush(sVnf);
+			
+		}
 
 
 	}

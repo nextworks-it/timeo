@@ -55,10 +55,10 @@ public class ScaleNsResourceAllocation {
 
 	@Id
     @GeneratedValue
+    @JsonIgnore
     private Long id;
 	
-	private String nsInstanceId;
-	
+		
 	@OneToOne
 	private NsScaleSchedulingSolution nsSSS;
 	
@@ -95,65 +95,11 @@ public class ScaleNsResourceAllocation {
 		//JPA only
 	}
 	
+	
+		
 	/**
 	 * Constructor
 	 * 
-	 * @param nsInstanceId	ID of the NS instance this resource allocation is associated to
-	 * @param solutionFound true if a suitable resource allocation solution has been found
-	 */
-	public ScaleNsResourceAllocation(String nsInstanceId,
-			boolean solutionFound) {
-		this.nsInstanceId = nsInstanceId;
-		this.solutionFound = solutionFound;
-	}
-	
-	/**
-	 * Constructor
-	 * 
-	 * @param nsInstanceId	ID of the NS instance this resource allocation is associated to
-	 * @param vnfResourceAllocation information about the allocation of computing resources for the VNFs
-	 * @param networkPaths information about the allocation of network resources for the NS virtual links
-	 * @param solutionFound true if a suitable resource allocation solution has been found
-	 */
-	public ScaleNsResourceAllocation(String nsInstanceId,
-			List<ScaleVnfResourceAllocation> vnfResourceAllocation,
-			List<NetworkPath> networkPaths,
-			boolean solutionFound) {
-		this.nsInstanceId = nsInstanceId;
-		if (vnfResourceAllocation != null) this.vnfResourceAllocation = vnfResourceAllocation;
-		if (networkPaths != null) this.networkPaths = networkPaths;
-		this.solutionFound = solutionFound;
-	}
-	
-	
-	/**
-	 * Constructor
-	 * 
-	 * @param nsInstanceId	ID of the NS instance this resource allocation is associated to
-	 * @param vnfResourceAllocation information about the allocation of computing resources for the VNFs
-	 * @param networkPaths information about the allocation of network resources for the NS virtual links
-	 * @param solutionFound true if a suitable resource allocation solution has been found
-	 * @param networkNodesToBeActivated network nodes to be activated
-	 * @param computeNodesToBeActivated compute nodes to be activated
-	 */
-	public ScaleNsResourceAllocation(String nsInstanceId,
-			List<ScaleVnfResourceAllocation> vnfResourceAllocation,
-			List<NetworkPath> networkPaths,
-			boolean solutionFound,
-			List<String> networkNodesToBeActivated,
-			Map<String,String> computeNodesToBeActivated) {
-		this.nsInstanceId = nsInstanceId;
-		if (vnfResourceAllocation != null) this.vnfResourceAllocation = vnfResourceAllocation;
-		if (networkPaths != null) this.networkPaths = networkPaths;
-		this.solutionFound = solutionFound;
-		if (networkNodesToBeActivated != null) this.networkNodesToBeActivated = networkNodesToBeActivated;
-		if (computeNodesToBeActivated != null) this.computeNodesToBeActivated = computeNodesToBeActivated;
-	}
-	
-	/**
-	 * Constructor
-	 * 
-	 * @param nsInstanceId	ID of the NS instance this resource allocation is associated to
 	 * @param vnfResourceAllocation information about the allocation of computing resources for the VNFs
 	 * @param pnfAllocation information about the PNF selected for the NS
 	 * @param networkPaths information about the allocation of network resources for the NS virtual links
@@ -161,14 +107,13 @@ public class ScaleNsResourceAllocation {
 	 * @param networkNodesToBeActivated network nodes to be activated
 	 * @param computeNodesToBeActivated compute nodes to be activated
 	 */
-	public ScaleNsResourceAllocation(String nsInstanceId,
-			List<ScaleVnfResourceAllocation> vnfResourceAllocation,
+	public ScaleNsResourceAllocation(List<ScaleVnfResourceAllocation> vnfResourceAllocation,
 			List<PnfAllocation> pnfAllocation,
 			List<NetworkPath> networkPaths,
 			boolean solutionFound,
 			List<String> networkNodesToBeActivated,
 			Map<String,String> computeNodesToBeActivated) {
-		this.nsInstanceId = nsInstanceId;
+		
 		if (vnfResourceAllocation != null) this.vnfResourceAllocation = vnfResourceAllocation;
 		if (pnfAllocation != null) this.pnfAllocation = pnfAllocation;
 		if (networkPaths != null) this.networkPaths = networkPaths;
@@ -177,30 +122,7 @@ public class ScaleNsResourceAllocation {
 		if (computeNodesToBeActivated != null) this.computeNodesToBeActivated = computeNodesToBeActivated;
 	}
 	
-	/**
-	 * Constructor
-	 * 
-	 * @param nsInstanceId	ID of the NS instance this resource allocation is associated to
-	 * @param networkNodesToBeActivated network nodes to be activated
-	 * @param computeNodesToBeActivated compute nodes to be activated
-	 */
-	public ScaleNsResourceAllocation(String nsInstanceId,
-			boolean solutionFound,
-			List<String> networkNodesToBeActivated,
-			Map<String,String> computeNodesToBeActivated) {
-		this.nsInstanceId = nsInstanceId;
-		this.solutionFound = solutionFound;
-		if (networkNodesToBeActivated != null) this.networkNodesToBeActivated = networkNodesToBeActivated;
-		if (computeNodesToBeActivated != null) this.computeNodesToBeActivated = computeNodesToBeActivated;
-	}
-
-	/**
-	 * @return the nsInstanceId
-	 */
-	public String getNsInstanceId() {
-		return nsInstanceId;
-	}
-
+	
 	/**
 	 * @return the vnfResourceAllocation
 	 */
