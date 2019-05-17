@@ -147,6 +147,7 @@ public class NsManager {
 					nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received scaling message in wrong status");
 				}
 				ScaleNsRequestMessage scaleMsg = (ScaleNsRequestMessage)em;
+				this.scaleMessage = scaleMsg;
 				try {
 					scaleNs(scaleMsg);
 				} catch(Exception e) {
