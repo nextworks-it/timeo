@@ -45,17 +45,20 @@ public class NsScaleSchedulingSolution {
 	private String nsInstanceId;
 
 	@OneToOne
+	@JsonIgnore
 	private NsResourceSchedulingSolution postScaleResourceSolution;
 
 	//Contains the resources to be allocated by the scaling
 	@OneToOne(fetch=FetchType.EAGER, mappedBy="nsScaleSchedulingSolution", cascade=CascadeType.ALL, orphanRemoval = true)
 	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JsonIgnore
 	private ScaleNsResourceAllocation scaleNsResourceAllocation;
 
 	//The vnf instance ids to be dealloacted by the scaling procedure
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@JsonIgnore
 	private List<String> vnfInstanceDeallocation = new ArrayList<>();
 
 
@@ -63,18 +66,21 @@ public class NsScaleSchedulingSolution {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@JsonIgnore
 	private List<String> pnfInstanceDeallocation = new ArrayList<>();
 
 	//The network path ids to be dealloacted by the scaling procedure
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@JsonIgnore
 	private List<String> networkPathsToDeallocate = new ArrayList<>();
 
 	//The network nodes to be deactivate by the powermanager after the scaling procedure
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@JsonIgnore
 	private List<String> networkNodesToBeDeactivated = new ArrayList<>();
 
 
@@ -83,6 +89,7 @@ public class NsScaleSchedulingSolution {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@JsonIgnore
 	private Map<String,String> computeNodesToBeDeactivated = new HashMap<>();
 
 	private boolean solutionFound;
