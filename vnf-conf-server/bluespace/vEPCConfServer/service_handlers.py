@@ -1,6 +1,7 @@
 from log import get_logger
 import netifaces
 from subprocess import Popen, PIPE, STDOUT
+import os
 
 class EpcHandler:
 
@@ -51,6 +52,9 @@ class EpcHandler:
             if key_split[-1]=="internet_interface" and value !="":
                 self.logger.debug("received interface_interface:%s"%value)
                 spgw_config["PGW_INTERFACE_NAME_FOR_SGI"]=value
+
+            if key_split[-1]=="hostname":
+                os.system('hostname %s' % value)
 
         with open("/opt/vEPCConfServer/mme.conf_template") as f:
             mme_setup = f.read()
