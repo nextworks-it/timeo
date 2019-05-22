@@ -1,15 +1,8 @@
-List of variables to be sent to the VNF during the config phase
+Preconditions:
+$ pip3 install tornado
+$ pip3 install yattag
 
-HSS
- ->  hss_hostname
- ->  vEPC_domain
-
-Json to be sent
-	{
-		"vnf_type" : "HSS",
-		"hss_hostname" : "vEPC-hss-00x",
-		"vEPC_domain" : "openair.EUR"
-	}
-
-
-
+Operating:
+Run with
+$ python3 server.py
+and see help via browser at 'http://localhost:8888'
