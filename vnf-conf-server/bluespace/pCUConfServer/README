@@ -1,0 +1,15 @@
+List of variables to be sent to the VNF during the config phase
+
+HSS
+ ->  hss_hostname
+ ->  vEPC_domain
+
+Json to be sent
+	{
+		"vnf_type" : "HSS",
+		"hss_hostname" : "vEPC-hss-00x",
+		"vEPC_domain" : "openair.EUR"
+	}
+
+
+
