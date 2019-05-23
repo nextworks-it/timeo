@@ -2,7 +2,7 @@
   "port": 8888,
   "script": "echo",
   "params": [
-    "pnf.remote.cu"
+    "vnf.vEPC_01.vdu.vEPC_vdu.extcp.vEPC_users_ext.floating"
 
   ]
 }

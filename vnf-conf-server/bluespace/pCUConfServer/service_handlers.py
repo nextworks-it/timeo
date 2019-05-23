@@ -26,7 +26,7 @@ class CUHandler:
     def process(self, parameters):
 
         self.logger.debug("process")
-        self.epc_address = parameters["pnf.remote.cu"]
+        self.epc_address = parameters["vnf.vEPC_01.vdu.vEPC_vdu.extcp.vEPC_users_ext.floating"]
 
         self.__restart_service()
 
