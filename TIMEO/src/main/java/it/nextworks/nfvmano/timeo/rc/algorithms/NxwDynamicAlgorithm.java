@@ -78,6 +78,15 @@ public class NxwDynamicAlgorithm extends AbstractNsResourceAllocationAlgorithm {
                 "pDNS_profile",
                 Collections.emptyMap()
         ));
+        pnfs.add(new PnfAllocation(
+                null,
+                "pCU_v01",
+                "0.1",
+                0,
+                "pCU_INSTANCE_001",
+                "pCU_profile",
+                Collections.emptyMap()
+        ));
 
         List<String> networkNodesToBeActivated = new ArrayList<>();
 
