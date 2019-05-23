@@ -1,0 +1,14 @@
+{
+	"vnfConfigurationData": {
+		"cpConfiguration": [],
+		"dhcpServer": "null",
+		"vnfSpecificData": [
+			{
+				"key": "pnf.remote.cu",
+				"value": "10.20.6.151"
+			}
+		]
+	},
+	"vnfcConfigurationData": [],
+	"vnfInstanceId": "553"
+}

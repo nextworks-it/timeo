@@ -1,0 +1,9 @@
+{
+  "port": 8888,
+  "script": "echo",
+  "params": [
+    "uservnf.cu_interface",
+    "uservnf.internet_interface",
+    "uservnf.hostname"
+  ]
+}
