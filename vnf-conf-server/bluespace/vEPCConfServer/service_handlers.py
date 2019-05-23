@@ -10,6 +10,7 @@ class EpcHandler:
     def __init__(self):
         if EpcHandler.__instance is None:
             self.logger = get_logger(__name__)
+            self.vxlan_remote = ""
             EpcHandler.__instance = self
         else:
             raise Exception("This class is a singleton!")
@@ -29,6 +30,14 @@ class EpcHandler:
 
     def get_interface_ip(self, iface):
         return netifaces.ifaddresses(iface)[netifaces.AF_INET][0]["addr"]
+
+    def __start_stop_vxlan(self, vxlan_address):
+        self.logger.debug("service restart")
+
+        p = Popen("/opt/vEPCConfServer/start_stop_vxlan.sh %s"%vxlan_address, stdout=PIPE, stdin=PIPE, stderr=STDOUT, shell=True)
+        stdout = p.communicate()[0]
+        if p.returncode != 0:
+            raise Exception(stdout.decode())
 
     def process(self, parameters):
         self.logger.debug("process")
@@ -56,6 +65,10 @@ class EpcHandler:
             if key_split[-1]=="hostname":
                 os.system('hostname %s' % value)
 
+            if key_split[-1]=="floating":
+               self.__start_stop_vxlan(value)
+
+
         with open("/opt/vEPCConfServer/mme.conf_template") as f:
             mme_setup = f.read()
             for key, value in mme_config.iteritems():
@@ -78,7 +91,12 @@ class EpcHandler:
 
 
     def __restart_service(self):
-        self.logger.debug("service restart")
+
+        p = Popen("service hss restart", stdout=PIPE, stdin=PIPE, stderr=STDOUT, shell=True)
+        stdout = p.communicate()[0]
+        if p.returncode != 0:
+            raise Exception(stdout.decode())
+
         p = Popen("service mme restart", stdout=PIPE, stdin=PIPE, stderr=STDOUT, shell=True)
         stdout = p.communicate()[0]
         if p.returncode != 0:
