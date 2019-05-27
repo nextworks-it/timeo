@@ -73,6 +73,7 @@ import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithmBluespaceNXW;
 import it.nextworks.nfvmano.timeo.rc.algorithms.DummyAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.algorithms.DummyAlgorithmNXW;
 import it.nextworks.nfvmano.timeo.rc.algorithms.NsResourceAllocationAlgorithmInterface;
+import it.nextworks.nfvmano.timeo.rc.algorithms.NxwDynamicAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.algorithms.emma.EmmaNetCompAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.repositories.ResourceComputationDbWrapper;
 import it.nextworks.nfvmano.timeo.sbdriver.SbDriverType;
@@ -118,6 +119,11 @@ public class ResourceSchedulingManager {
 	
 	@Value("${timeo.poweradaptation.network}")
 	private boolean networkPowerAdaptation;
+	
+	
+	//Used to store Rc Algorithm properties
+	@Value("#{${timeo.rc.properties}}")
+	private Map<String, String> rcProperties;
 	
 	@Autowired
 	NsManagementEngine nsManagementEngine;
@@ -649,6 +655,8 @@ public class ResourceSchedulingManager {
 				return new VEPCStaticAlgorithmArno();
 			case VEPC_STATIC_NXW:
 				return new VEPCStaticAlgorithmNXW();
+			case NXW_DYNAMIC_ALGORITHM:
+				return new NxwDynamicAlgorithm(vnfPackageManagement, rcProperties);
 			default:
 				log.error("Algorithm type {} not yet implemented.", type);
 				throw new AlgorithmNotAvailableException();

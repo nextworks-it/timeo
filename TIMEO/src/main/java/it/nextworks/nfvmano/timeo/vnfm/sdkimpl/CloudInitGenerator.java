@@ -87,7 +87,7 @@ public class CloudInitGenerator {
 		for (Map.Entry<String, String> e : ipAddresses.entrySet()) {
 			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$intCp." + e.getKey() + ".address", e.getValue());
 		}
-		for (Map.Entry<String, String> e : ipAddresses.entrySet()) {
+		for (Map.Entry<String, String> e : floatingIps.entrySet()) {
 			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$extCp." + e.getKey() + ".floating", e.getValue());
 		}
 		for (Map.Entry<String, String> e : gwAddresses.entrySet()) {
