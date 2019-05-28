@@ -25,6 +25,8 @@ import it.nextworks.nfvmano.libs.descriptors.onboardedvnfpackage.OnboardedVnfPkg
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vdu;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.PnfManagementService;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
 import it.nextworks.nfvmano.timeo.catalogue.vnfpackagemanagement.VnfPackageManagementService;
 import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
 import it.nextworks.nfvmano.timeo.rc.elements.*;
@@ -42,11 +44,13 @@ public class NxwDynamicAlgorithm extends AbstractNsResourceAllocationAlgorithm {
 	
 	private VnfPackageManagementService vnfPackageManagementService;
 	private Map<String, String> properties;
+	private PnfManagementService pnfManagementService;
 
-    public NxwDynamicAlgorithm(VnfPackageManagementService vnfPackageManagement, Map<String, String> properties) {
+    public NxwDynamicAlgorithm(VnfPackageManagementService vnfPackageManagement, PnfManagementService pnfManagement, Map<String, String> properties) {
         super(AlgorithmType.NXW_DYNAMIC_ALGORITHM);
         this.vnfPackageManagementService= vnfPackageManagement;
         this.properties = properties;
+        this.pnfManagementService = pnfManagement;
     }
 
     @Override
@@ -69,25 +73,22 @@ public class NxwDynamicAlgorithm extends AbstractNsResourceAllocationAlgorithm {
     	
         List<NetworkPath> networkPaths = new ArrayList<>();
         List<PnfAllocation> pnfs = new ArrayList<>();
-        pnfs.add(new PnfAllocation(
-                null,
-                "pDNS_v01",
-                "0.1",
-                0,
-                "pDNS_INSTANCE_001",
-                "pDNS_profile",
-                Collections.emptyMap()
-        ));
-        pnfs.add(new PnfAllocation(
-                null,
-                "pCU_v01",
-                "0.1",
-                0,
-                "pCU_INSTANCE_001",
-                "pCU_profile",
-                Collections.emptyMap()
-        ));
+        for(String pnfdId : nsd.getPnfdId()) {
+        	PnfInstance pnfInstance= pnfManagementService.getPnfInstancesFromPnfd(pnfdId).get(0);
+        	
+        	pnfs.add(new PnfAllocation(
+                    null,
+                    pnfdId,
+                    pnfInstance.getPnfdVersion(),
+                    0,
+                    pnfInstance.getPnfInstanceId(),
+                    "",
+                    Collections.emptyMap()
+            ));
+           
 
+        }
+        
         List<String> networkNodesToBeActivated = new ArrayList<>();
 
         Map<String,String> computeNodesToBeActivated = new HashMap<>();

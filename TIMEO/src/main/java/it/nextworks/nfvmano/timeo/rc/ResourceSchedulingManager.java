@@ -58,6 +58,7 @@ import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.descriptors.onboardedvnfpackage.OnboardedVnfPkgInfo;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.PnfManagementService;
 import it.nextworks.nfvmano.timeo.catalogue.vnfpackagemanagement.VnfPackageManagementService;
 import it.nextworks.nfvmano.timeo.common.NfvoConstants;
 import it.nextworks.nfvmano.timeo.common.Utilities;
@@ -130,6 +131,9 @@ public class ResourceSchedulingManager {
 	
 	@Autowired
 	private VnfPackageManagementService vnfPackageManagement;
+	
+	@Autowired
+	private PnfManagementService pnfManagement;
 	
 	@Autowired
 	private SbDriversManager sbDriversManager;
@@ -656,7 +660,7 @@ public class ResourceSchedulingManager {
 			case VEPC_STATIC_NXW:
 				return new VEPCStaticAlgorithmNXW();
 			case NXW_DYNAMIC_ALGORITHM:
-				return new NxwDynamicAlgorithm(vnfPackageManagement, rcProperties);
+				return new NxwDynamicAlgorithm(vnfPackageManagement, pnfManagement, rcProperties);
 			default:
 				log.error("Algorithm type {} not yet implemented.", type);
 				throw new AlgorithmNotAvailableException();
