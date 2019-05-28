@@ -44,7 +44,7 @@ import it.nextworks.nfvmano.timeo.nso.messages.EngineMessageType;
 import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationResultMessage;
-import it.nextworks.nfvmano.timeo.nso.messages.NotifyScaleResultMessage;
+import it.nextworks.nfvmano.timeo.nso.messages.NotifyScaleVnfAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
@@ -151,7 +151,10 @@ public class NsManager {
 				try {
 					scaleNs(scaleMsg);
 				} catch(Exception e) {
-					//TODO:
+					log.error("Error during NS SCALE procedure");
+					log.error(e.getMessage());
+					this.internalStatus=InternalNsStatus.FAILED;
+					//TODO: Control scaling error
 				}
 				break;
 			}
@@ -174,12 +177,13 @@ public class NsManager {
 				}
 				break;
 			}
-			case NOTIFY_SCALE_RESULT: {
+			case NOTIFY_SCALE_COMPUTATION_RESULT: {
 				log.debug("Received scale computation result message with operation ID " + operationId);
-				NotifyScaleResultMessage notifyMsg = (NotifyScaleResultMessage)em;
+				NotifyScaleVnfAllocationResultMessage notifyMsg = (NotifyScaleVnfAllocationResultMessage)em;
 				if (notifyMsg.getSolution().isSolutionFound()) {
 					try {
-						allocateScaleVnfs(operationId);
+						scaleTerminateVnfs(operationId);
+						
 					} catch (WrongInternalStatusException e) {
 						log.error("Received notify computation result message in wrong status");
 						nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify computation result message in wrong status");
@@ -259,6 +263,26 @@ public class NsManager {
 					}
 					break;
 				}
+				case SCALE_CONFIGURE_VNF: {
+					if (notifyMsg.isSuccessful()) {
+						log.trace("END CONFIGURE VNFS FOR NS SCALE " + nsInstanceId);
+						log.trace("END SCALE NS FOR NS" + nsInstanceId);
+						log.debug("VNFs successfully configured");
+						try {
+							scaleConfigureMonitoring(operationId);
+						
+						} catch (WrongInternalStatusException e) {
+							log.error("Received notify VNFs monitoring update result message in wrong status");
+							nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify VNFs monitoring update result message in wrong status");
+							this.internalStatus = InternalNsStatus.FAILED;
+						}
+					} else {
+						log.error("VNFs monitoring activation failed. Setting internal status to failed.");
+						this.internalStatus=InternalNsStatus.FAILED;
+						//TODO: release computed resources in path computation, release VNFs and NS links
+					}
+					break;
+				}
 				
 				case SETUP_UNDERLYING_CONNECTIVITY: {
 					if (notifyMsg.isSuccessful()) {
@@ -278,12 +302,47 @@ public class NsManager {
 					}
 					break;
 				}
+				case SCALE_SETUP_UNDERLYING_CONNECTIVITY: {
+					if (notifyMsg.isSuccessful()) {
+						log.debug("Underlying network connectivity established");
+						try {
+							scaleConfigureVnfs(operationId);
+							
+						} catch (WrongInternalStatusException e) {
+							log.error("Received notify result message for underlying connections in wrong status");
+							nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify result message for underlying connections in wrong status");
+							this.internalStatus = InternalNsStatus.FAILED;
+						}
+					} else {
+						log.error("Network underlying connections failed. Setting internal status to failed.");
+						this.internalStatus=InternalNsStatus.FAILED;
+						//TODO: release computed resources in path computation, release VNFs and NS links
+					}
+					break;
+				}
 				
 				case REMOVE_VNF: {
 					if (notifyMsg.isSuccessful()) {
 						log.debug("VNFs successfully removed");
 						try {
 							destroyUnderlyingConnectivity(operationId);
+						} catch (WrongInternalStatusException e) {
+							log.error("Received notify VNFs termination result message in wrong status");
+							nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify VNFs termination result message in wrong status");
+							this.internalStatus = InternalNsStatus.FAILED;
+						}
+					} else {
+						log.error("VNFs termination failed. Setting internal status to failed.");
+						this.internalStatus=InternalNsStatus.FAILED;
+						//TODO: release computed resources in path computation, release NS links
+					}
+					break;
+				}
+				case SCALE_REMOVE_VNF: {
+					if (notifyMsg.isSuccessful()) {
+						log.debug("SCALE VNFs successfully removed");
+						try {
+							scaleAllocateVnfs(operationId);
 						} catch (WrongInternalStatusException e) {
 							log.error("Received notify VNFs termination result message in wrong status");
 							nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify VNFs termination result message in wrong status");
@@ -328,6 +387,25 @@ public class NsManager {
 					} else {
 						log.error("Removal of underlying connection failed. Setting internal status to failed.");
 						this.internalStatus=InternalNsStatus.FAILED;						
+					}
+					break;
+				}
+				case SCALE_ALLOCATE_VNF: {
+					if (notifyMsg.isSuccessful()) {
+						log.trace("END SCALE VNFS");
+						log.debug("SCALE VNFs successfully allocated");
+						try {
+							scaleSetupUnderlyingConnectivity(operationId);
+							//configureVnfs(operationId);
+						} catch (WrongInternalStatusException e) {
+							log.error("Received notify VNFs allocation result message in wrong status");
+							nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify VNFs allocation result message in wrong status");
+							this.internalStatus = InternalNsStatus.FAILED;
+						}
+					} else {
+						log.error("VNFs SCALE allocation failed. Setting internal status to failed.");
+						this.internalStatus=InternalNsStatus.FAILED;
+						//TODO: release computed resources in path computation, release NS links
 					}
 					break;
 				}
@@ -473,11 +551,11 @@ public class NsManager {
 		resourceAllocationManager.allocateVnf(nsInstanceId, operationId, instantiateMessage);
 	}
 	
-	private void allocateScaleVnfs(String operationId) throws WrongInternalStatusException {
-		if (internalStatus != InternalNsStatus.COMPUTING_SCALING_RESOURCES) throw new WrongInternalStatusException();
+	private void scaleAllocateVnfs(String operationId) throws WrongInternalStatusException {
+		if (internalStatus != InternalNsStatus.SCALE_TERMINATING_VNFS) throw new WrongInternalStatusException();
 		log.debug("Starting procedure to scale VNFs");
-		internalStatus = InternalNsStatus.SCALING_VNFS;
-		resourceAllocationManager.scaleVnf(nsInstanceId, operationId, scaleMessage);
+		internalStatus = InternalNsStatus.SCALE_CREATING_VNFS;
+		resourceAllocationManager.scaleAllocateVnfs(nsInstanceId, operationId, scaleMessage);
 		
 		
 	}
@@ -489,6 +567,24 @@ public class NsManager {
 		log.debug("Starting procedures to configure VNFs");
 		internalStatus = InternalNsStatus.CONFIGURING_VNFS;
 		resourceAllocationManager.configureVnfs(nsInstanceId, operationId, instantiateMessage);
+	}
+	
+	private void scaleConfigureVnfs(String operationId) throws WrongInternalStatusException {
+		//if (internalStatus != InternalNsStatus.CREATING_VNFS) throw new WrongInternalStatusException();
+		log.trace("START CONFIGURE VNFS FOR NS " + nsInstanceId);
+		if (internalStatus != InternalNsStatus.SCALE_CREATING_CONNECTIVITY) throw new WrongInternalStatusException();
+		log.debug("Starting procedures to configure VNFs");
+		internalStatus = InternalNsStatus.SCALE_CONFIGURING_VNFS;
+		resourceAllocationManager.configureVnfs(nsInstanceId, operationId, scaleMessage);
+	}
+	
+	private void scaleSetupUnderlyingConnectivity(String operationId) throws WrongInternalStatusException {
+		//if (internalStatus != InternalNsStatus.CONFIGURING_VNFS) throw new WrongInternalStatusException();
+			if (internalStatus != InternalNsStatus.SCALE_CREATING_VNFS) throw new WrongInternalStatusException();
+			log.debug("Starting procedures to setup underlying connectivity");
+			//TODO: check if this is needed from configuration
+			internalStatus = InternalNsStatus.SCALE_CREATING_CONNECTIVITY;
+			resourceAllocationManager.setupUnderlyingConnectivity(nsInstanceId, operationId, scaleMessage);
 	}
 	
 	private void setupUnderlyingConnectivity(String operationId) throws WrongInternalStatusException {
@@ -520,6 +616,12 @@ public class NsManager {
 		}
 	}
 	
+	private void scaleConfigureMonitoring(String operationId) throws WrongInternalStatusException {
+		//TODO: Implement monitoring configuration update
+		if (internalStatus != InternalNsStatus.CONFIGURING_VNFS) throw new WrongInternalStatusException();
+		internalStatus = InternalNsStatus.SCALE_ALLOCATED;
+	}
+	
 	private void confirmComputedResourceRelease(String operationId) throws WrongInternalStatusException {
 		if (internalStatus != InternalNsStatus.RELEASING_COMPUTED_RESOURCES) throw new WrongInternalStatusException();
 		internalStatus = InternalNsStatus.TERMINATED;
@@ -532,5 +634,11 @@ public class NsManager {
 		}
 	}
 	
-	
+	private void scaleTerminateVnfs(String operationId ) throws WrongInternalStatusException {
+		if (internalStatus != InternalNsStatus.CONFIGURING_VNFS) throw new WrongInternalStatusException();
+		log.debug("Starting procedure to scale VNFs");
+		internalStatus = InternalNsStatus.SCALE_TERMINATING_VNFS;
+		resourceAllocationManager.scaleTerminateVnfs(nsInstanceId, operationId, scaleMessage);
+		
+	}
 }

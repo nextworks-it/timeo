@@ -36,7 +36,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 	@Type(value = NotifyComputationResultMessage.class, 	name = "NOTIFY_COMPUTATION"),
 	@Type(value = NotifyComputationReleaseMessage.class, 	name = "NOTIFY_COMPUTATION_RELEASE"),
 	@Type(value = NotifyAllocationResultMessage.class, 	name = "NOTIFY_ALLOCATION"),
-	@Type(value = NotifyScaleResultMessage.class, 	name = "NOTIFY_SCALE")
+	@Type(value = NotifyScaleVnfAllocationResultMessage.class, 	name = "NOTIFY_SCALE")
 })
 public abstract class EngineMessage {
 

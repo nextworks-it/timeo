@@ -21,16 +21,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.NsScaleSchedulingSolution;
 
-public class NotifyScaleResultMessage extends EngineMessage {
+public class NotifyScaleVnfAllocationResultMessage extends EngineMessage {
 
 	@JsonProperty("solution")
 	NsScaleSchedulingSolution solution;
 	
 	@JsonCreator
-	public NotifyScaleResultMessage(@JsonProperty("nsInstanceId") String nsInstanceId,
+	public NotifyScaleVnfAllocationResultMessage(@JsonProperty("nsInstanceId") String nsInstanceId,
 			@JsonProperty("operationId") String operationId, 
 			@JsonProperty("solution") NsScaleSchedulingSolution solution) {
-		this.type = EngineMessageType.NOTIFY_SCALE_RESULT;
+		this.type = EngineMessageType.NOTIFY_SCALE_VNF_ALLOCATION_RESULT;
 		this.nsInstanceId = nsInstanceId;
 		this.solution = solution;
 		this.operationId = operationId;

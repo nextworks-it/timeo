@@ -22,7 +22,7 @@ import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateN
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.ScaleNsRequest;
 
 
-public class ScaleVnfMessage extends AllocationMessage {
+public class ScaleAllocateVnfMessage extends AllocationMessage {
 
 	@JsonProperty("request")
 	private ScaleNsRequest request;
@@ -31,10 +31,10 @@ public class ScaleVnfMessage extends AllocationMessage {
 	String operationId;
 	
 	@JsonCreator
-	public ScaleVnfMessage(@JsonProperty("nsInstanceId") String nsInstanceId,
+	public ScaleAllocateVnfMessage(@JsonProperty("nsInstanceId") String nsInstanceId,
 			@JsonProperty("operationId") String operationId,
 			@JsonProperty("request") ScaleNsRequest request) {
-		this.type = AllocationMessageType.SCALE_VNF;
+		this.type = AllocationMessageType.SCALE_ALLOCATE_VNF;
 		this.nsInstanceId = nsInstanceId;
 		this.operationId = operationId;
 		this.request = request;
