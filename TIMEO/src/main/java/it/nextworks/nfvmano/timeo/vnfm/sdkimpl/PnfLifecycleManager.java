@@ -120,7 +120,8 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 			case CONFIGURE_VNF: {
 				log.debug("Received configure PNF message with operation ID " + operationId);
 				log.trace("START CONFIGURE PNF " + operationId);
-				if (!(internalStatus.equals(VnfInternalStatus.ALLOCATED))) {
+				//TODO: j.brenes verify the second condition. Added for the scaling procedure. 
+				if (!(internalStatus.equals(VnfInternalStatus.ALLOCATED) || internalStatus.equals(VnfInternalStatus.CONFIGURED))) {
 					signalError(operationId, "Received configure PNF message in wrong status.");
 					return;
 				}
