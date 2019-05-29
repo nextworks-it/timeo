@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.util.CollectionUtils;
+import org.hibernate.hql.internal.CollectionSubqueryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Queue;
@@ -940,20 +942,27 @@ implements AsynchronousVimNotificationInterface,
 		try {
 			NsScaleSchedulingSolution scaleSolution = resourceComputationDbWrapper.getNsScaleSchedulingSolution(nsInstanceId);
 			List<String> vnfInstancesId = scaleSolution.getVnfInstanceDeallocation();
-			NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
-			for (String vnfId : vnfInstancesId) {
-				log.debug("Processing termination for VNF instance " + vnfId);
-				String vnfdId = nsInfo.getVnfInfoVnfdIdMap().get(vnfId);
-				log.debug("VNFD ID: " + vnfdId);
-				Vnfm vnfm = retrieveVnfm(vnfdId);
+			if(CollectionUtils.isEmpty(vnfInstancesId)) {
+				log.debug("No VNF to be removed due to scale for NSI:  " + nsInstanceId +". Notifying lifecycle manager.");
+				internalStatus = ResourceAllocationStatus.SCALE_TERMINATED_VNF;
+				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.SCALE_REMOVE_VNF, true);
 				
-				TerminateVnfRequest request = new TerminateVnfRequest(vnfId, StopType.FORCEFUL, 0, new HashMap<String, String>());
-				String operationId = vnfm.terminateVnf(request);
-				log.debug("Termination request for VNF " + vnfId + " sent to the VNFM. Operation ID: " + operationId);
-				pendingVnfmOperation.add(operationId);
-				vnfOperationMap.put(operationId, vnfId);
-				vnfmOperationPollingManager.addOperation(operationId, OperationStatus.SUCCESSFULLY_DONE, vnfId, vnfm, this);
-				log.debug("Operation " + operationId + " added to the list of VNFM pending operations");
+			}else {
+				NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
+				for (String vnfId : vnfInstancesId) {
+					log.debug("Processing termination for VNF instance " + vnfId);
+					String vnfdId = nsInfo.getVnfInfoVnfdIdMap().get(vnfId);
+					log.debug("VNFD ID: " + vnfdId);
+					Vnfm vnfm = retrieveVnfm(vnfdId);
+					
+					TerminateVnfRequest request = new TerminateVnfRequest(vnfId, StopType.FORCEFUL, 0, new HashMap<String, String>());
+					String operationId = vnfm.terminateVnf(request);
+					log.debug("Termination request for VNF " + vnfId + " sent to the VNFM. Operation ID: " + operationId);
+					pendingVnfmOperation.add(operationId);
+					vnfOperationMap.put(operationId, vnfId);
+					vnfmOperationPollingManager.addOperation(operationId, OperationStatus.SUCCESSFULLY_DONE, vnfId, vnfm, this);
+					log.debug("Operation " + operationId + " added to the list of VNFM pending operations");
+				}
 			}
 		} catch (NotExistingEntityException e) {
 			manageError("Unable to find entity: " + e.getMessage(), AllocationMessageType.SCALE_REMOVE_VNF);
@@ -1105,39 +1114,48 @@ implements AsynchronousVimNotificationInterface,
 			
 			NsScaleSchedulingSolution scaleSolution = resourceComputationDbWrapper.getNsScaleSchedulingSolution(nsInstanceId);
 			List<ScaleVnfResourceAllocation> vnfsToScale = scaleSolution.getScaleNsResourceAllocation().getVnfResourceAllocation(); 
-			List<VnfToLevelMapping> origVnfLevels = nsLevel.getVnfToLevelMapping();
-			log.debug("The requested NS Level includes " + origVnfLevels.size() + " VNFs.");
-			List<VnfToLevelMapping> vnfLevels = Utilities.orderVnfsBasedOnDependencies(origVnfLevels, nsDeploymentFlavour.getDependencies());
-			log.debug("The ordered NS Level includes " + vnfLevels.size() + " VNFs.");
-			for (VnfToLevelMapping vnf : vnfLevels) {
-				//TODO j.brenes check this
-				if(vnf != null){
-					VnfProfile vnfProfile = nsDeploymentFlavour.getVnfProfile(vnf.getVnfProfileId());
-					log.debug("Analyzing VNF profile " + vnf.getVnfProfileId());
-					int numInstances = vnf.getNumberOfInstances();
-					
-					String vnfdId = vnfProfile.getVnfdId();
-					ScaleVnfResourceAllocation vnfdScale = vnfsToScale.stream()
-							.filter(rA->vnfdId.equals(rA.getVnfdId()))
-							.findAny()
-							.orElse(null);
-					if(vnfdScale!=null) {
-						log.debug("Found vnfd to be instantiated during scale procedure");
-						String vnfFlavourId = vnfProfile.getFlavourId();
-						String vnfInstantiationLevel = vnfProfile.getInstantiationLevel();
-						log.debug("VNFD: " + vnfdId + " - FlavourID: " + vnfFlavourId + " - Number of instances: " + numInstances);
-						for (int i = 0; i<numInstances; i++) {
-							String vnfInstanceId = allocateVnf(vnfdId, vnfFlavourId, i, vnfInstantiationLevel, vnfProfile, nsDeploymentFlavour);
-							setVnfIdInUserInfo(vnfdId, vnfInstanceId, i);
-							log.debug("VNF index: " + i + " - VNF instance ID: " + vnfInstanceId);
+			
+			if(CollectionUtils.isEmpty(vnfsToScale)) {
+				log.debug("No VNFs to be created due to scale to the NS " + nsInstanceId + " . Notifying lifecycle manager.");
+				internalStatus = ResourceAllocationStatus.SCALE_CREATED_VNF;
+				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.SCALE_ALLOCATE_VNF, true);
+				
+			}else {
+				List<VnfToLevelMapping> origVnfLevels = nsLevel.getVnfToLevelMapping();
+				log.debug("The requested NS Level includes " + origVnfLevels.size() + " VNFs.");
+				List<VnfToLevelMapping> vnfLevels = Utilities.orderVnfsBasedOnDependencies(origVnfLevels, nsDeploymentFlavour.getDependencies());
+				log.debug("The ordered NS Level includes " + vnfLevels.size() + " VNFs.");
+				for (VnfToLevelMapping vnf : vnfLevels) {
+					//TODO j.brenes check this
+					if(vnf != null){
+						VnfProfile vnfProfile = nsDeploymentFlavour.getVnfProfile(vnf.getVnfProfileId());
+						log.debug("Analyzing VNF profile " + vnf.getVnfProfileId());
+						int numInstances = vnf.getNumberOfInstances();
+						
+						String vnfdId = vnfProfile.getVnfdId();
+						ScaleVnfResourceAllocation vnfdScale = vnfsToScale.stream()
+								.filter(rA->vnfdId.equals(rA.getVnfdId()))
+								.findAny()
+								.orElse(null);
+						if(vnfdScale!=null) {
+							log.debug("Found vnfd to be instantiated during scale procedure");
+							String vnfFlavourId = vnfProfile.getFlavourId();
+							String vnfInstantiationLevel = vnfProfile.getInstantiationLevel();
+							log.debug("VNFD: " + vnfdId + " - FlavourID: " + vnfFlavourId + " - Number of instances: " + numInstances);
+							for (int i = 0; i<numInstances; i++) {
+								String vnfInstanceId = allocateVnf(vnfdId, vnfFlavourId, i, vnfInstantiationLevel, vnfProfile, nsDeploymentFlavour);
+								setVnfIdInUserInfo(vnfdId, vnfInstanceId, i);
+								log.debug("VNF index: " + i + " - VNF instance ID: " + vnfInstanceId);
+							}
 						}
+						
 					}
-					
+
 				}
+				log.debug("All VNF instantiation requests have been sent for NS " + nsInstanceId);
 
 			}
-			log.debug("All VNF instantiation requests have been sent for NS " + nsInstanceId);
-			
+						
 		} catch (NotExistingEntityException e) {
 			manageError("Unable to find entity: " + e.getMessage(), AllocationMessageType.SCALE_ALLOCATE_VNF);
 			rollback();
