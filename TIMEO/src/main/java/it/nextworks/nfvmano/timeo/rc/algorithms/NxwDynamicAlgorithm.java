@@ -25,10 +25,13 @@ import it.nextworks.nfvmano.libs.descriptors.onboardedvnfpackage.OnboardedVnfPkg
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vdu;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
+import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.ScaleNsRequest;
+import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.PnfManagementService;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
 import it.nextworks.nfvmano.timeo.catalogue.vnfpackagemanagement.VnfPackageManagementService;
 import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
+import it.nextworks.nfvmano.timeo.common.exception.ScaleAllocationSolutionNotFound;
 import it.nextworks.nfvmano.timeo.rc.elements.*;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
@@ -104,6 +107,44 @@ public class NxwDynamicAlgorithm extends AbstractNsResourceAllocationAlgorithm {
                 networkNodesToBeActivated,
                 computeNodesToBeActivated
         );
+    }
+    
+    @Override
+    public NsScaleSchedulingSolution computeNsScaleAllocationSolution(ScaleNsRequest request, NsInfo nsi,
+			Nsd nsd, Map<Vnfd, Map<String, String>> vnfds, VimPlugin vimPlugin,  SdnControllerPlugin sdnPlugin, 
+			VnfPackageManagementService vnfService
+			) throws NotExistingEntityException, ScaleAllocationSolutionNotFound
+
+    {
+    	//Look for the missing vnfdIds
+    	List<ScaleVnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
+    	String defaultVim = properties.get("default_vim");
+    	String defaultZone = properties.get("default_zone");
+    	String defaultCompute = properties.get("default_compute");
+    	String newInstantiationLevel = request.getScaleNsData().getScaleNsToLevelData().getNsInstantiationLevel();
+    	String currentInstantiationLevel = nsi.getNsScaleStatus().get(0).getNsScaleLevelId();
+    	Map<String, Map<String, String>> currentVnfds = nsd.getVnfdDataFromFlavour(nsi.getFlavourId(), currentInstantiationLevel);
+    	Map<String, Map<String, String>> newVnfds = nsd.getVnfdDataFromFlavour(nsi.getFlavourId(), newInstantiationLevel);
+    	Set<String> currentVnfdIds = currentVnfds.keySet();
+    	for(String vnfdId : newVnfds.keySet()) {
+    		if(!currentVnfdIds.contains(vnfdId)) {
+    			
+    			OnboardedVnfPkgInfo pkg =vnfPackageManagementService.getOnboardedVnfPkgInfoFromVnfd(vnfdId); 
+        		Vnfd currentVnfd = pkg.getVnfd();
+        		Vdu currentVdu = currentVnfd.getVdu().get(0);
+        		ScaleVnfResourceAllocation vra = new ScaleVnfResourceAllocation(null, vnfdId, 0, currentVdu.getVduId(), 0, defaultVim, defaultZone, defaultCompute );
+        		vnfResourceAllocation.add(vra);
+    		}
+    		
+    	
+    	}
+    	
+		ScaleNsResourceAllocation sNRA = new ScaleNsResourceAllocation(vnfResourceAllocation, null, null, true, null, null);
+		return new NsScaleSchedulingSolution(request.getNsInstanceId(), null, null, null, null, null,sNRA, true);
+	
+    	
+    	
+    	
     }
 
 }
