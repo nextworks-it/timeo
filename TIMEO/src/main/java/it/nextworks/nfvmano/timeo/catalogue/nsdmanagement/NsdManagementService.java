@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import it.nextworks.nfvmano.libs.records.nsinfo.PnfInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1077,19 +1078,18 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 				NsAutoscalingRule targetRule = new NsAutoscalingRule(output, r.getRuleId());
 				nsAutoscalingRuleRepository.saveAndFlush(targetRule);
 				
-				List<AutoscalingRuleCondition> ruleConditions = r.getRuleConditions();
-				for (AutoscalingRuleCondition arc : ruleConditions) {
-					AutoscalingRuleCondition targetArc = new AutoscalingRuleCondition(targetRule, arc.getName(), arc.getScalingType(), arc.isEnabled(), arc.getScaleInOperationType(), 
-							arc.getScaleOutOperationType(), arc.getThresholdTime(), arc.getCooldownTime(), arc.getInitialInstantiationLevel());
-					autoscalingRuleConditionRepository.saveAndFlush(targetArc);
-					
-					List<AutoscalingRuleCriteria> scalingCriteria = arc.getScalingCriteria();
-					for (AutoscalingRuleCriteria sc : scalingCriteria) {
-						AutoscalingRuleCriteria targetSc = new AutoscalingRuleCriteria(targetArc, sc.getName(), sc.getScaleInThreshold(), sc.getScaleInRelationalOperation(),
-								sc.getScaleOutThreshold(), sc.getScaleOutRelationalOperation(), sc.getNsMonitoringParamRef());
-						autoscalingRuleCriteriaRepository.saveAndFlush(targetSc);
-					}
+				AutoscalingRuleCondition ruleConditions = r.getRuleConditions();
+				AutoscalingRuleCondition targetArc = new AutoscalingRuleCondition(targetRule, ruleConditions.getName(), ruleConditions.getScalingType(), ruleConditions.isEnabled(), ruleConditions.getScaleInOperationType(), 
+						ruleConditions.getScaleOutOperationType(), ruleConditions.getThresholdTime(), ruleConditions.getCooldownTime(), ruleConditions.getInitialInstantiationLevel());
+				autoscalingRuleConditionRepository.saveAndFlush(targetArc);
+
+				List<AutoscalingRuleCriteria> scalingCriteria = ruleConditions.getScalingCriteria();
+				for (AutoscalingRuleCriteria sc : scalingCriteria) {
+					AutoscalingRuleCriteria targetSc = new AutoscalingRuleCriteria(targetArc, sc.getName(), sc.getScaleInThreshold(), sc.getScaleInRelationalOperation(),
+							sc.getScaleOutThreshold(), sc.getScaleOutRelationalOperation(), sc.getNsMonitoringParamRef());
+					autoscalingRuleCriteriaRepository.saveAndFlush(targetSc);
 				}
+
 				
 				List<AutoscalingAction> ruleActions = r.getRuleActions();
 				for (AutoscalingAction aa : ruleActions) {
@@ -1512,6 +1512,41 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 		log.debug(logString);
 
 		return vnfsParametersMap;
+	}
+
+	public Map<String, String> findPnfUserParameters(String nsdInfoId) throws NotExistingEntityException {
+		List<String> pnfsParameters = new ArrayList<>();
+
+		Map<String, String> pnfsParametersMap = new HashMap<>();
+
+		InternalNsdInfo iNsdInfo = null;
+		iNsdInfo = findNsdInfo(nsdInfoId);
+		log.debug("Found NSD info");
+
+		List<String> pnfdInfoIds = iNsdInfo.getPnfdInfoId();
+		for (String pnfdInfoId : pnfdInfoIds) {
+			PnfdInfo pnfdInfo = buildPnfdInfo(pnfdInfoId);
+			Pnfd pnfd = pnfdInfo.getPnfd();
+			//TODO: verify this j.brenes
+			String pnfdId = pnfdInfo.getPnfdId();
+			//String pnfdInfoName = "TEST";
+			List<String> configurableProperty = pnfd.getConfigurableProperty();
+			if (configurableProperty != null){
+				for( String pnfPorperty : configurableProperty ){
+					pnfsParametersMap.put(pnfPorperty, pnfdId);
+				}
+			}
+
+		}
+
+		pnfsParameters.addAll(pnfsParametersMap.keySet());
+		String logString = "User configuration parameters in NSD " + nsdInfoId + ": ";
+		for (String s : pnfsParameters) {
+			logString += s + " \n";
+		}
+		log.debug(logString);
+
+		return pnfsParametersMap;
 	}
 
 

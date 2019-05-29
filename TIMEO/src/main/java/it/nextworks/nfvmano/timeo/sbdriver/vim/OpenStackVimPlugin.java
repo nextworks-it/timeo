@@ -1494,7 +1494,8 @@ public class OpenStackVimPlugin extends VimPlugin {
 
 		List<? extends Image> images = null;
 		try {
-			images = os.images().list();
+			//TODO: improve
+			images = os.images().listAll();
 		} catch (Exception e) {
 			log.error("An error occurred gathering Image list: " + e.getMessage());
 			throw new FailedOperationException("An error occurred gathering Image list: " + e.getMessage());
