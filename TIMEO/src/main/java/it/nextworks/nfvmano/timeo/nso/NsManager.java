@@ -186,7 +186,7 @@ public class NsManager {
 						scaleTerminateVnfs(operationId);
 						
 					} catch (WrongInternalStatusException e) {
-						log.error("Received notify computation result message in wrong status");
+						log.error("Received notify scale computation result message in wrong status");
 						nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify computation result message in wrong status");
 						this.internalStatus = InternalNsStatus.FAILED;
 					}
@@ -636,7 +636,7 @@ public class NsManager {
 	}
 	
 	private void scaleTerminateVnfs(String operationId ) throws WrongInternalStatusException {
-		if (internalStatus != InternalNsStatus.CONFIGURING_VNFS) throw new WrongInternalStatusException();
+		if (internalStatus != InternalNsStatus.COMPUTING_SCALING_RESOURCES) throw new WrongInternalStatusException();
 		log.debug("Starting procedure to scale VNFs");
 		internalStatus = InternalNsStatus.SCALE_TERMINATING_VNFS;
 		resourceAllocationManager.scaleTerminateVnfs(nsInstanceId, operationId, scaleMessage);
