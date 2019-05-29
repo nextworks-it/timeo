@@ -44,6 +44,7 @@ import it.nextworks.nfvmano.timeo.nso.messages.EngineMessageType;
 import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationResultMessage;
+import it.nextworks.nfvmano.timeo.nso.messages.NotifyScaleComputationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyScaleVnfAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
@@ -179,7 +180,7 @@ public class NsManager {
 			}
 			case NOTIFY_SCALE_COMPUTATION_RESULT: {
 				log.debug("Received scale computation result message with operation ID " + operationId);
-				NotifyScaleVnfAllocationResultMessage notifyMsg = (NotifyScaleVnfAllocationResultMessage)em;
+				NotifyScaleComputationResultMessage notifyMsg = (NotifyScaleComputationResultMessage)em;
 				if (notifyMsg.getSolution().isSolutionFound()) {
 					try {
 						scaleTerminateVnfs(operationId);
