@@ -69,6 +69,7 @@ import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationReleaseMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationResultMessage;
+import it.nextworks.nfvmano.timeo.nso.messages.NotifyScaleComputationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyScaleVnfAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
@@ -283,7 +284,7 @@ public class NsManagementEngine {
 	public void notifyScaleComputationResult(String nsInstanceId, String operationId, NsScaleSchedulingSolution solution){
 		log.debug("Received notification about scale allocation computation result for network service " + nsInstanceId);
 		if (this.nsManagers.containsKey(nsInstanceId)) {
-			NotifyScaleVnfAllocationResultMessage internalMessage = new NotifyScaleVnfAllocationResultMessage(nsInstanceId, operationId, solution);
+			NotifyScaleComputationResultMessage internalMessage = new NotifyScaleComputationResultMessage(nsInstanceId, operationId, solution);
 			String topic = "lifecycle.notifyScaleSolution." + nsInstanceId;
 			ObjectMapper mapper = Utilities.buildObjectMapper();
 			try {
