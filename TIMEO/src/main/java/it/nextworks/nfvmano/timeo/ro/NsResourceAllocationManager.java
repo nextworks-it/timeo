@@ -412,15 +412,15 @@ implements AsynchronousVimNotificationInterface,
 				break;
 			}
 			case SCALE_REMOVE_VNF: {
-				log.debug("Received request to remove the VNFs");
+				log.debug("Received request to remove the VNFs due to scale");
 				if (!(internalStatus == ResourceAllocationStatus.CONFIGURED_VNF)) {
 					log.error("Wrong status. Discarding message.");
 					return;
 				}
 				ScaleRemoveVnfMessage terminateVnfMessage = (ScaleRemoveVnfMessage)allocateMessage;
 				this.currentOperationId = terminateVnfMessage.getOperationId();
-				terminateVnfsInternal();
-				terminatePnfsInternal();
+				scaleTerminateVnfsInternal(terminateVnfMessage);
+				
 				break;
 			}
 			
@@ -934,7 +934,7 @@ implements AsynchronousVimNotificationInterface,
 		}
 	}
 	
-	private void scaleTerminteVnfsInternal(ScaleRemoveVnfMessage message) {
+	private void scaleTerminateVnfsInternal(ScaleRemoveVnfMessage message) {
 		log.debug("Starting termination of VNFs due to SCALE for NS instance " + nsInstanceId);
 		internalStatus = ResourceAllocationStatus.SCALE_TERMINATING_VNF;
 		try {
