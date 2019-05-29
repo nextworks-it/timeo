@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.ScaleNsRequest;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.TerminateNsRequest;
 
-public class ScaleTerminateVnfMessage extends AllocationMessage {
+public class ScaleRemoveVnfMessage extends AllocationMessage {
 
 	@JsonProperty("request")
 	private ScaleNsRequest request;
@@ -30,7 +30,7 @@ public class ScaleTerminateVnfMessage extends AllocationMessage {
 	String operationId;
 	
 	@JsonCreator
-	public ScaleTerminateVnfMessage(@JsonProperty("nsInstanceId") String nsInstanceId,
+	public ScaleRemoveVnfMessage(@JsonProperty("nsInstanceId") String nsInstanceId,
 			@JsonProperty("operationId") String operationId,
 			@JsonProperty("request") ScaleNsRequest request) {
 		this.type = AllocationMessageType.SCALE_REMOVE_VNF;

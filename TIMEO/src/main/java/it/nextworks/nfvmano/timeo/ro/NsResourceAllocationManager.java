@@ -124,7 +124,7 @@ import it.nextworks.nfvmano.timeo.ro.messages.ScaleAllocateVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.ScaleConfigureVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.SdnControllerOperationAckMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.ScaleSetupUnderlyingConnectivityMessage;
-import it.nextworks.nfvmano.timeo.ro.messages.ScaleTerminateVnfMessage;
+import it.nextworks.nfvmano.timeo.ro.messages.ScaleRemoveVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.SetupUnderlyingConnectivityMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.TerminateNsVlsMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.TerminateVnfMessage;
@@ -417,7 +417,7 @@ implements AsynchronousVimNotificationInterface,
 					log.error("Wrong status. Discarding message.");
 					return;
 				}
-				ScaleTerminateVnfMessage terminateVnfMessage = (ScaleTerminateVnfMessage)allocateMessage;
+				ScaleRemoveVnfMessage terminateVnfMessage = (ScaleRemoveVnfMessage)allocateMessage;
 				this.currentOperationId = terminateVnfMessage.getOperationId();
 				terminateVnfsInternal();
 				terminatePnfsInternal();
@@ -934,7 +934,7 @@ implements AsynchronousVimNotificationInterface,
 		}
 	}
 	
-	private void scaleTerminteVnfsInternal(ScaleTerminateVnfMessage message) {
+	private void scaleTerminteVnfsInternal(ScaleRemoveVnfMessage message) {
 		log.debug("Starting termination of VNFs due to SCALE for NS instance " + nsInstanceId);
 		internalStatus = ResourceAllocationStatus.SCALE_TERMINATING_VNF;
 		try {

@@ -59,7 +59,7 @@ import it.nextworks.nfvmano.timeo.ro.messages.DestroyUnderlyingConnectivityMessa
 import it.nextworks.nfvmano.timeo.ro.messages.ScaleAllocateVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.ScaleConfigureVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.ScaleSetupUnderlyingConnectivityMessage;
-import it.nextworks.nfvmano.timeo.ro.messages.ScaleTerminateVnfMessage;
+import it.nextworks.nfvmano.timeo.ro.messages.ScaleRemoveVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.SetupUnderlyingConnectivityMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.TerminateNsVlsMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.TerminateVnfMessage;
@@ -527,7 +527,7 @@ public class ResourceAllocationManager {
 		log.debug("Invoked terminate VNFs due to SCALE for NS instance " + nsInstanceId);
 		
 		if (nsResourceManagers.containsKey(nsInstanceId)) {
-			ScaleTerminateVnfMessage internalMessage = new ScaleTerminateVnfMessage(nsInstanceId, operationId, scaleMessage.getRequest());
+			ScaleRemoveVnfMessage internalMessage = new ScaleRemoveVnfMessage(nsInstanceId, operationId, scaleMessage.getRequest());
 			ObjectMapper mapper = Utilities.buildObjectMapper();
 			try {
 				String json = mapper.writeValueAsString(internalMessage);
