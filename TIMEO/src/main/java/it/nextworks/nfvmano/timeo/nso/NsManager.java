@@ -654,7 +654,7 @@ public class NsManager {
 			String newInstantiationLevel = this.scaleMessage.getRequest().getScaleNsData().getScaleNsToLevelData().getNsInstantiationLevel();
 			String currentDf = nsDbWrapper.getNsInfo(this.nsInstanceId).getFlavourId();
 			
-			nsDbWrapper.setNsInfoDeploymentFlavour(operationId, currentDf, newInstantiationLevel);
+			nsDbWrapper.setNsInfoDeploymentFlavour(this.nsInstanceId, currentDf, newInstantiationLevel);
 			nsDbWrapper.updateInternalOperation(operationId, OperationStatus.SUCCESSFULLY_DONE, null);
 		}catch(Exception e){
 			log.error("Impossible to update NS information after NS SCALE");
