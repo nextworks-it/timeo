@@ -344,7 +344,8 @@ implements AsynchronousVimNotificationInterface,
 			case VNFM_OPERATION_ACK: {
 				log.debug("Received notification about VNF operation");
 				if (!((internalStatus == ResourceAllocationStatus.CREATING_VNF) || (internalStatus == ResourceAllocationStatus.TERMINATING_VNF) || 
-						(internalStatus == ResourceAllocationStatus.CONFIGURING_VNF) || (internalStatus==ResourceAllocationStatus.SCALE_CREATING_VNF) || (internalStatus==ResourceAllocationStatus.SCALE_TERMINATING_VNF))) {
+						(internalStatus == ResourceAllocationStatus.CONFIGURING_VNF) || (internalStatus==ResourceAllocationStatus.SCALE_CREATING_VNF) || 
+						(internalStatus==ResourceAllocationStatus.SCALE_TERMINATING_VNF)||(internalStatus==ResourceAllocationStatus.SCALE_CONFIGURING_VNF))) {
 					log.error("Wrong status. Discarding message.");
 					return;
 				}
