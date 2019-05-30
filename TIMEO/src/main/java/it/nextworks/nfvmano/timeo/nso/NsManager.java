@@ -649,6 +649,8 @@ public class NsManager {
 		//TODO: which should be the state afterwards?
 		internalStatus=InternalNsStatus.SCALE_ALLOCATED;
 		try {
+			log.debug("NS SCALE procedure finished correctly, storing results for NS:"+this.nsInstanceId+
+					"operation: "+operationId);
 			String newInstantiationLevel = this.scaleMessage.getRequest().getScaleNsData().getScaleNsToLevelData().getNsInstantiationLevel();
 			String currentDf = nsDbWrapper.getNsInfo(this.nsInstanceId).getFlavourId();
 			
