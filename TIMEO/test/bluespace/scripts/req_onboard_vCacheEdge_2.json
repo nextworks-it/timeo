@@ -1,0 +1,7 @@
+{
+	"name": "CDN vCacheEdge_2",
+	"version": "0.1",
+	"provider": "NXW",
+	"checksum": "VNFD_TEST_001_checksum",
+	"vnfPackagePath": "http://localhost/vnfd/vnfd_vCacheEdge_2_v01.tar"
+}

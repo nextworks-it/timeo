@@ -873,7 +873,7 @@ implements AsynchronousVimNotificationInterface,
 			NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
 			List<PnfInfo> pnfInfo = nsInfo.getPnfInfo();
 			for (PnfInfo pi : pnfInfo) {
-				String pnfId = pi.getPnfdInfoId();
+				String pnfId = pi.getId().toString();
 				log.debug("Removing PNF info " + pnfId);
 				Vnfm vnfm = pnfmMap.get(pnfId);
 				vnfm.deletePnfIdentifier(pnfId);
@@ -987,18 +987,22 @@ implements AsynchronousVimNotificationInterface,
 			List<VnfToLevelMapping> vnfLevels = Utilities.orderVnfsBasedOnDependencies(origVnfLevels, nsDeploymentFlavour.getDependencies());
 			log.debug("The ordered NS Level includes " + vnfLevels.size() + " VNFs.");
 			for (VnfToLevelMapping vnf : vnfLevels) {
-				VnfProfile vnfProfile = nsDeploymentFlavour.getVnfProfile(vnf.getVnfProfileId());
-				log.debug("Analyzing VNF profile " + vnf.getVnfProfileId());
-				int numInstances = vnf.getNumberOfInstances();
-				String vnfdId = vnfProfile.getVnfdId();
-				String vnfFlavourId = vnfProfile.getFlavourId();
-				String vnfInstantiationLevel = vnfProfile.getInstantiationLevel();
-				log.debug("VNFD: " + vnfdId + " - FlavourID: " + vnfFlavourId + " - Number of instances: " + numInstances);
-				for (int i = 0; i<numInstances; i++) {
-					String vnfInstanceId = allocateVnf(vnfdId, vnfFlavourId, i, vnfInstantiationLevel, vnfProfile, nsDeploymentFlavour);
-					setVnfIdInUserInfo(vnfdId, vnfInstanceId, i);
-					log.debug("VNF index: " + i + " - VNF instance ID: " + vnfInstanceId);
+				//TODO j.brenes check this
+				if(vnf != null){
+					VnfProfile vnfProfile = nsDeploymentFlavour.getVnfProfile(vnf.getVnfProfileId());
+					log.debug("Analyzing VNF profile " + vnf.getVnfProfileId());
+					int numInstances = vnf.getNumberOfInstances();
+					String vnfdId = vnfProfile.getVnfdId();
+					String vnfFlavourId = vnfProfile.getFlavourId();
+					String vnfInstantiationLevel = vnfProfile.getInstantiationLevel();
+					log.debug("VNFD: " + vnfdId + " - FlavourID: " + vnfFlavourId + " - Number of instances: " + numInstances);
+					for (int i = 0; i<numInstances; i++) {
+						String vnfInstanceId = allocateVnf(vnfdId, vnfFlavourId, i, vnfInstantiationLevel, vnfProfile, nsDeploymentFlavour);
+						setVnfIdInUserInfo(vnfdId, vnfInstanceId, i);
+						log.debug("VNF index: " + i + " - VNF instance ID: " + vnfInstanceId);
+					}
 				}
+
 			}
 			log.debug("All VNF instantiation requests have been sent for NS " + nsInstanceId);
 			
@@ -1097,7 +1101,7 @@ implements AsynchronousVimNotificationInterface,
 			}
 			
 			for (PnfInfo pi : pnfInfo) {
-				String pnfId = pi.getPnfdInfoId();
+				String pnfId = pi.getId().toString();
 				log.debug("Processing configuration for PNF info " + pnfId);
 				Pnfd pnfd = pnfdMap.get(pnfId);
 				log.debug("PNFD ID " + pnfd.getPnfdId());

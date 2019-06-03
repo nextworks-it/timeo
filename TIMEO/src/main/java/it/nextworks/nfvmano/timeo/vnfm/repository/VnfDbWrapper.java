@@ -200,6 +200,18 @@ public class VnfDbWrapper {
 		log.debug("Updated status for instantiated VNF info " + vnfInstanceId);
 	}
 
+	public synchronized void setManagementIp(String vnfInstanceId, String managementIp) throws NotExistingEntityException {
+		log.debug("Setting management IP for instantiated VNF info " + vnfInstanceId);
+		InstantiatedVnfInfo iVnfInfo = getInstantiatedVnfInfo(vnfInstanceId);
+		iVnfInfo.setManagementIp(managementIp);
+		instantiatedVnfInfoRepository.saveAndFlush(iVnfInfo);
+		log.debug("Set management IP address for instantiated VNF info " + vnfInstanceId);
+	}
+	
+	public String getVnfManagementIpAddress(String vnfInstanceId) throws NotExistingEntityException {
+		log.debug("Retrieving management IP for instantiated VNF info " + vnfInstanceId);
+		return getInstantiatedVnfInfo(vnfInstanceId).getManagementIp();
+	}
 	
 	//****************************** METHODS RELATED TO VNF INTERNAL OPERATIONS ********************************************************
 

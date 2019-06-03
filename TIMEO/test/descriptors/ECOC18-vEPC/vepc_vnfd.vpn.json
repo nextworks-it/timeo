@@ -1,0 +1,116 @@
+{
+	"vnfdId": "vEPC",
+	"vnfProvider": "EURECOM",
+	"vnfProductName": "vEPC",
+	"vnfSoftwareVersion": "0.1",
+	"vnfdVersion": "0.1",
+	"vnfProductInfoName": "vEPC",
+	"vnfProductInfoDescription": "vEPC",
+	"vnfmInfo": ["vEPC_VNFM"],
+	"vdu": [{
+		"vduId": "vEPC_vdu",
+		"name": "vEPC",
+		"description": "VDU of the vEPC",
+		"intCpd": [{
+			"cpdId": "vEPCMgtInt",
+			"layerProtocol": "IPV4",
+			"description": "Management CP of the origin server",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": true,
+				"management": true,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}],
+		"virtualComputeDesc": "VCD_vEPC",
+		"virtualStorageDesc": ["VSD_vEPC"],
+		"swImageDesc": {
+			"id": "vEPC_SWID",
+			"name": "vEPC",
+			"version": "0.1",
+			"checksum": "TBD",
+			"containerFormat": "VMDK",
+			"diskFormat": "VMDK",
+			"minDisk": 2,
+			"minRam": 2,
+			"size": 10,
+			"swImage": "vEPC",
+			"operatingSystem": "Ubuntu-10.04"
+		},
+		"configurableProperties": {}
+	}],
+	"virtualComputeDesc": [{
+		"virtualComputeDescId": "VCD_vEPC",
+		"virtualMemory": {
+			"virtualMemSize": 2,
+			"virtualMemOversubscriptionPolicy": "asdasd",
+			"numaEnabled": false
+		},
+		"virtualCpu": {
+			"numVirtualCpu": 2,
+			"cpuArchitecture": "x86_64",
+			"virtualCpuClock": 0,
+			"virtualCpuOversubscriptionPolicy": "asdasd"
+		}
+		
+	}],
+	"virtualStorageDesc": [{
+		"id": "VSD_vEPC",
+		"typeOfStorage": "VOLUME",
+		"sizeOfStorage": 10,
+		"swImageDesc": "vEPC_SWID"
+	}],
+	"vnfExtCpd": [{
+		"cpdId": "S1Ext",
+		"layerProtocol": "IPV4",
+		"description": "Management external CP of the Origin Server",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": true,
+			"management": true,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "vEPCMgtInt"
+	}],
+	"deploymentFlavour": [{
+		"flavourId": "df_vEPC",
+		"description": "Standard deployment flavour of the vEPC",
+		"vduProfile": [{
+			"vduId": "vEPC_vdu",
+			"minNumberOfInstances": 1,
+			"maxNumberOfInstances": 1
+		}],
+		"instantiationLevel": [{
+			"levelId": "il_vEPC",
+			"description": "Standard instantiation level of the vEPC",
+			"vduLevel": [{
+				"vduId": "vEPC_vdu",
+				"numberOfInstances": 1
+			}]
+		}],
+		"vnfLcmOperationsConfiguration": {}
+	}],
+	"configurableProperties": {
+			"autoScalable": false,
+			"autoHealable": false,
+			"additionalConfigurableProperty": []
+	},
+	"modifiableAttributes": {},
+	"lifeCycleManagementScript": [{
+		"event": ["START_VNF_INSTANTIATION"],
+		"script": "#!/bin/bash\necho \"$$config$$hostname\" > /etc/hostname; hostnamectl set-hostname $$config$$hostname; echo \"127.0.0.1 localhost\" > /etc/hosts; echo \"127.0.1.1 $$config$$hostname\" >> /etc/hosts; if [[ $EUID -ne 0 ]]; then echo 'ERROR: not root' > ~/cloud-init.log; exit 1; fi; sleep 5; ip link add vxlan0 type vxlan id 1 dstport 8472 remote 10.10.40.10; ifconfig vxlan0 192.168.100.1 netmask 255.255.255.0 up; sleep 3; ip link add vxlan1 type vxlan id 2 remote 10.10.20.1; ifconfig vxlan1 10.255.255.2 netmask 255.255.255.0 up; sleep 3; mkdir /var/log/epc; nohup /home/v_epc/openair-cn/scripts/run_hss > /var/log/epc/hss.log 2>&1 & sleep 2; nohup /home/v_epc/openair-cn/scripts/run_mme > /var/log/epc/mme.log 2>&1 & sleep 2; nohup /home/v_epc/openair-cn/scripts/run_spgw > /var/log/epc/gw.log 2>&1 &"
+	}, {
+		"event": ["END_VNF_INSTANTIATION"],
+		"script": ""
+	}, {
+		"event": ["START_VNF_TERMINATION"],
+		"script": ""
+	}, {
+		"event": ["END_VNF_TERMINATION"],
+		"script": ""
+	}]
+}

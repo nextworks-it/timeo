@@ -15,6 +15,10 @@
 */
 package it.nextworks.nfvmano.timeo.nso;
 
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +37,7 @@ import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,21 +46,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.nextworks.nfvmano.libs.catalogues.interfaces.elements.NsdInfo;
 import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.QueryNsdResponse;
 import it.nextworks.nfvmano.libs.common.elements.Filter;
+import it.nextworks.nfvmano.libs.common.enums.NsScaleType;
 import it.nextworks.nfvmano.libs.common.enums.OperationStatus;
 import it.nextworks.nfvmano.libs.common.exceptions.AlreadyExistingEntityException;
+import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.common.exceptions.MethodNotImplementedException;
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
+import it.nextworks.nfvmano.libs.descriptors.nsd.ScaleNsToLevelData;
+import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.elements.ScaleNsData;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
+import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.ScaleNsRequest;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.TerminateNsRequest;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.NsdManagementService;
 import it.nextworks.nfvmano.timeo.common.NfvoConstants;
 import it.nextworks.nfvmano.timeo.common.Utilities;
+import it.nextworks.nfvmano.timeo.monitoring.MonitoringManager;
 import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationReleaseMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationResultMessage;
+import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
 import it.nextworks.nfvmano.timeo.rc.ResourceSchedulingManager;
@@ -98,6 +111,17 @@ public class NsManagementEngine {
 	@Autowired
 	ResourceAllocationManager resourceAllocationManager;
 	
+	@Autowired
+	@Lazy(value=true)
+	MonitoringManager monitoringManager;
+
+	@Value("${timeo.address}")
+	private String timeoAddress;
+
+
+	@Value("${timeo.monitoring.url}")
+	private String monitoringUrl;
+
 	//internal map of NS Managers
 	//each NS Manager is created when a new NS istance ID is created and removed when the NS instance ID is removed
 	private Map<String, NsManager> nsManagers = new HashMap<>();
@@ -117,7 +141,8 @@ public class NsManagementEngine {
 	 */
 	public void initNewNsManager(String nsInstanceId) {
 		log.debug("Initializing new NS manager for NS instance " + nsInstanceId);
-		NsManager nsManager = new NsManager(nsInstanceId, resourceSchedulingManager, nsDbWrapper, resourceAllocationManager);
+		NsManager nsManager = new NsManager(nsInstanceId, resourceSchedulingManager, nsDbWrapper, 
+				resourceAllocationManager, monitoringManager, this, timeoAddress, getAddressFromUrl(monitoringUrl));
 		createQueue(nsInstanceId, nsManager);
 		this.nsManagers.put(nsInstanceId, nsManager);
 	}
@@ -125,8 +150,9 @@ public class NsManagementEngine {
 	/**
 	 * Instantiates a network service
 	 * 
-	 * @param request
-	 * @throws NotExistingEntityException
+	 * @param request instantiation request
+	 * @return operation ID
+	 * @throws NotExistingEntityException if the NS does not exist
 	 */
 	public String instantiateNetworkService(InstantiateNsRequest request) throws NotExistingEntityException {
 		String nsInstanceId = request.getNsInstanceId();
@@ -148,6 +174,47 @@ public class NsManagementEngine {
 			}
 		} else {
 			throw new NotExistingEntityException("Network Service ID not found");
+		}
+	}
+	
+	/**
+	 * Scales a network service. At the moment supports only NS scaling to NS level.
+	 * 
+	 * @param request scaling request
+	 * @return operation ID
+	 * @throws NotExistingEntityException if the NS does not exist
+	 * @throws MethodNotImplementedException if the requested scaling option is not yet supported 
+	 * @throws MalformattedElementException if the scaling request is malformatted
+	 */
+	public String scaleNetworkService(ScaleNsRequest request) throws NotExistingEntityException, MethodNotImplementedException, MalformattedElementException {
+		String nsInstanceId = request.getNsInstanceId();
+		if (request.getScaleType() == NsScaleType.SCALE_NS) {
+			ScaleNsData scaleNsData = request.getScaleNsData();
+			if (scaleNsData == null) throw new MalformattedElementException("Request to scale a NS without ScaleNsData element.");
+			ScaleNsToLevelData scaleNsToLevelData = scaleNsData.getScaleNsToLevelData();
+			if (scaleNsToLevelData == null) throw new MethodNotImplementedException("Only scale to NS level data option is supported.");
+			log.debug("Received scale NS instance request: NS instance ID - " + nsInstanceId);
+			if (this.nsManagers.containsKey(nsInstanceId)) {
+				String operationId = generateNewOperation(nsInstanceId, "NS scaling");
+				String topic = "lifecycle.scale." + nsInstanceId;
+				ScaleNsRequestMessage internalMessage = new ScaleNsRequestMessage(nsInstanceId, operationId, request);
+				ObjectMapper mapper = Utilities.buildObjectMapper();
+				try {
+					String json = mapper.writeValueAsString(internalMessage);
+					rabbitTemplate.convertAndSend(messageExchange.getName(), topic, json);
+					log.debug("Sent internal message with request to scale network service " + nsInstanceId);
+					return operationId;
+				} catch (JsonProcessingException e) {
+					log.error("Error while translating internal scaling message in Json format.");
+					nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Error while translating internal scaling message in Json format.");
+					return operationId;
+				}
+			} else {
+				throw new NotExistingEntityException("Network Service ID not found");
+			}
+		} else {
+			log.error("Scale VNF method not supported.");
+			throw new MethodNotImplementedException("Scale VNF method not supported.");
 		}
 	}
 	
@@ -298,6 +365,29 @@ public class NsManagementEngine {
 	    container.setQueueNames(queueName);
 	    container.start();
 	    log.debug("Queue created");
+	}
+
+
+	/**
+	 * Method to extract the host address of an URL
+	 *
+	 * @param url	string with the URL
+	 * @return	address from the URL
+	 */
+	private String getAddressFromUrl(String url){
+
+		try {
+			InetAddress ip = InetAddress.getByName(new URL(url).getHost());
+			return ip.getHostAddress();
+		} catch (UnknownHostException e) {
+			log.error("Reading monitoring url");
+			log.error(e.getMessage());
+			return null;
+		} catch (MalformedURLException e) {
+			log.error("Reading monitoring url");
+			log.error(e.getMessage());
+			return null;
+		}
 	}
 	
 }

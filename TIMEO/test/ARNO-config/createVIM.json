@@ -1,0 +1,16 @@
+{
+	"vimId": "OpenStack_local",
+    	"type": "OPENSTACK",
+    	"tenant": "b1510c9c2e494028bca45619af1e0300 ",
+    	"url": "http://10.10.20.99:5000/v3",
+    	"domain": "default",
+    	"username": "admin",
+    	"password": "admin",
+    	"defaultExternalNetworkId": "403e7a3b-9cf6-4a9b-868e-fefe2d85851c",
+  	"defaultExternalRouterId": "ae109392-b581-4a06-9172-982b0da5a004",
+    	"providerId": "b1510c9c2e494028bca45619af1e0300 ",
+    	"networkNodeMacAddress": "a0:36:9f:b0:37:09",
+	"wrapperIp": "10.0.7.14",
+	"wrapperPort": "8888",
+	"keyPair": "keypair"
+}

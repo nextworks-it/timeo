@@ -108,7 +108,7 @@ function instantiateNSD(formIds, resId, nsdInfoId) {
 			}
 		}
 		if (!found) {
-			var jsonParam = JSON.parse('{}');
+			var jsonParam = {};
 			jsonParam['vnfProfileId'] = profile;		
 			var paramsMap = {};	
 			paramsMap[key] = value;		
@@ -196,6 +196,10 @@ function updateNSDescriptor(nsdId, resId) {
 
 function getVNFsUserParameters(nsdId, callback, param) {
 	getJsonFromURL('http://' + nfvoAddr + ':' + nfvoPort + '/nfvo/nsdManagement/nsd/' + nsdId + '/internal/vnfsuserparameters', nsdId, callback, param, null, null);
+}
+
+function getNSUserParameters(nsdId, callback, param) {
+	getJsonFromURL('http://' + nfvoAddr + ':' + nfvoPort + '/nfvo/nsdManagement/nsd/' + nsdId + '/internal/nsuserparameters', nsdId, callback, param, null, null);
 }
 
 function createNSDTable(tableId, data, resId) {
@@ -419,7 +423,7 @@ function createNSInstantiateModalDialogs(nsdInfoId, data) {
 						  <h4 class="modal-title" id="myModalLabel">SAP</h4>\
 						</div>\
 						<div id="instantiateNSD-userParams_modalForm_' + nsdInfoId + '">\
-						  <h4 class="modal-title" id="myModalLabel">VNFs Parameters</h4>\
+						  <h4 class="modal-title" id="myModalLabel">User Parameters</h4>\
 						</div>\
                       </form>\
                     </div>\
@@ -579,9 +583,9 @@ function fillNSInstantiationForm(data, formIds, nsdInfoId) {
 	}
 	
 	if (data[0] === null || data[0] === undefined) {
-		getVNFsUserParameters(data['nsdInfoId'], fillNSInstantiationForm_step2, formIds[3]);
+		getNSUserParameters(data['nsdInfoId'], fillNSInstantiationForm_step2, formIds[3]);
 	} else {
-		getVNFsUserParameters(data[0]['nsdInfoId'], fillNSInstantiationForm_step2, formIds[3]);
+		getNSUserParameters(data[0]['nsdInfoId'], fillNSInstantiationForm_step2, formIds[3]);
 	}
 }
 
@@ -650,7 +654,7 @@ function showInstantiateNSModal(elemIds, data, resId) {
 		var nsdInput = document.getElementById(elemIds[1]);
 		nsdInput.value = nsdId;
 		var modalDiv = document.getElementById(elemIds[0]);
-		modalDiv.style = 'display:block';
+		modalDiv.style = 'display:block; overflow-y:auto;';
 	} else {
 		showResultMessage(false, resId, 'Unable to create NSD Id');
 	}

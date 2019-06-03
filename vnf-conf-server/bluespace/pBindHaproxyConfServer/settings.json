@@ -1,0 +1,13 @@
+{
+  "port": 8888,
+  "script": "echo",
+  "params": [
+    "uservnf.add_dns_hosts",
+    "uservnf.rm_dns_hosts",
+    "vnf.vCacheEdge_1_01.vdu.vCacheEdge_1_vdu.extcp.vCacheEdge_1_users_ext.floating",
+    "vnf.vCacheEdge_1_01.vdu.vCacheEdge_1_vdu.hostname",
+    "vnf.vCacheEdge_2_01.vdu.vCacheEdge_2_vdu.extcp.vCacheEdge_2_users_ext.floating",
+    "vnf.vCacheEdge_2_01.vdu.vCacheEdge_2_vdu.hostname",
+    "uservnf.origin_fqdn"
+  ]
+}

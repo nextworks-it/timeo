@@ -1,0 +1,15 @@
+{
+	"pnfInstanceId": "pDNS_INSTANCE_001",
+	"pnfdId": "pDNS_v01",
+	"pnfdVersion": "0.1",
+	"description": "TEST DNS",
+	"location": "NXW",
+	"ports": [{
+		"portId": "dns_users",
+		"addresses": {
+			"MAC_ADDRESS": "fa:16:3e:53:a5:4f",
+			"IP_ADDRESS": "10.0.8.42"
+		},
+		"management": true
+	}]
+}

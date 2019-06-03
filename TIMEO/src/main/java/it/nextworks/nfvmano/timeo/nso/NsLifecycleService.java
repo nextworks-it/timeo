@@ -125,8 +125,8 @@ public class NsLifecycleService implements NsLcmProviderInterface {
 	public String scaleNs(ScaleNsRequest request) 
 			throws MethodNotImplementedException, NotExistingEntityException, FailedOperationException, MalformattedElementException {
 		log.debug("Received scale NS request");
-		//TODO:
-		throw new MethodNotImplementedException();
+		String operationId = nsManagementEngine.scaleNetworkService(request);
+		return operationId;
 	}
 	
 	@Override

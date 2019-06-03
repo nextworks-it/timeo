@@ -1,0 +1,6 @@
+{
+  "nsdId": "${NSD_ID}",
+  "nsName": "vCDN_test",
+  "tenantId": "NXW",
+  "nsDescription": ""
+}

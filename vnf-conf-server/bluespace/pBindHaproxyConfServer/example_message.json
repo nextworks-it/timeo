@@ -1,0 +1,28 @@
+{
+	"vnfConfigurationData": {
+		"cpConfiguration": [],
+		"dhcpServer": "null",
+		"vnfSpecificData": [
+			{
+				"key": "uservnf.origin_fqdn",
+				"value": "5gmedia.lab"
+			},{
+				"key": "vnf.vCacheEdge_1_01.vdu.vCacheEdge_1_vdu.hostname",
+				"value": "vCacheEdge1_409"
+			},{
+				"key": "vnf.vCacheEdge_1_01.vdu.vCacheEdge_1_vdu.extcp.vCacheEdge_1_users_ext.floating",
+				"value": "10.0.6.15"
+			},{
+				"key": "uservnf.add_dns_hosts",
+				"value": "true"
+			},{
+				"key": "uservnf.rm_dns_hosts",
+				"value": "true"
+			}
+
+
+		]
+	},
+	"vnfcConfigurationData": [],
+	"vnfInstanceId": "553"
+}

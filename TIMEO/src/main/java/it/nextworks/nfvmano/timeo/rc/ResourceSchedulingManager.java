@@ -27,6 +27,7 @@ import it.nextworks.nfvmano.timeo.rc.algorithms.AlgorithmType;
 import it.nextworks.nfvmano.timeo.rc.algorithms.BluespaceStaticAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithm5tonic;
 import it.nextworks.nfvmano.timeo.rc.algorithms.VEPCStaticAlgorithmArno;
+import it.nextworks.nfvmano.timeo.rc.algorithms.VEPCStaticAlgorithmNXW;
 import it.nextworks.nfvmano.timeo.rc.algorithms.dijkstra.DijkstraAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,7 @@ import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
 import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithmNXW;
+import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithmBluespaceNXW;
 import it.nextworks.nfvmano.timeo.rc.algorithms.DummyAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.algorithms.DummyAlgorithmNXW;
 import it.nextworks.nfvmano.timeo.rc.algorithms.NsResourceAllocationAlgorithmInterface;
@@ -480,14 +482,18 @@ public class ResourceSchedulingManager {
 				return new DummyAlgorithmNXW();
 			case CDN_STATIC_NXW:
 				return new CdnStaticAlgorithmNXW();
+			case CDN_STATIC_BLUESPACE_NXW:
+				return new CdnStaticAlgorithmBluespaceNXW();
 			case CDN_STATIC_5TONIC:
 				return new CdnStaticAlgorithm5tonic();
 			case DIJKSTRA:
 				return new DijkstraAlgorithm();
 			case VEPC_STATIC_ARNO:
 				return new VEPCStaticAlgorithmArno();
+			case VEPC_STATIC_NXW:
+				return new VEPCStaticAlgorithmNXW();
 			case BLUESPACE_STATIC_NXW:
-				return new BluespaceStaticAlgorithm();
+				return new BluespaceStaticAlgorithm();			
 			default:
 				log.error("Algorithm type {} not yet implemented.", type);
 				throw new AlgorithmNotAvailableException();

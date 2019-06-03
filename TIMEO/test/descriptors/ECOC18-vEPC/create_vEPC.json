@@ -1,0 +1,7 @@
+{
+	"name": "vEPC",
+	"version": "0.1",
+	"provider": "EURECOM",
+	"checksum": "VNFD_TEST_001_checksum",
+	"vnfPackagePath": "http://localhost/vepc_vnfd.tar"
+}

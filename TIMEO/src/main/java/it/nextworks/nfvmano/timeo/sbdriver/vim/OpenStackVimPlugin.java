@@ -404,7 +404,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 					break;
 				}
 				try{
-					log.debug("Attaching port  to router " + routerID);
+					log.debug("Attaching port to router " + routerID);
 					RouterInterface routerIf = os.networking().router().attachInterface(routerID, AttachInterfaceType.SUBNET, foundSubnet);
 					port = os.networking().port().get(routerIf.getPortId());
 				} catch(Exception e){
@@ -1502,7 +1502,8 @@ public class OpenStackVimPlugin extends VimPlugin {
 
 		List<? extends Image> images = null;
 		try {
-			images = os.images().list();
+			//TODO: improve
+			images = os.images().listAll();
 		} catch (Exception e) {
 			log.error("An error occurred gathering Image list: " + e.getMessage());
 			throw new FailedOperationException("An error occurred gathering Image list: " + e.getMessage());
