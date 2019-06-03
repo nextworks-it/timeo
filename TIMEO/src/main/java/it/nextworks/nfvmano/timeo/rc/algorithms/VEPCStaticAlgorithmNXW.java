@@ -21,6 +21,7 @@ import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
 import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
+import it.nextworks.nfvmano.timeo.rc.elements.InterDcNetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.PnfAllocation;
@@ -76,12 +77,15 @@ public class VEPCStaticAlgorithmNXW extends AbstractNsResourceAllocationAlgorith
 
 //		computeNodesToBeActivated.put("hulk","OpenStack_local");
 //		computeNodesToBeActivated.put("wasp","OpenStack_local");
+		
+		List<InterDcNetworkPath> interDcNetworkPaths = new ArrayList<>();
 
 		return new NsResourceSchedulingSolution(
 				request.getNsInstanceId(),
 				vnfResourceAllocation,
 				pnfs,
 				networkPaths,
+				interDcNetworkPaths,
 				true,
 				networkNodesToBeActivated,
 				computeNodesToBeActivated
