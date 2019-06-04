@@ -225,7 +225,7 @@ function createNSITableContents(table, data, btnFlag, resId, names, cbacks, colu
 					subTable += '<tr>';
 					subTable += '<td><b>' + vals[0][v]['sapdId'] + '</b></td></tr>';
 					subTable += '<tr><td>' + vals[0][v]['sapInstanceId'] + '</td></tr>';
-					subTable += '<tr><td>' +"userAccessInfo" in vals[0][v] ? vals[0][v]["userAccessInfo"][0]["address"] : "NA" + '</td>';
+					subTable += '<tr><td>' +"userAccessInfo" in vals[0][v] ? vals[0][v]["userAccessInfo"][0]["address"] : "" + '</td>';
 					subTable += '</tr>';
 				}
 				subTable += '</table>';
