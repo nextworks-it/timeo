@@ -57,6 +57,10 @@ public class NetworkPath {
 	@JsonIgnore
 	private NsResourceSchedulingSolution nsRss;
 	
+	@ManyToOne
+	@JsonIgnore
+	private ScaleNsResourceAllocation sNSRA;
+	
 	private String networkPathId;
 	
 	@ElementCollection(fetch=FetchType.EAGER)

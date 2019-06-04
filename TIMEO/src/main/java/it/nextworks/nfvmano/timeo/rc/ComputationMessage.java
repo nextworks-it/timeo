@@ -32,6 +32,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 @JsonSubTypes({
 	@Type(value = ComputationReserveMessage.class, 	name = "RESERVE"),
 	@Type(value = ComputationReleaseMessage.class, 	name = "RELEASE"),
+	@Type(value = ComputationScaleMessage.class, 	name = "SCALE"),
 })
 public abstract class ComputationMessage {
 

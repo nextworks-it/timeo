@@ -204,7 +204,8 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 			case CONFIGURE_VNF: {
 				log.debug("Received configure VNF message with operation ID " + operationId);
 				log.trace("START CONFIGURE VNF " + operationId);
-				if (!(internalStatus.equals(VnfInternalStatus.ALLOCATED))) {
+				//TODO: j.brenes verify the second condition. Added for the scaling procedure. 
+				if (!(internalStatus.equals(VnfInternalStatus.ALLOCATED)||internalStatus.equals(VnfInternalStatus.CONFIGURED))) {
 					signalError(operationId, "Received configure VNF message in wrong status.");
 					return;
 				}

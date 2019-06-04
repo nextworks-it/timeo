@@ -29,6 +29,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
@@ -60,6 +61,11 @@ public class NsResourceSchedulingSolution {
     private Long id;
 	
 	private String nsInstanceId;
+	
+	@OneToOne(fetch=FetchType.EAGER, mappedBy="postScaleResourceSolution", cascade=CascadeType.ALL, orphanRemoval = true)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JsonIgnore
+	private NsScaleSchedulingSolution nsScaleSchedulingSolution; 
 	
 	@OneToMany(mappedBy = "nsRss", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
@@ -176,6 +182,8 @@ public class NsResourceSchedulingSolution {
 		if (networkNodesToBeActivated != null) this.networkNodesToBeActivated = networkNodesToBeActivated;
 		if (computeNodesToBeActivated != null) this.computeNodesToBeActivated = computeNodesToBeActivated;
 	}
+	
+	
 	
 	/**
 	 * Constructor
