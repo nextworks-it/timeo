@@ -78,6 +78,7 @@ import it.nextworks.nfvmano.libs.orvnfm.vnflcm.interfaces.messages.ModifyVnfInfo
 import it.nextworks.nfvmano.libs.orvnfm.vnflcm.interfaces.messages.TerminateVnfRequest;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.elements.SapData;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
+import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.ScaleNsRequest;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsLinkPort;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsVirtualLinkInfo;
@@ -840,9 +841,7 @@ implements AsynchronousVimNotificationInterface,
 				log.debug("VLAN ID: " + vlanId);
 				
 				log.debug("Retrieving data related to VNF instances.");
-				NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
 				
-				String tenantId = nsInfo.getTenantId();
 				log.debug("Tenant ID: " + tenantId);
 
 				log.debug("Reading info about path edges.");

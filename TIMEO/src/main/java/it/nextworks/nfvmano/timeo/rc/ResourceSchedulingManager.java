@@ -19,6 +19,7 @@ package it.nextworks.nfvmano.timeo.rc;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,6 +63,7 @@ import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.descriptors.onboardedvnfpackage.OnboardedVnfPkgInfo;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.PnfManagementService;
 import it.nextworks.nfvmano.timeo.catalogue.vnfpackagemanagement.VnfPackageManagementService;
 import it.nextworks.nfvmano.timeo.common.NfvoConstants;
 import it.nextworks.nfvmano.timeo.common.Utilities;

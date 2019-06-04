@@ -97,12 +97,13 @@ public class NxwDynamicAlgorithm extends AbstractNsResourceAllocationAlgorithm {
         Map<String,String> computeNodesToBeActivated = new HashMap<>();
         computeNodesToBeActivated.put("netdev5","OpenStack_local");
         
-
+        List<InterDcNetworkPath> interDcNetworkPaths = new ArrayList<InterDcNetworkPath>();
         return new NsResourceSchedulingSolution(
                 request.getNsInstanceId(),
                 vnfResourceAllocation,
                 pnfs,
                 networkPaths,
+                interDcNetworkPaths,
                 true,
                 networkNodesToBeActivated,
                 computeNodesToBeActivated

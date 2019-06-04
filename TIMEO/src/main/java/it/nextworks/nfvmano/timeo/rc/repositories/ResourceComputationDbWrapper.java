@@ -99,11 +99,13 @@ public class ResourceComputationDbWrapper {
 		Map<String,String> overallComputeNodes = currentSolution.getComputeNodesToBeActivated();
 		List<String> overallNetworkNodes = currentSolution.getNetworkNodesToBeActivated();
 		this.removeNsResourceSchedulingSolution(input.getNsInstanceId());
+		List<InterDcNetworkPath> interDcNetworkPaths = new ArrayList<InterDcNetworkPath>();
 		this.addNewNsResourceSchedulingSolution(new NsResourceSchedulingSolution
 				(input.getNsInstanceId(),
 						overallVnfds,
 						overallPnfs,
 						overallNetworkPaths,
+						interDcNetworkPaths,
 						input.isSolutionFound(),
 						overallNetworkNodes,
 						overallComputeNodes));
