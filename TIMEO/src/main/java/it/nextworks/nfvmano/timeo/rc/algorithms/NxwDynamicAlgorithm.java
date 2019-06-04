@@ -117,7 +117,7 @@ public class NxwDynamicAlgorithm extends AbstractNsResourceAllocationAlgorithm {
 			) throws NotExistingEntityException, ScaleAllocationSolutionNotFound
 
     {
-    	//Look for the missing vnfdIds
+    	
     	List<ScaleVnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
     	String defaultVim = properties.get("default_vim");
     	String defaultZone = properties.get("default_zone");
@@ -127,6 +127,9 @@ public class NxwDynamicAlgorithm extends AbstractNsResourceAllocationAlgorithm {
     	Map<String, Map<String, String>> currentVnfds = nsd.getVnfdDataFromFlavour(nsi.getFlavourId(), currentInstantiationLevel);
     	Map<String, Map<String, String>> newVnfds = nsd.getVnfdDataFromFlavour(nsi.getFlavourId(), newInstantiationLevel);
     	Set<String> currentVnfdIds = currentVnfds.keySet();
+    	Set<String> newVnfdIds = newVnfds.keySet();
+    	
+    	//Look for the vnfdIds to instantiate
     	for(String vnfdId : newVnfds.keySet()) {
     		if(!currentVnfdIds.contains(vnfdId)) {
     			
@@ -139,9 +142,19 @@ public class NxwDynamicAlgorithm extends AbstractNsResourceAllocationAlgorithm {
     		
     	
     	}
+    	//Look for the vnfdIds to terminate
+    	List<String> vnfInstancesToTerminate = new ArrayList<String>();
+    	for(String vnfdId : currentVnfds.keySet()) {
+    		if(!newVnfdIds.contains(vnfdId)) {
+    			vnfInstancesToTerminate.addAll(nsi.getVnfInfoIdFromVnfdId(vnfdId));
+    			
+    		}
+    		    	
+    	} 	
+    	
     	
 		ScaleNsResourceAllocation sNRA = new ScaleNsResourceAllocation(vnfResourceAllocation, null, null, true, null, null);
-		return new NsScaleSchedulingSolution(request.getNsInstanceId(), null, null, null, null, null,sNRA, true);
+		return new NsScaleSchedulingSolution(request.getNsInstanceId(), vnfInstancesToTerminate, null, null, null, null,sNRA, true);
 	
     	
     	
