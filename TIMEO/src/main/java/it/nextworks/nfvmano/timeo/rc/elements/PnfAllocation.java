@@ -38,6 +38,10 @@ public class PnfAllocation {
 	@JsonIgnore
 	private NsResourceSchedulingSolution nsRss;
 	
+	@ManyToOne
+	@JsonIgnore
+	private ScaleNsResourceAllocation sNSRA;
+	
 	//input
 	private String pnfdId;
 	private String pnfdVersion;

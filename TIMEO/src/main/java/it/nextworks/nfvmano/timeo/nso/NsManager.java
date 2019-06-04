@@ -18,6 +18,13 @@ package it.nextworks.nfvmano.timeo.nso;
 import java.io.IOException;
 import java.util.Map;
 
+import it.nextworks.nfvmano.libs.common.enums.NsScaleType;
+import it.nextworks.nfvmano.libs.common.exceptions.MethodNotImplementedException;
+import it.nextworks.nfvmano.libs.descriptors.nsd.NsDf;
+import it.nextworks.nfvmano.libs.descriptors.nsd.NsLevel;
+import it.nextworks.nfvmano.libs.descriptors.nsd.ScaleNsToLevelData;
+import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.elements.ScaleNsData;
+import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.ScaleNsRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +44,8 @@ import it.nextworks.nfvmano.timeo.nso.messages.EngineMessageType;
 import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationResultMessage;
+import it.nextworks.nfvmano.timeo.nso.messages.NotifyScaleComputationResultMessage;
+import it.nextworks.nfvmano.timeo.nso.messages.NotifyScaleVnfAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
@@ -139,10 +148,14 @@ public class NsManager {
 					nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received scaling message in wrong status");
 				}
 				ScaleNsRequestMessage scaleMsg = (ScaleNsRequestMessage)em;
+				this.scaleMessage = scaleMsg;
 				try {
 					scaleNs(scaleMsg);
 				} catch(Exception e) {
-					//TODO:
+					log.error("Error during NS SCALE procedure");
+					log.error(e.getMessage());
+					this.internalStatus=InternalNsStatus.FAILED;
+					//TODO: Control scaling error
 				}
 				break;
 			}
@@ -165,6 +178,26 @@ public class NsManager {
 				}
 				break;
 			}
+			case NOTIFY_SCALE_COMPUTATION_RESULT: {
+				log.debug("Received scale computation result message with operation ID " + operationId);
+				NotifyScaleComputationResultMessage notifyMsg = (NotifyScaleComputationResultMessage)em;
+				if (notifyMsg.getSolution().isSolutionFound()) {
+					try {
+						scaleTerminateVnfs(operationId);
+						
+					} catch (WrongInternalStatusException e) {
+						log.error("Received notify scale computation result message in wrong status");
+						nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify computation result message in wrong status");
+						this.internalStatus = InternalNsStatus.FAILED;
+					}
+				} else {
+					log.error("Resource computation failed. Setting internal status to failed.");
+					this.internalStatus=InternalNsStatus.FAILED;
+					//TODO: should we somehow remove this NS Manager instance?
+				}
+				break;
+			}
+
 			
 			case NOTIFY_ALLOCATION_RESULT: {
 				log.debug("Received resource allocation result message with operation ID " + operationId);
@@ -231,6 +264,27 @@ public class NsManager {
 					}
 					break;
 				}
+				case SCALE_CONFIGURE_VNF: {
+					if (notifyMsg.isSuccessful()) {
+						log.trace("END CONFIGURE VNFS FOR NS SCALE " + nsInstanceId);
+						log.trace("END SCALE NS FOR NS" + nsInstanceId);
+						log.debug("VNFs successfully configured");
+						try {
+							confirmNsScale(operationId);
+							//scaleConfigureMonitoring(operationId);
+						
+						} catch (WrongInternalStatusException e) {
+							log.error("Received notify VNFs monitoring update result message in wrong status");
+							nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify VNFs monitoring update result message in wrong status");
+							this.internalStatus = InternalNsStatus.FAILED;
+						}
+					} else {
+						log.error("VNFs monitoring activation failed. Setting internal status to failed.");
+						this.internalStatus=InternalNsStatus.FAILED;
+						//TODO: release computed resources in path computation, release VNFs and NS links
+					}
+					break;
+				}
 				
 				case SETUP_UNDERLYING_CONNECTIVITY: {
 					if (notifyMsg.isSuccessful()) {
@@ -250,12 +304,47 @@ public class NsManager {
 					}
 					break;
 				}
+				case SCALE_SETUP_UNDERLYING_CONNECTIVITY: {
+					if (notifyMsg.isSuccessful()) {
+						log.debug("Underlying network connectivity established");
+						try {
+							scaleConfigureVnfs(operationId);
+							
+						} catch (WrongInternalStatusException e) {
+							log.error("Received notify result message for underlying connections in wrong status");
+							nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify result message for underlying connections in wrong status");
+							this.internalStatus = InternalNsStatus.FAILED;
+						}
+					} else {
+						log.error("Network underlying connections failed. Setting internal status to failed.");
+						this.internalStatus=InternalNsStatus.FAILED;
+						//TODO: release computed resources in path computation, release VNFs and NS links
+					}
+					break;
+				}
 				
 				case REMOVE_VNF: {
 					if (notifyMsg.isSuccessful()) {
 						log.debug("VNFs successfully removed");
 						try {
 							destroyUnderlyingConnectivity(operationId);
+						} catch (WrongInternalStatusException e) {
+							log.error("Received notify VNFs termination result message in wrong status");
+							nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify VNFs termination result message in wrong status");
+							this.internalStatus = InternalNsStatus.FAILED;
+						}
+					} else {
+						log.error("VNFs termination failed. Setting internal status to failed.");
+						this.internalStatus=InternalNsStatus.FAILED;
+						//TODO: release computed resources in path computation, release NS links
+					}
+					break;
+				}
+				case SCALE_REMOVE_VNF: {
+					if (notifyMsg.isSuccessful()) {
+						log.debug("SCALE VNFs successfully removed");
+						try {
+							scaleAllocateVnfs(operationId);
 						} catch (WrongInternalStatusException e) {
 							log.error("Received notify VNFs termination result message in wrong status");
 							nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify VNFs termination result message in wrong status");
@@ -303,7 +392,26 @@ public class NsManager {
 					}
 					break;
 				}
-
+				case SCALE_ALLOCATE_VNF: {
+					if (notifyMsg.isSuccessful()) {
+						log.trace("END SCALE VNFS");
+						log.debug("SCALE VNFs successfully allocated");
+						try {
+							scaleSetupUnderlyingConnectivity(operationId);
+							//configureVnfs(operationId);
+						} catch (WrongInternalStatusException e) {
+							log.error("Received notify VNFs allocation result message in wrong status");
+							nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received notify VNFs allocation result message in wrong status");
+							this.internalStatus = InternalNsStatus.FAILED;
+						}
+					} else {
+						log.error("VNFs SCALE allocation failed. Setting internal status to failed.");
+						this.internalStatus=InternalNsStatus.FAILED;
+						//TODO: release computed resources in path computation, release NS links
+					}
+					break;
+				}
+				
 				default:
 					break;
 				}
@@ -336,6 +444,7 @@ public class NsManager {
 				}
 				break;
 			}
+			
 			
 			default: {
 				log.error("Received message with not supported type");
@@ -381,7 +490,7 @@ public class NsManager {
 	}
 	
 	private void terminateNs(TerminateNsRequestMessage message) throws WrongInternalStatusException {
-		if (!((internalStatus == InternalNsStatus.ALLOCATED) || (internalStatus == InternalNsStatus.FAILED))) throw new WrongInternalStatusException();
+		if (!((internalStatus == InternalNsStatus.ALLOCATED) || (internalStatus == InternalNsStatus.FAILED)||(internalStatus==InternalNsStatus.SCALE_ALLOCATED))) throw new WrongInternalStatusException();
 		log.debug("Starting procedure to terminate Network Service.");
 		internalStatus = InternalNsStatus.TERMINATING_MONITORING;
 		//TODO: check if we really need to make this asynchronous...
@@ -394,14 +503,27 @@ public class NsManager {
 		resourceAllocationManager.terminateVnfs(nsInstanceId, message.getOperationId(), message);	
 	}
 	
-	private void scaleNs(ScaleNsRequestMessage message) throws NotExistingEntityException {
+	private void scaleNs(ScaleNsRequestMessage message) throws NotExistingEntityException, MethodNotImplementedException {
 		//TODO:
 		log.debug("Starting procedure to scale network service.");
 		//check if the target instantiation level is different from the current one
 		//what to do if it is the same? 
 		//identify the delta - new VNFs? new VLs? - and invoke the scheduling manager
 		NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
-		//afkjdg
+		ScaleNsRequest sRequest = message.getRequest();
+		ScaleNsData sData = sRequest.getScaleNsData();
+		ScaleNsToLevelData sNsLevelData = sData.getScaleNsToLevelData();
+
+		//TODO: To be verified
+		String currentLevel =  nsInfo.getNsScaleStatus().get(0).getNsScaleLevelId();
+		internalStatus = InternalNsStatus.COMPUTING_SCALING_RESOURCES;
+		if(currentLevel!= sNsLevelData.getNsInstantiationLevel() ){
+			resourceSchedulingManager.scaleResources(message);
+		}else{
+			//TODO: what happens if it is the same instantiation level?
+		}
+
+
 	}
 	
 	private void instantiateNs(InstantiateNsRequestMessage message) throws WrongInternalStatusException {
@@ -431,6 +553,15 @@ public class NsManager {
 		resourceAllocationManager.allocateVnf(nsInstanceId, operationId, instantiateMessage);
 	}
 	
+	private void scaleAllocateVnfs(String operationId) throws WrongInternalStatusException {
+		if (internalStatus != InternalNsStatus.SCALE_TERMINATING_VNFS) throw new WrongInternalStatusException();
+		log.debug("Starting procedure to scale VNFs");
+		internalStatus = InternalNsStatus.SCALE_CREATING_VNFS;
+		resourceAllocationManager.scaleAllocateVnfs(nsInstanceId, operationId, scaleMessage);
+		
+		
+	}
+	
 	private void configureVnfs(String operationId) throws WrongInternalStatusException {
 		//if (internalStatus != InternalNsStatus.CREATING_VNFS) throw new WrongInternalStatusException();
 		log.trace("START CONFIGURE VNFS FOR NS " + nsInstanceId);
@@ -438,6 +569,24 @@ public class NsManager {
 		log.debug("Starting procedures to configure VNFs");
 		internalStatus = InternalNsStatus.CONFIGURING_VNFS;
 		resourceAllocationManager.configureVnfs(nsInstanceId, operationId, instantiateMessage);
+	}
+	
+	private void scaleConfigureVnfs(String operationId) throws WrongInternalStatusException {
+		//if (internalStatus != InternalNsStatus.CREATING_VNFS) throw new WrongInternalStatusException();
+		log.trace("START CONFIGURE VNFS FOR NS " + nsInstanceId);
+		if (internalStatus != InternalNsStatus.SCALE_CREATING_CONNECTIVITY) throw new WrongInternalStatusException();
+		log.debug("Starting procedures to configure VNFs");
+		internalStatus = InternalNsStatus.SCALE_CONFIGURING_VNFS;
+		resourceAllocationManager.configureVnfs(nsInstanceId, operationId, scaleMessage);
+	}
+	
+	private void scaleSetupUnderlyingConnectivity(String operationId) throws WrongInternalStatusException {
+		//if (internalStatus != InternalNsStatus.CONFIGURING_VNFS) throw new WrongInternalStatusException();
+			if (internalStatus != InternalNsStatus.SCALE_CREATING_VNFS) throw new WrongInternalStatusException();
+			log.debug("Starting procedures to setup underlying connectivity");
+			//TODO: check if this is needed from configuration
+			internalStatus = InternalNsStatus.SCALE_CREATING_CONNECTIVITY;
+			resourceAllocationManager.setupUnderlyingConnectivity(nsInstanceId, operationId, scaleMessage);
 	}
 	
 	private void setupUnderlyingConnectivity(String operationId) throws WrongInternalStatusException {
@@ -469,6 +618,12 @@ public class NsManager {
 		}
 	}
 	
+	private void scaleConfigureMonitoring(String operationId) throws WrongInternalStatusException {
+		//TODO: Implement monitoring configuration update
+		if (internalStatus != InternalNsStatus.SCALE_ALLOCATED) throw new WrongInternalStatusException();
+		//internalStatus = InternalNsStatus.SCALE_ALLOCATED;
+	}
+	
 	private void confirmComputedResourceRelease(String operationId) throws WrongInternalStatusException {
 		if (internalStatus != InternalNsStatus.RELEASING_COMPUTED_RESOURCES) throw new WrongInternalStatusException();
 		internalStatus = InternalNsStatus.TERMINATED;
@@ -481,5 +636,29 @@ public class NsManager {
 		}
 	}
 	
+	private void scaleTerminateVnfs(String operationId ) throws WrongInternalStatusException {
+		if (internalStatus != InternalNsStatus.COMPUTING_SCALING_RESOURCES) throw new WrongInternalStatusException();
+		log.debug("Starting procedure to scale VNFs");
+		internalStatus = InternalNsStatus.SCALE_TERMINATING_VNFS;
+		resourceAllocationManager.scaleTerminateVnfs(nsInstanceId, operationId, scaleMessage);
+		
+	}
 	
+	private void confirmNsScale(String operationId) throws WrongInternalStatusException{
+		if (internalStatus!=InternalNsStatus.SCALE_CONFIGURING_VNFS) throw new WrongInternalStatusException();
+		//TODO: which should be the state afterwards?
+		internalStatus=InternalNsStatus.SCALE_ALLOCATED;
+		try {
+			log.debug("NS SCALE procedure finished correctly, storing results for NS:"+this.nsInstanceId+
+					"operation: "+operationId);
+			String newInstantiationLevel = this.scaleMessage.getRequest().getScaleNsData().getScaleNsToLevelData().getNsInstantiationLevel();
+			String currentDf = nsDbWrapper.getNsInfo(this.nsInstanceId).getFlavourId();
+			
+			nsDbWrapper.setNsInfoDeploymentFlavour(this.nsInstanceId, currentDf, newInstantiationLevel);
+			nsDbWrapper.updateInternalOperation(operationId, OperationStatus.SUCCESSFULLY_DONE, null);
+		}catch(Exception e){
+			log.error("Impossible to update NS information after NS SCALE");
+		}
+		
+	}
 }

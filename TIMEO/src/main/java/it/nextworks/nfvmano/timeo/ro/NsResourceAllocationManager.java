@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.util.CollectionUtils;
+import org.hibernate.hql.internal.CollectionSubqueryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Queue;
@@ -108,7 +110,9 @@ import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathEndPoint;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
+import it.nextworks.nfvmano.timeo.rc.elements.NsScaleSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.PnfAllocation;
+import it.nextworks.nfvmano.timeo.rc.elements.ScaleVnfResourceAllocation;
 import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 import it.nextworks.nfvmano.timeo.rc.repositories.ResourceComputationDbWrapper;
 import it.nextworks.nfvmano.timeo.ro.messages.AllocateNsVlsMessage;
@@ -118,7 +122,11 @@ import it.nextworks.nfvmano.timeo.ro.messages.AllocationMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.AllocationMessageType;
 import it.nextworks.nfvmano.timeo.ro.messages.ConfigureVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.DestroyUnderlyingConnectivityMessage;
+import it.nextworks.nfvmano.timeo.ro.messages.ScaleAllocateVnfMessage;
+import it.nextworks.nfvmano.timeo.ro.messages.ScaleConfigureVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.SdnControllerOperationAckMessage;
+import it.nextworks.nfvmano.timeo.ro.messages.ScaleSetupUnderlyingConnectivityMessage;
+import it.nextworks.nfvmano.timeo.ro.messages.ScaleRemoveVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.SetupUnderlyingConnectivityMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.TerminateNsVlsMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.TerminateVnfMessage;
@@ -170,6 +178,8 @@ implements AsynchronousVimNotificationInterface,
 	private VnfmOperationPollingManager vnfmOperationPollingManager;
 	
 	private InstantiateNsRequest originalRequest;
+	
+	private ScaleNsRequest lastScaleRequest;
 	
 	private VnfPackageManagementService vnfPackageManagement;
 	
@@ -290,6 +300,23 @@ implements AsynchronousVimNotificationInterface,
 				allocatePnfInfosInternal(allocateVnfMsg);
 				break;
 			}
+			case SCALE_ALLOCATE_VNF: {
+				log.debug("Received request for VNF scaling");
+				log.trace("START SCALE VNFS");
+				//TODO: j.brenes verify this
+				
+				if (!(internalStatus == ResourceAllocationStatus.SCALE_TERMINATED_VNF)){
+					log.error("Wrong status. Discarding message.");
+					return;
+				}
+				ScaleAllocateVnfMessage scaleVnfMsg = (ScaleAllocateVnfMessage)allocateMessage;
+				this.currentOperationId = scaleVnfMsg.getOperationId();
+				this.lastScaleRequest = scaleVnfMsg.getRequest();
+				scaleVnfsInternal(scaleVnfMsg);
+				//TODO: implement pnfinfo scaling
+				//scalePnfInfosInternal(allocateVnfMsg);
+				break;
+			}
 			
 			case CONFIGURE_VNF: {
 				log.debug("Received request for VNF configuration");
@@ -363,6 +390,18 @@ implements AsynchronousVimNotificationInterface,
 				terminatePnfsInternal();
 				break;
 			}
+			case SCALE_REMOVE_VNF: {
+				log.debug("Received request to remove the VNFs due to scale");
+				if (!(internalStatus == ResourceAllocationStatus.CONFIGURED_VNF)) {
+					log.error("Wrong status. Discarding message.");
+					return;
+				}
+				ScaleRemoveVnfMessage terminateVnfMessage = (ScaleRemoveVnfMessage)allocateMessage;
+				this.currentOperationId = terminateVnfMessage.getOperationId();
+				scaleTerminateVnfsInternal(terminateVnfMessage);
+				
+				break;
+			}
 			
 			case REMOVE_UNDERLYING_CONNECTIVITY: {
 				log.debug("Received request to destroy underlying connectivity.");
@@ -390,6 +429,8 @@ implements AsynchronousVimNotificationInterface,
 		} 
 	}
 	
+	
+
 	//*********************************** Notification methods **************************
 
 	public void notify(AllocateNetworkResponse response) {
@@ -799,6 +840,11 @@ implements AsynchronousVimNotificationInterface,
 				log.debug("VLAN ID: " + vlanId);
 				
 				log.debug("Retrieving data related to VNF instances.");
+				NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
+				
+				String tenantId = nsInfo.getTenantId();
+				log.debug("Tenant ID: " + tenantId);
+
 				log.debug("Reading info about path edges.");
 				
 				List<NetworkPathEndPoint> endPoints = np.getEndPoints();
@@ -854,6 +900,17 @@ implements AsynchronousVimNotificationInterface,
 		}
 	}
 	
+	private void scaleSetupUnderlyingNetworkConnectivityInternal(
+			ScaleSetupUnderlyingConnectivityMessage setupNetworkMessage) {
+		log.debug("Starting scale of underlying network connectivity");
+		internalStatus = ResourceAllocationStatus.SCALE_CREATING_NETWORK_CONNECTIONS;
+		//TODO: Implement SDN related operation for scaling
+		internalStatus = ResourceAllocationStatus.SCALE_CREATED_NETWORK_CONNECTIONS;
+		nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.SCALE_SETUP_UNDERLYING_CONNECTIVITY, true);
+		
+		
+	}
+
 	private void invokeSdnControllerCreateNetworkPath(List<SbNetworkPath> targetNetworkPath, String networkPathId) throws Exception {
 		if (defaultSdnControllerPlugin == null) 
 			log.error("SDN controller plugin not found");
@@ -866,7 +923,7 @@ implements AsynchronousVimNotificationInterface,
 		sdnControllerOperationMap.put(sdnOperationId, networkPathId);
 		log.debug("Added SDN controller operation " + sdnOperationId + " in internal list." );
 	}
-	
+
 	private void terminatePnfsInternal() {
 		log.debug("Removing PNF infos.");
 		try {
@@ -887,6 +944,45 @@ implements AsynchronousVimNotificationInterface,
 			return;
 		} catch (FailedOperationException | MethodNotImplementedException | MalformattedElementException e) {
 			manageError("Unable to remove PNF info: " + e.getMessage(), AllocationMessageType.REMOVE_VNF);
+			rollback();
+			return;
+		}
+	}
+	
+	private void scaleTerminateVnfsInternal(ScaleRemoveVnfMessage message) {
+		log.debug("Starting termination of VNFs due to SCALE for NS instance " + nsInstanceId);
+		internalStatus = ResourceAllocationStatus.SCALE_TERMINATING_VNF;
+		try {
+			NsScaleSchedulingSolution scaleSolution = resourceComputationDbWrapper.getNsScaleSchedulingSolution(nsInstanceId);
+			List<String> vnfInstancesId = scaleSolution.getVnfInstanceDeallocation();
+			if(CollectionUtils.isEmpty(vnfInstancesId)) {
+				log.debug("No VNF to be removed due to scale for NSI:  " + nsInstanceId +". Notifying lifecycle manager.");
+				internalStatus = ResourceAllocationStatus.SCALE_TERMINATED_VNF;
+				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.SCALE_REMOVE_VNF, true);
+				
+			}else {
+				NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
+				for (String vnfId : vnfInstancesId) {
+					log.debug("Processing termination for VNF instance " + vnfId);
+					String vnfdId = nsInfo.getVnfInfoVnfdIdMap().get(vnfId);
+					log.debug("VNFD ID: " + vnfdId);
+					Vnfm vnfm = retrieveVnfm(vnfdId);
+					
+					TerminateVnfRequest request = new TerminateVnfRequest(vnfId, StopType.FORCEFUL, 0, new HashMap<String, String>());
+					String operationId = vnfm.terminateVnf(request);
+					log.debug("Termination request for VNF " + vnfId + " sent to the VNFM. Operation ID: " + operationId);
+					pendingVnfmOperation.add(operationId);
+					vnfOperationMap.put(operationId, vnfId);
+					vnfmOperationPollingManager.addOperation(operationId, OperationStatus.SUCCESSFULLY_DONE, vnfId, vnfm, this);
+					log.debug("Operation " + operationId + " added to the list of VNFM pending operations");
+				}
+			}
+		} catch (NotExistingEntityException e) {
+			manageError("Unable to find entity: " + e.getMessage(), AllocationMessageType.SCALE_REMOVE_VNF);
+			rollback();
+			return;
+		} catch (FailedOperationException | MethodNotImplementedException | MalformattedElementException e) {
+			manageError("Unable to terminate VNF: " + e.getMessage(), AllocationMessageType.SCALE_REMOVE_VNF);
 			rollback();
 			return;
 		}
@@ -1017,6 +1113,73 @@ implements AsynchronousVimNotificationInterface,
 		}
 	}
 	
+	private void scaleVnfsInternal(ScaleAllocateVnfMessage scaleVnfMessage) {
+		log.debug("Starting scaling of VNFs for NS instance " + nsInstanceId);
+		internalStatus = ResourceAllocationStatus.SCALE_CREATING_VNF;
+		try {			
+			Nsd nsd = nsManagementEngine.retrieveNsd(nsInstanceId);
+			NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
+			
+			NsDf nsDeploymentFlavour = nsd.getNsDeploymentFlavour(nsInfo.getFlavourId());
+			String nsInstantiationLevel = scaleVnfMessage.getRequest().getScaleNsData().getScaleNsToLevelData().getNsInstantiationLevel();
+			log.debug("Ns Instantiation Level ID: " + nsInstantiationLevel);
+			NsLevel nsLevel = nsDeploymentFlavour.getNsLevel(nsInstantiationLevel);
+			
+			NsScaleSchedulingSolution scaleSolution = resourceComputationDbWrapper.getNsScaleSchedulingSolution(nsInstanceId);
+			List<ScaleVnfResourceAllocation> vnfsToScale = scaleSolution.getScaleNsResourceAllocation().getVnfResourceAllocation(); 
+			
+			if(CollectionUtils.isEmpty(vnfsToScale)) {
+				log.debug("No VNFs to be created due to scale to the NS " + nsInstanceId + " . Notifying lifecycle manager.");
+				internalStatus = ResourceAllocationStatus.SCALE_CREATED_VNF;
+				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.SCALE_ALLOCATE_VNF, true);
+				
+			}else {
+				List<VnfToLevelMapping> origVnfLevels = nsLevel.getVnfToLevelMapping();
+				log.debug("The requested NS Level includes " + origVnfLevels.size() + " VNFs.");
+				List<VnfToLevelMapping> vnfLevels = Utilities.orderVnfsBasedOnDependencies(origVnfLevels, nsDeploymentFlavour.getDependencies());
+				log.debug("The ordered NS Level includes " + vnfLevels.size() + " VNFs.");
+				for (VnfToLevelMapping vnf : vnfLevels) {
+					//TODO j.brenes check this
+					if(vnf != null){
+						VnfProfile vnfProfile = nsDeploymentFlavour.getVnfProfile(vnf.getVnfProfileId());
+						log.debug("Analyzing VNF profile " + vnf.getVnfProfileId());
+						int numInstances = vnf.getNumberOfInstances();
+						
+						String vnfdId = vnfProfile.getVnfdId();
+						ScaleVnfResourceAllocation vnfdScale = vnfsToScale.stream()
+								.filter(rA->vnfdId.equals(rA.getVnfdId()))
+								.findAny()
+								.orElse(null);
+						if(vnfdScale!=null) {
+							log.debug("Found vnfd to be instantiated during scale procedure");
+							String vnfFlavourId = vnfProfile.getFlavourId();
+							String vnfInstantiationLevel = vnfProfile.getInstantiationLevel();
+							log.debug("VNFD: " + vnfdId + " - FlavourID: " + vnfFlavourId + " - Number of instances: " + numInstances);
+							for (int i = 0; i<numInstances; i++) {
+								String vnfInstanceId = allocateVnf(vnfdId, vnfFlavourId, i, vnfInstantiationLevel, vnfProfile, nsDeploymentFlavour);
+								setVnfIdInUserInfo(vnfdId, vnfInstanceId, i);
+								log.debug("VNF index: " + i + " - VNF instance ID: " + vnfInstanceId);
+							}
+						}
+						
+					}
+
+				}
+				log.debug("All VNF instantiation requests have been sent for NS " + nsInstanceId);
+
+			}
+						
+		} catch (NotExistingEntityException e) {
+			manageError("Unable to find entity: " + e.getMessage(), AllocationMessageType.SCALE_ALLOCATE_VNF);
+			rollback();
+			return;
+		} catch (FailedOperationException e) {
+			manageError("Unable to scale VNF: " + e.getMessage(), AllocationMessageType.SCALE_ALLOCATE_VNF);
+			rollback();
+			return;
+		}
+	}
+	
 	private String allocateVnf(String vnfdId, String flavourId, int instanceNumber, String vnfInstantiationLevel, VnfProfile vnfProfile, NsDf nsDeploymentFlavour) 
 			throws FailedOperationException, NotExistingEntityException {
 		log.debug("Instantiating VNF for VNFD ID " + vnfdId);
@@ -1069,6 +1232,57 @@ implements AsynchronousVimNotificationInterface,
 		}
 	}
 	
+	private boolean configureVnfsInternal(List<String> vnfInstancesId, NsInfo nsInfo) throws Exception {
+		boolean foundVnfToBeConfigured = false;
+		
+		for (String vnfId : vnfInstancesId) {
+			log.debug("Processing configuration for VNF instance " + vnfId);
+			String vnfdId = nsInfo.getVnfInfoVnfdIdMap().get(vnfId);
+			log.debug("VNFD ID: " + vnfdId);
+			Vnfm vnfm = retrieveVnfm(vnfdId);
+			ResourceAllocationUtilities rau = new ResourceAllocationUtilities(vnfmMap, vnfdMap, defaultVimPlugin, vnfm);
+			Vnfd vnfd = vnfdMap.get(vnfId);
+			VnfConfigurableProperties configParam = vnfd.getConfigurableProperties();
+			if ((configParam != null) && (!(configParam.getAdditionalConfigurableProperty().isEmpty()))) {
+				foundVnfToBeConfigured = true;
+				Map<String, String> configValues = rau.buildConfigurationData(configParam.getAdditionalConfigurableProperty(), nsInfo.getConfigurationParameters());
+				ModifyVnfInformationRequest configRequest = new ModifyVnfInformationRequest(vnfId, configValues);
+				String operationId = vnfm.modifyVnfInformation(configRequest);
+				log.debug("Configuration request for VNF " + vnfId + " sent to the VNFM.");
+				pendingVnfmOperation.add(operationId);
+				vnfOperationMap.put(operationId, vnfId);
+				vnfmOperationPollingManager.addOperation(operationId, OperationStatus.SUCCESSFULLY_DONE, vnfId, vnfm, this);
+				log.debug("Operation " + operationId + " added to the list of VNFM pending operations");
+			}
+		}
+		return foundVnfToBeConfigured;
+	}
+	
+	private boolean configurePnfsInternal(List<PnfInfo> pnfInfo, NsInfo nsInfo) throws Exception {
+		boolean foundPnfToBeConfigured = false;
+		for (PnfInfo pi : pnfInfo) {
+			String pnfId = pi.getId().toString();
+			log.debug("Processing configuration for PNF info " + pnfId);
+			Pnfd pnfd = pnfdMap.get(pnfId);
+			log.debug("PNFD ID " + pnfd.getPnfdId());
+			List<String> configParams = pnfd.getConfigurableProperty();
+			if ((configParams != null) && (!(configParams.isEmpty()))) {
+				foundPnfToBeConfigured = true;
+				Vnfm pnfm = pnfmMap.get(pnfId);
+				ResourceAllocationUtilities rau = new ResourceAllocationUtilities(vnfmMap, vnfdMap, defaultVimPlugin, pnfm);
+				Map<String, String> configValues = rau.buildConfigurationData(configParams, nsInfo.getConfigurationParameters());
+				ModifyVnfInformationRequest configRequest = new ModifyVnfInformationRequest(pnfId, configValues);
+				String operationId = pnfm.modifyPnfInformation(configRequest);
+				log.debug("Configuration request for PNF " + pnfId + " sent to the VNFM.");
+				pendingVnfmOperation.add(operationId);
+				vnfOperationMap.put(operationId, pnfId);
+				vnfmOperationPollingManager.addOperation(operationId, OperationStatus.SUCCESSFULLY_DONE, pnfId, pnfm, this);
+				log.debug("Operation " + operationId + " added to the list of VNFM pending operations");
+			}
+		}
+		return foundPnfToBeConfigured;
+	}
+	
 	private void configureVnfsInternal(ConfigureVnfMessage configureVnfMessage) {
 		log.debug("Starting configuration of VNFs for NS instance " + nsInstanceId);
 		internalStatus = ResourceAllocationStatus.CONFIGURING_VNF;
@@ -1077,51 +1291,11 @@ implements AsynchronousVimNotificationInterface,
 			NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
 			List<String> vnfInstancesId = nsInfo.getVnfInfoId();
 			List<PnfInfo> pnfInfo = nsInfo.getPnfInfo();
-			boolean foundVnfToBeConfigured = false;
+			boolean foundVnfToBeConfigured = configureVnfsInternal(vnfInstancesId, nsInfo);
+			boolean foundPnfToBeConfigured = configurePnfsInternal(pnfInfo, nsInfo);
 			
-			for (String vnfId : vnfInstancesId) {
-				log.debug("Processing configuration for VNF instance " + vnfId);
-				String vnfdId = nsInfo.getVnfInfoVnfdIdMap().get(vnfId);
-				log.debug("VNFD ID: " + vnfdId);
-				Vnfm vnfm = retrieveVnfm(vnfdId);
-				ResourceAllocationUtilities rau = new ResourceAllocationUtilities(vnfmMap, vnfdMap, defaultVimPlugin, vnfm);
-				Vnfd vnfd = vnfdMap.get(vnfId);
-				VnfConfigurableProperties configParam = vnfd.getConfigurableProperties();
-				if ((configParam != null) && (!(configParam.getAdditionalConfigurableProperty().isEmpty()))) {
-					foundVnfToBeConfigured = true;
-					Map<String, String> configValues = rau.buildConfigurationData(configParam.getAdditionalConfigurableProperty(), nsInfo.getConfigurationParameters());
-					ModifyVnfInformationRequest configRequest = new ModifyVnfInformationRequest(vnfId, configValues);
-					String operationId = vnfm.modifyVnfInformation(configRequest);
-					log.debug("Configuration request for VNF " + vnfId + " sent to the VNFM.");
-					pendingVnfmOperation.add(operationId);
-					vnfOperationMap.put(operationId, vnfId);
-					vnfmOperationPollingManager.addOperation(operationId, OperationStatus.SUCCESSFULLY_DONE, vnfId, vnfm, this);
-					log.debug("Operation " + operationId + " added to the list of VNFM pending operations");
-				}
-			}
 			
-			for (PnfInfo pi : pnfInfo) {
-				String pnfId = pi.getId().toString();
-				log.debug("Processing configuration for PNF info " + pnfId);
-				Pnfd pnfd = pnfdMap.get(pnfId);
-				log.debug("PNFD ID " + pnfd.getPnfdId());
-				List<String> configParams = pnfd.getConfigurableProperty();
-				if ((configParams != null) && (!(configParams.isEmpty()))) {
-					foundVnfToBeConfigured = true;
-					Vnfm pnfm = pnfmMap.get(pnfId);
-					ResourceAllocationUtilities rau = new ResourceAllocationUtilities(vnfmMap, vnfdMap, defaultVimPlugin, pnfm);
-					Map<String, String> configValues = rau.buildConfigurationData(configParams, nsInfo.getConfigurationParameters());
-					ModifyVnfInformationRequest configRequest = new ModifyVnfInformationRequest(pnfId, configValues);
-					String operationId = pnfm.modifyPnfInformation(configRequest);
-					log.debug("Configuration request for PNF " + pnfId + " sent to the VNFM.");
-					pendingVnfmOperation.add(operationId);
-					vnfOperationMap.put(operationId, pnfId);
-					vnfmOperationPollingManager.addOperation(operationId, OperationStatus.SUCCESSFULLY_DONE, pnfId, pnfm, this);
-					log.debug("Operation " + operationId + " added to the list of VNFM pending operations");
-				}
-			}
-			
-			if (!foundVnfToBeConfigured) {
+			if (!foundVnfToBeConfigured && !foundPnfToBeConfigured) {
 				log.debug("No VNF or PNF needs to be configured. Sending ACK to lifecycle manager");
 				internalStatus = ResourceAllocationStatus.CONFIGURED_VNF;
 				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.CONFIGURE_VNF, true);
@@ -1140,6 +1314,42 @@ implements AsynchronousVimNotificationInterface,
 			rollback();
 			return;
 		}
+	}
+	
+	
+	private void scaleConfigureVnfsInternal(ScaleConfigureVnfMessage configureVnfMessage) {
+		log.debug("Starting configuration of VNFs for NS instance " + nsInstanceId);
+		internalStatus = ResourceAllocationStatus.SCALE_CONFIGURING_VNF;
+		try {
+			
+			NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
+			List<String> vnfInstancesId = nsInfo.getVnfInfoId();
+			List<PnfInfo> pnfInfo = nsInfo.getPnfInfo();
+			boolean foundVnfToBeConfigured = configureVnfsInternal(vnfInstancesId, nsInfo);
+			boolean foundPnfToBeConfigured = configurePnfsInternal(pnfInfo, nsInfo);
+			
+			
+			if (!foundVnfToBeConfigured && !foundPnfToBeConfigured) {
+				log.debug("No VNF or PNF needs to be configured. Sending ACK to lifecycle manager");
+				internalStatus = ResourceAllocationStatus.SCALE_CONFIGURED_VNF;
+				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.SCALE_CONFIGURE_VNF, true);
+			}
+			
+		} catch (FailedOperationException e) {
+			manageError("Failed VNF configuration: " + e.getMessage(), AllocationMessageType.SCALE_CONFIGURE_VNF);
+			rollback();
+			return;
+		} catch (NotExistingEntityException e) {
+			manageError("Failed VNF configuration: " + e.getMessage(), AllocationMessageType.SCALE_CONFIGURE_VNF);
+			rollback();
+			return;
+		} catch (Exception e) {
+			manageError("General exception: " + e.getMessage(), AllocationMessageType.SCALE_CONFIGURE_VNF);
+			rollback();
+			return;
+		}
+		
+		
 	}
 	
 	private InstantiateVnfRequest buildInstantiateVnfRequest(String vnfInstanceId, String flavourId, String instantiationLevelId, VnfProfile vnfProfile, NsDf nsDeploymentFlavour, 
@@ -1293,6 +1503,29 @@ implements AsynchronousVimNotificationInterface,
 			}
 			break;
 		}
+		case SCALE_CONFIGURING_VNF: {
+			if (operationStatus == OperationStatus.FAILED) {
+				log.error("Operation " + operationId + " is failed at VNFM");
+				manageError("Configuration of VNF " + vnfId + " is failed at VNFM", AllocationMessageType.SCALE_CONFIGURE_VNF);
+				rollback();
+				return;
+			} else if (operationStatus == OperationStatus.SUCCESSFULLY_DONE) {
+				log.debug("Received ACK from VNFM while in configuring VNF status: VNF " + vnfId + " has been successfully configured at VNFM.");
+				vnfOperationMap.remove(operationId);
+				pendingVnfmOperation.remove(operationId);
+				if (pendingVnfmOperation.isEmpty()) {
+					log.debug("All the VNFs and PNFs associated to the NS " + nsInstanceId + " have been configured. Notifying lifecycle manager.");
+					internalStatus = ResourceAllocationStatus.SCALE_CONFIGURED_VNF;
+					nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.SCALE_CONFIGURE_VNF, true);
+				} else {
+					log.debug("Some VNFs or PNFs associated to the NS " + nsInstanceId + " are still to be configured. Waiting for other notifications.");
+				}
+			} else {
+				log.error("Unexpected operation status. Discarding message.");
+				return;
+			}
+			break;
+		}
 		
 		case TERMINATING_VNF: {
 			
@@ -1337,6 +1570,74 @@ implements AsynchronousVimNotificationInterface,
 			}
 			break;
 			
+		}
+		case SCALE_TERMINATING_VNF: {
+			
+			if (operationStatus == OperationStatus.FAILED) {
+				log.error("Operation " + operationId + " is failed at VNFM");
+				manageError("Termination of VNF " + vnfId + " is failed at VNFM", AllocationMessageType.SCALE_REMOVE_VNF);
+				rollback();
+				return;
+			} else if (operationStatus == OperationStatus.SUCCESSFULLY_DONE) {
+				log.debug("VNF " + vnfId + " has been successfully terminated at VNFM. Deleting VNF identifier at VNFM.");
+				Vnfm vnfm = vnfmMap.get(vnfId);
+				try {
+					vnfm.deleteVnfIdentifier(vnfId);
+					log.debug("VNF ID removed from VNFM.");
+				} catch (Exception e) {
+					log.error("Unable to remove VNF ID from VNFM: " + e.getMessage());
+				}
+				vnfOperationMap.remove(operationId);
+				pendingVnfmOperation.remove(operationId);
+				log.debug("Operation removed from internal data structures");
+				try {
+					nsDbWrapper.removeVnfInfoInNsInfo(nsInstanceId, vnfId);
+				} catch (NotExistingEntityException e) {
+					log.error("Unable to remove VNF info from NS info");
+				}
+				try {
+					String vnfPackageId = vnfPackageManagement.getOnboardedVnfPkgInfoFromVnfd(vnfdMap.get(vnfId).getVnfdId()).getOnboardedVnfPkgInfoId();
+					vnfPackageManagement.notifyVnfInstanceDeletion(vnfPackageId, vnfId);
+				} catch (NotExistingEntityException e) {
+					log.error("Unable to notify VNF instance deletion to VNF package manager");
+				}
+				if (pendingVnfmOperation.isEmpty()) {
+					log.debug("All the VNFs associated to the NS " + nsInstanceId + " have been terminated. Notifying lifecycle manager.");
+					internalStatus = ResourceAllocationStatus.SCALE_TERMINATED_VNF;
+					nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.SCALE_REMOVE_VNF, true);
+				} else {
+					log.debug("Some VNFs associated to the NS " + nsInstanceId + " are still to be terminated. Waiting for other notifications.");
+				}
+			} else {
+				log.error("Unexpected operation status. Discarding message.");
+				return;
+			}
+			break;
+			
+		}
+		case SCALE_CREATING_VNF:{
+			if (operationStatus == OperationStatus.FAILED) {
+				log.error("Operation " + operationId + " is failed at VNFM");
+				manageError("Scaling operatoin of VNF " + vnfId + " is failed at VNFM", AllocationMessageType.SCALE_ALLOCATE_VNF);
+				rollback();
+				return;
+			} else if (operationStatus == OperationStatus.SUCCESSFULLY_DONE) {
+				log.debug("VNF " + vnfId + " has been successfully created at VNFM");
+				addVnfUserAccessInfoInDb(vnfId);
+				vnfOperationMap.remove(operationId);
+				pendingVnfmOperation.remove(operationId);
+				if (pendingVnfmOperation.isEmpty()) {
+					log.debug("All the VNFs associated to the NS " + nsInstanceId + " have been created. Notifying lifecycle manager.");
+					internalStatus = ResourceAllocationStatus.SCALE_CREATED_VNF;
+					nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, currentOperationId, AllocationMessageType.SCALE_ALLOCATE_VNF, true);
+				} else {
+					log.debug("Some VNFs associated to the NS " + nsInstanceId + " are still to be created/terminated. Waiting for other notifications.");
+				}
+			} else {
+				log.error("Unexpected operation status. Discarding message.");
+				return;
+			}
+			break;
 		}
 		
 		default:{
