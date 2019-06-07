@@ -25,13 +25,23 @@
 	</properties>
 
 	<dependencies>
-
+	<!-- tapi arof dependecies  -->
+	<dependency>
+		<groupId>io.swagger</groupId>
+		<artifactId>tapi-sdm-client</artifactId>
+		<version>1.0.1</version>
+	</dependency>
 	<dependency>
 		<groupId>io.swagger</groupId>
 		<artifactId>tapi-arof-client</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.1</version>
 	</dependency>
-	
+	<dependency>
+		<groupId>io.swagger</groupId>
+		<artifactId>tapi-connectivity</artifactId>
+		<version>1.0.1</version>
+	</dependency>
+	<!-- /end tapi arof dependecies  -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
