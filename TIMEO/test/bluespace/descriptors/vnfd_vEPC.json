@@ -1,0 +1,149 @@
+{
+	"vnfdId": "vEPC_01",
+	"vnfProvider": "SSSA",
+	"vnfProductName": "vEPC",
+	"vnfSoftwareVersion": "0.1",
+	"vnfdVersion": "0.1",
+	"vnfProductInfoName": "vEPC",
+	"vnfProductInfoDescription": "vEPC",
+	"vnfmInfo": ["SDK"],
+	"vdu": [{
+		"vduId": "vEPC_vdu",
+		"name": "vEPC",
+		"description": "VDU of the vEPC",
+		"intCpd": [
+		{
+        "cpdId": "vEPC_users_int",
+        "layerProtocol": "IPV4",
+        "description": "vDNS CP to the vl_users @ vCDN NS",
+        "addressData": [{
+          "addressType": "IP_ADDRESS",
+          "iPAddressAssignment": false,
+          "floatingIpActivated": true,
+          "iPAddressType": "IPv4",
+          "numberOfIpAddress": 1
+        }]
+      },
+		{
+			"cpdId": "vEPC_mgmt_int",
+			"layerProtocol": "IPV4",
+			"description": "Management CP of the origin server",
+			"addressData": [{
+				"addressType": "IP_ADDRESS",
+				"iPAddressAssignment": false,
+				"floatingIpActivated": true,
+				"management": true,
+				"iPAddressType": "IPv4",
+				"numberOfIpAddress": 1
+			}]
+		}],
+		"virtualComputeDesc": "VCD_vEPC",
+		"virtualStorageDesc": ["VSD_vEPC"],
+		"swImageDesc": {
+			"id": "vEPC_SWID",
+			"name": "vEPC_bluespace_x",
+			"version": "0.1",
+			"checksum": "TBD",
+			"containerFormat": "QCOW",
+			"diskFormat": "QCOW",
+			"minDisk": 2,
+			"minRam": 2,
+			"size": 10,
+			"swImage": "vEPC_bluespace_x",
+			"operatingSystem": "Ubuntu-16.04"
+		},
+		"configurableProperties": {}
+	}],
+	"virtualComputeDesc": [{
+		"virtualComputeDescId": "VCD_vEPC",
+		"virtualMemory": {
+			"virtualMemSize": 2,
+			"virtualMemOversubscriptionPolicy": "asdasd",
+			"numaEnabled": false
+		},
+		"virtualCpu": {
+			"numVirtualCpu": 2,
+			"cpuArchitecture": "x86_64",
+			"virtualCpuClock": 0,
+			"virtualCpuOversubscriptionPolicy": "asdasd"
+		}
+		
+	}],
+	"virtualStorageDesc": [{
+		"id": "VSD_vEPC",
+		"typeOfStorage": "VOLUME",
+		"sizeOfStorage": 10,
+		"swImageDesc": "vEPC_SWID"
+	}],
+	"vnfExtCpd": [{
+		"cpdId": "vEPC_mgmt_ext",
+		"layerProtocol": "IPV4",
+		"description": "Management external CP vEPC",
+		"addressData": [{
+			"addressType": "IP_ADDRESS",
+			"iPAddressAssignment": false,
+			"floatingIpActivated": true,
+			"management": true,
+			"iPAddressType": "IPv4",
+			"numberOfIpAddress": 1
+		}],
+		"intCpd": "vEPC_mgmt_int"
+	}, {
+    "cpdId": "vEPC_users_ext",
+    "layerProtocol": "IPV4",
+    "description": "vEPC External CP to vl_users @ vCDN NS",
+    "addressData": [{
+      "addressType": "IP_ADDRESS",
+      "iPAddressAssignment": false,
+      "floatingIpActivated": true,
+      "iPAddressType": "IPv4",
+      "numberOfIpAddress": 1
+    }],
+    "intCpd": "vEPC_users_int"
+  }],
+	"deploymentFlavour": [{
+		"flavourId": "df_vEPC",
+		"description": "Standard deployment flavour of the vEPC",
+		"vduProfile": [{
+			"vduId": "vEPC_vdu",
+			"minNumberOfInstances": 1,
+			"maxNumberOfInstances": 1
+		}],
+		"instantiationLevel": [{
+			"levelId": "il_vEPC",
+			"description": "Standard instantiation level of the vEPC",
+			"vduLevel": [{
+				"vduId": "vEPC_vdu",
+				"numberOfInstances": 1
+			}]
+		}],
+		"vnfLcmOperationsConfiguration": {}
+	}],
+	"configurableProperties": {
+			"autoScalable": false,
+			"autoHealable": false,
+			"additionalConfigurableProperty": [
+				"uservnf.timeo_address",
+				"uservnf.monitoring_address",
+      			"uservnf.cu_interface",
+      			"uservnf.internet_interface",
+      			"uservnf.hostname",
+      			"vnf.vEPC_01.vdu.vEPC_vdu.extcp.vEPC_users_ext.floating"
+      			
+			]
+	},
+	"modifiableAttributes": {},
+	"lifeCycleManagementScript": [{
+		"event": ["START_VNF_INSTANTIATION"],
+		"script": "#!/bin/bash\necho \"$$config$$uservnf.hostname\" > /etc/hostname\n hostnamectl set-hostname $$config$$uservnf.hostname\n echo \"127.0.0.1 localhost\" > /etc/hosts\n echo \"127.0.1.1 $$config$$uservnf.hostname\" >> /etc/hosts\n if [[ $EUID -ne 0 ]]\n then echo 'ERROR: not root' > ~/cloud-init.log\n exit 1\n fi\n sleep 5\n \nroute add -host $$config$$uservnf.timeo_address gw $$config$$managementGw \n route add -host $$config$$uservnf.monitoring_address gw $$config$$managementGw \nroute del default gw $$config$$managementGw \n route add default gw $$config$$extCp.vEPC_users_ext.gateway\n mkdir /var/log/epc\n &"
+	}, {
+		"event": ["END_VNF_INSTANTIATION"],
+		"script": ""
+	}, {
+		"event": ["START_VNF_TERMINATION"],
+		"script": ""
+	}, {
+		"event": ["END_VNF_TERMINATION"],
+		"script": ""
+	}]
+}
