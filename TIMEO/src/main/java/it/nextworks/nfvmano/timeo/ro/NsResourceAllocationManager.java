@@ -416,7 +416,7 @@ implements AsynchronousVimNotificationInterface,
 			}
 			case SCALE_REMOVE_VNF: {
 				log.debug("Received request to remove the VNFs due to scale");
-				if (!(internalStatus == ResourceAllocationStatus.CONFIGURED_VNF)) {
+				if (!(internalStatus == ResourceAllocationStatus.CONFIGURED_VNF || internalStatus == ResourceAllocationStatus.SCALE_CONFIGURED_VNF)) {
 					log.error("Wrong status. Discarding message.");
 					return;
 				}
