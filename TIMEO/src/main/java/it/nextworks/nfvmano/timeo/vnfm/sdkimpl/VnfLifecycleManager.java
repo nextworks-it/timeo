@@ -132,6 +132,7 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 	private VimPlugin vimPlugin;
 	private RestTemplate restTemplate;
 	private TaskExecutor taskExecutor;
+	private Map<String, String> currentConfiguParameters;
 	
 	private VnfDriver vnfDriver;
 	
@@ -157,6 +158,7 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 		this.internalStatus = VnfInternalStatus.INIT;
 		this.vimResourcePollingManager = vimResourcePollingManager;
 		this.sbDriversManager = sbDriversManager;
+		this.currentConfiguParameters= new HashMap<String, String>();
 	}
 	
 	
@@ -384,15 +386,22 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 		internalStatus = VnfInternalStatus.CONFIGURING_VNF;
 		try {
 			Map<String, String> configParameters = request.getNewValues();
-			Set<KeyValuePair> vnfSpecificData = new HashSet<>();
-			for (Map.Entry<String, String> p : configParameters.entrySet()) {
-				vnfSpecificData.add(new KeyValuePair(p.getKey(), p.getValue()));
-				vnfDbWrapper.addGenericConfigParameterToVnfInfo(vnfInstanceId, p.getKey(), p.getValue());
+			if(!currentConfiguParameters.equals(configParameters)) {
+				Set<KeyValuePair> vnfSpecificData = new HashSet<>();
+				for (Map.Entry<String, String> p : configParameters.entrySet()) {
+					vnfSpecificData.add(new KeyValuePair(p.getKey(), p.getValue()));
+					vnfDbWrapper.addGenericConfigParameterToVnfInfo(vnfInstanceId, p.getKey(), p.getValue());
+				}
+				VnfConfiguration vnfConfigurationData = new VnfConfiguration(null, null, vnfSpecificData);
+				SetConfigurationRequest configRequest = new SetConfigurationRequest(vnfInstanceId, vnfConfigurationData, null);
+				log.debug("Configuration request sent to VNF.");
+				this.currentConfiguParameters=configParameters;
+				vnfDriver.setConfiguration(configRequest, this);
+			}else {
+				log.debug("VNF configuration parameters unchanged. Skipping");
+				this.processVnfConfigurationAck(OperationStatus.SUCCESSFULLY_DONE);
 			}
-			VnfConfiguration vnfConfigurationData = new VnfConfiguration(null, null, vnfSpecificData);
-			SetConfigurationRequest configRequest = new SetConfigurationRequest(vnfInstanceId, vnfConfigurationData, null);
-			log.debug("Configuration request sent to VNF.");
-			vnfDriver.setConfiguration(configRequest, this);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			signalError(currentOperation, e.getMessage());
