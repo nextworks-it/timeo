@@ -172,6 +172,7 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 	 */
 	public void deactivateNsMonitoring() throws MethodNotImplementedException, FailedOperationException {
 		log.debug("Disactivating NS monitoring for NS instance " + nsInstanceId);
+		alertManager.deleteThresholds();
 		log.debug("Removing monitoring GUI");
 		if (monitoringGui != null) {
 			try {

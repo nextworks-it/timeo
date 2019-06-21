@@ -431,20 +431,18 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 	public DeleteThresholdsResponse deleteThreshold(DeleteThresholdsRequest request)
 			throws MethodNotImplementedException, NotExistingEntityException, FailedOperationException,
 			MalformattedElementException {
-		for (String thresholdId : request.getThresholdId()) { // TODO do it better
+		List<String> deleted = new ArrayList<>();
+		for (String thresholdId : request.getThresholdId()) {
 			try {
 				alertApi.deleteAlert(thresholdId);
+				deleted.add(thresholdId);
 			} catch (ApiException exc) {
-				log.error("Could not delete threshold with id {}", thresholdId);
+				log.error("Could not delete threshold with id {}. Skipping", thresholdId);
 				log.debug("Details:", exc);
-				throw new FailedOperationException(String.format(
-						"Could not delete threshold with id %s",
-						thresholdId
-				));
 			}
 		}
 		return new DeleteThresholdsResponse(
-				request.getThresholdId()
+				deleted
 		);
 	}
 

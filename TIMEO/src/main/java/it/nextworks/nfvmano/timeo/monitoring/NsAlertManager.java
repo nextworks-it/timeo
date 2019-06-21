@@ -13,6 +13,8 @@ import it.nextworks.nfvmano.libs.descriptors.nsd.MonitoredData;
 import it.nextworks.nfvmano.libs.descriptors.nsd.NsAutoscalingRule;
 import it.nextworks.nfvmano.libs.monit.interfaces.PerformanceManagementConsumerInterface;
 import it.nextworks.nfvmano.libs.monit.interfaces.messages.CreateThresholdRequest;
+import it.nextworks.nfvmano.libs.monit.interfaces.messages.DeleteThresholdsRequest;
+import it.nextworks.nfvmano.libs.monit.interfaces.messages.DeleteThresholdsResponse;
 import it.nextworks.nfvmano.libs.monit.interfaces.messages.PerformanceInformationAvailableNotification;
 import it.nextworks.nfvmano.libs.monit.interfaces.messages.ThresholdCrossedNotification;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.elements.ScaleNsData;
@@ -23,7 +25,9 @@ import it.nextworks.nfvmano.timeo.nso.NsManagementEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -169,9 +173,10 @@ public class NsAlertManager implements PerformanceManagementConsumerInterface {
 
     void createThresholds(Map<String, String> mp2job)
             throws MethodNotImplementedException, FailedOperationException, MalformattedElementException {
+        log.info("Creating thresholds for NSI {}", nsiId);
         for (Map.Entry<AutoscalingRuleCriteria, Integer> entry : wrapper.getCriteriaAndThresholdTimes().entrySet()) {
-
             AutoscalingRuleCriteria criterion = entry.getKey();
+            log.debug("Creating threshold for criterion {}", criterion.getName());
             String mpId = criterion.getNsMonitoringParamRef();
             Optional<String> optMetric = monitoredData.stream()
                     .filter(mi -> mi.getMonitoringParameter() != null)
@@ -196,7 +201,25 @@ public class NsAlertManager implements PerformanceManagementConsumerInterface {
                     makeDetails(entry, mp2job.get(mpId))
             );
             String thresholdId = driver.createThreshold(request);
+            log.debug("Criterion {} is assigned threshold {}", criterion.getName(), thresholdId);
             thresholdId2criterionId.put(thresholdId, criterion.getName());
         }
+    }
+
+    void deleteThresholds() {
+        log.info("Stopping thresholds for NSI {}", nsiId);
+        DeleteThresholdsRequest request = new DeleteThresholdsRequest(
+                new ArrayList<>(thresholdId2criterionId.keySet())
+        );
+        DeleteThresholdsResponse response;
+        try {
+            response = driver.deleteThreshold(request);
+        } catch (Exception exc) {
+            log.error("Could not delete thresholds");
+            log.debug("Details:", exc);
+            return;
+        }
+        log.info("Deleted the following thresholds: {}", response.getDeletedThresholdId());
+        response.getDeletedThresholdId().forEach(thresholdId2criterionId::remove);
     }
 }
