@@ -95,7 +95,7 @@ public class NsAlertManagerTest {
         verify(driver).createThreshold(captor.capture());
         CreateThresholdRequest request = captor.getValue();
 
-        assertEquals("VcpuUsageMean.spr2", request.getPerformanceMetric());
+        assertEquals("VcpuUsageMean", request.getPerformanceMetric());
         assertTrue(request.getThresholdDetails() instanceof PrometheusTDetails);
         PrometheusTDetails promDet = (PrometheusTDetails) request.getThresholdDetails();
 

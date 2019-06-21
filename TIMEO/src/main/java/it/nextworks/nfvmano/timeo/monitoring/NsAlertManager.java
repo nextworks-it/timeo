@@ -191,7 +191,7 @@ public class NsAlertManager implements PerformanceManagementConsumerInterface {
                 );
                 continue;
             }
-            String metric = optMetric.get();
+            String metric = optMetric.get().split("\\.")[0];
             CreateThresholdRequest request = new CreateThresholdRequest(
                     null,
                     null,
