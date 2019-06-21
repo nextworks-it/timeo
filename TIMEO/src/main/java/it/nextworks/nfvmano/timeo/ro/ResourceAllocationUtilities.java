@@ -308,9 +308,9 @@ public class ResourceAllocationUtilities {
 	private String getPnfCpAddress(String pnfdId, String cpId, List<PnfInfo> pnfInfo) throws FailedOperationException {
 		
 		for(PnfInfo current : pnfInfo) {
-			if(current.getPnfdId()==pnfdId) {
+			if(current.getPnfdId().equals(pnfdId)) {
 				for(PnfExtCpInfo currentCp : current.getCpInfo()) {
-					if (currentCp.getCpdId()==cpId) {
+					if (currentCp.getCpdId().equals(cpId)) {
 						return currentCp.getAddress();
 					}
 				}
