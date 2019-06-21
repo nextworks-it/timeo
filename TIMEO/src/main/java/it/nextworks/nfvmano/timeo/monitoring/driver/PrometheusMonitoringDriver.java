@@ -6,6 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import io.swagger.client.model.Alert;
+import io.swagger.client.model.AlertDescription;
+import it.nextworks.nfvmano.libs.common.enums.RelationalOperation;
+import it.nextworks.nfvmano.libs.monit.interfaces.elements.ThresholdDetails;
+import it.nextworks.nfvmano.libs.monit.interfaces.enums.ThresholdFormat;
+import it.nextworks.nfvmano.timeo.monitoring.driver.prometheus.PrometheusTDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +50,6 @@ import it.nextworks.nfvmano.timeo.monitoring.driver.prometheus.PrometheusMapper;
 import it.nextworks.nfvmano.timeo.monitoring.elements.MonitoringGui;
 import it.nextworks.nfvmano.timeo.tenant.Tenant;
 import it.nextworks.nfvmano.timeo.vnfm.repository.VnfDbWrapper;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Monitoring driver that interacts with a Prometheus monitoring platform through a configuration manager.
@@ -56,6 +61,8 @@ import org.springframework.beans.factory.annotation.Value;
 public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 
 	private static final Logger log = LoggerFactory.getLogger(PrometheusMonitoringDriver.class);
+
+	private static final String MON_PATH = "timeo/alerts";
 	
 	private VnfDbWrapper vnfDbWrapper;
 	
@@ -64,6 +71,8 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 	private DashboardApi dashboardApi;
 
 	private String grafanaUrl;
+
+	private String timeoDomain;
 
 	private AlertApi alertApi;
 	
@@ -89,13 +98,18 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 	private Map<String, List<String>> dashboardIdToPmJobId = new HashMap<>();
 	
 	//key: ID of the pm job; Value: ID of the dashboard where the pm job is shown.
-	//At the moment a pm job ID is shown on a single dashboard. Chech if we need to evolve this.
+	//At the moment a pm job ID is shown on a single dashboard. Check if we need to evolve this.
 	private Map<String, String> pmJobIdToDashboardId = new HashMap<>();
 	
 	//key: ID of the dashboard; Value: details of the dashboard
 	private Map<String, MonitoringGui> monitoringGui = new HashMap<>();
 	
-	public PrometheusMonitoringDriver(String monitoringPlatformUrl, VnfDbWrapper vnfDbWrapper, String grafanaUrl) {
+	public PrometheusMonitoringDriver(
+			String monitoringPlatformUrl,
+			VnfDbWrapper vnfDbWrapper,
+			String grafanaUrl,
+			String timeoDomain
+	) {
 		super(MonitoringDriverType.PROMETHEUS, monitoringPlatformUrl);
 		this.vnfDbWrapper = vnfDbWrapper;
 		exporterApi = new ExporterApi();
@@ -107,6 +121,7 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 		dashboardApi.setApiClient(apiClient);
 		alertApi.setApiClient(apiClient);
 		this.grafanaUrl=grafanaUrl;
+		this.timeoDomain = timeoDomain;
 	}
 	
 	@Override
@@ -353,19 +368,84 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 				throw new MethodNotImplementedException("Method not implemented");
 	}
 
+	private AlertDescription.KindEnum translateRelation(RelationalOperation op) {
+		switch (op) {
+			case LT:
+				return AlertDescription.KindEnum.L;
+			case LE:
+				return AlertDescription.KindEnum.LEQ;
+			case GT:
+				return AlertDescription.KindEnum.G;
+			case GE:
+				return AlertDescription.KindEnum.GEQ;
+			case EQ:
+				return AlertDescription.KindEnum.EQ;
+			default:
+				throw new IllegalArgumentException(String.format(
+						"Unknown relational operation %s",
+						op
+				));
+		}
+	}
+
+	public String makeQuery(String pm, PrometheusTDetails details) {
+		String expId = pmJobIdToExporterId.get(details.getPmJobId());
+		return PrometheusMapper.readPrometheusQuery(
+				MonitoringObjectType.VNF, // The only type supported right now
+				pm,
+				expId
+		);
+	}
+
 	@Override
 	public String createThreshold(CreateThresholdRequest request)
 			throws MethodNotImplementedException, FailedOperationException, MalformattedElementException {
-		//TODO:
-				throw new MethodNotImplementedException("Method not implemented");
+		ThresholdDetails details = request.getThresholdDetails();
+		if (!details.getFormat().equals(ThresholdFormat.PROMETHEUS)) {
+			throw new IllegalArgumentException(String.format(
+					"Unsupported threshold format %s",
+					details.getFormat()
+			));
+		}
+		PrometheusTDetails promDetails = (PrometheusTDetails) details;
+		Alert response;
+		try {
+			response = alertApi.postAlert(new AlertDescription()
+					.alertName(UUID.randomUUID().toString())  // TODO more meaningful name?
+					._for(String.valueOf(promDetails.getThresholdTime()))
+					.kind(translateRelation(promDetails.getRelationalOperation()))
+					// .labels() TODO decide what to put here (if anything)
+					.query(makeQuery(request.getPerformanceMetric(), promDetails))
+					.severity(AlertDescription.SeverityEnum.WARNING)
+					.target(timeoDomain + MON_PATH)
+					.value(promDetails.getValue())
+			);
+		} catch (ApiException e) {
+			log.error("API exception while invoking Monitoring Config Manager client: " + e.getMessage());
+			throw new FailedOperationException("API exception while invoking Monitoring Config Manager client: " + e.getMessage());
+		}
+		return response.getAlertId();
 	}
 
 	@Override
 	public DeleteThresholdsResponse deleteThreshold(DeleteThresholdsRequest request)
 			throws MethodNotImplementedException, NotExistingEntityException, FailedOperationException,
 			MalformattedElementException {
-		//TODO:
-				throw new MethodNotImplementedException("Method not implemented");
+		for (String thresholdId : request.getThresholdId()) { // TODO do it better
+			try {
+				alertApi.deleteAlert(thresholdId);
+			} catch (ApiException exc) {
+				log.error("Could not delete threshold with id {}", thresholdId);
+				log.debug("Details:", exc);
+				throw new FailedOperationException(String.format(
+						"Could not delete threshold with id %s",
+						thresholdId
+				));
+			}
+		}
+		return new DeleteThresholdsResponse(
+				request.getThresholdId()
+		);
 	}
 
 	@Override

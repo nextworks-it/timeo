@@ -55,6 +55,8 @@ MonitoringElaborationInterface, MonitoringGuiManagementInterface {
 	@Value("${timeo.monitoring.url}")
 	private String monitoringUrl;
 
+	@Value("${timeo.domain}")
+	private String timeoDomain;
 
 	//URL to be appended to the dashboard URL in case it is missing
 	@Value("${timeo.grafana.url}")
@@ -76,7 +78,7 @@ MonitoringElaborationInterface, MonitoringGuiManagementInterface {
 			log.debug("Dummy monitoring driver initialized");
 		} else if (monitoringType.equals("PROMETHEUS")) {
 			log.debug("TIMEO is configured to operate with a PROMETHEUS monitoring platform.");
-			monitoringDriver = new PrometheusMonitoringDriver(monitoringUrl, vnfDbWrapper, grafanaUrl);
+			monitoringDriver = new PrometheusMonitoringDriver(monitoringUrl, vnfDbWrapper, grafanaUrl, timeoDomain);
 			log.debug("Prometheus monitoring driver initialized");
 		} else {
 			log.warn("Monitoring driver not configured");

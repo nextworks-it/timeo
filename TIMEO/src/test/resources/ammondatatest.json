@@ -1,0 +1,16 @@
+[
+  {
+    "monitoringParameter": {
+      "monitoringParameterId": "mp1",
+      "name": "cacheLoad",
+      "performanceMetric": "VcpuUsageMean.spr2"
+    }
+  },
+  {
+    "monitoringParameter": {
+      "monitoringParameterId": "mp2",
+      "name": "webserverLoad",
+      "performanceMetric": "VcpuUsageMean.webserver"
+    }
+  }
+]
