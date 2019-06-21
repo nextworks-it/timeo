@@ -1,0 +1,7 @@
+{
+	"name": "vEPC for vCDN demo",
+	"version": "0.1",
+	"provider": "SSSA",
+	"checksum": "VNFD_TEST_001_checksum",
+	"vnfPackagePath": "http://localhost/vnfd/vnfd_vEPC_v01.tar"
+}

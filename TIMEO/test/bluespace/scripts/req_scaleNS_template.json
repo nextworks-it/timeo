@@ -1,0 +1,18 @@
+{
+	"nsInstanceId": "${NSI_ID}",
+	"scaleType": "SCALE_NS",
+	"scaleNsData": {
+		"vnfInstanceToBeAdded":[],
+		"vnfInstanceToBeRemoved":[],
+		"scaleNsToLevelData":{
+			"nsInstantiationLevel":"il_vCDN_big",
+			"nsScaleInfo":[]
+			
+		},
+		"additionalParamForNs":{},
+		"additionalParamForVnf":[],
+		"locationConstraints":[]
+	},
+	"scaleVnfData": []
+	
+}

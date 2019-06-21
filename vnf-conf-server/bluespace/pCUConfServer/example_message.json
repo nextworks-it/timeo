@@ -1,0 +1,14 @@
+{
+	"vnfConfigurationData": {
+		"cpConfiguration": [],
+		"dhcpServer": "null",
+		"vnfSpecificData": [
+			{
+				"key": "vnf.vEPC_01.vdu.vEPC_vdu.extcp.vEPC_users_ext.floating",
+				"value": "10.20.6.151"
+			}
+		]
+	},
+	"vnfcConfigurationData": [],
+	"vnfInstanceId": "553"
+}

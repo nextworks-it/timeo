@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import it.nextworks.nfvmano.timeo.rc.elements.NsScaleSchedulingSolution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.BindingBuilder;
@@ -68,6 +69,8 @@ import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationReleaseMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.NotifyComputationResultMessage;
+import it.nextworks.nfvmano.timeo.nso.messages.NotifyScaleComputationResultMessage;
+import it.nextworks.nfvmano.timeo.nso.messages.NotifyScaleVnfAllocationResultMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
@@ -268,6 +271,33 @@ public class NsManagementEngine {
 		} else {
 			log.error("Network service " + nsInstanceId + " not existing. Nothing to do.");
 		}
+	}
+
+
+	/**
+	 * Process a message about the computation result for a scale allocation solution
+	 *
+	 * @param nsInstanceId
+	 * @param operationId
+	 * @param solution
+	 */
+	public void notifyScaleComputationResult(String nsInstanceId, String operationId, NsScaleSchedulingSolution solution){
+		log.debug("Received notification about scale allocation computation result for network service " + nsInstanceId);
+		if (this.nsManagers.containsKey(nsInstanceId)) {
+			NotifyScaleComputationResultMessage internalMessage = new NotifyScaleComputationResultMessage(nsInstanceId, operationId, solution);
+			String topic = "lifecycle.notifyScaleSolution." + nsInstanceId;
+			ObjectMapper mapper = Utilities.buildObjectMapper();
+			try {
+				String json = mapper.writeValueAsString(internalMessage);
+				rabbitTemplate.convertAndSend(messageExchange.getName(), topic, json);
+				log.debug("Sent internal message with notification of resource scale solution for network service " + nsInstanceId);
+			} catch (JsonProcessingException e) {
+				log.error("Error while translating internal notify computation result message in Json format.");
+			}
+		} else {
+			log.error("Network service " + nsInstanceId + " not existing. Nothing to do.");
+		}
+
 	}
 	
 	public void notifyResourceComputationRelease(String nsInstanceId, String operationId, boolean successful) {

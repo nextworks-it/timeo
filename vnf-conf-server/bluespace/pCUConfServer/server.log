@@ -1,0 +1,550 @@
+INFO:tornado.access:200 GET / (127.0.0.1) 0.59ms
+INFO:tornado.access:200 GET / (127.0.0.1) 0.58ms
+ERROR:tornado.application:Uncaught exception POST /configure/initial (127.0.0.1)
+HTTPServerRequest(protocol='http', host='localhost:8182', method='POST', uri='/configure/initial', version='HTTP/1.1', remote_ip='127.0.0.1', headers={'Origin': 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop', 'Content-Length': '0', 'Accept-Language': 'it-IT,it;q=0.8,en-US;q=0.6,en;q=0.4', 'Accept-Encoding': 'gzip, deflate, br', 'Host': 'localhost:8182', 'Accept': '*/*', 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 'Connection': 'keep-alive', 'Cache-Control': 'no-cache', 'Postman-Token': 'f70722ca-c89c-1648-2064-ddc29af146ad'})
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/tornado/web.py", line 1467, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "server.py", line 27, in post
+    data = json.loads(self.request.body.decode('utf-8'))
+  File "/usr/lib/python2.7/json/__init__.py", line 339, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python2.7/json/decoder.py", line 364, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python2.7/json/decoder.py", line 382, in raw_decode
+    raise ValueError("No JSON object could be decoded")
+ValueError: No JSON object could be decoded
+ERROR:tornado.access:500 POST /configure/initial (127.0.0.1) 70.54ms
+ERROR:tornado.access:501 POST /configure/initial (127.0.0.1) 0.41ms
+ERROR:tornado.access:501 POST /configure/initial (127.0.0.1) 0.63ms
+ERROR:tornado.application:Uncaught exception POST /configure/initial (127.0.0.1)
+HTTPServerRequest(protocol='http', host='localhost:8182', method='POST', uri='/configure/initial', version='HTTP/1.1', remote_ip='127.0.0.1', headers={'Origin': 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop', 'Content-Length': '0', 'Accept-Language': 'it-IT,it;q=0.8,en-US;q=0.6,en;q=0.4', 'Accept-Encoding': 'gzip, deflate, br', 'Host': 'localhost:8182', 'Accept': '*/*', 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 'Connection': 'keep-alive', 'Cache-Control': 'no-cache', 'Content-Type': 'application/json', 'Postman-Token': 'eacf4af3-c3b9-d200-eb11-36da16e9bdcf'})
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/tornado/web.py", line 1467, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "server.py", line 27, in post
+    data = json.loads(self.request.body.decode('utf-8'))
+  File "/usr/lib/python2.7/json/__init__.py", line 339, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python2.7/json/decoder.py", line 364, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python2.7/json/decoder.py", line 382, in raw_decode
+    raise ValueError("No JSON object could be decoded")
+ValueError: No JSON object could be decoded
+ERROR:tornado.access:500 POST /configure/initial (127.0.0.1) 1.20ms
+ERROR:tornado.application:Uncaught exception POST /configure/initial (127.0.0.1)
+HTTPServerRequest(protocol='http', host='localhost:8182', method='POST', uri='/configure/initial', version='HTTP/1.1', remote_ip='127.0.0.1', headers={'Origin': 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop', 'Content-Length': '0', 'Accept-Language': 'it-IT,it;q=0.8,en-US;q=0.6,en;q=0.4', 'Accept-Encoding': 'gzip, deflate, br', 'Host': 'localhost:8182', 'Accept': '*/*', 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 'Connection': 'keep-alive', 'Cache-Control': 'no-cache', 'Content-Type': 'application/json', 'Postman-Token': '9a521e09-2fe6-262e-dadc-25861f17bb30'})
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/tornado/web.py", line 1467, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "server.py", line 27, in post
+    data = json.loads(self.request.body.decode('utf-8'))
+  File "/usr/lib/python2.7/json/__init__.py", line 339, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python2.7/json/decoder.py", line 364, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python2.7/json/decoder.py", line 382, in raw_decode
+    raise ValueError("No JSON object could be decoded")
+ValueError: No JSON object could be decoded
+ERROR:tornado.access:500 POST /configure/initial (127.0.0.1) 1.80ms
+ERROR:tornado.application:Uncaught exception POST /configure/initial (127.0.0.1)
+HTTPServerRequest(protocol='http', host='localhost:8182', method='POST', uri='/configure/initial', version='HTTP/1.1', remote_ip='127.0.0.1', headers={'Origin': 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop', 'Content-Length': '0', 'Accept-Language': 'it-IT,it;q=0.8,en-US;q=0.6,en;q=0.4', 'Accept-Encoding': 'gzip, deflate, br', 'Host': 'localhost:8182', 'Accept': '*/*', 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 'Connection': 'keep-alive', 'Cache-Control': 'no-cache', 'Content-Type': 'application/json', 'Postman-Token': '18994f44-0ddf-f658-77cc-cd16cbab8d15'})
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/tornado/web.py", line 1467, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "server.py", line 27, in post
+    data = json.loads(self.request.body.decode('utf-8'))
+  File "/usr/lib/python2.7/json/__init__.py", line 339, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python2.7/json/decoder.py", line 364, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python2.7/json/decoder.py", line 382, in raw_decode
+    raise ValueError("No JSON object could be decoded")
+ValueError: No JSON object could be decoded
+ERROR:tornado.access:500 POST /configure/initial (127.0.0.1) 2.26ms
+ERROR:tornado.access:501 POST /configure/initial (127.0.0.1) 0.36ms
+ERROR:tornado.access:501 POST /configure/initial (127.0.0.1) 0.38ms
+ERROR:tornado.access:501 POST /configure/initial (127.0.0.1) 0.56ms
+ERROR:tornado.access:501 POST /configure/initial (127.0.0.1) 0.76ms
+ERROR:tornado.access:501 POST /configure/initial (127.0.0.1) 0.68ms
+ERROR:tornado.access:501 POST /configure/initial (127.0.0.1) 0.60ms
+ERROR:tornado.access:501 POST /configure/initial (127.0.0.1) 0.75ms
+ERROR:tornado.application:Uncaught exception POST /configure/initial (127.0.0.1)
+HTTPServerRequest(protocol='http', host='localhost:8182', method='POST', uri='/configure/initial', version='HTTP/1.1', remote_ip='127.0.0.1', headers={'Origin': 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop', 'Content-Length': '0', 'Accept-Language': 'it-IT,it;q=0.8,en-US;q=0.6,en;q=0.4', 'Accept-Encoding': 'gzip, deflate, br', 'Host': 'localhost:8182', 'Accept': '*/*', 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 'Connection': 'keep-alive', 'Cache-Control': 'no-cache', 'Content-Type': 'application/json', 'Postman-Token': '491ac5d7-661e-c60c-56bd-a80c2f9a4f66'})
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/tornado/web.py", line 1467, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "server.py", line 27, in post
+    data = json.loads(self.request.body.decode('utf-8'))
+  File "/usr/lib/python2.7/json/__init__.py", line 339, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python2.7/json/decoder.py", line 364, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python2.7/json/decoder.py", line 382, in raw_decode
+    raise ValueError("No JSON object could be decoded")
+ValueError: No JSON object could be decoded
+ERROR:tornado.access:500 POST /configure/initial (127.0.0.1) 1.32ms
+WARNING:tornado.access:400 POST /configure/initial (127.0.0.1) 0.56ms
+ERROR:tornado.access:501 POST /configure/initial (127.0.0.1) 0.45ms
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (127.0.0.1) 0.85ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.55ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.57ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.12ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.31ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.59ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.62ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.08ms
+ERROR:tornado.application:Uncaught exception PATCH /vnfconfig/v1/configuration (10.30.2.235)
+HTTPServerRequest(protocol='http', host='10.30.2.57:8888', method='PATCH', uri='/vnfconfig/v1/configuration', version='HTTP/1.1', remote_ip='10.30.2.235')
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.4/dist-packages/tornado/web.py", line 1541, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "./server.py", line 22, in patch
+    data = json.loads(self.request.body.decode('utf-8'))
+  File "/usr/lib/python3.4/json/__init__.py", line 318, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python3.4/json/decoder.py", line 343, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python3.4/json/decoder.py", line 359, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ValueError: Expecting ',' delimiter: line 7 column 31 (char 222)
+ERROR:tornado.access:500 PATCH /vnfconfig/v1/configuration (10.30.2.235) 10.94ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.69ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.52ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.22ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.19ms
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.37ms
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.38ms
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.38ms
+DEBUG:asyncio:Using selector: EpollSelector
+WARNING:tornado.access:405 POST / (10.10.20.103) 0.76ms
+WARNING:tornado.access:405 POST /vnfconfig/v1/configuration (10.10.20.103) 0.63ms
+WARNING:tornado.access:405 POST /vnfconfig/v1/configuration (10.10.20.103) 0.62ms
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.47ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.56ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.51ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.55ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.45ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.43ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.31ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.52ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.52ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.50ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.54ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.60ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.48ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.61ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.55ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.24ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.43ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.50ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.48ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.52ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.63ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.59ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.62ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.19ms
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.10ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.65ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.60ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.17ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.63ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.16ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.10ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.235) 2.75ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.61ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+WARNING:tornado.access:405 POST /vnfconfig/v1/configuration (10.30.2.59) 0.74ms
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.30.2.59) 1.96ms
+DEBUG:asyncio:Using selector: EpollSelector
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.68ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.64ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.44ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.58ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.49ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.59ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.45ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.56ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.50ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.53ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.44ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.55ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.50ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.54ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.45ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.58ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.48ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.47ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.54ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.53ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.45ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.61ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.43ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.54ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.46ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.54ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.44ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.55ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.51ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.61ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.45ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.59ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.59ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.44ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.58ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.52ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.55ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.45ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.58ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.45ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.52ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.44ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.52ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.46ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.55ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.43ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.57ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.54ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.56ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.44ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.58ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.47ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.53ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.44ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.51ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.50ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.55ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.44ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.58ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.49ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.58ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.44ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.57ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.46ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.54ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.45ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.52ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.49ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.54ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.44ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.58ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.49ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.57ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.43ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.56ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.50ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.52ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.43ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.47ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.55ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.63ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.44ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.58ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.49ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.53ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.44ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.58ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.46ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.53ms
+DEBUG:asyncio:Using selector: EpollSelector
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.66ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.46ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.65ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.57ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.57ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.66ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.52ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.67ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.58ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.56ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.66ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.66ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.58ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.73ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.61ms
+WARNING:tornado.access:400 PATCH /vnfconfig/v1/configuration (10.10.20.103) 0.44ms
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.36ms
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.21ms
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.18ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.33ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.03ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.57ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.25ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.58ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.08ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.15ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.11ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.09ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.42ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.58ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.29ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.17ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.49ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.55ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.52ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.54ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.55ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.56ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.52ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.54ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.17ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.51ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.56ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.06ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.52ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.54ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.49ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.52ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.47ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.60ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.55ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.58ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.63ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.59ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.57ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.54ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.66ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.57ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.57ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.53ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.10ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.47ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.56ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.55ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.58ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.58ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.12ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /vnfconfig/v1/configuration (10.10.20.103) 2.26ms
+DEBUG:asyncio:Using selector: EpollSelector
+WARNING:tornado.access:404 PATCH /videobandconfig/v1/configuration (10.30.2.107) 2.54ms
+WARNING:tornado.access:404 PATCH /videobandconfig/v1/configuration (10.30.2.107) 1.77ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+WARNING:tornado.access:404 PATCH /videobandconfig/v1/configuration (10.30.2.107) 1.33ms
+DEBUG:asyncio:Using selector: EpollSelector
+ERROR:tornado.application:Uncaught exception PATCH /pnfCUactivation/v1/configuration (10.30.2.107)
+HTTPServerRequest(protocol='http', host='10.30.2.65:8888', method='PATCH', uri='/pnfCUactivation/v1/configuration', version='HTTP/1.1', remote_ip='10.30.2.107')
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.5/dist-packages/tornado/web.py", line 1697, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "./server_CU.py", line 23, in patch
+    result = checkParameters(data)
+  File "./server_CU.py", line 58, in checkParameters
+    paramList = settings.start_stop_cu['params']
+AttributeError: module 'settings' has no attribute 'start_stop_cu'
+ERROR:tornado.access:500 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 2.57ms
+DEBUG:asyncio:Using selector: EpollSelector
+ERROR:tornado.application:Uncaught exception PATCH /pnfCUactivation/v1/configuration (10.30.2.107)
+HTTPServerRequest(protocol='http', host='10.30.2.65:8888', method='PATCH', uri='/pnfCUactivation/v1/configuration', version='HTTP/1.1', remote_ip='10.30.2.107')
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.5/dist-packages/tornado/web.py", line 1697, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "./server_CU.py", line 23, in patch
+    result = checkParameters(data)
+  File "./server_CU.py", line 58, in checkParameters
+    paramList = settings.start_stop_cu['params']
+AttributeError: module 'settings' has no attribute 'start_stop_cu'
+ERROR:tornado.access:500 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 1.63ms
+ERROR:tornado.application:Uncaught exception PATCH /pnfCUactivation/v1/configuration (10.30.2.107)
+HTTPServerRequest(protocol='http', host='10.30.2.65:8888', method='PATCH', uri='/pnfCUactivation/v1/configuration', version='HTTP/1.1', remote_ip='10.30.2.107')
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.5/dist-packages/tornado/web.py", line 1697, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "./server_CU.py", line 23, in patch
+    result = checkParameters(data)
+  File "./server_CU.py", line 58, in checkParameters
+    paramList = settings.start_stop_cu['params']
+AttributeError: module 'settings' has no attribute 'start_stop_cu'
+ERROR:tornado.access:500 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 2.61ms
+ERROR:tornado.application:Uncaught exception PATCH /pnfCUactivation/v1/configuration (10.30.2.107)
+HTTPServerRequest(protocol='http', host='10.30.2.65:8888', method='PATCH', uri='/pnfCUactivation/v1/configuration', version='HTTP/1.1', remote_ip='10.30.2.107')
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.5/dist-packages/tornado/web.py", line 1697, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "./server_CU.py", line 23, in patch
+    result = checkParameters(data)
+  File "./server_CU.py", line 58, in checkParameters
+    paramList = settings.start_stop_cu['params']
+AttributeError: module 'settings' has no attribute 'start_stop_cu'
+ERROR:tornado.access:500 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 2.69ms
+ERROR:tornado.application:Uncaught exception PATCH /pnfCUactivation/v1/configuration (10.30.2.107)
+HTTPServerRequest(protocol='http', host='10.30.2.65:8888', method='PATCH', uri='/pnfCUactivation/v1/configuration', version='HTTP/1.1', remote_ip='10.30.2.107')
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.5/dist-packages/tornado/web.py", line 1697, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "./server_CU.py", line 23, in patch
+    result = checkParameters(data)
+  File "./server_CU.py", line 58, in checkParameters
+    paramList = settings.start_stop_cu['params']
+AttributeError: module 'settings' has no attribute 'start_stop_cu'
+ERROR:tornado.access:500 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 2.52ms
+DEBUG:asyncio:Using selector: EpollSelector
+ERROR:tornado.application:Uncaught exception PATCH /pnfCUactivation/v1/configuration (10.30.2.107)
+HTTPServerRequest(protocol='http', host='10.30.2.65:8888', method='PATCH', uri='/pnfCUactivation/v1/configuration', version='HTTP/1.1', remote_ip='10.30.2.107')
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.5/dist-packages/tornado/web.py", line 1697, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "./server_CU.py", line 23, in patch
+    result = checkParameters(data)
+  File "./server_CU.py", line 58, in checkParameters
+    paramList = settings.start_stop_cu['params']
+AttributeError: module 'settings' has no attribute 'start_stop_cu'
+ERROR:tornado.access:500 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 1.87ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 3.13ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 2.37ms
+INFO:tornado.access:200 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 1.85ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 2.88ms
+INFO:tornado.access:200 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 1.85ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 3.10ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 2.80ms
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 3.21ms
+INFO:tornado.access:200 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 6.90ms
+DEBUG:asyncio:Using selector: EpollSelector
+WARNING:tornado.access:400 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 1.26ms
+WARNING:tornado.access:404 PATCH /pnfDUactivation/v1/configuration (10.30.2.107) 1.71ms
+INFO:tornado.access:200 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 4.64ms
+INFO:tornado.access:200 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 1.97ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 2.57ms
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:asyncio:Using selector: EpollSelector
+INFO:tornado.access:200 PATCH /pnfCUactivation/v1/configuration (10.30.2.107) 3.16ms
+WARNING:tornado.access:404 PATCH /vnfconfig/v1/configuration (10.20.8.1) 2.28ms
+ERROR:tornado.application:Uncaught exception PATCH /pnfCUactivation/v1/configuration (10.20.8.1)
+HTTPServerRequest(protocol='http', host='10.20.8.201:8888', method='PATCH', uri='/pnfCUactivation/v1/configuration', version='HTTP/1.1', remote_ip='10.20.8.1', headers={'Content-Length': '229', 'Accept-Encoding': 'gzip, deflate', 'Host': '10.20.8.201:8888', 'Accept': '*/*', 'User-Agent': 'PostmanRuntime/7.6.0', 'Connection': 'keep-alive', 'Cache-Control': 'no-cache', 'Content-Type': 'text/plain', 'Postman-Token': 'c0700e88-dc10-4245-a10f-9a077b41f983'})
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/dist-packages/tornado/web.py", line 1413, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "server_CU.py", line 23, in patch
+    result = checkParameters(data)
+  File "server_CU.py", line 60, in checkParameters
+    data = json.get('pnfActivationData').get('pnfSpecificData')
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:tornado.access:500 PATCH /pnfCUactivation/v1/configuration (10.20.8.1) 2.49ms

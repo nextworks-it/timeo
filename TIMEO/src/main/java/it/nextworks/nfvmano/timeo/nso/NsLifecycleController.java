@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.nextworks.nfvmano.libs.common.enums.NsScaleType;
+import it.nextworks.nfvmano.libs.descriptors.nsd.ScaleNsToLevelData;
+import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.elements.ScaleNsData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.util.CollectionUtils;
 import it.nextworks.nfvmano.libs.common.elements.Filter;
 import it.nextworks.nfvmano.libs.common.enums.OperationStatus;
 import it.nextworks.nfvmano.libs.common.exceptions.FailedOperationException;
@@ -115,13 +118,54 @@ public class NsLifecycleController {
 		log.debug("Received scale NS request");
 		try {
 			request.isValid();
+
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request: " + e.getMessage());
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 		try {
-			String response = nsLifecycleService.scaleNs(request);
-			return new ResponseEntity<String>(response, HttpStatus.OK);
+			//Only scale to NS instantiation level is supported
+			ScaleNsData sData = request.getScaleNsData();
+			if(request.getScaleType()== NsScaleType.SCALE_NS && sData!=null){
+				if(request.getScaleTime()!=null){
+					log.error("Unsupported request: ScaleTime");
+					return new ResponseEntity<String>("Unsupported request: ScaleTime", HttpStatus.BAD_REQUEST);
+				}
+
+				if (sData.getScaleNsByStepsData()!=null){
+					log.error("Unsupported request ScaleNsByStepsData");
+					return new ResponseEntity<String>("Unsupported request ScaleNsByStepsData", HttpStatus.BAD_REQUEST);
+				}
+
+				if(!CollectionUtils.isEmpty(sData.getVnfInstanceToBeAdded())){
+					log.error("Unsupported request VnfInstanceToBeAdded");
+					return new ResponseEntity<String>("Unsupported request VnfInstanceToBeAdded", HttpStatus.BAD_REQUEST);
+				}
+
+				if(!CollectionUtils.isEmpty(sData.getVnfInstanceToBeRemoved())){
+					log.error("Unsupported request VnfInstanceToBeRemoved");
+					return new ResponseEntity<String>("Unsupported request VnfInstanceToBeAdded", HttpStatus.BAD_REQUEST);
+				}
+				ScaleNsToLevelData sNsLevelData = sData.getScaleNsToLevelData();
+				if(sNsLevelData==null ) {
+					log.error("Unsupported request ScaleToNsLeveData Null");
+					return new ResponseEntity<String>("Unsupported request ScaleToNsLeveData Null", HttpStatus.BAD_REQUEST);
+				}
+
+
+				if(!CollectionUtils.isEmpty(sNsLevelData.getNsScaleInfo())){
+					log.error("Unsupported request NsScaleInfo null");
+					return new ResponseEntity<String>("Unsupported request NsScaleInfo null", HttpStatus.BAD_REQUEST);
+				}
+				log.debug("Starting NS scale procedure");
+				String response = nsLifecycleService.scaleNs(request);
+				return new ResponseEntity<String>(response, HttpStatus.OK);
+
+			}else{
+				log.error("Unsupported request ScaleType or null ScaleNSData");
+				return new ResponseEntity<String>("Unsupported request SCaleNsData null", HttpStatus.BAD_REQUEST);
+			}
+
 		} catch (MethodNotImplementedException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (NotExistingEntityException e) {
