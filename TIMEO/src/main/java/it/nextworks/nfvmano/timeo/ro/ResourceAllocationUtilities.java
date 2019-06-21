@@ -135,7 +135,7 @@ public class ResourceAllocationUtilities {
 				String [] splits = configParam.split("\\.");
 				if(splits.length==5 && splits[2].equals("cp")) {
 					String pnfdId = splits[1];
-					String cpId = splits[4];
+					String cpId = splits[3];
 					String pnfAddress = getPnfCpAddress(pnfdId, cpId, pnfInfo);
 					configuration.put(configParam, pnfAddress);
 				}else throw new Exception("Unacceptable config parameter format.");
