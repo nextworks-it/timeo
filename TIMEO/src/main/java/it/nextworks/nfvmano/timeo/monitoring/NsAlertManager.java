@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -157,7 +156,7 @@ public class NsAlertManager implements PerformanceManagementConsumerInterface {
             rel = criterion.getScaleOutRelationalOperation();
             value = criterion.getScaleOutThreshold();
         } else {
-            if (criterion.getScaleInThreshold() == null ) {
+            if (criterion.getScaleInThreshold() == null) {
                 throw new IllegalArgumentException(String.format("Malformed criterion %s", criterion.getName()));
             }
             rel = criterion.getScaleInRelationalOperation();
@@ -185,11 +184,12 @@ public class NsAlertManager implements PerformanceManagementConsumerInterface {
                     .map(MonitoringParameter::getPerformanceMetric)
                     .findAny();
             if (!optMetric.isPresent()) {
-                throw new IllegalArgumentException(String.format(
-                        "Monitoring parameter %s not available for nsi %s",
+                log.warn(
+                        "Monitoring parameter {} not available for nsi {}, aborting threshold",
                         mpId,
                         nsiId
-                ));
+                );
+                continue;
             }
             String metric = optMetric.get();
             CreateThresholdRequest request = new CreateThresholdRequest(

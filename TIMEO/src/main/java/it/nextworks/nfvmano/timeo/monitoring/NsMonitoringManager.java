@@ -367,9 +367,6 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 		this.pmJobIdToMpIdMap.put(pmJobId, mpId);
 		this.mpIdToPmJobIdMap.put(mpId, pmJobId);
 		log.debug("Updated internal maps with PM job and MP IDs");
-
-		alertManager.createThresholds(mpIdToPmJobIdMap);
-		log.debug("Alert thresholds created");
 	}
 
 	private void buildMonitoringDashboard() throws FailedOperationException {
