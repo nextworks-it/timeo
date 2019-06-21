@@ -69,6 +69,8 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 	MonitoringDriversManager monitoringDriver;
 	
 	VnfmHandler vnfmHandler;
+
+	private NsAlertManager alertManager;
 	
 	//Key: pm job ID; Value: Monitoring Parameter ID - This is for pm jobs associated to the NSD monitoring parameters
 	private Map<String, String> pmJobIdToMpIdMap = new HashMap<>();
@@ -90,16 +92,20 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 	 * @param monitoringDriver service used to access the monitoring platform
 	 * @param vnfmHandler service handling all the VNFMs
 	 */
-	public NsMonitoringManager(String nsInstanceId, 
+	public NsMonitoringManager(
+			String nsInstanceId,
 			Nsd nsd, 
 			NsDbWrapper nsDbWrapper,
 			MonitoringDriversManager monitoringDriver,
-			VnfmHandler vnfmHandler) {
+			VnfmHandler vnfmHandler,
+			NsAlertManager alertManager
+	) {
 		this.nsInstanceId = nsInstanceId;
 		this.nsd = nsd;
 		this.nsDbWrapper = nsDbWrapper;
 		this.monitoringDriver = monitoringDriver;
 		this.vnfmHandler = vnfmHandler;
+		this.alertManager = alertManager;
 	}
 	
 	/**
@@ -119,8 +125,10 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 		List<MonitoredData> monitoredData = nsd.getMonitoredInfo();
 		for (MonitoredData md : monitoredData) {
 			try {
-				if (md.getVnfIndicatorInfo() != null) startMonitoringJobForVnfIndicator(md.getVnfIndicatorInfo(), nsInfo);
-				if (md.getMonitoringParameter() != null) startMonitoringJobForMonitoringParameter(md.getMonitoringParameter(), nsInfo);
+				if (md.getVnfIndicatorInfo() != null)
+					startMonitoringJobForVnfIndicator(md.getVnfIndicatorInfo(), nsInfo);
+				if (md.getMonitoringParameter() != null)
+					startMonitoringJobForMonitoringParameter(md.getMonitoringParameter(), nsInfo);
 			} catch (Exception e) {
 				log.error("Error while starting a monitoring job: " + e.getMessage() + ". Skipping it.");
 				log.error(e.getMessage());
@@ -136,6 +144,12 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 			log.error("Impossible to set URL for NS instance " + nsInstanceId + e.getMessage());
 		}
 		log.debug("Finished creation of monitoring dashboard for NS instance " + nsInstanceId);
+		try {
+			alertManager.createThresholds(mpIdToPmJobIdMap);
+		} catch (MalformattedElementException exc) {
+			log.error("Malformatted element in creation of thresholds");
+			log.debug("Details:", exc);
+		}
 	}
 	
 	/**
@@ -158,6 +172,7 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 	 */
 	public void deactivateNsMonitoring() throws MethodNotImplementedException, FailedOperationException {
 		log.debug("Disactivating NS monitoring for NS instance " + nsInstanceId);
+		alertManager.deleteThresholds();
 		log.debug("Removing monitoring GUI");
 		if (monitoringGui != null) {
 			try {
@@ -352,6 +367,9 @@ public class NsMonitoringManager implements PerformanceManagementProviderInterfa
 		this.pmJobIdToMpIdMap.put(pmJobId, mpId);
 		this.mpIdToPmJobIdMap.put(mpId, pmJobId);
 		log.debug("Updated internal maps with PM job and MP IDs");
+
+		alertManager.createThresholds(mpIdToPmJobIdMap);
+		log.debug("Alert thresholds created");
 	}
 
 	private void buildMonitoringDashboard() throws FailedOperationException {
