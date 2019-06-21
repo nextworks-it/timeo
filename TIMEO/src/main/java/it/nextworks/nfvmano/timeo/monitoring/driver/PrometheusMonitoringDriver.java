@@ -431,6 +431,7 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 	public DeleteThresholdsResponse deleteThreshold(DeleteThresholdsRequest request)
 			throws MethodNotImplementedException, NotExistingEntityException, FailedOperationException,
 			MalformattedElementException {
+		log.info("Deleting thresholds: {}", request.getThresholdId());
 		List<String> deleted = new ArrayList<>();
 		for (String thresholdId : request.getThresholdId()) {
 			try {

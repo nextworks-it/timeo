@@ -8,6 +8,8 @@ import it.nextworks.nfvmano.libs.common.enums.ThresholdCrossingDirection;
 import it.nextworks.nfvmano.libs.descriptors.nsd.MonitoredData;
 import it.nextworks.nfvmano.libs.descriptors.nsd.NsAutoscalingRule;
 import it.nextworks.nfvmano.libs.monit.interfaces.messages.CreateThresholdRequest;
+import it.nextworks.nfvmano.libs.monit.interfaces.messages.DeleteThresholdsRequest;
+import it.nextworks.nfvmano.libs.monit.interfaces.messages.DeleteThresholdsResponse;
 import it.nextworks.nfvmano.libs.monit.interfaces.messages.ThresholdCrossedNotification;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.elements.ScaleNsData;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.ScaleNsRequest;
@@ -19,6 +21,8 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +111,7 @@ public class NsAlertManagerTest {
         Map<String, String> mp2job = new HashMap<>();
         mp2job.put("mp1", "mp1-job");
         mp2job.put("mp2", "mp2-job");
-        when(driver.createThreshold(any())).thenReturn("threshold1", "threshold2");
+        when(driver.createThreshold(any())).thenReturn("threshold1");
         alertManager.createThresholds(mp2job);
         ThresholdCrossedNotification not = new ThresholdCrossedNotification(
                 "threshold1",
@@ -126,5 +130,28 @@ public class NsAlertManagerTest {
 
         String target = request.getScaleNsData().getScaleNsToLevelData().getNsInstantiationLevel();
         assertEquals("il_vCDN_big", target);
+    }
+
+
+    @Test
+    public void testDeleteThreshold() throws Exception {
+        Map<String, String> mp2job = new HashMap<>();
+        mp2job.put("mp1", "mp1-job");
+        mp2job.put("mp2", "mp2-job");
+        when(driver.createThreshold(any())).thenReturn("threshold1");
+        alertManager.createThresholds(mp2job);
+        verify(driver).createThreshold(any());
+
+        when(driver.deleteThreshold(any()))
+                .thenReturn(new DeleteThresholdsResponse(
+                        Collections.singletonList("threshold1")
+                ));
+        alertManager.deleteThresholds();
+        ArgumentCaptor<DeleteThresholdsRequest> captor = ArgumentCaptor.forClass(DeleteThresholdsRequest.class);
+        verify(driver).deleteThreshold(captor.capture());
+
+        DeleteThresholdsRequest request = captor.getValue();
+
+        assertEquals(Collections.singletonList("threshold1"), request.getThresholdId());
     }
 }

@@ -204,6 +204,7 @@ public class NsAlertManager implements PerformanceManagementConsumerInterface {
             log.debug("Criterion {} is assigned threshold {}", criterion.getName(), thresholdId);
             thresholdId2criterionId.put(thresholdId, criterion.getName());
         }
+        log.info("Threshold creation successful");
     }
 
     void deleteThresholds() {
