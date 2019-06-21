@@ -133,7 +133,7 @@ public class ResourceAllocationUtilities {
 				}
 			}else if(configParam.startsWith("pnf")){
 				String [] splits = configParam.split("\\.");
-				if(splits.length==5 && splits[2]=="cp") {
+				if(splits.length==5 && splits[2].equals("cp")) {
 					String pnfdId = splits[1];
 					String cpId = splits[4];
 					String pnfAddress = getPnfCpAddress(pnfdId, cpId, pnfInfo);
