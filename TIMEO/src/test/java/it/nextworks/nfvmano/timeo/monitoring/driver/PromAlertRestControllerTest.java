@@ -5,11 +5,13 @@ import it.nextworks.nfvmano.TimeoApplication;
 import it.nextworks.nfvmano.libs.common.enums.ThresholdCrossingDirection;
 import it.nextworks.nfvmano.libs.monit.interfaces.messages.ThresholdCrossedNotification;
 import it.nextworks.nfvmano.timeo.monitoring.MonitoringAlertDispatcher;
+import it.nextworks.nfvmano.timeo.monitoring.driver.prometheus.PrometheusAlert;
 import it.nextworks.nfvmano.timeo.monitoring.driver.prometheus.PrometheusAlertMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.time.Instant;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -44,7 +46,21 @@ public class PromAlertRestControllerTest {
     @Test
     public void testNotifyBase() throws Exception {
         String alert = "{\"alerts\":[{\"labels\":{\"alertname\":\"0e921992-fc70-4dd6-8675-a92c365e62d3\"," +
-                "\"severity\":\"error\",\"user_label\":\"ar1\"},\"startsAt\":\"2019-01-10T13:16:06.658232137Z\"," +
+                "\"severity\":\"error\",\"user_label\":\"ar1\"},\"startsAt\":\"2019-01-10T13:16:06.658232+02:00\"," +
+                "\"status\":\"firing\"}],\"receiver\":\"web-notf\",\"version\":\"4\"}";
+        ctrl.notify(mapper.readValue(alert, PrometheusAlertMessage.class));
+        ArgumentCaptor<ThresholdCrossedNotification> captor =
+                ArgumentCaptor.forClass(ThresholdCrossedNotification.class);
+        verify(dispatcher).notify(captor.capture());
+        ThresholdCrossedNotification output = captor.getValue();
+        assertEquals("0e921992-fc70-4dd6-8675-a92c365e62d3", output.getThresholdId());
+        assertEquals(ThresholdCrossingDirection.UP, output.getCrossingDirection());
+    }
+
+    @Test
+    public void testNotify2() throws Exception {
+        String alert = "{\"alerts\":[{\"labels\":{\"alertname\":\"0e921992-fc70-4dd6-8675-a92c365e62d3\"," +
+                "\"severity\":\"error\",\"user_label\":\"ar1\"},\"startsAt\":\"2019-06-24T15:27:48.949435+02:00\"," +
                 "\"status\":\"firing\"}],\"receiver\":\"web-notf\",\"version\":\"4\"}";
         ctrl.notify(mapper.readValue(alert, PrometheusAlertMessage.class));
         ArgumentCaptor<ThresholdCrossedNotification> captor =
