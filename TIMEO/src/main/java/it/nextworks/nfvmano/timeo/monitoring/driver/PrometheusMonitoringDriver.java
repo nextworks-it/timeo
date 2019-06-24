@@ -368,7 +368,7 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 				throw new MethodNotImplementedException("Method not implemented");
 	}
 
-	private AlertDescription.KindEnum translateRelation(RelationalOperation op) {
+	private static AlertDescription.KindEnum translateRelation(RelationalOperation op) {
 		switch (op) {
 			case LT:
 				return AlertDescription.KindEnum.L;
@@ -388,7 +388,7 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 		}
 	}
 
-	public String makeQuery(String pm, PrometheusTDetails details) {
+	String makeAlertQuery(String pm, PrometheusTDetails details) {
 		String expId = pmJobIdToExporterId.get(details.getPmJobId());
 		return PrometheusMapper.readPrometheusQuery(
 				MonitoringObjectType.VNF, // The only type supported right now
@@ -397,9 +397,7 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 		);
 	}
 
-	@Override
-	public String createThreshold(CreateThresholdRequest request)
-			throws MethodNotImplementedException, FailedOperationException, MalformattedElementException {
+	AlertDescription makeAlertDescription(CreateThresholdRequest request) {
 		ThresholdDetails details = request.getThresholdDetails();
 		if (!details.getFormat().equals(ThresholdFormat.PROMETHEUS)) {
 			throw new IllegalArgumentException(String.format(
@@ -408,18 +406,24 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 			));
 		}
 		PrometheusTDetails promDetails = (PrometheusTDetails) details;
+		return new AlertDescription()
+				.alertName(UUID.randomUUID().toString())  // TODO more meaningful name?
+				._for(promDetails.getThresholdTime() + "s") // javascript concatenation of int and string
+				.kind(translateRelation(promDetails.getRelationalOperation()))
+				// .labels() TODO decide what to put here (if anything)
+				.query(makeAlertQuery(request.getPerformanceMetric(), promDetails))
+				.severity(AlertDescription.SeverityEnum.WARNING)
+				.target(timeoDomain + MON_PATH)
+				.value(promDetails.getValue());
+	}
+
+	@Override
+	public String createThreshold(CreateThresholdRequest request)
+			throws MethodNotImplementedException, FailedOperationException, MalformattedElementException {
+
 		Alert response;
 		try {
-			response = alertApi.postAlert(new AlertDescription()
-					.alertName(UUID.randomUUID().toString())  // TODO more meaningful name?
-					._for(String.valueOf(promDetails.getThresholdTime()))
-					.kind(translateRelation(promDetails.getRelationalOperation()))
-					// .labels() TODO decide what to put here (if anything)
-					.query(makeQuery(request.getPerformanceMetric(), promDetails))
-					.severity(AlertDescription.SeverityEnum.WARNING)
-					.target(timeoDomain + MON_PATH)
-					.value(promDetails.getValue())
-			);
+			response = alertApi.postAlert(makeAlertDescription(request));
 		} catch (ApiException e) {
 			log.error("API exception while invoking Monitoring Config Manager client: " + e.getMessage());
 			throw new FailedOperationException("API exception while invoking Monitoring Config Manager client: " + e.getMessage());
@@ -470,7 +474,7 @@ public class PrometheusMonitoringDriver extends MonitoringAbstractDriver {
 		return new PmJob(pmJobId, os, performanceMetrics, new ArrayList<>(), collectionPeriod, reportingPeriod, null);
 	}
 	
-	private void storePmJobInfo(PmJob pmJob, String exporterId, String vnfInstanceId) {
+	void storePmJobInfo(PmJob pmJob, String exporterId, String vnfInstanceId) {
 		String pmJobId = pmJob.getPmJobId();
 		pmJobIdToExporterId.put(pmJobId, exporterId);
 		List<String> exporterPMJobList =  exporterIdToPmJob.get(exporterId);
