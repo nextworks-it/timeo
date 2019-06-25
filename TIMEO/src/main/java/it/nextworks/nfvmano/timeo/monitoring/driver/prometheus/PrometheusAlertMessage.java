@@ -24,9 +24,15 @@ public class PrometheusAlertMessage {
 
     private  Map<String, String> commonAnnotations;
 
-    private  Map<String, String> externalURL;
+    private  String externalURL;
 
     private String version;
+
+    private String groupKey;
+
+    public String getGroupKey() {
+        return groupKey;
+    }
 
     public String getReceiver() {
         return receiver;
@@ -52,7 +58,7 @@ public class PrometheusAlertMessage {
         return commonAnnotations;
     }
 
-    public Map<String, String> getExternalURL() {
+    public String getExternalURL() {
         return externalURL;
     }
 

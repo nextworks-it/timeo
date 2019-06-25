@@ -72,6 +72,18 @@ public class PromAlertRestControllerTest {
     }
 
     @Test
+    public void testNotify3() throws Exception {
+        String alert = "{\"receiver\":\"532d3b1c-cd73-4c5a-9e8d-b1dadf53d0d4\",\"status\":\"firing\",\"alerts\":[{\"status\":\"firing\",\"labels\":{\"alertName\":\"42635c2b-c910-4530-b7c4-feb7e0234f74\",\"alertname\":\"1ca6da27-5dda-42b9-9d02-afc0b46c4433\",\"host\":\"vcacheedge-1478\",\"instance\":\"10.20.6.162:9273\",\"job\":\"8beeaa7b-6351-445e-aad8-84654cff09f1\",\"nsId\":\"452\",\"severity\":\"warning\",\"vnfdId\":\"vCacheEdge_1_01\"},\"annotations\":{},\"startsAt\":\"2019-06-25T09:54:08.949435+02:00\",\"endsAt\":\"0001-01-01T00:00:00Z\",\"generatorURL\":\"http://manostack-bluesspace:9090/graph?g0.expr=trafficserver_stats_http_current_client_connections%7Bjob%3D%228beeaa7b-6351-445e-aad8-84654cff09f1%22%7D+%3E+3\\u0026g0.tab=1\"}],\"groupLabels\":{\"alertname\":\"1ca6da27-5dda-42b9-9d02-afc0b46c4433\"},\"commonLabels\":{\"alertName\":\"42635c2b-c910-4530-b7c4-feb7e0234f74\",\"alertname\":\"1ca6da27-5dda-42b9-9d02-afc0b46c4433\",\"host\":\"vcacheedge-1478\",\"instance\":\"10.20.6.162:9273\",\"job\":\"8beeaa7b-6351-445e-aad8-84654cff09f1\",\"nsId\":\"452\",\"severity\":\"warning\",\"vnfdId\":\"vCacheEdge_1_01\"},\"commonAnnotations\":{},\"externalURL\":\"http://manostack-bluesspace:9093\",\"version\":\"4\",\"groupKey\":\"{}/{alertname=\\\"1ca6da27-5dda-42b9-9d02-afc0b46c4433\\\"}:{alertname=\\\"1ca6da27-5dda-42b9-9d02-afc0b46c4433\\\"}\"}\n";
+        ctrl.notify(mapper.readValue(alert, PrometheusAlertMessage.class));
+        ArgumentCaptor<ThresholdCrossedNotification> captor =
+                ArgumentCaptor.forClass(ThresholdCrossedNotification.class);
+        verify(dispatcher).notify(captor.capture());
+        ThresholdCrossedNotification output = captor.getValue();
+        assertEquals("1ca6da27-5dda-42b9-9d02-afc0b46c4433", output.getThresholdId());
+        assertEquals(ThresholdCrossingDirection.UP, output.getCrossingDirection());
+    }
+
+    @Test
     public void testNotifyResolved() throws Exception {
         String alert = "{\"alerts\":[{\"labels\":{\"alertname\":\"0e921992-fc70-4dd6-8675-a92c365e62d3\"}," +
                 "\"status\":\"resolved\"}]}";
