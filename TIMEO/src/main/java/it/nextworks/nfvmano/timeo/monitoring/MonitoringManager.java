@@ -63,6 +63,9 @@ public class MonitoringManager implements NsMonitoringActivationInterface, Perfo
 	@Autowired
 	NsManagementEngine engine;
 
+	@Autowired
+	MonitoringAlertDispatcher dispatcher;
+
 	private Map<String, NsMonitoringManager> nsMonitoringManagers = new HashMap<>(); //Key: NS_instance_ID
 	
 	public MonitoringManager() {
@@ -155,7 +158,8 @@ public class MonitoringManager implements NsMonitoringActivationInterface, Perfo
 						nsInstanceId,
 						nsd.getMonitoredInfo(),
 						nsd.getAutoScalingRule(),
-						monitoringDriver
+						monitoringDriver,
+						dispatcher
 				)
 		);
 		log.debug("Instantiated new NS Monitoring Manager for NS instance " + nsInstanceId);

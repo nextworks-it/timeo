@@ -47,6 +47,8 @@ public class NsAlertManagerTest {
 
     private NsAlertManager alertManager;
 
+    private MonitoringAlertDispatcher dispatcher;
+
     @Before
     public void setup() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -60,12 +62,14 @@ public class NsAlertManagerTest {
         List<MonitoredData> monData = mapper.readValue(monDataStream, new TypeReference<List<MonitoredData>>() {});
         engine = mock(NsManagementEngine.class);
         driver = mock(MonitoringDriversManager.class);
+        dispatcher = mock(MonitoringAlertDispatcher.class);
         alertManager = new NsAlertManager(
                 engine,
                 "test-nsiId",
                 monData,
                 rules,
-                driver
+                driver,
+                dispatcher
         );
     }
 
@@ -87,12 +91,16 @@ public class NsAlertManagerTest {
         Map<String, String> mp2job = new HashMap<>();
         mp2job.put("mp1", "mp1-job");
         mp2job.put("mp2", "mp2-job");
+
+        when(driver.createThreshold(any())).thenReturn("thresholdId");
+
         alertManager.createThresholds(mp2job);
 
         verify(engine, never()).scaleNetworkService(any());
 
         ArgumentCaptor<CreateThresholdRequest> captor = ArgumentCaptor.forClass(CreateThresholdRequest.class);
         verify(driver).createThreshold(captor.capture());
+        verify(dispatcher).register("thresholdId", alertManager);
         CreateThresholdRequest request = captor.getValue();
 
         assertEquals("VcpuUsageMean", request.getPerformanceMetric());

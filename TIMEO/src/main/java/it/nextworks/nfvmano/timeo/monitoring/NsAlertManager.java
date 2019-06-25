@@ -52,13 +52,15 @@ public class NsAlertManager implements PerformanceManagementConsumerInterface {
 
     private List<MonitoredData> monitoredData;
 
+    MonitoringAlertDispatcher dispatcher;
 
     public NsAlertManager(
             NsManagementEngine engine,
             String nsiId,
             List<MonitoredData> monitoredData,
             List<NsAutoscalingRule> rules,
-            MonitoringDriversManager driver
+            MonitoringDriversManager driver,
+            MonitoringAlertDispatcher dispatcher
     ) {
         if (null == rules) {
             throw new NullPointerException("rules must not be null.");
@@ -68,6 +70,7 @@ public class NsAlertManager implements PerformanceManagementConsumerInterface {
         this.wrapper = new AutoScalingRulesWrapper(rules);
         this.driver = driver;
         this.monitoredData = monitoredData;
+        this.dispatcher = dispatcher;
     }
 
     @Override
@@ -203,6 +206,7 @@ public class NsAlertManager implements PerformanceManagementConsumerInterface {
             String thresholdId = driver.createThreshold(request);
             log.debug("Criterion {} is assigned threshold {}", criterion.getName(), thresholdId);
             thresholdId2criterionId.put(thresholdId, criterion.getName());
+            dispatcher.register(thresholdId, this);
         }
         log.info("Threshold creation successful");
     }
