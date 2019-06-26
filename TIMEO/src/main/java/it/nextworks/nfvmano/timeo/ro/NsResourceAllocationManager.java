@@ -404,7 +404,7 @@ implements AsynchronousVimNotificationInterface,
 			
 			case REMOVE_VNF: {
 				log.debug("Received request to remove the VNFs");
-				if (!((internalStatus == ResourceAllocationStatus.CONFIGURED_VNF) || (internalStatus == ResourceAllocationStatus.FAILED))) {
+				if (!((internalStatus == ResourceAllocationStatus.CONFIGURED_VNF) || (internalStatus == ResourceAllocationStatus.FAILED) || (internalStatus == ResourceAllocationStatus.SCALE_CONFIGURED_VNF))) {
 					log.error("Wrong status. Discarding message.");
 					return;
 				}
