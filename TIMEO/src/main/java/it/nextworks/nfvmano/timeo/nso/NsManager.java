@@ -146,18 +146,20 @@ public class NsManager {
 				if (!(internalStatus == InternalNsStatus.ALLOCATED||internalStatus==InternalNsStatus.SCALE_ALLOCATED)) {
 					log.error("Received scaling request when the service is not in the appropiate status. Ignoring.");
 					nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received scaling message in wrong status");
+				}else {
+					ScaleNsRequestMessage scaleMsg = (ScaleNsRequestMessage)em;
+					this.scaleMessage = scaleMsg;
+					try {
+						scaleNs(scaleMsg);
+					} catch(Exception e) {
+						log.error("Error during NS SCALE procedure");
+						log.error(e.getMessage());
+						this.internalStatus=InternalNsStatus.FAILED;
+						//TODO: Control scaling error
+					}
+					break;
 				}
-				ScaleNsRequestMessage scaleMsg = (ScaleNsRequestMessage)em;
-				this.scaleMessage = scaleMsg;
-				try {
-					scaleNs(scaleMsg);
-				} catch(Exception e) {
-					log.error("Error during NS SCALE procedure");
-					log.error(e.getMessage());
-					this.internalStatus=InternalNsStatus.FAILED;
-					//TODO: Control scaling error
-				}
-				break;
+				
 			}
 			
 			case NOTIFY_COMPUTATION_RESULT: {
