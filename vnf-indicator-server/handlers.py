@@ -388,6 +388,7 @@ class VnfIndicatorHandler(RequestHandler):
                     }
                 )
             )
+            return
         inds = self.repo.get_all_indicators()
         ind_info_content = [
             {
