@@ -1,6 +1,7 @@
 package it.nextworks.nfvmano.timeo.vnfm.sdkimpl;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -62,7 +63,7 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 	//private RestTemplate restTemplate;
 	//private TaskExecutor taskExecutor;
 	//private String managementIp;
-	
+	private Map<String, String> currentConfiguParameters;
 	private VnfDriver pnfDriver;
 
 	/**
@@ -99,6 +100,7 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 		//this.managementIp = managementIp;
 		this.pnfDriver = new RestVnfDriver(pnfId, managementIp, restTemplate, taskExecutor);
 		log.debug("Created REST-based PNF driver for PNF " + pnfId + " with IP " + managementIp);
+		this.currentConfiguParameters= new HashMap<String, String>();
 	}
 	
 	/**
@@ -171,15 +173,21 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 		internalStatus = VnfInternalStatus.CONFIGURING_VNF;
 		try {
 			Map<String, String> configParameters = request.getNewValues();
-			Set<KeyValuePair> pnfSpecificData = new HashSet<>();
-			for (Map.Entry<String, String> p : configParameters.entrySet()) {
-				pnfSpecificData.add(new KeyValuePair(p.getKey(), p.getValue()));
-				//vnfDbWrapper.addGenericConfigParameterToVnfInfo(vnfInstanceId, p.getKey(), p.getValue());
+			if(!currentConfiguParameters.equals(configParameters)) {
+				Set<KeyValuePair> pnfSpecificData = new HashSet<>();
+				for (Map.Entry<String, String> p : configParameters.entrySet()) {
+					pnfSpecificData.add(new KeyValuePair(p.getKey(), p.getValue()));
+					//vnfDbWrapper.addGenericConfigParameterToVnfInfo(vnfInstanceId, p.getKey(), p.getValue());
+				}
+				VnfConfiguration pnfConfigurationData = new VnfConfiguration(null, null, pnfSpecificData);
+				SetConfigurationRequest configRequest = new SetConfigurationRequest(pnfId, pnfConfigurationData, null);
+				log.debug("Configuration request sent to PNF.");
+				pnfDriver.setConfiguration(configRequest, this);
+			}else {
+				log.debug("PNF configuration parameters unchanged. Skipping");
+				this.processVnfConfigurationAck(OperationStatus.SUCCESSFULLY_DONE);
 			}
-			VnfConfiguration pnfConfigurationData = new VnfConfiguration(null, null, pnfSpecificData);
-			SetConfigurationRequest configRequest = new SetConfigurationRequest(pnfId, pnfConfigurationData, null);
-			log.debug("Configuration request sent to PNF.");
-			pnfDriver.setConfiguration(configRequest, this);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			signalError(currentOperation, e.getMessage());
