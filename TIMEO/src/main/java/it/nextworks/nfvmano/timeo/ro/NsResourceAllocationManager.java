@@ -1570,8 +1570,7 @@ implements AsynchronousVimNotificationInterface,
 				log.debug("VNF " + vnfId + " has been successfully terminated at VNFM. Deleting VNF identifier at VNFM.");
 				Vnfm vnfm = vnfmMap.get(vnfId);
 				try {
-					//TODO: this should be moved
-					vnfdMap.remove(vnfId);
+					
 					vnfm.deleteVnfIdentifier(vnfId);
 					log.debug("VNF ID removed from VNFM.");
 				} catch (Exception e) {
@@ -1587,6 +1586,8 @@ implements AsynchronousVimNotificationInterface,
 				}
 				try {
 					String vnfPackageId = vnfPackageManagement.getOnboardedVnfPkgInfoFromVnfd(vnfdMap.get(vnfId).getVnfdId()).getOnboardedVnfPkgInfoId();
+					//TODO: this should be moved
+					vnfdMap.remove(vnfId);
 					vnfPackageManagement.notifyVnfInstanceDeletion(vnfPackageId, vnfId);
 				} catch (NotExistingEntityException e) {
 					log.error("Unable to notify VNF instance deletion to VNF package manager");
