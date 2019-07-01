@@ -182,6 +182,7 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 				VnfConfiguration pnfConfigurationData = new VnfConfiguration(null, null, pnfSpecificData);
 				SetConfigurationRequest configRequest = new SetConfigurationRequest(pnfId, pnfConfigurationData, null);
 				log.debug("Configuration request sent to PNF.");
+				this.currentConfiguParameters=configParameters;
 				pnfDriver.setConfiguration(configRequest, this);
 			}else {
 				log.debug("PNF configuration parameters unchanged. Skipping");
