@@ -1570,6 +1570,8 @@ implements AsynchronousVimNotificationInterface,
 				log.debug("VNF " + vnfId + " has been successfully terminated at VNFM. Deleting VNF identifier at VNFM.");
 				Vnfm vnfm = vnfmMap.get(vnfId);
 				try {
+					//TODO: this should be moved
+					vnfdMap.remove(vnfId);
 					vnfm.deleteVnfIdentifier(vnfId);
 					log.debug("VNF ID removed from VNFM.");
 				} catch (Exception e) {
