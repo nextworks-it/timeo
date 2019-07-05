@@ -16,11 +16,9 @@
 package it.nextworks.nfvmano.timeo.rc.algorithms;
 
 
-import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
-import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathEndPoint;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
@@ -48,22 +46,27 @@ public class CdnStaticAlgorithm5tonic extends AbstractNsResourceAllocationAlgori
 	}
 
 	@Override
-	public NsResourceSchedulingSolution computeNsResourceAllocationSolution(InstantiateNsRequest request, Nsd nsd, Map<Vnfd, Map<String, String>> vnfds, 
-			VimPlugin vimPlugin, SdnControllerPlugin sdnPlugin) throws NotExistingEntityException, ResourceAllocationSolutionNotFound {
+	public NsResourceSchedulingSolution computeNsResourceAllocationSolution(
+			InstantiateNsRequest request,
+			Nsd nsd,
+			Map<Vnfd, Map<String, String>> vnfds,
+			VimPlugin vimPlugin,
+			SdnControllerPlugin sdnPlugin
+	) {
 
 		List<VnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
 		List<NetworkPath> networkPaths = new ArrayList<>();
-		
+
 		VnfResourceAllocation vra1 = new VnfResourceAllocation(null, "webserver", 0, "webserver_vdu", 0, "OpenStack_local", "nova", "wasp");
 		VnfResourceAllocation vra2 = new VnfResourceAllocation(null, "spr1", 0, "spr1_vdu", 0, "OpenStack_local", "nova", "hulk");
 		VnfResourceAllocation vra3 = new VnfResourceAllocation(null, "spr21", 0, "spr21_vdu", 0, "OpenStack_local", "nova", "wasp");
 		VnfResourceAllocation vra4 = new VnfResourceAllocation(null, "spr22", 0, "spr22_vdu", 0, "OpenStack_local", "nova", "hulk");
-		
+
 		vnfResourceAllocation.add(vra1);
 		vnfResourceAllocation.add(vra2);
 		vnfResourceAllocation.add(vra3);
 		if (request.getNsInstantiationLevelId().equals("il_vCDN_big")) vnfResourceAllocation.add(vra4);
-		
+
 		String incomingLinkId = null;
 		String outgoingLinkId = null;
 
@@ -79,7 +82,7 @@ public class CdnStaticAlgorithm5tonic extends AbstractNsResourceAllocationAlgori
 		nph1.add(new NetworkPathHop(2, "openflow:1", "openflow:1:3", "openflow:1:1", incomingLinkId, outgoingLinkId, 0, false, true, null, null));
 		NetworkPath np1 = new NetworkPath(null, "NP_01_Data_Cache1", npe1, nph1, "VideoData", false);
 		networkPaths.add(np1);
-		
+
 		if (request.getNsInstantiationLevelId().equals("il_vCDN_big")) {
 			//WS -> CACHE 2
 			NetworkPathEndPoint npe2Src = new NetworkPathEndPoint("webserver", 0, "webserver_vdu", 0, "webDistInt");
@@ -92,7 +95,7 @@ public class CdnStaticAlgorithm5tonic extends AbstractNsResourceAllocationAlgori
 			nph2.add(new NetworkPathHop(1, "openflow:9", "openflow:9:4", "openflow:9:3", incomingLinkId, outgoingLinkId, 0, false, false, null, null));
 			nph2.add(new NetworkPathHop(2, "openflow:2", "openflow:2:4", "openflow:2:1", incomingLinkId, outgoingLinkId, 0, false, true, null, null));
 			NetworkPath np2 = new NetworkPath(null, "NP_02_Distribution_Cache2", npe2, nph2, "VideoDistribution", false);
-			networkPaths.add(np2);	
+			networkPaths.add(np2);
 		}
 
 		//Mgt Origin->Router(MgtSap)
@@ -120,7 +123,7 @@ public class CdnStaticAlgorithm5tonic extends AbstractNsResourceAllocationAlgori
 		nph4.add(new NetworkPathHop(2, "openflow:3", "openflow:3:2", "openflow:3:1", incomingLinkId, outgoingLinkId, 0, false, true, null, null));
 		NetworkPath np4 = new NetworkPath(null, "NP_04_Cache1-videoSAP", npe4, nph4, "VideoDistribution", false);
 		networkPaths.add(np4);
-		
+
 		if (request.getNsInstantiationLevelId().equals("il_vCDN_big")) {
 			//Dist Cache2->Router(VideoSap)
 			NetworkPathEndPoint npe5Src = new NetworkPathEndPoint("spr22", 0, "spr22_vdu", 0, "spr22DistInt");
@@ -156,13 +159,12 @@ public class CdnStaticAlgorithm5tonic extends AbstractNsResourceAllocationAlgori
 		networkNodesToBeActivated.add("openflow:7");
 		networkNodesToBeActivated.add("openflow:8");
 		networkNodesToBeActivated.add("openflow:9");
-		
-		Map<String,String> computeNodesToBeActivated = new HashMap<>();
+
+		Map<String, String> computeNodesToBeActivated = new HashMap<>();
 //		computeNodesToBeActivated.put("hulk","OpenStack_local");
 //		computeNodesToBeActivated.put("wasp","OpenStack_local");
 
 		return new NsResourceSchedulingSolution(request.getNsInstanceId(), vnfResourceAllocation, networkPaths, true,
 				networkNodesToBeActivated, computeNodesToBeActivated);
 	}
-
 }

@@ -15,6 +15,10 @@
 */
 package it.nextworks.nfvmano.timeo.vnfm.vnfdriver;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
+import it.nextworks.nfvmano.libs.vnfindicator.interfaces.messages.GetIndicatorValueResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -31,6 +35,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.nextworks.nfvmano.libs.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.vnfconfig.interfaces.messages.SetConfigurationRequest;
 import it.nextworks.nfvmano.libs.vnfconfig.interfaces.messages.SetConfigurationResponse;
+
 
 public class VnfRestClient {
 
@@ -66,13 +71,16 @@ public class VnfRestClient {
 		while (count < 60 ) {
 			log.debug("Cicling for VNF Configuration: " + count);
 			try {
-				ResponseEntity<?> httpResponse = restTemplate.exchange(configurationApiUrl, HttpMethod.PATCH,
-						new HttpEntity<SetConfigurationRequest>(request, headers),
-						SetConfigurationResponse.class);
+				ResponseEntity<SetConfigurationResponse> httpResponse = restTemplate.exchange(
+						configurationApiUrl,
+						HttpMethod.PATCH,
+						new HttpEntity<>(request, headers),
+						SetConfigurationResponse.class
+				);
 				switch (httpResponse.getStatusCode()) {
 				case OK: {
 					log.debug("Received VNF configuration response: " + httpResponse.getBody().toString());
-					return (SetConfigurationResponse) (httpResponse.getBody());
+					return httpResponse.getBody();
 				}
 				default: {
 					log.error("HTTP response code with failed VNF configuration.");
@@ -92,6 +100,61 @@ public class VnfRestClient {
 		}
 		log.error("Error while invoking REST API for VNF configuration");
 		throw new FailedOperationException("Error while invoking REST API for VNF configuration: ");
+	}
+
+	public GetIndicatorValueResponse getIndicatorValue(GeneralizedQueryRequest request)
+			throws FailedOperationException {
+		String requestString;
+		ObjectWriter mapper = new ObjectMapper().writerWithDefaultPrettyPrinter();
+		try {
+			requestString = mapper.writeValueAsString(request);
+		} catch (JsonProcessingException exc) {
+			log.error("Could not process get indicator request.");
+			log.debug("Details: ", exc);
+			throw new FailedOperationException("Could not process get indicator request");
+		}
+		log.debug("Sending GET VNF indicator request to VNF.");
+		log.debug(requestString);
+		HttpHeaders headers = new HttpHeaders();
+		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+		requestFactory.setConnectionRequestTimeout(5000);
+		requestFactory.setConnectTimeout(5000);
+		requestFactory.setReadTimeout(5000);
+		restTemplate.setRequestFactory(requestFactory);
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		ResponseEntity<GetIndicatorValueResponse> httpResponse = restTemplate.exchange(
+				indicatorApiUrl,
+				HttpMethod.GET,
+				new HttpEntity<>(request, headers),
+				GetIndicatorValueResponse.class
+		);
+		switch (httpResponse.getStatusCode()) {
+			case OK:
+				log.debug("Received GET VNF indicator response.");
+				String responseString;
+				try {
+					responseString = mapper.writeValueAsString(httpResponse.getBody());
+				} catch (JsonProcessingException exc) {
+					log.error("Cannot parse response.");
+					throw new FailedOperationException(exc);
+				}
+				log.debug(responseString);
+				return httpResponse.getBody();
+
+			default:
+				log.error("Unexpected response code '{}' from VNF.", httpResponse.getStatusCode());
+				String errorResponseString;
+				try {
+					errorResponseString = mapper.writeValueAsString(httpResponse.getBody());
+				} catch (JsonProcessingException exc) {
+					log.error("Cannot parse error response.");
+					throw new FailedOperationException(exc);
+				}
+				log.debug("Response:");
+				log.debug(errorResponseString);
+				throw new FailedOperationException("GET VNF indicator value operation failed at the VNF.");
+
+		}
 	}
 
 }

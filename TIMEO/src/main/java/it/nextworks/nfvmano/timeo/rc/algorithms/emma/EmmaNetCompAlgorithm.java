@@ -56,7 +56,8 @@ public class EmmaNetCompAlgorithm extends AbstractNsResourceAllocationAlgorithm 
             Map<Vnfd, Map<String, String>> vnfds,
             VimPlugin vimPlugin,
             SdnControllerPlugin sdnPlugin,
-            VimWrapperPlugin wrapper)
+            VimWrapperPlugin wrapper
+    )
             throws NotExistingEntityException, ResourceAllocationSolutionNotFound {
         log.info("Received NS instantiation request {}.", request.getNsInstanceId());
         log.trace("START ALLOCATION COMP FOR NS {}.", request.getNsInstanceId());

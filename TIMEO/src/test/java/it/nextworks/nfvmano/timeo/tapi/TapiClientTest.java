@@ -22,6 +22,7 @@ import io.swagger.client.model.ConnectivityServiceSchema;
 import io.swagger.client.model.ContextSchema;
 import io.swagger.client.model.CoreSlot;
 import io.swagger.client.model.FrequencySlot;
+import io.swagger.client.model.GetTopologyListRPCOutputSchema;
 import io.swagger.client.model.Link;
 import io.swagger.client.model.Node;
 import io.swagger.client.model.NodeEdgePoint;
@@ -266,7 +267,7 @@ public class TapiClientTest {
 				SdmTerminationPac includeCore = new SdmTerminationPac();
 				includeCore.setCoreId("1");
 				FrequencySlot fs = new FrequencySlot();
-				fs.setSlotId("1");
+				fs.setSlotId("155");
 				includeCore.addSelectedFrequencySlotItem(fs);
 				connectivityService.setIncludeCore(includeCore);
 				

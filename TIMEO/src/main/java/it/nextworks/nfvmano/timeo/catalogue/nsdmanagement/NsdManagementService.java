@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import it.nextworks.nfvmano.libs.records.nsinfo.PnfInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1136,8 +1135,17 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 							log.error("NS profile " + nsP.getNsProfileId() + " already existing. Impossible to load a new one.");
 							throw new AlreadyExistingEntityException("NS profile " + nsP.getNsProfileId() + " already existing.");
 						}
-						NsProfile nsProfileTarget = new NsProfile(target, nsP.getNsProfileId(), nsP.getNsdId(), nsP.getNsDeploymentFlavourId(),
-								nsP.getNsInstantiationLevelId(), nsP.getMinNumberOfInstances(), nsP.getMaxNumberOfInstances(), nsP.getAffinityOrAntiaffinityGroupId());
+						NsProfile nsProfileTarget = new NsProfile(
+								target,
+								nsP.getNsProfileId(),
+								nsP.getNsdId(),
+								nsP.getNsDeploymentFlavourId(),
+								nsP.getNsInstantiationLevelId(),
+								nsP.getMinNumberOfInstances(),
+								nsP.getMaxNumberOfInstances(),
+								nsP.getAffinityOrAntiaffinityGroupId(),
+								nsP.getNsVirtualLinkConnectivity()
+						);
 						nsProfileRepository.saveAndFlush(nsProfileTarget);
 						log.debug("Stored NS profile " + nsP.getNsProfileId());
 						
@@ -1515,7 +1523,6 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 	}
 
 	public Map<String, String> findPnfUserParameters(String nsdInfoId) throws NotExistingEntityException {
-		List<String> pnfsParameters = new ArrayList<>();
 
 		Map<String, String> pnfsParametersMap = new HashMap<>();
 
@@ -1539,15 +1546,13 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 
 		}
 
-		pnfsParameters.addAll(pnfsParametersMap.keySet());
-		String logString = "User configuration parameters in NSD " + nsdInfoId + ": ";
+		List<String> pnfsParameters = new ArrayList<>(pnfsParametersMap.keySet());
+		StringBuilder logString = new StringBuilder("User configuration parameters in NSD " + nsdInfoId + ": ");
 		for (String s : pnfsParameters) {
-			logString += s + " \n";
+			logString.append(s).append(" \n");
 		}
-		log.debug(logString);
+		log.debug(logString.toString());
 
 		return pnfsParametersMap;
 	}
-
-
 }
