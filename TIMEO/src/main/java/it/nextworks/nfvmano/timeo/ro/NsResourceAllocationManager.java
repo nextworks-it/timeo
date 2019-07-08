@@ -1089,7 +1089,9 @@ implements AsynchronousVimNotificationInterface,
 				VnfConfigurableProperties configParam = vnfd.getConfigurableProperties();
 				if ((configParam != null) && (!(configParam.getAdditionalConfigurableProperty().isEmpty()))) {
 					foundVnfToBeConfigured = true;
-					Map<String, String> configValues = rau.buildConfigurationData(configParam.getAdditionalConfigurableProperty(), nsInfo.getConfigurationParameters());
+					Map<String, String> rcOutput = new HashMap<>();
+					//TODO: fill rcOutput
+					Map<String, String> configValues = rau.buildConfigurationData(configParam.getAdditionalConfigurableProperty(), nsInfo.getConfigurationParameters(), rcOutput);
 					ModifyVnfInformationRequest configRequest = new ModifyVnfInformationRequest(vnfId, configValues);
 					String operationId = vnfm.modifyVnfInformation(configRequest);
 					log.debug("Configuration request for VNF " + vnfId + " sent to the VNFM.");
@@ -1110,7 +1112,9 @@ implements AsynchronousVimNotificationInterface,
 					foundVnfToBeConfigured = true;
 					Vnfm pnfm = pnfmMap.get(pnfId);
 					ResourceAllocationUtilities rau = new ResourceAllocationUtilities(vnfmMap, vnfdMap, defaultVimPlugin, pnfm);
-					Map<String, String> configValues = rau.buildConfigurationData(configParams, nsInfo.getConfigurationParameters());
+					Map<String, String> rcOutput = new HashMap<>();
+					//TODO: fill rcOutput
+					Map<String, String> configValues = rau.buildConfigurationData(configParams, nsInfo.getConfigurationParameters(), rcOutput);
 					ModifyVnfInformationRequest configRequest = new ModifyVnfInformationRequest(pnfId, configValues);
 					String operationId = pnfm.modifyPnfInformation(configRequest);
 					log.debug("Configuration request for PNF " + pnfId + " sent to the VNFM.");

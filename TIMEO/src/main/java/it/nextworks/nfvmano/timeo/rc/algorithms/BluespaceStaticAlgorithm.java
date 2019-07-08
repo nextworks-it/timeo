@@ -15,6 +15,7 @@ import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
+import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
 
 /**
  * Static algorithm for TAPI testing
@@ -30,7 +31,7 @@ public class BluespaceStaticAlgorithm extends AbstractNsResourceAllocationAlgori
 
 	@Override
 	public NsResourceSchedulingSolution computeNsResourceAllocationSolution(InstantiateNsRequest request, Nsd nsd,
-			Map<Vnfd, Map<String, String>> vnfds, VimPlugin vimPlugin, SdnControllerPlugin sdnPlugin)
+			Map<Vnfd, Map<String, String>> vnfds, VimPlugin vimPlugin, SdnControllerPlugin sdnPlugin, VnfmHandler vnfmHandler)
 			throws NotExistingEntityException, ResourceAllocationSolutionNotFound {
 		
 		List<VnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();

@@ -28,6 +28,7 @@ import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNot
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
+import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
 
 
 public interface NsResourceAllocationAlgorithmInterface {
@@ -37,7 +38,8 @@ public interface NsResourceAllocationAlgorithmInterface {
 			Nsd nsd,
 			Map<Vnfd,Map<String, String>> vnfds,
 			VimPlugin vimPlugin,
-			SdnControllerPlugin sdnPlugin
+			SdnControllerPlugin sdnPlugin,
+			VnfmHandler vnfmHandler
 	)
 			throws NotExistingEntityException, ResourceAllocationSolutionNotFound;
 

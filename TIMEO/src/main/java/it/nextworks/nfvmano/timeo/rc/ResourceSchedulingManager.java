@@ -80,6 +80,7 @@ import it.nextworks.nfvmano.timeo.sbdriver.SbDriverType;
 import it.nextworks.nfvmano.timeo.sbdriver.SbDriversManager;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
+import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
 
 /**
  * Entity in charge of computing the resources to be allocated 
@@ -128,6 +129,9 @@ public class ResourceSchedulingManager {
 	
 	@Autowired
 	private SbDriversManager sbDriversManager;
+	
+	@Autowired
+	private VnfmHandler vnfmHandler;
 	
 	private SdnControllerPlugin defaultSdnControllerPlugin;
 	
@@ -282,7 +286,8 @@ public class ResourceSchedulingManager {
 						nsd,
 						vnfdsTarget,
 						defaultVimPlugin,
-						defaultSdnControllerPlugin
+						defaultSdnControllerPlugin,
+						vnfmHandler
 				);
 				//store in DB if successful
 				if (solution.isSolutionFound()) {
