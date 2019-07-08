@@ -1,14 +1,14 @@
 {
-	"pnfInstanceId": "pDNS_INSTANCE_001",
-	"pnfdId": "pDNS_v01",
+	"pnfInstanceId": "pCU_INSTANCE_001",
+	"pnfdId": "pCU_v01",
 	"pnfdVersion": "0.1",
-	"description": "TEST DNS",
+	"description": "TEST CU",
 	"location": "NXW",
 	"ports": [{
 		"portId": "dns_users",
 		"addresses": {
 			"MAC_ADDRESS": "fa:16:3e:53:a5:4f",
-			"IP_ADDRESS": "10.20.8.4"
+			"IP_ADDRESS": "10.20.8.201"
 		},
 		"management": true
 	}]

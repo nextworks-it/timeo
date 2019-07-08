@@ -101,5 +101,4 @@ public class VEPCStaticAlgorithmArno extends AbstractNsResourceAllocationAlgorit
 				computeNodesToBeActivated
 		);
 	}
-
 }
