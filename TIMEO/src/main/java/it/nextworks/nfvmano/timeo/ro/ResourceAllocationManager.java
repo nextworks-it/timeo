@@ -47,6 +47,7 @@ import it.nextworks.nfvmano.timeo.common.NfvoConstants;
 import it.nextworks.nfvmano.timeo.common.Utilities;
 import it.nextworks.nfvmano.timeo.nso.NsManagementEngine;
 import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
+import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
 import it.nextworks.nfvmano.timeo.rc.repositories.ResourceComputationDbWrapper;
@@ -55,6 +56,10 @@ import it.nextworks.nfvmano.timeo.ro.messages.AllocateVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.AllocationMessageType;
 import it.nextworks.nfvmano.timeo.ro.messages.ConfigureVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.DestroyUnderlyingConnectivityMessage;
+import it.nextworks.nfvmano.timeo.ro.messages.ScaleAllocateVnfMessage;
+import it.nextworks.nfvmano.timeo.ro.messages.ScaleConfigureVnfMessage;
+import it.nextworks.nfvmano.timeo.ro.messages.ScaleSetupUnderlyingConnectivityMessage;
+import it.nextworks.nfvmano.timeo.ro.messages.ScaleRemoveVnfMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.SetupUnderlyingConnectivityMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.TerminateNsVlsMessage;
 import it.nextworks.nfvmano.timeo.ro.messages.TerminateVnfMessage;
@@ -221,6 +226,81 @@ public class ResourceAllocationManager {
 			nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, operationId, AllocationMessageType.ALLOCATE_VNF, false);
 		}
 	}
+	
+	
+	/**
+	 * Method used to request the allocate of the VNFs associated to a Network Service
+	 * due to a scale procedure
+	 * 
+	 * @param nsInstanceId ID of the NS instance
+	 * @param operationId ID of the current operation
+	 * @param instantiateMessage Instantiation message with the details of the instantiation request
+	 */
+	public void scaleAllocateVnfs(String nsInstanceId, String operationId, ScaleNsRequestMessage scaleMessage) {
+		log.debug("Invoked scale VNFs method for NS instance " + nsInstanceId);
+		if (nsResourceManagers.containsKey(nsInstanceId)) {
+			ScaleAllocateVnfMessage internalMessage = new ScaleAllocateVnfMessage(nsInstanceId, operationId, scaleMessage.getRequest());
+			ObjectMapper mapper = Utilities.buildObjectMapper();
+			try {
+				String json = mapper.writeValueAsString(internalMessage);
+				rabbitTemplate.convertAndSend(allocationMessageExchange.getName(), "resourceAllocate." + nsInstanceId, json);
+				log.debug("Sent internal message with request for VNF scale");
+			} catch (JsonProcessingException e) {
+				log.error("Error while translating internal scale VNF message in Json format.");
+				try {
+					nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Error while translating internal allocate VNF message in Json format.");
+				} catch (NotExistingEntityException e1) {
+					log.error("Error while updating internal operation status");
+				}
+				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, operationId, AllocationMessageType.SCALE_ALLOCATE_VNF, false);
+			}
+		} else {
+			log.error("NS resource manager not found for NS instance " + nsInstanceId);
+			try {
+				nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "NS resource manager not found for NS instance " + nsInstanceId);
+			} catch (NotExistingEntityException e1) {
+				log.error("Error while updating internal operation status");
+			}
+			nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, operationId, AllocationMessageType.SCALE_ALLOCATE_VNF, false);
+		}
+	}
+	
+	/**
+	 * Method used to request the configuration of the VNFs after a Network Service scale operation
+	 * 
+	 * @param nsInstanceId ID of the NS instance
+	 * @param operationId ID of the current operation
+	 * @param instantiateMessage Instantiation message with the details of the instantiation request
+	 */
+	public void configureVnfs(String nsInstanceId, String operationId, ScaleNsRequestMessage scaleMessage) {
+		log.debug("Invoked configure VNFs method for NS instance " + nsInstanceId);
+		if (nsResourceManagers.containsKey(nsInstanceId)) {
+			ScaleConfigureVnfMessage internalMessage = new ScaleConfigureVnfMessage(nsInstanceId, operationId, scaleMessage.getRequest());
+			ObjectMapper mapper = Utilities.buildObjectMapper();
+			try {
+				String json = mapper.writeValueAsString(internalMessage);
+				rabbitTemplate.convertAndSend(allocationMessageExchange.getName(), "resourceAllocate." + nsInstanceId, json);
+				log.debug("Sent internal message with request for VNF configuration");
+			} catch (JsonProcessingException e) {
+				log.error("Error while translating internal configure VNF message in Json format.");
+				try {
+					nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Error while translating internal configure VNF message in Json format.");
+				} catch (NotExistingEntityException e1) {
+					log.error("Error while updating internal operation status");
+				}
+				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, operationId, AllocationMessageType.SCALE_CONFIGURE_VNF, false);
+			}
+		} else {
+			log.error("NS resource manager not found for NS instance " + nsInstanceId);
+			try {
+				nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "NS resource manager not found for NS instance " + nsInstanceId);
+			} catch (NotExistingEntityException e1) {
+				log.error("Error while updating internal operation status");
+			}
+			nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, operationId, AllocationMessageType.SCALE_CONFIGURE_VNF, false);
+		}
+	}
+	
 	
 	/**
 	 * Method used to request the configuration of the VNFs associated to a Network Service
@@ -410,6 +490,76 @@ public class ResourceAllocationManager {
 	    log.debug("Queue created");
 	    return queue;
 	}
+	
+	/**
+	 * Method used to request the setup the scale of the network connectivity
+	 * 
+	 * @param nsInstanceId ID of the NS instance
+	 * @param operationId ID of the current operation
+	 * @param scaleMessage Scale message with the details of the scale request
+	 */
+	public void setupUnderlyingConnectivity(String nsInstanceId, String operationId,
+			ScaleNsRequestMessage scaleMessage) {
+		log.debug("Invoked setup underlying connectivity method for SCALE NS instance " + nsInstanceId);
+		if (nsResourceManagers.containsKey(nsInstanceId)) {
+			ScaleSetupUnderlyingConnectivityMessage internalMessage = new ScaleSetupUnderlyingConnectivityMessage(nsInstanceId, operationId, scaleMessage.getRequest());
+			ObjectMapper mapper = Utilities.buildObjectMapper();
+			try {
+				String json = mapper.writeValueAsString(internalMessage);
+				rabbitTemplate.convertAndSend(allocationMessageExchange.getName(), "resourceAllocate." + nsInstanceId, json);
+				log.debug("Sent internal message with request for SCALE underlying connectivity setup");
+			} catch (JsonProcessingException e) {
+				log.error("Error while translating internal SCALE setup underlying connectivity in Json format.");
+				try {
+					nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Error while translating internal setup underlying connectivity message in Json format.");
+				} catch (NotExistingEntityException e1) {
+					log.error("Error while updating internal operation status");
+				}
+				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, operationId, AllocationMessageType.SCALE_SETUP_UNDERLYING_CONNECTIVITY, false);
+			}
+		} else {
+			log.error("NS resource manager not found for NS instance " + nsInstanceId);
+			try {
+				nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "NS resource manager not found for NS instance " + nsInstanceId);
+			} catch (NotExistingEntityException e1) {
+				log.error("Error while updating internal operation status");
+			}
+			nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, operationId, AllocationMessageType.SCALE_SETUP_UNDERLYING_CONNECTIVITY, false);
+		}
+	}
+
+	public void scaleTerminateVnfs(String nsInstanceId, String operationId, ScaleNsRequestMessage scaleMessage) {
+		log.debug("Invoked terminate VNFs due to SCALE for NS instance " + nsInstanceId);
+		
+		if (nsResourceManagers.containsKey(nsInstanceId)) {
+			ScaleRemoveVnfMessage internalMessage = new ScaleRemoveVnfMessage(nsInstanceId, operationId, scaleMessage.getRequest());
+			ObjectMapper mapper = Utilities.buildObjectMapper();
+			try {
+				String json = mapper.writeValueAsString(internalMessage);
+				rabbitTemplate.convertAndSend(allocationMessageExchange.getName(), "resourceAllocate." + nsInstanceId, json);
+				log.debug("Sent internal message with request for VNF termination");
+			} catch (JsonProcessingException e) {
+				log.error("Error while translating internal terminate VNF message in Json format.");
+				try {
+					nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Error while translating internal scale terminate VNF message in Json format.");
+				} catch (NotExistingEntityException e1) {
+					log.error("Error while updating internal operation status");
+				}
+				nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, operationId, AllocationMessageType.SCALE_REMOVE_VNF, false);
+			}
+		} else {
+			log.error("NS resource manager not found for NS instance " + nsInstanceId);
+			try {
+				nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "NS resource manager not found for NS instance " + nsInstanceId);
+			} catch (NotExistingEntityException e1) {
+				log.error("Error while updating internal operation status");
+			}
+			nsManagementEngine.notifyResourceAllocationResult(nsInstanceId, operationId, AllocationMessageType.SCALE_REMOVE_VNF, false);
+		}
+		
+	}
+		
+	
 	
 	
 }

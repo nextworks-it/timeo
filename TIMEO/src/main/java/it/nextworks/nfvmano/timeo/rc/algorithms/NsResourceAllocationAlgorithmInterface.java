@@ -24,8 +24,13 @@ import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
+import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.ScaleNsRequest;
+import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
+import it.nextworks.nfvmano.timeo.catalogue.vnfpackagemanagement.VnfPackageManagementService;
 import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
+import it.nextworks.nfvmano.timeo.common.exception.ScaleAllocationSolutionNotFound;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
+import it.nextworks.nfvmano.timeo.rc.elements.NsScaleSchedulingSolution;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
 import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
@@ -42,5 +47,16 @@ public interface NsResourceAllocationAlgorithmInterface {
 			VnfmHandler vnfmHandler
 	)
 			throws NotExistingEntityException, ResourceAllocationSolutionNotFound;
+
+
+	public NsScaleSchedulingSolution computeNsScaleAllocationSolution(
+			ScaleNsRequest request,
+			NsInfo nsi,
+			Nsd nsd,
+			Map<Vnfd,Map<String, String>> vnfds,
+			VimPlugin vimPlugin,
+			SdnControllerPlugin sdnPlugin, VnfPackageManagementService vnfPackageManagement
+	)
+			throws NotExistingEntityException, ScaleAllocationSolutionNotFound;
 
 }

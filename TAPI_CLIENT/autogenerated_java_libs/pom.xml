@@ -13,6 +13,8 @@
       <module>tapi-pc-client</module>
       <module>tapi-sdm-client</module>
       <module>tapi-topology-client</module>
+      <module>tapi-connectivity-client</module>
+      <module>tapi-arof-client</module>
   </modules>
 </project>
 

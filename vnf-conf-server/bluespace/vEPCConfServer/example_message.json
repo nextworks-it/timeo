@@ -1,0 +1,20 @@
+{
+	"vnfConfigurationData": {
+		"cpConfiguration": [],
+		"dhcpServer": "null",
+		"vnfSpecificData": [
+			{
+				"key": "uservnf.cu_interface",
+				"value": "gtp0"
+			},{
+				"key": "uservnf.internet_interface",
+				"value": "ens3"
+			},{
+				"key": "vnf.vEPC_01.vdu.vEPC_vdu.extcp.vEPC_users_ext.floating",
+				"value" : "10.10.10.10"
+			}
+		]
+	},
+	"vnfcConfigurationData": [],
+	"vnfInstanceId": "553"
+}
