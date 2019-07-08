@@ -2,7 +2,7 @@
 
 export origin_fqdn=${uservnf_origin_fqdn}
 export origin_port=${uservnf_origin_port}
-export origin_address=${uservnf_origin_address}
+export origin_address=${pnf_pOrigin_v01_cp_origin_caches_address}
 export remap_fqdn=origin.${origin_fqdn}
 #Dns hosts do not allow '_'
 cache_host=$(hostname | sed -r 's/[^[:alnum:]]//g' | sed -e 's/\(.*\)/\L\1/')
@@ -16,7 +16,7 @@ then
 	#This is a vCacheEdge
 
 	echo configuring edge		
-	export mid_cache_host=${vnf_vCacheMid_01_vdu_vCacheMid_vdu_hostname}
+	export mid_cache_host=vcachemid
 	export mid_cache_address=${vnf_vCacheMid_01_vdu_vCacheMid_vdu_intcp_vCacheMid_cache_int_address}
 	export edge_fqdn=${cache_host}.${origin_fqdn}
 	envsubst < ${template_folder}/edge/parent.config > ${conf_folder}/parent.config

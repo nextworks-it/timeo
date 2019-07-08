@@ -24,7 +24,6 @@
       "vnfProfileId": "vCacheEdge_2_profile",
       "additionalParam": {
         "uservnf.origin_port": "32400",
-        "uservnf.origin_address": "10.0.8.39",
         "uservnf.origin_fqdn": "bluespace.lab"
       }
     }
@@ -32,7 +31,7 @@
   "additionalParamForNs": {
     "uservnf.add_dns_hosts": "true",
     "uservnf.rm_dns_hosts": "true",
-    "uservnf.cu_interface": "gtp0",
+    "uservnf.cu_interface": "vxlan1",
     "uservnf.internet_interface": "ens3",
     "uservnf.hostname": "vepc-test"
   }

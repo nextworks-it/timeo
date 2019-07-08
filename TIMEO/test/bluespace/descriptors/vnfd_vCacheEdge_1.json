@@ -58,7 +58,7 @@
       "virtualStorageDesc": ["VSD_vCacheEdge_1"],
       "swImageDesc": {
         "id": "vCDN_vCacheEdge_1_SWID",
-        "name": "vCacheBluespace-20190429-shrink",
+        "name": "vCache-bluespace-20190621-shrink",
         "version": "0.1",
         "checksum": "TBD",
         "containerFormat": "QCOW",
@@ -66,7 +66,7 @@
         "minDisk": 1,
         "minRam": 1,
         "size": 20,
-        "swImage": "vCacheBluespace-20190429-shrink",
+        "swImage": "vCache-bluespace-20190621-shrink",
         "operatingSystem": "ubuntu-server"
       },
       "configurableProperties": {}
@@ -156,7 +156,8 @@
       "vnf.vCacheMid_01.vdu.vCacheMid_vdu.domainname",
       "vnf.vCacheMid_01.vdu.vCacheMid_vdu.intcp.vCacheMid_cache_int.address",
       "uservnf.origin_port",
-      "uservnf.origin_address",
+      "pnf.pDNS_v01.cp.dns_users.address",
+      "pnf.pOrigin_v01.cp.origin_caches.address",
       "uservnf.origin_fqdn",
       "uservnf.timeo_address",
       "uservnf.monitoring_address"
@@ -165,7 +166,7 @@
   "modifiableAttributes": {},
   "lifeCycleManagementScript": [{
     "event": ["START_VNF_INSTANTIATION"],
-    "script": "#!/bin/bash \necho \"nameserver 8.8.8.8\" > /etc/resolv.conf \necho \"domain $$config$$domainname\" >> /etc/resolv.conf \necho \"$$config$$hostname\" > /etc/hostname \nhostnamectl set-hostname $$config$$hostname \necho \"127.0.0.1 localhost\" > /etc/hosts \necho \"127.0.1.1 $$config$$hostname.$$config$$domainname $$config$$hostname\" >> /etc/hosts \nroute add -host $$config$$uservnf.timeo_address gw $$config$$managementGw \n route add -host $$config$$uservnf.monitoring_address gw $$config$$managementGw \nroute del default gw $$config$$managementGw \n route add default gw $$config$$extCp.vCacheEdge_1_users_ext.gateway\n"
+    "script": "#!/bin/bash \necho \"nameserver 8.8.8.8\" > /etc/resolv.conf \necho \"domain $$config$$domainname\" >> /etc/resolv.conf \necho \"vcacheedge1\" > /etc/hostname \nhostnamectl set-hostname vcacheedge1 \necho \"127.0.0.1 localhost\" > /etc/hosts \necho \"127.0.1.1 vcacheedge1.$$config$$domainname vcacheedge1\" >> /etc/hosts \nroute add -host $$config$$uservnf.timeo_address gw $$config$$managementGw \n route add -host $$config$$uservnf.monitoring_address gw $$config$$managementGw \nroute del default gw $$config$$managementGw \n route add default gw $$config$$extCp.vCacheEdge_1_users_ext.gateway\n"
 
   }, {
     "event": ["END_VNF_INSTANTIATION"],

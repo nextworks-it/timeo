@@ -93,7 +93,7 @@ P-GW =
     };
 
     # DNS address communicated to UEs
-    DEFAULT_DNS_IPV4_ADDRESS     = "8.8.8.8";                                   # YOUR NETWORK CONFIG HERE
+    DEFAULT_DNS_IPV4_ADDRESS     = "#{DEFAULT_DNS_IPV4_ADDRESS}";                                   # YOUR NETWORK CONFIG HERE
     DEFAULT_DNS_SEC_IPV4_ADDRESS = "8.8.4.4";                                   # YOUR NETWORK CONFIG HERE
 
     # Non standard feature, normally should be set to "no", but you may need to set to yes for UE that do not explicitly request a PDN address through NAS signalling

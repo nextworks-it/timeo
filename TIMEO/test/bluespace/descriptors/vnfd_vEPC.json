@@ -41,7 +41,7 @@
 		"virtualStorageDesc": ["VSD_vEPC"],
 		"swImageDesc": {
 			"id": "vEPC_SWID",
-			"name": "vEPC_bluespace_x",
+			"name": "vEPC-bluespace-20190626-shrink",
 			"version": "0.1",
 			"checksum": "TBD",
 			"containerFormat": "QCOW",
@@ -49,7 +49,7 @@
 			"minDisk": 2,
 			"minRam": 2,
 			"size": 10,
-			"swImage": "vEPC_bluespace_x",
+			"swImage": "vEPC-bluespace-20190626-shrink",
 			"operatingSystem": "Ubuntu-16.04"
 		},
 		"configurableProperties": {}
@@ -127,7 +127,7 @@
 				"uservnf.monitoring_address",
       			"uservnf.cu_interface",
       			"uservnf.internet_interface",
-      			"uservnf.hostname",
+      			"pnf.pDNS_v01.cp.dns_users.address",
       			"vnf.vEPC_01.vdu.vEPC_vdu.extcp.vEPC_users_ext.floating"
       			
 			]
@@ -135,7 +135,7 @@
 	"modifiableAttributes": {},
 	"lifeCycleManagementScript": [{
 		"event": ["START_VNF_INSTANTIATION"],
-		"script": "#!/bin/bash\necho \"$$config$$uservnf.hostname\" > /etc/hostname\n hostnamectl set-hostname $$config$$uservnf.hostname\n echo \"127.0.0.1 localhost\" > /etc/hosts\n echo \"127.0.1.1 $$config$$uservnf.hostname\" >> /etc/hosts\n if [[ $EUID -ne 0 ]]\n then echo 'ERROR: not root' > ~/cloud-init.log\n exit 1\n fi\n sleep 5\n \nroute add -host $$config$$uservnf.timeo_address gw $$config$$managementGw \n route add -host $$config$$uservnf.monitoring_address gw $$config$$managementGw \nroute del default gw $$config$$managementGw \n route add default gw $$config$$extCp.vEPC_users_ext.gateway\n mkdir /var/log/epc\n &"
+		"script": "#!/bin/bash\necho vepc-test.openair4g.eur > /etc/hostname\n hostnamectl set-hostname vepc-test\n echo \"127.0.0.1 localhost\" > /etc/hosts\n echo \"127.0.1.1 vepc-test.openair4G.eur vepc-test\" >> /etc/hosts\n if [[ $EUID -ne 0 ]]\n then echo 'ERROR: not root' > ~/cloud-init.log\n exit 1\n fi\n sleep 5\n \nroute add -host $$config$$uservnf.timeo_address gw $$config$$managementGw \n route add -host $$config$$uservnf.monitoring_address gw $$config$$managementGw \nroute del default gw $$config$$managementGw \n route add default gw $$config$$extCp.vEPC_users_ext.gateway\n mkdir /var/log/epc\n &"
 	}, {
 		"event": ["END_VNF_INSTANTIATION"],
 		"script": ""

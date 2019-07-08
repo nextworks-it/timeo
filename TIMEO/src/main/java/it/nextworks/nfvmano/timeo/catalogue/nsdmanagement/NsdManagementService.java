@@ -1077,7 +1077,7 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 				NsAutoscalingRule targetRule = new NsAutoscalingRule(output, r.getRuleId());
 				nsAutoscalingRuleRepository.saveAndFlush(targetRule);
 				
-				AutoscalingRuleCondition ruleConditions = r.getRuleConditions();
+				AutoscalingRuleCondition ruleConditions = r.getRuleCondition();
 				AutoscalingRuleCondition targetArc = new AutoscalingRuleCondition(targetRule, ruleConditions.getName(), ruleConditions.getScalingType(), ruleConditions.isEnabled(), ruleConditions.getScaleInOperationType(), 
 						ruleConditions.getScaleOutOperationType(), ruleConditions.getThresholdTime(), ruleConditions.getCooldownTime(), ruleConditions.getInitialInstantiationLevel());
 				autoscalingRuleConditionRepository.saveAndFlush(targetArc);

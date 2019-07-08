@@ -45,22 +45,18 @@ class EpcHandler:
 
         mme_config={}
         spgw_config={}
-
+        cu_interface = None
+        dns_server= None
+        pgw_interface =None
         for key, value in parameters.iteritems():
             key_split = key.split(".")
             if key_split[-1]=="cu_interface" and value !="":
+                cu_interface=value
                 self.logger.debug("received cu_interface:%s"%value)
-                mme_config["MME_INTERFACE_NAME_FOR_S1_MME"]=value
-                mme_config["MME_INTERFACE_NAME_FOR_S11_MME"]=value
-                spgw_config["SGW_INTERFACE_NAME_FOR_S1U_S12_S4_UP"]=value
-                ip = self.get_interface_ip(value)
-                mme_config["MME_IPV4_ADDRESS_FOR_S1_MME"]=ip
-                mme_config["MME_IPV4_ADDRESS_FOR_S11_MME"]=ip
-                spgw_config["SGW_IPV4_ADDRESS_FOR_S1U_S12_S4_UP"]=ip
 
             if key_split[-1]=="internet_interface" and value !="":
                 self.logger.debug("received interface_interface:%s"%value)
-                spgw_config["PGW_INTERFACE_NAME_FOR_SGI"]=value
+                pgw_interface=value
 
             if key_split[-1]=="hostname":
                 os.system('hostname %s' % value)
@@ -68,6 +64,31 @@ class EpcHandler:
             if key_split[-1]=="floating":
                self.__start_stop_vxlan(value)
 
+
+        if cu_interface is None:
+            self.logger.debug("using default CU interface: vxlan1")
+            cu_interface="vxlan1"
+
+        if pgw_interface is None:
+            pgw_interface="ens3"
+            self.logger.debug("using default PGW interface: %s"%pgw_interface)
+
+        if "pnf.pDNS_v01.cp.dns_users.address" in parameters:
+            dns_server=parameters["pnf.pDNS_v01.cp.dns_users.address"]
+            self.logger.debug("received dns_server: %s"%dns_server)
+        else:
+            dns_server="8.8.8.8"
+            self.logger.debug("using default dns_server: %s"%dns_server)
+
+        spgw_config["PGW_INTERFACE_NAME_FOR_SGI"]=pgw_interface
+        cu_ip = self.get_interface_ip(cu_interface)
+        mme_config["MME_INTERFACE_NAME_FOR_S1_MME"]=cu_interface
+        mme_config["MME_INTERFACE_NAME_FOR_S11_MME"]=cu_interface
+        spgw_config["SGW_INTERFACE_NAME_FOR_S1U_S12_S4_UP"]=cu_interface
+        mme_config["MME_IPV4_ADDRESS_FOR_S1_MME"]=cu_ip
+        mme_config["MME_IPV4_ADDRESS_FOR_S11_MME"]=cu_ip
+        spgw_config["SGW_IPV4_ADDRESS_FOR_S1U_S12_S4_UP"]=cu_ip
+        spgw_config["DEFAULT_DNS_IPV4_ADDRESS"]=dns_server
 
         with open("/opt/vEPCConfServer/mme.conf_template") as f:
             mme_setup = f.read()
@@ -87,7 +108,6 @@ class EpcHandler:
             f.write(spgw_setup)
 
         self.__restart_service()
-
 
 
     def __restart_service(self):
