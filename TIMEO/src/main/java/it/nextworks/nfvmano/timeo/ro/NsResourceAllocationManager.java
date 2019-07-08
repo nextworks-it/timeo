@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.util.CollectionUtils;
 import org.hibernate.hql.internal.CollectionSubqueryFactory;
@@ -1244,8 +1245,12 @@ implements AsynchronousVimNotificationInterface,
 			VnfConfigurableProperties configParam = vnfd.getConfigurableProperties();
 			if ((configParam != null) && (!(configParam.getAdditionalConfigurableProperty().isEmpty()))) {
 				foundVnfToBeConfigured = true;
-				Map<String, String> rcOutput = new HashMap<>();
-				//TODO: fill rcOutput
+				NsResourceSchedulingSolution solution =
+						resourceComputationDbWrapper.getNsResourceSchedulingSolution(nsInstanceId);
+				Map<String, String> rcOutput = solution.getPnfAllocation().stream() // for each PnfAllocation
+						.map(PnfAllocation::getParameters) // Get its parameter map
+						.flatMap(m -> m.entrySet().stream()) // Flatten them all into a single list of entries
+						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)); // Collect into a single Map
 				Map<String, String> configValues = rau.buildConfigurationData(configParam.getAdditionalConfigurableProperty(), nsInfo.getConfigurationParameters(), rcOutput);
 				ModifyVnfInformationRequest configRequest = new ModifyVnfInformationRequest(vnfId, configValues);
 				String operationId = vnfm.modifyVnfInformation(configRequest);
@@ -1270,8 +1275,12 @@ implements AsynchronousVimNotificationInterface,
 			if ((configParams != null) && (!(configParams.isEmpty()))) {
 				foundPnfToBeConfigured = true;
 				Vnfm pnfm = pnfmMap.get(pnfId);
-				Map<String, String> rcOutput = new HashMap<>();
-				//TODO: fill rcOutput
+				NsResourceSchedulingSolution solution =
+						resourceComputationDbWrapper.getNsResourceSchedulingSolution(nsInstanceId);
+				Map<String, String> rcOutput = solution.getPnfAllocation().stream() // for each PnfAllocation
+						.map(PnfAllocation::getParameters) // Get its parameter map
+						.flatMap(m -> m.entrySet().stream()) // Flatten them all into a single list of entries
+						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)); // Collect into a single Map
 				ResourceAllocationUtilities rau = new ResourceAllocationUtilities(vnfmMap, vnfdMap, defaultVimPlugin, pnfm);
 				Map<String, String> configValues = rau.buildConfigurationData(configParams, nsInfo.getConfigurationParameters(), rcOutput);
 				ModifyVnfInformationRequest configRequest = new ModifyVnfInformationRequest(pnfId, configValues);
