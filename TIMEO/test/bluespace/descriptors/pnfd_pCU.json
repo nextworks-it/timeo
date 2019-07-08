@@ -1,0 +1,33 @@
+{
+	"pnfd": {
+		"pnfdId": "pCU_v01",
+		"provider": "SSSA",
+		"version": "0.1",
+		"pnfExtCp": [
+			{
+				"cpdId": "cu_users",
+				"description": "Management connection point for the central unit",
+				"layerProtocol": "IPV4",
+				"cpRole": "ROOT",
+				"addressData": [
+					{
+						"addressType": "IP_ADDRESS",
+						"iPAddressAssignment": false,
+						"floatingIpActivated": true,
+						"iPAddressType": "IPv4",
+						"numberOfIpAddress": 1,
+						"management": true
+					}
+				]
+			}
+		],
+		"security": {
+			"signature": "CU_PNFD_SIGNATURE",
+			"algorithm": "CU_PNFD_ALGORITHM",
+			"certificate": "CU_PNFD_CERTIFICATE"
+		},
+		"configurableProperty": [
+			"vnf.vEPC_01.vdu.vEPC_vdu.extcp.vEPC_users_ext.floating"
+		]
+	}
+}

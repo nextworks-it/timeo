@@ -1,6 +1,6 @@
 {
   "nsdId": "${NSD_ID}",
-  "nsName": "vCDN_test",
+  "nsName": "${NS_NAME}",
   "tenantId": "NXW",
   "nsDescription": ""
 }
