@@ -1,0 +1,9 @@
+1) Get tapi-arof.yang from [CTTC-BLUESPACE]
+2) Get ONF Transport API version 2.1.1 from [ONF]
+
+
+
+
+
+[CTTC-BLUESPACE] https://github.com/CTTC-ONS/bluespace
+[ONF] https://github.com/OpenNetworkingFoundation/TAPI/releases/tag/v2.1.1
