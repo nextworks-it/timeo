@@ -16,7 +16,6 @@
 package it.nextworks.nfvmano.timeo.rc;
 
 
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,9 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import it.nextworks.nfvmano.libs.catalogues.interfaces.elements.NsdInfo;
-import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.ScaleNsRequest;
+import it.nextworks.nfvmano.libs.catalogues.interfaces.elements.PnfdInfo;
+import it.nextworks.nfvmano.libs.descriptors.nsd.Pnfd;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
+import it.nextworks.nfvmano.libs.records.nsinfo.PnfInfo;
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.NsdManagementService;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.PnfManagementService;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
 import it.nextworks.nfvmano.timeo.common.exception.ScaleAllocationSolutionNotFound;
 import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
 import it.nextworks.nfvmano.timeo.rc.algorithms.AlgorithmType;
@@ -63,7 +66,6 @@ import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.descriptors.onboardedvnfpackage.OnboardedVnfPkgInfo;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
-import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.PnfManagementService;
 import it.nextworks.nfvmano.timeo.catalogue.vnfpackagemanagement.VnfPackageManagementService;
 import it.nextworks.nfvmano.timeo.common.NfvoConstants;
 import it.nextworks.nfvmano.timeo.common.Utilities;
@@ -89,6 +91,7 @@ import it.nextworks.nfvmano.timeo.sbdriver.SbDriverType;
 import it.nextworks.nfvmano.timeo.sbdriver.SbDriversManager;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
+import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
 
 /**
  * Entity in charge of computing the resources to be allocated 
@@ -128,23 +131,28 @@ public class ResourceSchedulingManager {
 	
 	@Value("${timeo.poweradaptation.network}")
 	private boolean networkPowerAdaptation;
-	
-	
+
 	//Used to store Rc Algorithm properties
 	@Value("#{${timeo.rc.properties}}")
 	private Map<String, String> rcProperties;
 	
 	@Autowired
 	NsManagementEngine nsManagementEngine;
-	
+
+	@Autowired
+	private NsdManagementService nsdManagement;
+
 	@Autowired
 	private VnfPackageManagementService vnfPackageManagement;
-	
+
 	@Autowired
-	private PnfManagementService pnfManagement;
+	private PnfManagementService pnfManagementService;
 	
 	@Autowired
 	private SbDriversManager sbDriversManager;
+	
+	@Autowired
+	private VnfmHandler vnfmHandler;
 	
 	private SdnControllerPlugin defaultSdnControllerPlugin;
 	
@@ -252,6 +260,7 @@ public class ResourceSchedulingManager {
 				releaseResources(releaseMsg);
 				break;
 			}
+
 			case SCALE: {
 				log.debug("Received computation release message for operation " + operationId);
 				ComputationScaleMessage scaleMsg = (ComputationScaleMessage)compMessage;
@@ -285,8 +294,9 @@ public class ResourceSchedulingManager {
 			String nsInstanceId = msg.getRequest().getNsInstanceId();
 			String nsFlavourId = msg.getRequest().getFlavourId(); 
 			String nsInstantiationLevel = msg.getRequest().getNsInstantiationLevelId();
-			
+
 			try {
+				NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
 				Nsd nsd = nsManagementEngine.retrieveNsd(nsInstanceId);
 				Map<Vnfd,Map<String, String>> vnfdsTarget = new HashMap<>();
 				Map<String,Map<String, String>> vnfds = nsd.getVnfdDataFromFlavour(nsFlavourId, nsInstantiationLevel);
@@ -299,13 +309,30 @@ public class ResourceSchedulingManager {
 					Vnfd vnfd = pkg.getVnfd();
 					vnfdsTarget.put(vnfd, entry.getValue());
 				}
-				
+
+				// Compute pnf instances and pnfds
+				Map<String, List<PnfInstance>> pnfInstances = new HashMap<>();
+				Map<String, Pnfd> pnfds = new HashMap<>();
+				for (PnfInfo pnfInfo : nsInfo.getPnfInfo()) {
+					String pnfdId = pnfInfo.getPnfdId();
+					pnfInstances.put(
+							pnfdId,
+							pnfManagementService.getPnfInstancesFromPnfd(pnfdId)
+					);
+					PnfdInfo pnfdInfo = nsdManagement.findPnfdInfo(pnfInfo.getPnfdInfoId());
+					Pnfd pnfd = pnfdInfo.getPnfd();
+					pnfds.put(pnfdId, pnfd);
+				}
+
 				NsResourceSchedulingSolution solution = algorithm.computeNsResourceAllocationSolution(
 						msg.getRequest(),
 						nsd,
 						vnfdsTarget,
 						defaultVimPlugin,
-						defaultSdnControllerPlugin
+						defaultSdnControllerPlugin,
+						vnfmHandler,
+						pnfds,
+						pnfInstances
 				);
 				//store in DB if successful
 				if (solution.isSolutionFound()) {
@@ -353,8 +380,6 @@ public class ResourceSchedulingManager {
 		}
 	}
 	
-
-
 	private void adjustPowerState(String nsInstance, String operationId, NsResourceSchedulingSolution solution, boolean switchOn) throws FailedOperationException {
 		log.debug("Triggering power state adjustment for NS instance " + nsInstance);
 		if (switchOn) {
@@ -535,7 +560,6 @@ public class ResourceSchedulingManager {
 	private void switchOffComputeNodes(Map<String, String> computeNodes, String nsInstanceId) throws FailedOperationException {
 		log.debug("Found compute hosts to switch off:"+computeNodes.keySet().size());
 		Map<String, PowerState> powerStates = new HashMap<>();
-		
 		for (Map.Entry<String, String> e : computeNodes.entrySet()) {
 			String vimId = e.getValue();
 			String hostId = e.getKey();
@@ -671,7 +695,7 @@ public class ResourceSchedulingManager {
 			case BLUESPACE_STATIC_NXW:
 				return new BluespaceStaticAlgorithm();			
 			case NXW_DYNAMIC_ALGORITHM:
-				return new NxwDynamicAlgorithm(vnfPackageManagement, pnfManagement, rcProperties);			
+				return new NxwDynamicAlgorithm(vnfPackageManagement, pnfManagementService, rcProperties);
 			default:
 				log.error("Algorithm type {} not yet implemented.", type);
 				throw new AlgorithmNotAvailableException();

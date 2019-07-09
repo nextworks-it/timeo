@@ -67,7 +67,7 @@ public class ResourceAllocationUtilities {
 		this.vnfm = vnfm;
 	}
 	
-	public Map<String, String> buildConfigurationData(List<String> configurableProperties, Map<String, String> userConfigurationData) throws Exception {
+	public Map<String, String> buildConfigurationData(List<String> configurableProperties, Map<String, String> userConfigurationData, Map<String, String> rcOutput) throws Exception {
 		Map<String,String> configuration = new HashMap<String, String>();
 		for (String configParam : configurableProperties) {
 			//format example: 
@@ -76,6 +76,7 @@ public class ResourceAllocationUtilities {
 			//vnf.<vnfd_id>.vdu.<vdu_id>.domainname
 			//vnf.<vnfd_id>.vdu.<vdu_id>.extcp.<expcp>.floating
 			//uservnf.<vnfd_id>.vdu.<vdu_id>.domainname	--> this is used for parameters set by the user
+			//rcoutput.<param-name> --> this is used for parameters computed by the algorithm related to PNF config
 			if (configParam.startsWith("uservnf")) {
 				log.debug("The configuration parameter " + configParam + " shoud have been provided by the user in the instantiation request.");
 				if (userConfigurationData.containsKey(configParam)) {
@@ -84,6 +85,17 @@ public class ResourceAllocationUtilities {
 				} else {
 					log.error("The configuration parameter " + configParam + " has not been found in the parameters provided by the user. Skipping.");
 				}
+			} else if (configParam.startsWith("rcoutput")) {
+				String value = rcOutput.get(configParam);
+				if (value == null) {
+					log.error("No parameter named {} in RC Output", configParam);
+					log.debug("RC output: {}", rcOutput);
+					throw new IllegalArgumentException(String.format(
+							"No parameter named %s in RC Output", configParam
+					));
+				}
+				// else
+				configuration.put(configParam, value);
 			} else {
 				String [] splits = configParam.split("\\.");
 				if (splits.length == 5) {

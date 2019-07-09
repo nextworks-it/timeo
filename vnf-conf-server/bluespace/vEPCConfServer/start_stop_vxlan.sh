@@ -2,7 +2,7 @@
 
 remote_cu=$1
 
-echo `date` ": Starting CU" > /opt/VnfServer/configuration.log
+echo `date` ": Starting CU" > /opt/vEPCConfServer/configuration.log
 
 if [ $remote_cu != "" ]; then
 

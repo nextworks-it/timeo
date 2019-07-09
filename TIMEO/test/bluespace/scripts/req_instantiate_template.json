@@ -1,7 +1,7 @@
 {
   "nsInstanceId": "$NSI_ID",
   "flavourId": "df_vCDN",
-  "nsInstantiationLevelId": "il_vCDN_big",
+  "nsInstantiationLevelId": "il_vCDN_small",
   "sapData": [
     {
       "sapdId": "sap_mgmt",
@@ -24,16 +24,15 @@
       "vnfProfileId": "vCacheEdge_2_profile",
       "additionalParam": {
         "uservnf.origin_port": "32400",
-        "uservnf.origin_address": "10.0.8.39",
-        "uservnf.origin_fqdn": "bluespace.lab",
-        "uservnf.timeo_address": "10.0.2.161",
-        "uservnf.monitoring_address": "10.0.8.46"
+        "uservnf.origin_fqdn": "bluespace.lab"
       }
     }
   ],
   "additionalParamForNs": {
     "uservnf.add_dns_hosts": "true",
-    "uservnf.rm_dns_hosts": "true"
-
+    "uservnf.rm_dns_hosts": "true",
+    "uservnf.cu_interface": "vxlan1",
+    "uservnf.internet_interface": "ens3",
+    "uservnf.hostname": "vepc-test"
   }
 }

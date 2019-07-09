@@ -54,7 +54,7 @@
     "virtualStorageDesc": ["VSD_vCacheMid"],
     "swImageDesc": {
       "id": "vCDN_vCacheMid_SWID",
-      "name": "vCacheBluespace-20190429-shrink",
+      "name": "vCache-bluespace-20190621-shrink",
       "version": "0.1",
       "checksum": "TBD",
       "containerFormat": "QCOW",
@@ -62,7 +62,7 @@
       "minDisk": 1,
       "minRam": 1,
       "size": 20,
-      "swImage": "vCacheBluespace-20190429-shrink",
+      "swImage": "vCache-bluespace-20190621-shrink",
       "operatingSystem": "ubuntu-server"
     },
     "configurableProperties": {}
@@ -152,7 +152,8 @@
     "autoHealable": false,
     "additionalConfigurableProperty": [
       "uservnf.origin_port",
-      "uservnf.origin_address",
+      "pnf.pDNS_v01.cp.dns_users.address",
+      "pnf.pOrigin_v01.cp.origin_caches.address",
       "uservnf.origin_fqdn",
       "uservnf.timeo_address",
       "uservnf.monitoring_address"

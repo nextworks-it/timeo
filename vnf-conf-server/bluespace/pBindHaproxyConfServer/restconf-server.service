@@ -1,0 +1,10 @@
+[Unit]
+Description=pBindHaproxy Rest Agent
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python /opt/pBindHaproxyConfServer/server.py
+
+[Install]
+WantedBy=multi-user.target

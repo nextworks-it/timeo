@@ -16,14 +16,15 @@
 package it.nextworks.nfvmano.timeo.rc.algorithms;
 
 
-
-
+import java.util.List;
 import java.util.Map;
 
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
+import it.nextworks.nfvmano.libs.descriptors.nsd.Pnfd;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.ScaleNsRequest;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.timeo.catalogue.vnfpackagemanagement.VnfPackageManagementService;
@@ -33,21 +34,46 @@ import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.NsScaleSchedulingSolution;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
+import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
 
 
 public interface NsResourceAllocationAlgorithmInterface {
 
-	public NsResourceSchedulingSolution computeNsResourceAllocationSolution(
+	default NsResourceSchedulingSolution computeNsResourceAllocationSolution(
 			InstantiateNsRequest request,
 			Nsd nsd,
-			Map<Vnfd,Map<String, String>> vnfds,
+			Map<Vnfd, Map<String, String>> vnfds,
+			VimPlugin vimPlugin,
+			SdnControllerPlugin sdnPlugin,
+			VnfmHandler vnfmHandler,
+			Map<String, Pnfd> pnfds,
+			Map<String, List<PnfInstance>> pnfInstances
+	)
+			throws NotExistingEntityException, ResourceAllocationSolutionNotFound {
+		return computeNsResourceAllocationSolution(
+				request,
+				nsd,
+				vnfds,
+				vimPlugin,
+				sdnPlugin
+		);
+	}
+
+	default NsResourceSchedulingSolution computeNsResourceAllocationSolution(
+			InstantiateNsRequest request,
+			Nsd nsd,
+			Map<Vnfd, Map<String, String>> vnfds,
 			VimPlugin vimPlugin,
 			SdnControllerPlugin sdnPlugin
 	)
-			throws NotExistingEntityException, ResourceAllocationSolutionNotFound;
+			throws NotExistingEntityException, ResourceAllocationSolutionNotFound {
+		throw new IllegalStateException(String.format(
+				"Algorithm %s requires PNF information",
+				this.getClass().getSimpleName()
+		));
+	}
 
-
-	public NsScaleSchedulingSolution computeNsScaleAllocationSolution(
+	default NsScaleSchedulingSolution computeNsScaleAllocationSolution(
 			ScaleNsRequest request,
 			NsInfo nsi,
 			Nsd nsd,
@@ -55,6 +81,12 @@ public interface NsResourceAllocationAlgorithmInterface {
 			VimPlugin vimPlugin,
 			SdnControllerPlugin sdnPlugin, VnfPackageManagementService vnfPackageManagement
 	)
-			throws NotExistingEntityException, ScaleAllocationSolutionNotFound;
+			throws NotExistingEntityException, ScaleAllocationSolutionNotFound {
+
+		throw new ScaleAllocationSolutionNotFound(String.format(
+				"Algorithm %s does not support scaling",
+				this.getClass().getSimpleName()
+		));
+	}
 
 }
