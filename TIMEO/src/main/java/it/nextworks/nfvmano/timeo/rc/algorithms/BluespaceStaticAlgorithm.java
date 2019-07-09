@@ -6,8 +6,10 @@ import java.util.Map;
 
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
+import it.nextworks.nfvmano.libs.descriptors.nsd.Pnfd;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
 import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
 import it.nextworks.nfvmano.timeo.rc.elements.InterDcNetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
@@ -30,8 +32,13 @@ public class BluespaceStaticAlgorithm extends AbstractNsResourceAllocationAlgori
 	}
 
 	@Override
-	public NsResourceSchedulingSolution computeNsResourceAllocationSolution(InstantiateNsRequest request, Nsd nsd,
-			Map<Vnfd, Map<String, String>> vnfds, VimPlugin vimPlugin, SdnControllerPlugin sdnPlugin, VnfmHandler vnfmHandler)
+	public NsResourceSchedulingSolution computeNsResourceAllocationSolution(
+			InstantiateNsRequest request,
+			Nsd nsd,
+			Map<Vnfd, Map<String, String>> vnfds,
+			VimPlugin vimPlugin,
+			SdnControllerPlugin sdnPlugin
+	)
 			throws NotExistingEntityException, ResourceAllocationSolutionNotFound {
 		
 		List<VnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();

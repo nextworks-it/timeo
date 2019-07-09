@@ -67,8 +67,8 @@ public class ResourceAllocationUtilities {
 		this.vnfm = vnfm;
 	}
 	
-	public Map<String, String> buildConfigurationData(List<String> configurableProperties, Map<String, String> userConfigurationData, Map<String, String> rcOutput) throws Exception {
-		Map<String,String> configuration = new HashMap<String, String>();
+	public Map<String, String> buildConfigurationData(List<String> configurableProperties, Map<String, String> userConfigurationData, Map<String, String> rcOutput) {
+		Map<String,String> configuration = new HashMap<>();
 		for (String configParam : configurableProperties) {
 			//format example: 
 			//vnf.<vnfd_id>.vdu.<vdu_id>.intcp.<extcp>.address
@@ -136,7 +136,7 @@ public class ResourceAllocationUtilities {
 					}
 				} else {
 					log.error("Unacceptable config parameter format.");
-					throw new Exception("Unacceptable config parameter format.");
+					throw new IllegalArgumentException("Unacceptable config parameter format.");
 				}
 			}
 		}

@@ -160,7 +160,6 @@ public class RestVnfDriverTest {
             return null;
         };
         doAnswer(ans).when(executor).execute(any(Runnable.class));
-        Instant start = Instant.now();
         @SuppressWarnings("unchecked")
         Consumer<GetIndicatorValueResponse> listener = mock(Consumer.class);
         driver.getIndicatorValueAsync(getRequest(), listener);
