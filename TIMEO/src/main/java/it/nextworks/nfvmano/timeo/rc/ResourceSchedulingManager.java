@@ -33,6 +33,7 @@ import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
 import it.nextworks.nfvmano.timeo.common.exception.ScaleAllocationSolutionNotFound;
 import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
 import it.nextworks.nfvmano.timeo.rc.algorithms.AlgorithmType;
+import it.nextworks.nfvmano.timeo.rc.algorithms.BluespaceAitAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.algorithms.BluespaceStaticAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithm5tonic;
 import it.nextworks.nfvmano.timeo.rc.algorithms.VEPCStaticAlgorithmArno;
@@ -135,6 +136,9 @@ public class ResourceSchedulingManager {
 	//Used to store Rc Algorithm properties
 	@Value("#{${timeo.rc.properties}}")
 	private Map<String, String> rcProperties;
+	
+	@Value("${timeo.ait.algorithm}")
+	private String aitAlgorithmUrl;
 	
 	@Autowired
 	NsManagementEngine nsManagementEngine;
@@ -696,6 +700,8 @@ public class ResourceSchedulingManager {
 				return new BluespaceStaticAlgorithm();			
 			case NXW_DYNAMIC_ALGORITHM:
 				return new NxwDynamicAlgorithm(vnfPackageManagement, pnfManagementService, rcProperties);
+			case BLUESPACE_AIT:
+				return new BluespaceAitAlgorithm(aitAlgorithmUrl, vnfPackageManagement, rcProperties, pnfManagementService);
 			default:
 				log.error("Algorithm type {} not yet implemented.", type);
 				throw new AlgorithmNotAvailableException();
