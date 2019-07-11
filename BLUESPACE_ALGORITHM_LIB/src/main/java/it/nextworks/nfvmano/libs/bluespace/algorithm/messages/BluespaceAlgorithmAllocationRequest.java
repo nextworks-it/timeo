@@ -5,11 +5,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.BluespaceNode;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.GeographicalArea;
+import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.PhysicalServer;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.Rrh;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.ServiceRequest;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.TransmissionMode;
 
+/**
+ * This class models the input of the blueSPACE resource allocation algorithm
+ * 
+ * @author nextworks
+ *
+ */
 public class BluespaceAlgorithmAllocationRequest {
 
 	//to be read from the request
@@ -23,6 +31,12 @@ public class BluespaceAlgorithmAllocationRequest {
 	
 	private List<Rrh> rrhs = new ArrayList<Rrh>();
 	
+	//from SDN controller + static info about PNFs
+	private List<BluespaceNode> nodes = new ArrayList<BluespaceNode>();
+	
+	//from VIM
+	private List<PhysicalServer> servers = new ArrayList<PhysicalServer>();
+	
 	
 	public BluespaceAlgorithmAllocationRequest() {	}
 	
@@ -33,15 +47,21 @@ public class BluespaceAlgorithmAllocationRequest {
 	 * @param geographicalAreas abstract definition of geographical areas available in the environment 
 	 * @param datarate definition of the datarate for each transmission mode
 	 * @param rrhs list of RRHs available in the NFVI
+	 * @param nodes network topology
+	 * @param servers available computing resources
 	 */
 	public BluespaceAlgorithmAllocationRequest(List<ServiceRequest> serviceRequests,
 			List<GeographicalArea> geographicalAreas,
 			Map<TransmissionMode, Double> datarate,
-			List<Rrh> rrhs) {
+			List<Rrh> rrhs,
+			List<BluespaceNode> nodes,
+			List<PhysicalServer> servers) {
 		if (serviceRequests != null) this.serviceRequests = serviceRequests;
 		if (geographicalAreas != null) this.geographicalAreas = geographicalAreas;
 		if (datarate != null) this.datarate = datarate;
 		if (rrhs != null) this.rrhs = rrhs;
+		if (nodes != null) this.nodes = nodes;
+		if (servers != null) this.servers = servers;
 	}
 
 	/**
@@ -70,6 +90,20 @@ public class BluespaceAlgorithmAllocationRequest {
 	 */
 	public List<Rrh> getRrhs() {
 		return rrhs;
+	}
+
+	/**
+	 * @return the nodes
+	 */
+	public List<BluespaceNode> getNodes() {
+		return nodes;
+	}
+
+	/**
+	 * @return the servers
+	 */
+	public List<PhysicalServer> getServers() {
+		return servers;
 	}
 	
 	
