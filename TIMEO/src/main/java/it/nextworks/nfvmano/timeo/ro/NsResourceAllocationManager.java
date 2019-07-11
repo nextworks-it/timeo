@@ -404,7 +404,7 @@ implements AsynchronousVimNotificationInterface,
 			
 			case REMOVE_VNF: {
 				log.debug("Received request to remove the VNFs");
-				if (!((internalStatus == ResourceAllocationStatus.CONFIGURED_VNF) || (internalStatus == ResourceAllocationStatus.FAILED))) {
+				if (!((internalStatus == ResourceAllocationStatus.CONFIGURED_VNF) || (internalStatus == ResourceAllocationStatus.FAILED) || (internalStatus == ResourceAllocationStatus.SCALE_CONFIGURED_VNF))) {
 					log.error("Wrong status. Discarding message.");
 					return;
 				}
@@ -416,7 +416,7 @@ implements AsynchronousVimNotificationInterface,
 			}
 			case SCALE_REMOVE_VNF: {
 				log.debug("Received request to remove the VNFs due to scale");
-				if (!(internalStatus == ResourceAllocationStatus.CONFIGURED_VNF)) {
+				if (!(internalStatus == ResourceAllocationStatus.CONFIGURED_VNF || internalStatus == ResourceAllocationStatus.SCALE_CONFIGURED_VNF)) {
 					log.error("Wrong status. Discarding message.");
 					return;
 				}
@@ -1233,7 +1233,7 @@ implements AsynchronousVimNotificationInterface,
 			VnfConfigurableProperties configParam = vnfd.getConfigurableProperties();
 			if ((configParam != null) && (!(configParam.getAdditionalConfigurableProperty().isEmpty()))) {
 				foundVnfToBeConfigured = true;
-				Map<String, String> configValues = rau.buildConfigurationData(configParam.getAdditionalConfigurableProperty(), nsInfo.getConfigurationParameters());
+				Map<String, String> configValues = rau.buildConfigurationData(configParam.getAdditionalConfigurableProperty(), nsInfo.getConfigurationParameters(), nsInfo.getPnfInfo());
 				ModifyVnfInformationRequest configRequest = new ModifyVnfInformationRequest(vnfId, configValues);
 				String operationId = vnfm.modifyVnfInformation(configRequest);
 				log.debug("Configuration request for VNF " + vnfId + " sent to the VNFM.");
@@ -1258,7 +1258,7 @@ implements AsynchronousVimNotificationInterface,
 				foundPnfToBeConfigured = true;
 				Vnfm pnfm = pnfmMap.get(pnfId);
 				ResourceAllocationUtilities rau = new ResourceAllocationUtilities(vnfmMap, vnfdMap, defaultVimPlugin, pnfm);
-				Map<String, String> configValues = rau.buildConfigurationData(configParams, nsInfo.getConfigurationParameters());
+				Map<String, String> configValues = rau.buildConfigurationData(configParams, nsInfo.getConfigurationParameters(), nsInfo.getPnfInfo());
 				ModifyVnfInformationRequest configRequest = new ModifyVnfInformationRequest(pnfId, configValues);
 				String operationId = pnfm.modifyPnfInformation(configRequest);
 				log.debug("Configuration request for PNF " + pnfId + " sent to the VNFM.");
@@ -1570,6 +1570,7 @@ implements AsynchronousVimNotificationInterface,
 				log.debug("VNF " + vnfId + " has been successfully terminated at VNFM. Deleting VNF identifier at VNFM.");
 				Vnfm vnfm = vnfmMap.get(vnfId);
 				try {
+					
 					vnfm.deleteVnfIdentifier(vnfId);
 					log.debug("VNF ID removed from VNFM.");
 				} catch (Exception e) {
@@ -1585,6 +1586,8 @@ implements AsynchronousVimNotificationInterface,
 				}
 				try {
 					String vnfPackageId = vnfPackageManagement.getOnboardedVnfPkgInfoFromVnfd(vnfdMap.get(vnfId).getVnfdId()).getOnboardedVnfPkgInfoId();
+					//TODO: this should be moved
+					vnfdMap.remove(vnfId);
 					vnfPackageManagement.notifyVnfInstanceDeletion(vnfPackageId, vnfId);
 				} catch (NotExistingEntityException e) {
 					log.error("Unable to notify VNF instance deletion to VNF package manager");

@@ -1,0 +1,136 @@
+[
+  {
+    "ruleId": "simple",
+    "ruleConditions": {
+      "name": "s-cd",
+      "scalingType": "AUTOMATED_SCALING",
+      "enabled": true,
+      "thresholdTime": 2,
+      "cooldownTime": 1,
+      "initialInstantiationLevel": "il_vCDN_small",
+      "scalingCriteria": [
+        {
+          "name": "s-cr",
+          "scaleOutThreshold": "75",
+          "scaleOutRelationalOperation": "GT",
+          "nsMonitoringParamRef": "mp1"
+        }
+      ]
+    },
+    "ruleActions": [
+      {
+        "scaleType": "SCALE_NS",
+        "scaleNsToLevelData": {
+          "nsInstantiationLevel": "il_vCDN_big"
+        }
+      }
+    ]
+  },
+  {
+    "ruleId": "default-rule",
+    "ruleConditions": {
+      "name": "def-cd",
+      "scalingType": "AUTOMATED_SCALING",
+      "enabled": true,
+      "thresholdTime": 12,
+      "cooldownTime": 1,
+      "initialInstantiationLevel": "il_vCDN_small",
+      "scalingCriteria": [
+        {
+          "name": "def-cr1",
+          "scaleOutThreshold": "75",
+          "scaleOutRelationalOperation": "GT",
+          "nsMonitoringParamRef": "mp1"
+        },
+        {
+          "name": "def-cr2",
+          "scaleOutThreshold": "75",
+          "scaleOutRelationalOperation": "GT",
+          "nsMonitoringParamRef": "mp1"
+        }
+      ]
+    },
+    "ruleActions": [
+      {
+        "scaleType": "SCALE_NS",
+        "scaleNsToLevelData": {
+          "nsInstantiationLevel": "il_vCDN_big"
+        }
+      }
+    ]
+  },
+  {
+    "ruleId": "and-rule",
+    "ruleConditions": {
+      "name": "and-cd",
+      "scalingType": "AUTOMATED_SCALING",
+      "enabled": true,
+      "thresholdTime": 100,
+      "cooldownTime": 10,
+      "initialInstantiationLevel": "il_vCDN_small",
+      "scaleInOperationType": "AND",
+      "scalingCriteria": [
+        {
+          "name": "and-cr1",
+          "scaleOutThreshold": "75",
+          "scaleOutRelationalOperation": "GT",
+          "nsMonitoringParamRef": "mp1"
+        },
+        {
+          "name": "and-cr2",
+          "scaleOutThreshold": "75",
+          "scaleOutRelationalOperation": "GT",
+          "nsMonitoringParamRef": "mp1"
+        }
+      ]
+    },
+    "ruleActions": [
+      {
+        "scaleType": "SCALE_NS",
+        "scaleNsToLevelData": {
+          "nsInstantiationLevel": "il_vCDN_big"
+        }
+      },
+      {
+        "scaleType": "SCALE_NS",
+        "scaleNsToLevelData": {
+          "nsInstantiationLevel": "il_vCDN_big2"
+        }
+      }
+    ]
+  },
+  {
+    "ruleId": "or-rule",
+    "ruleConditions": {
+      "name": "or-cd",
+      "scalingType": "AUTOMATED_SCALING",
+      "enabled": true,
+      "thresholdTime": 30,
+      "cooldownTime": 1,
+      "initialInstantiationLevel": "il_vCDN_small",
+      "scaleInOperationType": "OR",
+      "scalingCriteria": [
+        {
+          "name": "or-cr1",
+          "scaleOutThreshold": "75",
+          "scaleOutRelationalOperation": "GT",
+          "nsMonitoringParamRef": "mp1"
+        },
+        {
+          "name": "or-cr2",
+          "scaleOutThreshold": "75",
+          "scaleOutRelationalOperation": "GT",
+          "nsMonitoringParamRef": "mp1"
+        }
+      ]
+    },
+    "ruleActions": [
+      {
+        "scaleType": "SCALE_NS",
+        "scaleNsToLevelData": {
+          "nsInstantiationLevel": "il_vCDN_big"
+        }
+      }
+    ]
+  }
+]

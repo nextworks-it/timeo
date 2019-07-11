@@ -30,6 +30,8 @@ import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.orvnfm.vnflcm.interfaces.messages.QueryVnfResponse;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
+import it.nextworks.nfvmano.libs.records.nsinfo.PnfExtCpInfo;
+import it.nextworks.nfvmano.libs.records.nsinfo.PnfInfo;
 import it.nextworks.nfvmano.libs.records.nsinfo.SapInfo;
 import it.nextworks.nfvmano.libs.records.vnfinfo.VnfExtCpInfo;
 import it.nextworks.nfvmano.libs.records.vnfinfo.VnfcResourceInfo;
@@ -56,6 +58,7 @@ public class ResourceAllocationUtilities {
 	
 	private Vnfm vnfm;
 	
+	
 	//TODO: this is to be fixed - it could be related to NS? to be passed as parameter in VNF request?
 	private static final String domainName = "vEPC.net";
 
@@ -65,9 +68,10 @@ public class ResourceAllocationUtilities {
 		this.vnfdMap = vnfdMap;
 		this.defaultVimPlugin = defaultVimPlugin;
 		this.vnfm = vnfm;
+		
 	}
 	
-	public Map<String, String> buildConfigurationData(List<String> configurableProperties, Map<String, String> userConfigurationData) throws Exception {
+	public Map<String, String> buildConfigurationData(List<String> configurableProperties, Map<String, String> userConfigurationData, List<PnfInfo> pnfInfo) throws Exception {
 		Map<String,String> configuration = new HashMap<String, String>();
 		for (String configParam : configurableProperties) {
 			//format example: 
@@ -75,6 +79,7 @@ public class ResourceAllocationUtilities {
 			//vnf.<vnfd_id>.vdu.<vdu_id>.hostname
 			//vnf.<vnfd_id>.vdu.<vdu_id>.domainname
 			//vnf.<vnfd_id>.vdu.<vdu_id>.extcp.<expcp>.floating
+			//pnf.<pnfd_id>.cp.<cp_id>.address
 			//uservnf.<vnfd_id>.vdu.<vdu_id>.domainname	--> this is used for parameters set by the user
 			if (configParam.startsWith("uservnf")) {
 				log.debug("The configuration parameter " + configParam + " shoud have been provided by the user in the instantiation request.");
@@ -84,7 +89,7 @@ public class ResourceAllocationUtilities {
 				} else {
 					log.error("The configuration parameter " + configParam + " has not been found in the parameters provided by the user. Skipping.");
 				}
-			} else {
+			} else if(configParam.startsWith("vnf")){
 				String [] splits = configParam.split("\\.");
 				if (splits.length == 5) {
 					log.debug("Configuration parameter related to a VNF VDU.");
@@ -126,6 +131,17 @@ public class ResourceAllocationUtilities {
 					log.error("Unacceptable config parameter format.");
 					throw new Exception("Unacceptable config parameter format.");
 				}
+			}else if(configParam.startsWith("pnf")){
+				String [] splits = configParam.split("\\.");
+				if(splits.length==5 && splits[2].equals("cp")) {
+					String pnfdId = splits[1];
+					String cpId = splits[3];
+					String pnfAddress = getPnfCpAddress(pnfdId, cpId, pnfInfo);
+					configuration.put(configParam, pnfAddress);
+				}else throw new Exception("Unacceptable config parameter format.");
+			} else {
+				log.error("Unacceptable config parameter format.");
+				throw new Exception("Unacceptable config parameter format.");
 			}
 		}
 		return configuration;
@@ -287,6 +303,21 @@ public class ResourceAllocationUtilities {
 			}
 		}
 		throw new NotExistingEntityException("VNF instance with VNFD ID " + vnfdId + " not found");
+	}
+	
+	private String getPnfCpAddress(String pnfdId, String cpId, List<PnfInfo> pnfInfo) throws FailedOperationException {
+		
+		for(PnfInfo current : pnfInfo) {
+			if(current.getPnfdId().equals(pnfdId)) {
+				for(PnfExtCpInfo currentCp : current.getCpInfo()) {
+					if (currentCp.getCpdId().equals(cpId)) {
+						return currentCp.getAddress();
+					}
+				}
+			}
+			
+		}
+		throw new FailedOperationException();
 	}
 
 }

@@ -53,14 +53,13 @@ public class PrometheusMapper {
 		prometheusQueriesMapper.put(motQueryVnf, vnfMetricsQueriesMap);
 	}
 	
-	public static AbstractExporterInfo readPrometheusExporterInfo(MonitoringObjectType monitoringObjectType, String metricType) throws Exception {
+	public static AbstractExporterInfo readPrometheusExporterInfo(MonitoringObjectType monitoringObjectType, String metricType) {
 		return prometheusExporterMapper.get(monitoringObjectType).get(metricType);
 	}
 	
-	public static String readPrometheusQuery(MonitoringObjectType monitoringObjectType, String metricType, String exporterId) throws Exception {
+	public static String readPrometheusQuery(MonitoringObjectType monitoringObjectType, String metricType, String exporterId) {
 		String origString = prometheusQueriesMapper.get(monitoringObjectType).get(metricType);
-		String retString = modifyParameter(origString, "$$configExp", exporterId);
-		return retString;
+		return modifyParameter(origString, "$$configExp", exporterId);
 	}
 	
 	public static int getPrometheusExporterPort(ExporterType type) {

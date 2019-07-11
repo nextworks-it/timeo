@@ -143,21 +143,23 @@ public class NsManager {
 			case SCALE_NS_REQUEST: {
 				log.trace("START SCALE NS FOR NS " + nsInstanceId);
 				log.debug("Received scale NS message with operation ID " + operationId);
-				if (internalStatus != InternalNsStatus.ALLOCATED) {
-					log.error("Received scaling request when the service is not in stable status. Ignoring.");
+				if (!(internalStatus == InternalNsStatus.ALLOCATED||internalStatus==InternalNsStatus.SCALE_ALLOCATED)) {
+					log.error("Received scaling request when the service is not in the appropiate status. Ignoring.");
 					nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Received scaling message in wrong status");
+				}else {
+					ScaleNsRequestMessage scaleMsg = (ScaleNsRequestMessage)em;
+					this.scaleMessage = scaleMsg;
+					try {
+						scaleNs(scaleMsg);
+					} catch(Exception e) {
+						log.error("Error during NS SCALE procedure");
+						log.error(e.getMessage());
+						this.internalStatus=InternalNsStatus.FAILED;
+						//TODO: Control scaling error
+					}
+					break;
 				}
-				ScaleNsRequestMessage scaleMsg = (ScaleNsRequestMessage)em;
-				this.scaleMessage = scaleMsg;
-				try {
-					scaleNs(scaleMsg);
-				} catch(Exception e) {
-					log.error("Error during NS SCALE procedure");
-					log.error(e.getMessage());
-					this.internalStatus=InternalNsStatus.FAILED;
-					//TODO: Control scaling error
-				}
-				break;
+				
 			}
 			
 			case NOTIFY_COMPUTATION_RESULT: {
@@ -517,10 +519,13 @@ public class NsManager {
 		//TODO: To be verified
 		String currentLevel =  nsInfo.getNsScaleStatus().get(0).getNsScaleLevelId();
 		internalStatus = InternalNsStatus.COMPUTING_SCALING_RESOURCES;
-		if(currentLevel!= sNsLevelData.getNsInstantiationLevel() ){
-			resourceSchedulingManager.scaleResources(message);
-		}else{
+		if(currentLevel.equals(sNsLevelData.getNsInstantiationLevel()) ){
 			//TODO: what happens if it is the same instantiation level?
+			internalStatus=InternalNsStatus.SCALE_ALLOCATED;
+			nsDbWrapper.updateInternalOperation(message.getOperationId(), OperationStatus.SUCCESSFULLY_DONE, null);
+		}else{
+			resourceSchedulingManager.scaleResources(message);
+			
 		}
 
 
