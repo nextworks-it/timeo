@@ -36,7 +36,7 @@ public class AutoScalingRulesWrapper {
 
     public AutoScalingRulesWrapper(List<NsAutoscalingRule> rules) {
         for (NsAutoscalingRule rule : rules) {
-            AutoscalingRuleCondition condition = rule.getRuleConditions();
+            AutoscalingRuleCondition condition = rule.getRuleCondition();
             String condName = condition.getName();
             if (conditions.containsKey(condName)) {
                 throw new IllegalArgumentException(String.format(

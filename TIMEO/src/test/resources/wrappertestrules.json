@@ -1,7 +1,7 @@
 [
   {
     "ruleId": "simple",
-    "ruleConditions": {
+    "ruleCondition": {
       "name": "s-cd",
       "scalingType": "AUTOMATED_SCALING",
       "enabled": true,
@@ -28,7 +28,7 @@
   },
   {
     "ruleId": "default-rule",
-    "ruleConditions": {
+    "ruleCondition": {
       "name": "def-cd",
       "scalingType": "AUTOMATED_SCALING",
       "enabled": true,
@@ -61,7 +61,7 @@
   },
   {
     "ruleId": "and-rule",
-    "ruleConditions": {
+    "ruleCondition": {
       "name": "and-cd",
       "scalingType": "AUTOMATED_SCALING",
       "enabled": true,
@@ -101,7 +101,7 @@
   },
   {
     "ruleId": "or-rule",
-    "ruleConditions": {
+    "ruleCondition": {
       "name": "or-cd",
       "scalingType": "AUTOMATED_SCALING",
       "enabled": true,
