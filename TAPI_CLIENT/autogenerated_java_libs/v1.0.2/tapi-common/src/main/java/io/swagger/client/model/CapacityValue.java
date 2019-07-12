@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -25,25 +26,33 @@ import java.io.IOException;
 
 /**
  * The Capacity (Bandwidth) values that are applicable for digital layers.
- */@ApiModel(description = "The Capacity (Bandwidth) values that are applicable for digital layers.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+ */
+@ApiModel(description = "The Capacity (Bandwidth) values that are applicable for digital layers.")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class CapacityValue {
-
   /**
    * Gets or Sets unit
    */
   @JsonAdapter(UnitEnum.Adapter.class)
   public enum UnitEnum {
-    
     TB("TB"),
+    
     TBPS("TBPS"),
+    
     GB("GB"),
+    
     GBPS("GBPS"),
+    
     MB("MB"),
+    
     MBPS("MBPS"),
+    
     KB("KB"),
+    
     KBPS("KBPS"),
+    
     GHZ("GHz"),
+    
     MHZ("MHz");
 
     private String value;
@@ -51,7 +60,7 @@ public class CapacityValue {
     UnitEnum(String value) {
       this.value = value;
     }
-    
+
     public String getValue() {
       return value;
     }
@@ -60,7 +69,7 @@ public class CapacityValue {
     public String toString() {
       return String.valueOf(value);
     }
-    
+
     public static UnitEnum fromValue(String text) {
       for (UnitEnum b : UnitEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
@@ -69,7 +78,7 @@ public class CapacityValue {
       }
       return null;
     }
-    
+
     public static class Adapter extends TypeAdapter<UnitEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final UnitEnum enumeration) throws IOException {
@@ -83,49 +92,50 @@ public class CapacityValue {
       }
     }
   }
-  
+
   @SerializedName("unit")
   private UnitEnum unit = null;
-  
+
   @SerializedName("value")
   private String value = null;
-  
+
   public CapacityValue unit(UnitEnum unit) {
     this.unit = unit;
     return this;
   }
 
-  
-  /**
-  * Get unit
-  * @return unit
+   /**
+   * Get unit
+   * @return unit
   **/
   @ApiModelProperty(value = "")
   public UnitEnum getUnit() {
     return unit;
   }
+
   public void setUnit(UnitEnum unit) {
     this.unit = unit;
   }
-  
+
   public CapacityValue value(String value) {
     this.value = value;
     return this;
   }
 
-  
-  /**
-  * Get value
-  * @return value
+   /**
+   * Get value
+   * @return value
   **/
   @ApiModelProperty(value = "")
   public String getValue() {
     return value;
   }
+
   public void setValue(String value) {
     this.value = value;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -143,7 +153,8 @@ public class CapacityValue {
   public int hashCode() {
     return Objects.hash(unit, value);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -166,8 +177,5 @@ public class CapacityValue {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

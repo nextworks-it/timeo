@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **operationalState** | [**OperationalStateEnum**](#OperationalStateEnum) |  |  [optional]
 
 
-
 <a name="LifecycleStateEnum"></a>
 ## Enum: LifecycleStateEnum
 Name | Value

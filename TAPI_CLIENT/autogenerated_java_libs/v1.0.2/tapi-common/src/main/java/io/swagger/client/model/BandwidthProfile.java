@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -27,21 +28,22 @@ import java.io.IOException;
 /**
  * BandwidthProfile
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class BandwidthProfile {
-
   @SerializedName("color-aware")
   private Boolean colorAware = null;
-  
+
   /**
    * Gets or Sets bwProfileType
    */
   @JsonAdapter(BwProfileTypeEnum.Adapter.class)
   public enum BwProfileTypeEnum {
-    
     MEF_10_X("MEF_10.x"),
+    
     RFC_2697("RFC_2697"),
+    
     RFC_2698("RFC_2698"),
+    
     RFC_4115("RFC_4115");
 
     private String value;
@@ -49,7 +51,7 @@ public class BandwidthProfile {
     BwProfileTypeEnum(String value) {
       this.value = value;
     }
-    
+
     public String getValue() {
       return value;
     }
@@ -58,7 +60,7 @@ public class BandwidthProfile {
     public String toString() {
       return String.valueOf(value);
     }
-    
+
     public static BwProfileTypeEnum fromValue(String text) {
       for (BwProfileTypeEnum b : BwProfileTypeEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
@@ -67,7 +69,7 @@ public class BandwidthProfile {
       }
       return null;
     }
-    
+
     public static class Adapter extends TypeAdapter<BwProfileTypeEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final BwProfileTypeEnum enumeration) throws IOException {
@@ -81,151 +83,152 @@ public class BandwidthProfile {
       }
     }
   }
-  
+
   @SerializedName("bw-profile-type")
   private BwProfileTypeEnum bwProfileType = null;
-  
+
   @SerializedName("peak-information-rate")
   private CapacityValue peakInformationRate = null;
-  
+
   @SerializedName("coupling-flag")
   private Boolean couplingFlag = null;
-  
+
   @SerializedName("committed-information-rate")
   private CapacityValue committedInformationRate = null;
-  
+
   @SerializedName("committed-burst-size")
   private CapacityValue committedBurstSize = null;
-  
+
   @SerializedName("peak-burst-size")
   private CapacityValue peakBurstSize = null;
-  
+
   public BandwidthProfile colorAware(Boolean colorAware) {
     this.colorAware = colorAware;
     return this;
   }
 
-  
-  /**
-  * Get colorAware
-  * @return colorAware
+   /**
+   * Get colorAware
+   * @return colorAware
   **/
   @ApiModelProperty(value = "")
   public Boolean isColorAware() {
     return colorAware;
   }
+
   public void setColorAware(Boolean colorAware) {
     this.colorAware = colorAware;
   }
-  
+
   public BandwidthProfile bwProfileType(BwProfileTypeEnum bwProfileType) {
     this.bwProfileType = bwProfileType;
     return this;
   }
 
-  
-  /**
-  * Get bwProfileType
-  * @return bwProfileType
+   /**
+   * Get bwProfileType
+   * @return bwProfileType
   **/
   @ApiModelProperty(value = "")
   public BwProfileTypeEnum getBwProfileType() {
     return bwProfileType;
   }
+
   public void setBwProfileType(BwProfileTypeEnum bwProfileType) {
     this.bwProfileType = bwProfileType;
   }
-  
+
   public BandwidthProfile peakInformationRate(CapacityValue peakInformationRate) {
     this.peakInformationRate = peakInformationRate;
     return this;
   }
 
-  
-  /**
-  * Get peakInformationRate
-  * @return peakInformationRate
+   /**
+   * Get peakInformationRate
+   * @return peakInformationRate
   **/
   @ApiModelProperty(value = "")
   public CapacityValue getPeakInformationRate() {
     return peakInformationRate;
   }
+
   public void setPeakInformationRate(CapacityValue peakInformationRate) {
     this.peakInformationRate = peakInformationRate;
   }
-  
+
   public BandwidthProfile couplingFlag(Boolean couplingFlag) {
     this.couplingFlag = couplingFlag;
     return this;
   }
 
-  
-  /**
-  * Get couplingFlag
-  * @return couplingFlag
+   /**
+   * Get couplingFlag
+   * @return couplingFlag
   **/
   @ApiModelProperty(value = "")
   public Boolean isCouplingFlag() {
     return couplingFlag;
   }
+
   public void setCouplingFlag(Boolean couplingFlag) {
     this.couplingFlag = couplingFlag;
   }
-  
+
   public BandwidthProfile committedInformationRate(CapacityValue committedInformationRate) {
     this.committedInformationRate = committedInformationRate;
     return this;
   }
 
-  
-  /**
-  * Get committedInformationRate
-  * @return committedInformationRate
+   /**
+   * Get committedInformationRate
+   * @return committedInformationRate
   **/
   @ApiModelProperty(value = "")
   public CapacityValue getCommittedInformationRate() {
     return committedInformationRate;
   }
+
   public void setCommittedInformationRate(CapacityValue committedInformationRate) {
     this.committedInformationRate = committedInformationRate;
   }
-  
+
   public BandwidthProfile committedBurstSize(CapacityValue committedBurstSize) {
     this.committedBurstSize = committedBurstSize;
     return this;
   }
 
-  
-  /**
-  * Get committedBurstSize
-  * @return committedBurstSize
+   /**
+   * Get committedBurstSize
+   * @return committedBurstSize
   **/
   @ApiModelProperty(value = "")
   public CapacityValue getCommittedBurstSize() {
     return committedBurstSize;
   }
+
   public void setCommittedBurstSize(CapacityValue committedBurstSize) {
     this.committedBurstSize = committedBurstSize;
   }
-  
+
   public BandwidthProfile peakBurstSize(CapacityValue peakBurstSize) {
     this.peakBurstSize = peakBurstSize;
     return this;
   }
 
-  
-  /**
-  * Get peakBurstSize
-  * @return peakBurstSize
+   /**
+   * Get peakBurstSize
+   * @return peakBurstSize
   **/
   @ApiModelProperty(value = "")
   public CapacityValue getPeakBurstSize() {
     return peakBurstSize;
   }
+
   public void setPeakBurstSize(CapacityValue peakBurstSize) {
     this.peakBurstSize = peakBurstSize;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -248,7 +251,8 @@ public class BandwidthProfile {
   public int hashCode() {
     return Objects.hash(colorAware, bwProfileType, peakInformationRate, couplingFlag, committedInformationRate, committedBurstSize, peakBurstSize);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -276,8 +280,5 @@ public class BandwidthProfile {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

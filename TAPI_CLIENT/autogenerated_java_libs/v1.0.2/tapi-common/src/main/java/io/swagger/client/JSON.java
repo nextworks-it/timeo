@@ -20,12 +20,15 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.internal.bind.util.ISO8601Utils;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
-
+import com.google.gson.JsonElement;
+import io.gsonfire.GsonFireBuilder;
+import io.gsonfire.TypeSelector;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
+import io.swagger.client.model.*;
+import okio.ByteString;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -33,29 +36,49 @@ import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
-
 import java.util.Date;
+import java.util.Map;
+import java.util.HashMap;
 
 public class JSON {
     private Gson gson;
     private boolean isLenientOnJson = false;
     private DateTypeAdapter dateTypeAdapter = new DateTypeAdapter();
     private SqlDateTypeAdapter sqlDateTypeAdapter = new SqlDateTypeAdapter();
-    
-    
     private OffsetDateTimeTypeAdapter offsetDateTimeTypeAdapter = new OffsetDateTimeTypeAdapter();
     private LocalDateTypeAdapter localDateTypeAdapter = new LocalDateTypeAdapter();
-    
+    private ByteArrayAdapter byteArrayAdapter = new ByteArrayAdapter();
+
+    public static GsonBuilder createGson() {
+        GsonFireBuilder fireBuilder = new GsonFireBuilder()
+        ;
+        GsonBuilder builder = fireBuilder.createGsonBuilder();
+        return builder;
+    }
+
+    private static String getDiscriminatorValue(JsonElement readElement, String discriminatorField) {
+        JsonElement element = readElement.getAsJsonObject().get(discriminatorField);
+        if(null == element) {
+            throw new IllegalArgumentException("missing discriminator field: <" + discriminatorField + ">");
+        }
+        return element.getAsString();
+    }
+
+    private static Class getClassByDiscriminator(Map classByDiscriminatorValue, String discriminatorValue) {
+        Class clazz = (Class) classByDiscriminatorValue.get(discriminatorValue.toUpperCase());
+        if(null == clazz) {
+            throw new IllegalArgumentException("cannot determine model class of name: <" + discriminatorValue + ">");
+        }
+        return clazz;
+    }
 
     public JSON() {
-        gson = new GsonBuilder()
+        gson = createGson()
             .registerTypeAdapter(Date.class, dateTypeAdapter)
             .registerTypeAdapter(java.sql.Date.class, sqlDateTypeAdapter)
-            
-            
             .registerTypeAdapter(OffsetDateTime.class, offsetDateTimeTypeAdapter)
             .registerTypeAdapter(LocalDate.class, localDateTypeAdapter)
-            
+            .registerTypeAdapter(byte[].class, byteArrayAdapter)
             .create();
     }
 
@@ -122,8 +145,34 @@ public class JSON {
         }
     }
 
-    
-    
+    /**
+     * Gson TypeAdapter for Byte Array type
+     */
+    public class ByteArrayAdapter extends TypeAdapter<byte[]> {
+
+        @Override
+        public void write(JsonWriter out, byte[] value) throws IOException {
+            if (value == null) {
+                out.nullValue();
+            } else {
+                out.value(ByteString.of(value).base64());
+            }
+        }
+
+        @Override
+        public byte[] read(JsonReader in) throws IOException {
+            switch (in.peek()) {
+                case NULL:
+                    in.nextNull();
+                    return null;
+                default:
+                    String bytesAsBase64 = in.nextString();
+                    ByteString byteString = ByteString.decodeBase64(bytesAsBase64);
+                    return byteString.toByteArray();
+            }
+        }
+    }
+
     /**
      * Gson TypeAdapter for JSR310 OffsetDateTime type
      */
@@ -219,7 +268,6 @@ public class JSON {
         return this;
     }
 
-    
     /**
      * Gson TypeAdapter for java.sql.Date type
      * If the dateFormat is null, a simple "yyyy-MM-dd" format will be used

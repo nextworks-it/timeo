@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -26,51 +27,51 @@ import java.io.IOException;
 /**
  * TimeRange
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class TimeRange {
-
   @SerializedName("end-time")
   private String endTime = null;
-  
+
   @SerializedName("start-time")
   private String startTime = null;
-  
+
   public TimeRange endTime(String endTime) {
     this.endTime = endTime;
     return this;
   }
 
-  
-  /**
-  * Get endTime
-  * @return endTime
+   /**
+   * Get endTime
+   * @return endTime
   **/
   @ApiModelProperty(value = "")
   public String getEndTime() {
     return endTime;
   }
+
   public void setEndTime(String endTime) {
     this.endTime = endTime;
   }
-  
+
   public TimeRange startTime(String startTime) {
     this.startTime = startTime;
     return this;
   }
 
-  
-  /**
-  * Get startTime
-  * @return startTime
+   /**
+   * Get startTime
+   * @return startTime
   **/
   @ApiModelProperty(value = "")
   public String getStartTime() {
     return startTime;
   }
+
   public void setStartTime(String startTime) {
     this.startTime = startTime;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -88,7 +89,8 @@ public class TimeRange {
   public int hashCode() {
     return Objects.hash(endTime, startTime);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -111,8 +113,5 @@ public class TimeRange {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

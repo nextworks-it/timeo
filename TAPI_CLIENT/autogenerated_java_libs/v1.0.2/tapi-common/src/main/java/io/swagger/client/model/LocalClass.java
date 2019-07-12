@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -28,61 +29,61 @@ import java.util.List;
 
 /**
  * The TAPI GlobalComponent serves as the super class for all TAPI entities that can be directly retrieved by their ID. As such, these are first class entities and their ID is expected to be globally unique. 
- */@ApiModel(description = "The TAPI GlobalComponent serves as the super class for all TAPI entities that can be directly retrieved by their ID. As such, these are first class entities and their ID is expected to be globally unique. ")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+ */
+@ApiModel(description = "The TAPI GlobalComponent serves as the super class for all TAPI entities that can be directly retrieved by their ID. As such, these are first class entities and their ID is expected to be globally unique. ")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class LocalClass {
-
   @SerializedName("local-id")
   private String localId = null;
-  
+
   @SerializedName("name")
   private List<NameAndValue> name = null;
-  
+
   public LocalClass localId(String localId) {
     this.localId = localId;
     return this;
   }
 
-  
-  /**
-  * Get localId
-  * @return localId
+   /**
+   * Get localId
+   * @return localId
   **/
   @ApiModelProperty(value = "")
   public String getLocalId() {
     return localId;
   }
+
   public void setLocalId(String localId) {
     this.localId = localId;
   }
-  
+
   public LocalClass name(List<NameAndValue> name) {
     this.name = name;
     return this;
   }
 
   public LocalClass addNameItem(NameAndValue nameItem) {
-    
     if (this.name == null) {
       this.name = new ArrayList<NameAndValue>();
     }
-    
     this.name.add(nameItem);
     return this;
   }
-  
-  /**
-  * List of names. A property of an entity with a value that is unique in some namespace but may change during the life of the entity. A name carries no semantics with respect to the purpose of the entity.
-  * @return name
+
+   /**
+   * List of names. A property of an entity with a value that is unique in some namespace but may change during the life of the entity. A name carries no semantics with respect to the purpose of the entity.
+   * @return name
   **/
   @ApiModelProperty(value = "List of names. A property of an entity with a value that is unique in some namespace but may change during the life of the entity. A name carries no semantics with respect to the purpose of the entity.")
   public List<NameAndValue> getName() {
     return name;
   }
+
   public void setName(List<NameAndValue> name) {
     this.name = name;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -100,7 +101,8 @@ public class LocalClass {
   public int hashCode() {
     return Objects.hash(localId, name);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -123,8 +125,5 @@ public class LocalClass {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

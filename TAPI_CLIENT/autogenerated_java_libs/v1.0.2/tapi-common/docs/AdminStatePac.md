@@ -9,7 +9,6 @@ Name | Type | Description | Notes
 **operationalState** | [**OperationalStateEnum**](#OperationalStateEnum) |  |  [optional]
 
 
-
 <a name="AdministrativeStateEnum"></a>
 ## Enum: AdministrativeStateEnum
 Name | Value

@@ -11,11 +11,9 @@ Method | HTTP request | Description
 [**updateContextNameNameById**](NameApi.md#updateContextNameNameById) | **PUT** /config/context/name/{value_name}/ | Update name by ID
 
 
-
-
 <a name="createContextNameNameById"></a>
 # **createContextNameNameById**
-> createContextNameNameById(body, valueName)
+> createContextNameNameById(valueName, name)
 
 Create name by ID
 
@@ -28,15 +26,11 @@ Create operation of resource: name
 //import io.swagger.client.api.NameApi;
 
 
-
 NameApi apiInstance = new NameApi();
-
-NameAndValue body = new NameAndValue(); // NameAndValue | namebody object
-
-String valueName = Arrays.asList("valueName_example"); // String | ID of value_name
-
+String valueName = "valueName_example"; // String | ID of value_name
+NameAndValue name = new NameAndValue(); // NameAndValue | namebody object
 try {
-    apiInstance.createContextNameNameById(body, valueName);
+    apiInstance.createContextNameNameById(valueName, name);
 } catch (ApiException e) {
     System.err.println("Exception when calling NameApi#createContextNameNameById");
     e.printStackTrace();
@@ -47,9 +41,8 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**NameAndValue**](NameAndValue.md)| namebody object |
- **valueName** | [**String**](.md)| ID of value_name |
-
+ **valueName** | **String**| ID of value_name |
+ **name** | [**NameAndValue**](NameAndValue.md)| namebody object |
 
 ### Return type
 
@@ -62,8 +55,7 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
-
+ - **Accept**: application/json
 
 <a name="deleteContextNameNameById"></a>
 # **deleteContextNameNameById**
@@ -80,11 +72,8 @@ Delete operation of resource: name
 //import io.swagger.client.api.NameApi;
 
 
-
 NameApi apiInstance = new NameApi();
-
-String valueName = Arrays.asList("valueName_example"); // String | ID of value_name
-
+String valueName = "valueName_example"; // String | ID of value_name
 try {
     apiInstance.deleteContextNameNameById(valueName);
 } catch (ApiException e) {
@@ -97,8 +86,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **valueName** | [**String**](.md)| ID of value_name |
-
+ **valueName** | **String**| ID of value_name |
 
 ### Return type
 
@@ -110,9 +98,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: Not defined
-
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 <a name="retrieveContextNameName"></a>
 # **retrieveContextNameName**
@@ -129,9 +116,7 @@ Retrieve operation of resource: name
 //import io.swagger.client.api.NameApi;
 
 
-
 NameApi apiInstance = new NameApi();
-
 try {
     List<String> result = apiInstance.retrieveContextNameName();
     System.out.println(result);
@@ -144,7 +129,6 @@ try {
 ### Parameters
 This endpoint does not need any parameter.
 
-
 ### Return type
 
 **List&lt;String&gt;**
@@ -155,9 +139,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextNameNameById"></a>
 # **retrieveContextNameNameById**
@@ -174,11 +157,8 @@ Retrieve operation of resource: name
 //import io.swagger.client.api.NameApi;
 
 
-
 NameApi apiInstance = new NameApi();
-
-String valueName = Arrays.asList("valueName_example"); // String | ID of value_name
-
+String valueName = "valueName_example"; // String | ID of value_name
 try {
     NameAndValue result = apiInstance.retrieveContextNameNameById(valueName);
     System.out.println(result);
@@ -192,8 +172,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **valueName** | [**String**](.md)| ID of value_name |
-
+ **valueName** | **String**| ID of value_name |
 
 ### Return type
 
@@ -205,13 +184,12 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="updateContextNameNameById"></a>
 # **updateContextNameNameById**
-> updateContextNameNameById(body, valueName)
+> updateContextNameNameById(valueName, name)
 
 Update name by ID
 
@@ -224,15 +202,11 @@ Update operation of resource: name
 //import io.swagger.client.api.NameApi;
 
 
-
 NameApi apiInstance = new NameApi();
-
-NameAndValue body = new NameAndValue(); // NameAndValue | namebody object
-
-String valueName = Arrays.asList("valueName_example"); // String | ID of value_name
-
+String valueName = "valueName_example"; // String | ID of value_name
+NameAndValue name = new NameAndValue(); // NameAndValue | namebody object
 try {
-    apiInstance.updateContextNameNameById(body, valueName);
+    apiInstance.updateContextNameNameById(valueName, name);
 } catch (ApiException e) {
     System.err.println("Exception when calling NameApi#updateContextNameNameById");
     e.printStackTrace();
@@ -243,9 +217,8 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**NameAndValue**](NameAndValue.md)| namebody object |
- **valueName** | [**String**](.md)| ID of value_name |
-
+ **valueName** | **String**| ID of value_name |
+ **name** | [**NameAndValue**](NameAndValue.md)| namebody object |
 
 ### Return type
 
@@ -258,7 +231,5 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
-
-
+ - **Accept**: application/json
 

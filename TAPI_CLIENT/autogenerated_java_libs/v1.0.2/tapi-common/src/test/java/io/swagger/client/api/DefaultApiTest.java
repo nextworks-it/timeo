@@ -19,16 +19,13 @@ import io.swagger.client.model.GetServiceInterfacePointDetailsRPCOutputSchema;
 import io.swagger.client.model.GetServiceInterfacePointListRPCOutputSchema;
 import io.swagger.client.model.TapiContext;
 import io.swagger.client.model.UpdateServiceInterfacePointRPCInputSchema;
-
 import org.junit.Test;
 import org.junit.Ignore;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * API tests for DefaultApi
@@ -49,10 +46,8 @@ public class DefaultApiTest {
      */
     @Test
     public void createContextByIdTest() throws ApiException {
-        
-        Object body = null;
-        
-        api.createContextById(body);
+        TapiContext context = null;
+        api.createContextById(context);
 
         // TODO: test validations
     }
@@ -67,10 +62,8 @@ public class DefaultApiTest {
      */
     @Test
     public void createGetServiceInterfacePointDetailsByIdTest() throws ApiException {
-        
-        GetServiceInterfacePointDetailsRPCInputSchema body = null;
-        
-        GetServiceInterfacePointDetailsRPCOutputSchema response = api.createGetServiceInterfacePointDetailsById(body);
+        GetServiceInterfacePointDetailsRPCInputSchema getServiceInterfacePointDetails = null;
+        GetServiceInterfacePointDetailsRPCOutputSchema response = api.createGetServiceInterfacePointDetailsById(getServiceInterfacePointDetails);
 
         // TODO: test validations
     }
@@ -85,7 +78,6 @@ public class DefaultApiTest {
      */
     @Test
     public void createGetServiceInterfacePointListByIdTest() throws ApiException {
-        
         GetServiceInterfacePointListRPCOutputSchema response = api.createGetServiceInterfacePointListById();
 
         // TODO: test validations
@@ -101,10 +93,8 @@ public class DefaultApiTest {
      */
     @Test
     public void createUpdateServiceInterfacePointByIdTest() throws ApiException {
-        
-        UpdateServiceInterfacePointRPCInputSchema body = null;
-        
-        api.createUpdateServiceInterfacePointById(body);
+        UpdateServiceInterfacePointRPCInputSchema updateServiceInterfacePoint = null;
+        api.createUpdateServiceInterfacePointById(updateServiceInterfacePoint);
 
         // TODO: test validations
     }
@@ -119,7 +109,6 @@ public class DefaultApiTest {
      */
     @Test
     public void deleteContextByIdTest() throws ApiException {
-        
         api.deleteContextById();
 
         // TODO: test validations
@@ -135,7 +124,6 @@ public class DefaultApiTest {
      */
     @Test
     public void retrieveContextTest() throws ApiException {
-        
         TapiContext response = api.retrieveContext();
 
         // TODO: test validations
@@ -151,10 +139,8 @@ public class DefaultApiTest {
      */
     @Test
     public void updateContextByIdTest() throws ApiException {
-        
-        Object body = null;
-        
-        api.updateContextById(body);
+        TapiContext context = null;
+        api.updateContextById(context);
 
         // TODO: test validations
     }

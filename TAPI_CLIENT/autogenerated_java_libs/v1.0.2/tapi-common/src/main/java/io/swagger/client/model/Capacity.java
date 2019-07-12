@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -27,52 +28,53 @@ import java.io.IOException;
 
 /**
  * Information on capacity of a particular TopologicalEntity.
- */@ApiModel(description = "Information on capacity of a particular TopologicalEntity.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+ */
+@ApiModel(description = "Information on capacity of a particular TopologicalEntity.")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class Capacity {
-
   @SerializedName("bandwidth-profile")
   private BandwidthProfile bandwidthProfile = null;
-  
+
   @SerializedName("total-size")
   private CapacityValue totalSize = null;
-  
+
   public Capacity bandwidthProfile(BandwidthProfile bandwidthProfile) {
     this.bandwidthProfile = bandwidthProfile;
     return this;
   }
 
-  
-  /**
-  * Get bandwidthProfile
-  * @return bandwidthProfile
+   /**
+   * Get bandwidthProfile
+   * @return bandwidthProfile
   **/
   @ApiModelProperty(value = "")
   public BandwidthProfile getBandwidthProfile() {
     return bandwidthProfile;
   }
+
   public void setBandwidthProfile(BandwidthProfile bandwidthProfile) {
     this.bandwidthProfile = bandwidthProfile;
   }
-  
+
   public Capacity totalSize(CapacityValue totalSize) {
     this.totalSize = totalSize;
     return this;
   }
 
-  
-  /**
-  * Get totalSize
-  * @return totalSize
+   /**
+   * Total capacity of the TopologicalEntity in MB/s. In case of bandwidthProfile, this is expected to same as the committedInformationRate.
+   * @return totalSize
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "Total capacity of the TopologicalEntity in MB/s. In case of bandwidthProfile, this is expected to same as the committedInformationRate.")
   public CapacityValue getTotalSize() {
     return totalSize;
   }
+
   public void setTotalSize(CapacityValue totalSize) {
     this.totalSize = totalSize;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -90,7 +92,8 @@ public class Capacity {
   public int hashCode() {
     return Objects.hash(bandwidthProfile, totalSize);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -113,8 +116,5 @@ public class Capacity {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -27,30 +28,30 @@ import java.io.IOException;
 /**
  * GetServiceInterfacePointDetailsRPCOutputSchema
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class GetServiceInterfacePointDetailsRPCOutputSchema {
-
   @SerializedName("sip")
   private ServiceInterfacePoint sip = null;
-  
+
   public GetServiceInterfacePointDetailsRPCOutputSchema sip(ServiceInterfacePoint sip) {
     this.sip = sip;
     return this;
   }
 
-  
-  /**
-  * Get sip
-  * @return sip
+   /**
+   * Get sip
+   * @return sip
   **/
   @ApiModelProperty(value = "")
   public ServiceInterfacePoint getSip() {
     return sip;
   }
+
   public void setSip(ServiceInterfacePoint sip) {
     this.sip = sip;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -67,7 +68,8 @@ public class GetServiceInterfacePointDetailsRPCOutputSchema {
   public int hashCode() {
     return Objects.hash(sip);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -89,8 +91,5 @@ public class GetServiceInterfacePointDetailsRPCOutputSchema {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

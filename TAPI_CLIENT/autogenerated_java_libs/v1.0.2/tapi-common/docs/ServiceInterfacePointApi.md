@@ -30,11 +30,9 @@ Method | HTTP request | Description
 [**updateContextServiceInterfacePointServiceInterfacePointById**](ServiceInterfacePointApi.md#updateContextServiceInterfacePointServiceInterfacePointById) | **PUT** /config/context/service-interface-point/{uuid}/ | Update service-interface-point by ID
 
 
-
-
 <a name="createContextServiceInterfacePointNameNameById"></a>
 # **createContextServiceInterfacePointNameNameById**
-> createContextServiceInterfacePointNameNameById(body, uuid, valueName)
+> createContextServiceInterfacePointNameNameById(uuid, valueName, name)
 
 Create name by ID
 
@@ -47,17 +45,12 @@ Create operation of resource: name
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-NameAndValue body = new NameAndValue(); // NameAndValue | namebody object
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
-String valueName = Arrays.asList("valueName_example"); // String | ID of value_name
-
+String uuid = "uuid_example"; // String | ID of uuid
+String valueName = "valueName_example"; // String | ID of value_name
+NameAndValue name = new NameAndValue(); // NameAndValue | namebody object
 try {
-    apiInstance.createContextServiceInterfacePointNameNameById(body, uuid, valueName);
+    apiInstance.createContextServiceInterfacePointNameNameById(uuid, valueName, name);
 } catch (ApiException e) {
     System.err.println("Exception when calling ServiceInterfacePointApi#createContextServiceInterfacePointNameNameById");
     e.printStackTrace();
@@ -68,10 +61,9 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**NameAndValue**](NameAndValue.md)| namebody object |
- **uuid** | [**String**](.md)| ID of uuid |
- **valueName** | [**String**](.md)| ID of value_name |
-
+ **uuid** | **String**| ID of uuid |
+ **valueName** | **String**| ID of value_name |
+ **name** | [**NameAndValue**](NameAndValue.md)| namebody object |
 
 ### Return type
 
@@ -84,12 +76,11 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
-
+ - **Accept**: application/json
 
 <a name="createContextServiceInterfacePointServiceInterfacePointById"></a>
 # **createContextServiceInterfacePointServiceInterfacePointById**
-> createContextServiceInterfacePointServiceInterfacePointById(body, uuid)
+> createContextServiceInterfacePointServiceInterfacePointById(uuid, serviceInterfacePoint)
 
 Create service-interface-point by ID
 
@@ -102,15 +93,11 @@ Create operation of resource: service-interface-point
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-Object body = null; // Object | service-interface-pointbody object
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
+ServiceInterfacePoint serviceInterfacePoint = new ServiceInterfacePoint(); // ServiceInterfacePoint | service-interface-pointbody object
 try {
-    apiInstance.createContextServiceInterfacePointServiceInterfacePointById(body, uuid);
+    apiInstance.createContextServiceInterfacePointServiceInterfacePointById(uuid, serviceInterfacePoint);
 } catch (ApiException e) {
     System.err.println("Exception when calling ServiceInterfacePointApi#createContextServiceInterfacePointServiceInterfacePointById");
     e.printStackTrace();
@@ -121,9 +108,8 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**Object**](Object.md)| service-interface-pointbody object |
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
+ **serviceInterfacePoint** | [**ServiceInterfacePoint**](ServiceInterfacePoint.md)| service-interface-pointbody object |
 
 ### Return type
 
@@ -136,8 +122,7 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
-
+ - **Accept**: application/json
 
 <a name="deleteContextServiceInterfacePointNameNameById"></a>
 # **deleteContextServiceInterfacePointNameNameById**
@@ -154,13 +139,9 @@ Delete operation of resource: name
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
-String valueName = Arrays.asList("valueName_example"); // String | ID of value_name
-
+String uuid = "uuid_example"; // String | ID of uuid
+String valueName = "valueName_example"; // String | ID of value_name
 try {
     apiInstance.deleteContextServiceInterfacePointNameNameById(uuid, valueName);
 } catch (ApiException e) {
@@ -173,9 +154,8 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
- **valueName** | [**String**](.md)| ID of value_name |
-
+ **uuid** | **String**| ID of uuid |
+ **valueName** | **String**| ID of value_name |
 
 ### Return type
 
@@ -187,9 +167,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: Not defined
-
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 <a name="deleteContextServiceInterfacePointServiceInterfacePointById"></a>
 # **deleteContextServiceInterfacePointServiceInterfacePointById**
@@ -206,11 +185,8 @@ Delete operation of resource: service-interface-point
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     apiInstance.deleteContextServiceInterfacePointServiceInterfacePointById(uuid);
 } catch (ApiException e) {
@@ -223,8 +199,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -236,9 +211,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: Not defined
-
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 <a name="retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacity"></a>
 # **retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacity**
@@ -255,11 +229,8 @@ Retrieve operation of resource: available-capacity
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     Capacity result = apiInstance.retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacity(uuid);
     System.out.println(result);
@@ -273,8 +244,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -286,9 +256,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfile"></a>
 # **retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfile**
@@ -305,11 +274,8 @@ Retrieve operation of resource: bandwidth-profile
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     BandwidthProfile result = apiInstance.retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfile(uuid);
     System.out.println(result);
@@ -323,8 +289,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -336,9 +301,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize"></a>
 # **retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize**
@@ -355,11 +319,8 @@ Retrieve operation of resource: committed-burst-size
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     CapacityValue result = apiInstance.retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize(uuid);
     System.out.println(result);
@@ -373,8 +334,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -386,9 +346,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate"></a>
 # **retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate**
@@ -405,11 +364,8 @@ Retrieve operation of resource: committed-information-rate
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     CapacityValue result = apiInstance.retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate(uuid);
     System.out.println(result);
@@ -423,8 +379,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -436,9 +391,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSize"></a>
 # **retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSize**
@@ -455,11 +409,8 @@ Retrieve operation of resource: peak-burst-size
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     CapacityValue result = apiInstance.retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSize(uuid);
     System.out.println(result);
@@ -473,8 +424,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -486,9 +436,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRate"></a>
 # **retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRate**
@@ -505,11 +454,8 @@ Retrieve operation of resource: peak-information-rate
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     CapacityValue result = apiInstance.retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRate(uuid);
     System.out.println(result);
@@ -523,8 +469,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -536,9 +481,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSize"></a>
 # **retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSize**
@@ -555,11 +499,8 @@ Retrieve operation of resource: total-size
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     CapacityValue result = apiInstance.retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSize(uuid);
     System.out.println(result);
@@ -573,8 +514,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -586,9 +526,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointNameName"></a>
 # **retrieveContextServiceInterfacePointNameName**
@@ -605,11 +544,8 @@ Retrieve operation of resource: name
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     List<String> result = apiInstance.retrieveContextServiceInterfacePointNameName(uuid);
     System.out.println(result);
@@ -623,8 +559,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -636,9 +571,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointNameNameById"></a>
 # **retrieveContextServiceInterfacePointNameNameById**
@@ -655,13 +589,9 @@ Retrieve operation of resource: name
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
-String valueName = Arrays.asList("valueName_example"); // String | ID of value_name
-
+String uuid = "uuid_example"; // String | ID of uuid
+String valueName = "valueName_example"; // String | ID of value_name
 try {
     NameAndValue result = apiInstance.retrieveContextServiceInterfacePointNameNameById(uuid, valueName);
     System.out.println(result);
@@ -675,9 +605,8 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
- **valueName** | [**String**](.md)| ID of value_name |
-
+ **uuid** | **String**| ID of uuid |
+ **valueName** | **String**| ID of value_name |
 
 ### Return type
 
@@ -689,9 +618,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointServiceInterfacePoint"></a>
 # **retrieveContextServiceInterfacePointServiceInterfacePoint**
@@ -708,9 +636,7 @@ Retrieve operation of resource: service-interface-point
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
 try {
     List<String> result = apiInstance.retrieveContextServiceInterfacePointServiceInterfacePoint();
     System.out.println(result);
@@ -723,7 +649,6 @@ try {
 ### Parameters
 This endpoint does not need any parameter.
 
-
 ### Return type
 
 **List&lt;String&gt;**
@@ -734,9 +659,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointServiceInterfacePointById"></a>
 # **retrieveContextServiceInterfacePointServiceInterfacePointById**
@@ -753,11 +677,8 @@ Retrieve operation of resource: service-interface-point
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     ServiceInterfacePoint result = apiInstance.retrieveContextServiceInterfacePointServiceInterfacePointById(uuid);
     System.out.println(result);
@@ -771,8 +692,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -784,9 +704,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfile"></a>
 # **retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfile**
@@ -803,11 +722,8 @@ Retrieve operation of resource: bandwidth-profile
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     BandwidthProfile result = apiInstance.retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfile(uuid);
     System.out.println(result);
@@ -821,8 +737,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -834,9 +749,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize"></a>
 # **retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize**
@@ -853,11 +767,8 @@ Retrieve operation of resource: committed-burst-size
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     CapacityValue result = apiInstance.retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize(uuid);
     System.out.println(result);
@@ -871,8 +782,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -884,9 +794,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate"></a>
 # **retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate**
@@ -903,11 +812,8 @@ Retrieve operation of resource: committed-information-rate
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     CapacityValue result = apiInstance.retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate(uuid);
     System.out.println(result);
@@ -921,8 +827,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -934,9 +839,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSize"></a>
 # **retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSize**
@@ -953,11 +857,8 @@ Retrieve operation of resource: peak-burst-size
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     CapacityValue result = apiInstance.retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSize(uuid);
     System.out.println(result);
@@ -971,8 +872,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -984,9 +884,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRate"></a>
 # **retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRate**
@@ -1003,11 +902,8 @@ Retrieve operation of resource: peak-information-rate
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     CapacityValue result = apiInstance.retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRate(uuid);
     System.out.println(result);
@@ -1021,8 +917,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -1034,9 +929,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacity"></a>
 # **retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacity**
@@ -1053,11 +947,8 @@ Retrieve operation of resource: total-potential-capacity
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     Capacity result = apiInstance.retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacity(uuid);
     System.out.println(result);
@@ -1071,8 +962,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -1084,9 +974,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSize"></a>
 # **retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSize**
@@ -1103,11 +992,8 @@ Retrieve operation of resource: total-size
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
 try {
     CapacityValue result = apiInstance.retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSize(uuid);
     System.out.println(result);
@@ -1121,8 +1007,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
 
 ### Return type
 
@@ -1134,13 +1019,12 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="updateContextServiceInterfacePointNameNameById"></a>
 # **updateContextServiceInterfacePointNameNameById**
-> updateContextServiceInterfacePointNameNameById(body, uuid, valueName)
+> updateContextServiceInterfacePointNameNameById(uuid, valueName, name)
 
 Update name by ID
 
@@ -1153,17 +1037,12 @@ Update operation of resource: name
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-NameAndValue body = new NameAndValue(); // NameAndValue | namebody object
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
-String valueName = Arrays.asList("valueName_example"); // String | ID of value_name
-
+String uuid = "uuid_example"; // String | ID of uuid
+String valueName = "valueName_example"; // String | ID of value_name
+NameAndValue name = new NameAndValue(); // NameAndValue | namebody object
 try {
-    apiInstance.updateContextServiceInterfacePointNameNameById(body, uuid, valueName);
+    apiInstance.updateContextServiceInterfacePointNameNameById(uuid, valueName, name);
 } catch (ApiException e) {
     System.err.println("Exception when calling ServiceInterfacePointApi#updateContextServiceInterfacePointNameNameById");
     e.printStackTrace();
@@ -1174,10 +1053,9 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**NameAndValue**](NameAndValue.md)| namebody object |
- **uuid** | [**String**](.md)| ID of uuid |
- **valueName** | [**String**](.md)| ID of value_name |
-
+ **uuid** | **String**| ID of uuid |
+ **valueName** | **String**| ID of value_name |
+ **name** | [**NameAndValue**](NameAndValue.md)| namebody object |
 
 ### Return type
 
@@ -1190,12 +1068,11 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
-
+ - **Accept**: application/json
 
 <a name="updateContextServiceInterfacePointServiceInterfacePointById"></a>
 # **updateContextServiceInterfacePointServiceInterfacePointById**
-> updateContextServiceInterfacePointServiceInterfacePointById(body, uuid)
+> updateContextServiceInterfacePointServiceInterfacePointById(uuid, serviceInterfacePoint)
 
 Update service-interface-point by ID
 
@@ -1208,15 +1085,11 @@ Update operation of resource: service-interface-point
 //import io.swagger.client.api.ServiceInterfacePointApi;
 
 
-
 ServiceInterfacePointApi apiInstance = new ServiceInterfacePointApi();
-
-Object body = null; // Object | service-interface-pointbody object
-
-String uuid = Arrays.asList("uuid_example"); // String | ID of uuid
-
+String uuid = "uuid_example"; // String | ID of uuid
+ServiceInterfacePoint serviceInterfacePoint = new ServiceInterfacePoint(); // ServiceInterfacePoint | service-interface-pointbody object
 try {
-    apiInstance.updateContextServiceInterfacePointServiceInterfacePointById(body, uuid);
+    apiInstance.updateContextServiceInterfacePointServiceInterfacePointById(uuid, serviceInterfacePoint);
 } catch (ApiException e) {
     System.err.println("Exception when calling ServiceInterfacePointApi#updateContextServiceInterfacePointServiceInterfacePointById");
     e.printStackTrace();
@@ -1227,9 +1100,8 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**Object**](Object.md)| service-interface-pointbody object |
- **uuid** | [**String**](.md)| ID of uuid |
-
+ **uuid** | **String**| ID of uuid |
+ **serviceInterfacePoint** | [**ServiceInterfacePoint**](ServiceInterfacePoint.md)| service-interface-pointbody object |
 
 ### Return type
 
@@ -1242,7 +1114,5 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
-
-
+ - **Accept**: application/json
 

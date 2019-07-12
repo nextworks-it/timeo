@@ -22,25 +22,18 @@ import io.swagger.client.Pair;
 import io.swagger.client.ProgressRequestBody;
 import io.swagger.client.ProgressResponseBody;
 
-
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 
 
-
-
 import io.swagger.client.model.NameAndValue;
 
-
 import java.lang.reflect.Type;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-
 
 public class NameApi {
     private ApiClient apiClient;
@@ -61,20 +54,18 @@ public class NameApi {
         this.apiClient = apiClient;
     }
 
-    
     /**
      * Build call for createContextNameNameById
-     * @param body namebody object (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
-    public com.squareup.okhttp.Call createContextNameNameByIdCall(NameAndValue body, String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = body;
-        
+    public com.squareup.okhttp.Call createContextNameNameByIdCall(String valueName, NameAndValue name, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = name;
+
         // create path and map variables
         String localVarPath = "/config/context/name/{value_name}/"
             .replaceAll("\\{" + "value_name" + "\\}", apiClient.escapeString(valueName.toString()));
@@ -87,7 +78,7 @@ public class NameApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            
+            "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
@@ -113,70 +104,60 @@ public class NameApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createContextNameNameByIdValidateBeforeCall(NameAndValue body, String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
-        
-        // verify the required parameter 'body' is set
-        if (body == null) {
-            throw new ApiException("Missing the required parameter 'body' when calling createContextNameNameById(Async)");
-        }
+    private com.squareup.okhttp.Call createContextNameNameByIdValidateBeforeCall(String valueName, NameAndValue name, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
         // verify the required parameter 'valueName' is set
         if (valueName == null) {
             throw new ApiException("Missing the required parameter 'valueName' when calling createContextNameNameById(Async)");
         }
         
+        // verify the required parameter 'name' is set
+        if (name == null) {
+            throw new ApiException("Missing the required parameter 'name' when calling createContextNameNameById(Async)");
+        }
         
-        com.squareup.okhttp.Call call = createContextNameNameByIdCall(body, valueName, progressListener, progressRequestListener);
+
+        com.squareup.okhttp.Call call = createContextNameNameByIdCall(valueName, name, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
      * Create name by ID
      * Create operation of resource: name
-     * @param body namebody object (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public void createContextNameNameById(NameAndValue body, String valueName) throws ApiException {
-        createContextNameNameByIdWithHttpInfo(body, valueName);
+    public void createContextNameNameById(String valueName, NameAndValue name) throws ApiException {
+        createContextNameNameByIdWithHttpInfo(valueName, name);
     }
 
     /**
      * Create name by ID
      * Create operation of resource: name
-     * @param body namebody object (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public ApiResponse<Void> createContextNameNameByIdWithHttpInfo(NameAndValue body, String valueName) throws ApiException {
-        com.squareup.okhttp.Call call = createContextNameNameByIdValidateBeforeCall(body, valueName, null, null);
+    public ApiResponse<Void> createContextNameNameByIdWithHttpInfo(String valueName, NameAndValue name) throws ApiException {
+        com.squareup.okhttp.Call call = createContextNameNameByIdValidateBeforeCall(valueName, name, null, null);
         return apiClient.execute(call);
     }
 
     /**
      * Create name by ID (asynchronously)
      * Create operation of resource: name
-     * @param body namebody object (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
-    public com.squareup.okhttp.Call createContextNameNameByIdAsync(NameAndValue body, String valueName, final ApiCallback<Void> callback) throws ApiException {
+    public com.squareup.okhttp.Call createContextNameNameByIdAsync(String valueName, NameAndValue name, final ApiCallback<Void> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -197,11 +178,10 @@ public class NameApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createContextNameNameByIdValidateBeforeCall(body, valueName, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = createContextNameNameByIdValidateBeforeCall(valueName, name, progressListener, progressRequestListener);
         apiClient.executeAsync(call, callback);
         return call;
     }
-    
     /**
      * Build call for deleteContextNameNameById
      * @param valueName ID of value_name (required)
@@ -209,11 +189,10 @@ public class NameApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call deleteContextNameNameByIdCall(String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/name/{value_name}/"
             .replaceAll("\\{" + "value_name" + "\\}", apiClient.escapeString(valueName.toString()));
@@ -226,13 +205,13 @@ public class NameApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            
+            "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -252,26 +231,19 @@ public class NameApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "DELETE", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call deleteContextNameNameByIdValidateBeforeCall(String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'valueName' is set
         if (valueName == null) {
             throw new ApiException("Missing the required parameter 'valueName' when calling deleteContextNameNameById(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = deleteContextNameNameByIdCall(valueName, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -279,7 +251,6 @@ public class NameApi {
      * Delete operation of resource: name
      * @param valueName ID of value_name (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public void deleteContextNameNameById(String valueName) throws ApiException {
         deleteContextNameNameByIdWithHttpInfo(valueName);
@@ -291,7 +262,6 @@ public class NameApi {
      * @param valueName ID of value_name (required)
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<Void> deleteContextNameNameByIdWithHttpInfo(String valueName) throws ApiException {
         com.squareup.okhttp.Call call = deleteContextNameNameByIdValidateBeforeCall(valueName, null, null);
@@ -305,7 +275,6 @@ public class NameApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call deleteContextNameNameByIdAsync(String valueName, final ApiCallback<Void> callback) throws ApiException {
 
@@ -332,18 +301,16 @@ public class NameApi {
         apiClient.executeAsync(call, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextNameName
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextNameNameCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/name/";
 
@@ -361,7 +328,7 @@ public class NameApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -381,21 +348,14 @@ public class NameApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextNameNameValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
-        
-        
+
         com.squareup.okhttp.Call call = retrieveContextNameNameCall(progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -403,7 +363,6 @@ public class NameApi {
      * Retrieve operation of resource: name
      * @return List&lt;String&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public List<String> retrieveContextNameName() throws ApiException {
         ApiResponse<List<String>> resp = retrieveContextNameNameWithHttpInfo();
@@ -415,7 +374,6 @@ public class NameApi {
      * Retrieve operation of resource: name
      * @return ApiResponse&lt;List&lt;String&gt;&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<List<String>> retrieveContextNameNameWithHttpInfo() throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextNameNameValidateBeforeCall(null, null);
@@ -429,7 +387,6 @@ public class NameApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextNameNameAsync(final ApiCallback<List<String>> callback) throws ApiException {
 
@@ -457,7 +414,6 @@ public class NameApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextNameNameById
      * @param valueName ID of value_name (required)
@@ -465,11 +421,10 @@ public class NameApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextNameNameByIdCall(String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/name/{value_name}/"
             .replaceAll("\\{" + "value_name" + "\\}", apiClient.escapeString(valueName.toString()));
@@ -488,7 +443,7 @@ public class NameApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -508,26 +463,19 @@ public class NameApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextNameNameByIdValidateBeforeCall(String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'valueName' is set
         if (valueName == null) {
             throw new ApiException("Missing the required parameter 'valueName' when calling retrieveContextNameNameById(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextNameNameByIdCall(valueName, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -536,7 +484,6 @@ public class NameApi {
      * @param valueName ID of value_name (required)
      * @return NameAndValue
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public NameAndValue retrieveContextNameNameById(String valueName) throws ApiException {
         ApiResponse<NameAndValue> resp = retrieveContextNameNameByIdWithHttpInfo(valueName);
@@ -549,7 +496,6 @@ public class NameApi {
      * @param valueName ID of value_name (required)
      * @return ApiResponse&lt;NameAndValue&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<NameAndValue> retrieveContextNameNameByIdWithHttpInfo(String valueName) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextNameNameByIdValidateBeforeCall(valueName, null, null);
@@ -564,7 +510,6 @@ public class NameApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextNameNameByIdAsync(String valueName, final ApiCallback<NameAndValue> callback) throws ApiException {
 
@@ -592,20 +537,18 @@ public class NameApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for updateContextNameNameById
-     * @param body namebody object (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
-    public com.squareup.okhttp.Call updateContextNameNameByIdCall(NameAndValue body, String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = body;
-        
+    public com.squareup.okhttp.Call updateContextNameNameByIdCall(String valueName, NameAndValue name, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = name;
+
         // create path and map variables
         String localVarPath = "/config/context/name/{value_name}/"
             .replaceAll("\\{" + "value_name" + "\\}", apiClient.escapeString(valueName.toString()));
@@ -618,7 +561,7 @@ public class NameApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            
+            "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
@@ -644,70 +587,60 @@ public class NameApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "PUT", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call updateContextNameNameByIdValidateBeforeCall(NameAndValue body, String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
-        
-        // verify the required parameter 'body' is set
-        if (body == null) {
-            throw new ApiException("Missing the required parameter 'body' when calling updateContextNameNameById(Async)");
-        }
+    private com.squareup.okhttp.Call updateContextNameNameByIdValidateBeforeCall(String valueName, NameAndValue name, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
         // verify the required parameter 'valueName' is set
         if (valueName == null) {
             throw new ApiException("Missing the required parameter 'valueName' when calling updateContextNameNameById(Async)");
         }
         
+        // verify the required parameter 'name' is set
+        if (name == null) {
+            throw new ApiException("Missing the required parameter 'name' when calling updateContextNameNameById(Async)");
+        }
         
-        com.squareup.okhttp.Call call = updateContextNameNameByIdCall(body, valueName, progressListener, progressRequestListener);
+
+        com.squareup.okhttp.Call call = updateContextNameNameByIdCall(valueName, name, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
      * Update name by ID
      * Update operation of resource: name
-     * @param body namebody object (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public void updateContextNameNameById(NameAndValue body, String valueName) throws ApiException {
-        updateContextNameNameByIdWithHttpInfo(body, valueName);
+    public void updateContextNameNameById(String valueName, NameAndValue name) throws ApiException {
+        updateContextNameNameByIdWithHttpInfo(valueName, name);
     }
 
     /**
      * Update name by ID
      * Update operation of resource: name
-     * @param body namebody object (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public ApiResponse<Void> updateContextNameNameByIdWithHttpInfo(NameAndValue body, String valueName) throws ApiException {
-        com.squareup.okhttp.Call call = updateContextNameNameByIdValidateBeforeCall(body, valueName, null, null);
+    public ApiResponse<Void> updateContextNameNameByIdWithHttpInfo(String valueName, NameAndValue name) throws ApiException {
+        com.squareup.okhttp.Call call = updateContextNameNameByIdValidateBeforeCall(valueName, name, null, null);
         return apiClient.execute(call);
     }
 
     /**
      * Update name by ID (asynchronously)
      * Update operation of resource: name
-     * @param body namebody object (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
-    public com.squareup.okhttp.Call updateContextNameNameByIdAsync(NameAndValue body, String valueName, final ApiCallback<Void> callback) throws ApiException {
+    public com.squareup.okhttp.Call updateContextNameNameByIdAsync(String valueName, NameAndValue name, final ApiCallback<Void> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -728,9 +661,8 @@ public class NameApi {
             };
         }
 
-        com.squareup.okhttp.Call call = updateContextNameNameByIdValidateBeforeCall(body, valueName, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = updateContextNameNameByIdValidateBeforeCall(valueName, name, progressListener, progressRequestListener);
         apiClient.executeAsync(call, callback);
         return call;
     }
-    
 }

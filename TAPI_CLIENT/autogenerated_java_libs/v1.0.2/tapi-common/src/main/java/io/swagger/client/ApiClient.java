@@ -19,12 +19,9 @@ import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor.Level;
 import okio.BufferedSink;
 import okio.Okio;
-
-
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
-
 
 import javax.net.ssl.*;
 import java.io.File;
@@ -42,7 +39,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
-
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -83,7 +79,6 @@ public class ApiClient {
     public ApiClient() {
         httpClient = new OkHttpClient();
 
-        
 
         verifyingSsl = true;
 
@@ -234,8 +229,6 @@ public class ApiClient {
         return this;
     }
 
-    
-    
     public ApiClient setOffsetDateTimeFormat(DateTimeFormatter dateFormat) {
         this.json.setOffsetDateTimeFormat(dateFormat);
         return this;
@@ -246,7 +239,6 @@ public class ApiClient {
         return this;
     }
 
-    
     public ApiClient setLenientOnJson(boolean lenientOnJson) {
         this.json.setLenientOnJson(lenientOnJson);
         return this;
@@ -412,7 +404,7 @@ public class ApiClient {
     }
 
     /**
-     * Set the tempoaray folder path (for downloading files)
+     * Set the temporary folder path (for downloading files)
      *
      * @param tempFolderPath Temporary folder path
      * @return ApiClient
@@ -434,12 +426,57 @@ public class ApiClient {
     /**
      * Sets the connect timeout (in milliseconds).
      * A value of 0 means no timeout, otherwise values must be between 1 and
+     * {@link Integer#MAX_VALUE}.
      *
      * @param connectionTimeout connection timeout in milliseconds
      * @return Api client
      */
     public ApiClient setConnectTimeout(int connectionTimeout) {
         httpClient.setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS);
+        return this;
+    }
+
+    /**
+     * Get read timeout (in milliseconds).
+     *
+     * @return Timeout in milliseconds
+     */
+    public int getReadTimeout() {
+        return httpClient.getReadTimeout();
+    }
+
+    /**
+     * Sets the read timeout (in milliseconds).
+     * A value of 0 means no timeout, otherwise values must be between 1 and
+     * {@link Integer#MAX_VALUE}.
+     *
+     * @param readTimeout read timeout in milliseconds
+     * @return Api client
+     */
+    public ApiClient setReadTimeout(int readTimeout) {
+        httpClient.setReadTimeout(readTimeout, TimeUnit.MILLISECONDS);
+        return this;
+    }
+
+    /**
+     * Get write timeout (in milliseconds).
+     *
+     * @return Timeout in milliseconds
+     */
+    public int getWriteTimeout() {
+        return httpClient.getWriteTimeout();
+    }
+
+    /**
+     * Sets the write timeout (in milliseconds).
+     * A value of 0 means no timeout, otherwise values must be between 1 and
+     * {@link Integer#MAX_VALUE}.
+     *
+     * @param writeTimeout connection timeout in milliseconds
+     * @return Api client
+     */
+    public ApiClient setWriteTimeout(int writeTimeout) {
+        httpClient.setWriteTimeout(writeTimeout, TimeUnit.MILLISECONDS);
         return this;
     }
 

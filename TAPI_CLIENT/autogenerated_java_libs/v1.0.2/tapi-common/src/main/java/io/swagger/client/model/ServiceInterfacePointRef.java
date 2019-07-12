@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -26,30 +27,30 @@ import java.io.IOException;
 /**
  * ServiceInterfacePointRef
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class ServiceInterfacePointRef {
-
   @SerializedName("service-interface-point-uuid")
   private String serviceInterfacePointUuid = null;
-  
+
   public ServiceInterfacePointRef serviceInterfacePointUuid(String serviceInterfacePointUuid) {
     this.serviceInterfacePointUuid = serviceInterfacePointUuid;
     return this;
   }
 
-  
-  /**
-  * Get serviceInterfacePointUuid
-  * @return serviceInterfacePointUuid
+   /**
+   * Get serviceInterfacePointUuid
+   * @return serviceInterfacePointUuid
   **/
   @ApiModelProperty(value = "")
   public String getServiceInterfacePointUuid() {
     return serviceInterfacePointUuid;
   }
+
   public void setServiceInterfacePointUuid(String serviceInterfacePointUuid) {
     this.serviceInterfacePointUuid = serviceInterfacePointUuid;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -66,7 +67,8 @@ public class ServiceInterfacePointRef {
   public int hashCode() {
     return Objects.hash(serviceInterfacePointUuid);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -88,8 +90,5 @@ public class ServiceInterfacePointRef {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

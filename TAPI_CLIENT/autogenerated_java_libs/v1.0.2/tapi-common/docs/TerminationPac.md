@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **terminationDirection** | [**TerminationDirectionEnum**](#TerminationDirectionEnum) | The overall directionality of the LP. - A BIDIRECTIONAL LP will have some SINK and/or SOURCE flowss. - A SINK LP can only contain elements with SINK flows or CONTRA_DIRECTION_SOURCE flows - A SOURCE LP can only contain SOURCE flows or CONTRA_DIRECTION_SINK flows |  [optional]
 
 
-
 <a name="TerminationStateEnum"></a>
 ## Enum: TerminationStateEnum
 Name | Value

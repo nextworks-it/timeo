@@ -15,16 +15,13 @@ package io.swagger.client.api;
 
 import io.swagger.client.ApiException;
 import io.swagger.client.model.NameAndValue;
-
 import org.junit.Test;
 import org.junit.Ignore;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * API tests for NameApi
@@ -45,12 +42,9 @@ public class NameApiTest {
      */
     @Test
     public void createContextNameNameByIdTest() throws ApiException {
-        
-        NameAndValue body = null;
-        
         String valueName = null;
-        
-        api.createContextNameNameById(body, valueName);
+        NameAndValue name = null;
+        api.createContextNameNameById(valueName, name);
 
         // TODO: test validations
     }
@@ -65,9 +59,7 @@ public class NameApiTest {
      */
     @Test
     public void deleteContextNameNameByIdTest() throws ApiException {
-        
         String valueName = null;
-        
         api.deleteContextNameNameById(valueName);
 
         // TODO: test validations
@@ -83,7 +75,6 @@ public class NameApiTest {
      */
     @Test
     public void retrieveContextNameNameTest() throws ApiException {
-        
         List<String> response = api.retrieveContextNameName();
 
         // TODO: test validations
@@ -99,9 +90,7 @@ public class NameApiTest {
      */
     @Test
     public void retrieveContextNameNameByIdTest() throws ApiException {
-        
         String valueName = null;
-        
         NameAndValue response = api.retrieveContextNameNameById(valueName);
 
         // TODO: test validations
@@ -117,12 +106,9 @@ public class NameApiTest {
      */
     @Test
     public void updateContextNameNameByIdTest() throws ApiException {
-        
-        NameAndValue body = null;
-        
         String valueName = null;
-        
-        api.updateContextNameNameById(body, valueName);
+        NameAndValue name = null;
+        api.updateContextNameNameById(valueName, name);
 
         // TODO: test validations
     }

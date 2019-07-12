@@ -13,7 +13,6 @@ Name | Type | Description | Notes
 **peakBurstSize** | [**CapacityValue**](CapacityValue.md) |  |  [optional]
 
 
-
 <a name="BwProfileTypeEnum"></a>
 ## Enum: BwProfileTypeEnum
 Name | Value

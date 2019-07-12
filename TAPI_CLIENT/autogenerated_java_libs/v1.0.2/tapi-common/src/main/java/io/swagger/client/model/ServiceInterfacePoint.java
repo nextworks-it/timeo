@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -25,24 +26,30 @@ import io.swagger.client.model.AdminStatePac;
 import io.swagger.client.model.Capacity;
 import io.swagger.client.model.CapacityPac;
 import io.swagger.client.model.NameAndValue;
-import io.swagger.client.model.Resource-spec;
+import io.swagger.client.model.ResourceSpec;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The LogicalTerminationPoint (LTP) object class encapsulates the termination and adaptation functions of one or more transport layers. The structure of LTP supports all transport protocols including circuit and packet forms.
- */@ApiModel(description = "The LogicalTerminationPoint (LTP) object class encapsulates the termination and adaptation functions of one or more transport layers. The structure of LTP supports all transport protocols including circuit and packet forms.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
-public class ServiceInterfacePoint extends Resource-spec {
+ */
+@ApiModel(description = "The LogicalTerminationPoint (LTP) object class encapsulates the termination and adaptation functions of one or more transport layers. The structure of LTP supports all transport protocols including circuit and packet forms.")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
+public class ServiceInterfacePoint {
+  @SerializedName("uuid")
+  private String uuid = null;
+
+  @SerializedName("name")
+  private List<NameAndValue> name = null;
 
   /**
    * Gets or Sets administrativeState
    */
   @JsonAdapter(AdministrativeStateEnum.Adapter.class)
   public enum AdministrativeStateEnum {
-    
     LOCKED("LOCKED"),
+    
     UNLOCKED("UNLOCKED");
 
     private String value;
@@ -50,7 +57,7 @@ public class ServiceInterfacePoint extends Resource-spec {
     AdministrativeStateEnum(String value) {
       this.value = value;
     }
-    
+
     public String getValue() {
       return value;
     }
@@ -59,7 +66,7 @@ public class ServiceInterfacePoint extends Resource-spec {
     public String toString() {
       return String.valueOf(value);
     }
-    
+
     public static AdministrativeStateEnum fromValue(String text) {
       for (AdministrativeStateEnum b : AdministrativeStateEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
@@ -68,7 +75,7 @@ public class ServiceInterfacePoint extends Resource-spec {
       }
       return null;
     }
-    
+
     public static class Adapter extends TypeAdapter<AdministrativeStateEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final AdministrativeStateEnum enumeration) throws IOException {
@@ -82,20 +89,23 @@ public class ServiceInterfacePoint extends Resource-spec {
       }
     }
   }
-  
+
   @SerializedName("administrative-state")
   private AdministrativeStateEnum administrativeState = null;
-  
+
   /**
    * Gets or Sets lifecycleState
    */
   @JsonAdapter(LifecycleStateEnum.Adapter.class)
   public enum LifecycleStateEnum {
-    
     PLANNED("PLANNED"),
+    
     POTENTIAL_AVAILABLE("POTENTIAL_AVAILABLE"),
+    
     POTENTIAL_BUSY("POTENTIAL_BUSY"),
+    
     INSTALLED("INSTALLED"),
+    
     PENDING_REMOVAL("PENDING_REMOVAL");
 
     private String value;
@@ -103,7 +113,7 @@ public class ServiceInterfacePoint extends Resource-spec {
     LifecycleStateEnum(String value) {
       this.value = value;
     }
-    
+
     public String getValue() {
       return value;
     }
@@ -112,7 +122,7 @@ public class ServiceInterfacePoint extends Resource-spec {
     public String toString() {
       return String.valueOf(value);
     }
-    
+
     public static LifecycleStateEnum fromValue(String text) {
       for (LifecycleStateEnum b : LifecycleStateEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
@@ -121,7 +131,7 @@ public class ServiceInterfacePoint extends Resource-spec {
       }
       return null;
     }
-    
+
     public static class Adapter extends TypeAdapter<LifecycleStateEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final LifecycleStateEnum enumeration) throws IOException {
@@ -135,17 +145,17 @@ public class ServiceInterfacePoint extends Resource-spec {
       }
     }
   }
-  
+
   @SerializedName("lifecycle-state")
   private LifecycleStateEnum lifecycleState = null;
-  
+
   /**
    * Gets or Sets operationalState
    */
   @JsonAdapter(OperationalStateEnum.Adapter.class)
   public enum OperationalStateEnum {
-    
     DISABLED("DISABLED"),
+    
     ENABLED("ENABLED");
 
     private String value;
@@ -153,7 +163,7 @@ public class ServiceInterfacePoint extends Resource-spec {
     OperationalStateEnum(String value) {
       this.value = value;
     }
-    
+
     public String getValue() {
       return value;
     }
@@ -162,7 +172,7 @@ public class ServiceInterfacePoint extends Resource-spec {
     public String toString() {
       return String.valueOf(value);
     }
-    
+
     public static OperationalStateEnum fromValue(String text) {
       for (OperationalStateEnum b : OperationalStateEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
@@ -171,7 +181,7 @@ public class ServiceInterfacePoint extends Resource-spec {
       }
       return null;
     }
-    
+
     public static class Adapter extends TypeAdapter<OperationalStateEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final OperationalStateEnum enumeration) throws IOException {
@@ -185,25 +195,27 @@ public class ServiceInterfacePoint extends Resource-spec {
       }
     }
   }
-  
+
   @SerializedName("operational-state")
   private OperationalStateEnum operationalState = null;
-  
+
   @SerializedName("available-capacity")
   private Capacity availableCapacity = null;
-  
+
   @SerializedName("total-potential-capacity")
   private Capacity totalPotentialCapacity = null;
-  
+
   /**
    * Usage of layerProtocolName [&gt;1]  in the ServiceInterfacePoint should be considered experimental
    */
   @JsonAdapter(LayerProtocolNameEnum.Adapter.class)
   public enum LayerProtocolNameEnum {
-    
     ODU("ODU"),
+    
     ETH("ETH"),
+    
     DSR("DSR"),
+    
     PHOTONIC_MEDIA("PHOTONIC_MEDIA");
 
     private String value;
@@ -211,7 +223,7 @@ public class ServiceInterfacePoint extends Resource-spec {
     LayerProtocolNameEnum(String value) {
       this.value = value;
     }
-    
+
     public String getValue() {
       return value;
     }
@@ -220,7 +232,7 @@ public class ServiceInterfacePoint extends Resource-spec {
     public String toString() {
       return String.valueOf(value);
     }
-    
+
     public static LayerProtocolNameEnum fromValue(String text) {
       for (LayerProtocolNameEnum b : LayerProtocolNameEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
@@ -229,7 +241,7 @@ public class ServiceInterfacePoint extends Resource-spec {
       }
       return null;
     }
-    
+
     public static class Adapter extends TypeAdapter<LayerProtocolNameEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final LayerProtocolNameEnum enumeration) throws IOException {
@@ -243,148 +255,192 @@ public class ServiceInterfacePoint extends Resource-spec {
       }
     }
   }
-  
+
   @SerializedName("layer-protocol-name")
   private LayerProtocolNameEnum layerProtocolName = null;
-  
+
   @SerializedName("supported-layer-protocol-qualifier")
   private List<String> supportedLayerProtocolQualifier = null;
-  
+
+  public ServiceInterfacePoint uuid(String uuid) {
+    this.uuid = uuid;
+    return this;
+  }
+
+   /**
+   * UUID: An identifier that is universally unique within an identifier space, where the identifier space is itself globally unique, and immutable. An UUID carries no semantics with respect to the purpose or state of the entity. UUID here uses string representation as defined in RFC 4122.  The canonical representation uses lowercase characters. Pattern: [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-&#39; + &#39;[0-9a-fA-F]{4}-[0-9a-fA-F]{12} Example of a UUID in string representation: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+   * @return uuid
+  **/
+  @ApiModelProperty(value = "UUID: An identifier that is universally unique within an identifier space, where the identifier space is itself globally unique, and immutable. An UUID carries no semantics with respect to the purpose or state of the entity. UUID here uses string representation as defined in RFC 4122.  The canonical representation uses lowercase characters. Pattern: [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-' + '[0-9a-fA-F]{4}-[0-9a-fA-F]{12} Example of a UUID in string representation: f81d4fae-7dec-11d0-a765-00a0c91e6bf6")
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  public ServiceInterfacePoint name(List<NameAndValue> name) {
+    this.name = name;
+    return this;
+  }
+
+  public ServiceInterfacePoint addNameItem(NameAndValue nameItem) {
+    if (this.name == null) {
+      this.name = new ArrayList<NameAndValue>();
+    }
+    this.name.add(nameItem);
+    return this;
+  }
+
+   /**
+   * List of names. A property of an entity with a value that is unique in some namespace but may change during the life of the entity. A name carries no semantics with respect to the purpose of the entity.
+   * @return name
+  **/
+  @ApiModelProperty(value = "List of names. A property of an entity with a value that is unique in some namespace but may change during the life of the entity. A name carries no semantics with respect to the purpose of the entity.")
+  public List<NameAndValue> getName() {
+    return name;
+  }
+
+  public void setName(List<NameAndValue> name) {
+    this.name = name;
+  }
+
   public ServiceInterfacePoint administrativeState(AdministrativeStateEnum administrativeState) {
     this.administrativeState = administrativeState;
     return this;
   }
 
-  
-  /**
-  * Get administrativeState
-  * @return administrativeState
+   /**
+   * Get administrativeState
+   * @return administrativeState
   **/
   @ApiModelProperty(value = "")
   public AdministrativeStateEnum getAdministrativeState() {
     return administrativeState;
   }
+
   public void setAdministrativeState(AdministrativeStateEnum administrativeState) {
     this.administrativeState = administrativeState;
   }
-  
+
   public ServiceInterfacePoint lifecycleState(LifecycleStateEnum lifecycleState) {
     this.lifecycleState = lifecycleState;
     return this;
   }
 
-  
-  /**
-  * Get lifecycleState
-  * @return lifecycleState
+   /**
+   * Get lifecycleState
+   * @return lifecycleState
   **/
   @ApiModelProperty(value = "")
   public LifecycleStateEnum getLifecycleState() {
     return lifecycleState;
   }
+
   public void setLifecycleState(LifecycleStateEnum lifecycleState) {
     this.lifecycleState = lifecycleState;
   }
-  
+
   public ServiceInterfacePoint operationalState(OperationalStateEnum operationalState) {
     this.operationalState = operationalState;
     return this;
   }
 
-  
-  /**
-  * Get operationalState
-  * @return operationalState
+   /**
+   * Get operationalState
+   * @return operationalState
   **/
   @ApiModelProperty(value = "")
   public OperationalStateEnum getOperationalState() {
     return operationalState;
   }
+
   public void setOperationalState(OperationalStateEnum operationalState) {
     this.operationalState = operationalState;
   }
-  
+
   public ServiceInterfacePoint availableCapacity(Capacity availableCapacity) {
     this.availableCapacity = availableCapacity;
     return this;
   }
 
-  
-  /**
-  * Get availableCapacity
-  * @return availableCapacity
+   /**
+   * Capacity available to be assigned.
+   * @return availableCapacity
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "Capacity available to be assigned.")
   public Capacity getAvailableCapacity() {
     return availableCapacity;
   }
+
   public void setAvailableCapacity(Capacity availableCapacity) {
     this.availableCapacity = availableCapacity;
   }
-  
+
   public ServiceInterfacePoint totalPotentialCapacity(Capacity totalPotentialCapacity) {
     this.totalPotentialCapacity = totalPotentialCapacity;
     return this;
   }
 
-  
-  /**
-  * Get totalPotentialCapacity
-  * @return totalPotentialCapacity
+   /**
+   * An optimistic view of the capacity of the TopologicalEntity assuming that any shared capacity is available to be taken.
+   * @return totalPotentialCapacity
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "An optimistic view of the capacity of the TopologicalEntity assuming that any shared capacity is available to be taken.")
   public Capacity getTotalPotentialCapacity() {
     return totalPotentialCapacity;
   }
+
   public void setTotalPotentialCapacity(Capacity totalPotentialCapacity) {
     this.totalPotentialCapacity = totalPotentialCapacity;
   }
-  
+
   public ServiceInterfacePoint layerProtocolName(LayerProtocolNameEnum layerProtocolName) {
     this.layerProtocolName = layerProtocolName;
     return this;
   }
 
-  
-  /**
-  * Usage of layerProtocolName [&gt;1]  in the ServiceInterfacePoint should be considered experimental
-  * @return layerProtocolName
+   /**
+   * Usage of layerProtocolName [&gt;1]  in the ServiceInterfacePoint should be considered experimental
+   * @return layerProtocolName
   **/
   @ApiModelProperty(value = "Usage of layerProtocolName [>1]  in the ServiceInterfacePoint should be considered experimental")
   public LayerProtocolNameEnum getLayerProtocolName() {
     return layerProtocolName;
   }
+
   public void setLayerProtocolName(LayerProtocolNameEnum layerProtocolName) {
     this.layerProtocolName = layerProtocolName;
   }
-  
+
   public ServiceInterfacePoint supportedLayerProtocolQualifier(List<String> supportedLayerProtocolQualifier) {
     this.supportedLayerProtocolQualifier = supportedLayerProtocolQualifier;
     return this;
   }
 
   public ServiceInterfacePoint addSupportedLayerProtocolQualifierItem(String supportedLayerProtocolQualifierItem) {
-    
     if (this.supportedLayerProtocolQualifier == null) {
       this.supportedLayerProtocolQualifier = new ArrayList<String>();
     }
-    
     this.supportedLayerProtocolQualifier.add(supportedLayerProtocolQualifierItem);
     return this;
   }
-  
-  /**
-  * Get supportedLayerProtocolQualifier
-  * @return supportedLayerProtocolQualifier
+
+   /**
+   * Get supportedLayerProtocolQualifier
+   * @return supportedLayerProtocolQualifier
   **/
   @ApiModelProperty(value = "")
   public List<String> getSupportedLayerProtocolQualifier() {
     return supportedLayerProtocolQualifier;
   }
+
   public void setSupportedLayerProtocolQualifier(List<String> supportedLayerProtocolQualifier) {
     this.supportedLayerProtocolQualifier = supportedLayerProtocolQualifier;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -394,26 +450,30 @@ public class ServiceInterfacePoint extends Resource-spec {
       return false;
     }
     ServiceInterfacePoint serviceInterfacePoint = (ServiceInterfacePoint) o;
-    return Objects.equals(this.administrativeState, serviceInterfacePoint.administrativeState) &&
+    return Objects.equals(this.uuid, serviceInterfacePoint.uuid) &&
+        Objects.equals(this.name, serviceInterfacePoint.name) &&
+        Objects.equals(this.administrativeState, serviceInterfacePoint.administrativeState) &&
         Objects.equals(this.lifecycleState, serviceInterfacePoint.lifecycleState) &&
         Objects.equals(this.operationalState, serviceInterfacePoint.operationalState) &&
         Objects.equals(this.availableCapacity, serviceInterfacePoint.availableCapacity) &&
         Objects.equals(this.totalPotentialCapacity, serviceInterfacePoint.totalPotentialCapacity) &&
         Objects.equals(this.layerProtocolName, serviceInterfacePoint.layerProtocolName) &&
-        Objects.equals(this.supportedLayerProtocolQualifier, serviceInterfacePoint.supportedLayerProtocolQualifier) &&
-        super.equals(o);
+        Objects.equals(this.supportedLayerProtocolQualifier, serviceInterfacePoint.supportedLayerProtocolQualifier);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(administrativeState, lifecycleState, operationalState, availableCapacity, totalPotentialCapacity, layerProtocolName, supportedLayerProtocolQualifier, super.hashCode());
+    return Objects.hash(uuid, name, administrativeState, lifecycleState, operationalState, availableCapacity, totalPotentialCapacity, layerProtocolName, supportedLayerProtocolQualifier);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ServiceInterfacePoint {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    
+    sb.append("    uuid: ").append(toIndentedString(uuid)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    administrativeState: ").append(toIndentedString(administrativeState)).append("\n");
     sb.append("    lifecycleState: ").append(toIndentedString(lifecycleState)).append("\n");
     sb.append("    operationalState: ").append(toIndentedString(operationalState)).append("\n");
@@ -436,8 +496,5 @@ public class ServiceInterfacePoint extends Resource-spec {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **value** | **String** |  |  [optional]
 
 
-
 <a name="UnitEnum"></a>
 ## Enum: UnitEnum
 Name | Value
