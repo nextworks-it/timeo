@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -25,52 +26,53 @@ import java.io.IOException;
 
 /**
  * A scoped name-value pair
- */@ApiModel(description = "A scoped name-value pair")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+ */
+@ApiModel(description = "A scoped name-value pair")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class NameAndValue {
-
   @SerializedName("value")
   private String value = null;
-  
+
   @SerializedName("value-name")
   private String valueName = null;
-  
+
   public NameAndValue value(String value) {
     this.value = value;
     return this;
   }
 
-  
-  /**
-  * The value
-  * @return value
+   /**
+   * The value
+   * @return value
   **/
   @ApiModelProperty(value = "The value")
   public String getValue() {
     return value;
   }
+
   public void setValue(String value) {
     this.value = value;
   }
-  
+
   public NameAndValue valueName(String valueName) {
     this.valueName = valueName;
     return this;
   }
 
-  
-  /**
-  * The name of the value. The value need not have a name.
-  * @return valueName
+   /**
+   * The name of the value. The value need not have a name.
+   * @return valueName
   **/
   @ApiModelProperty(value = "The name of the value. The value need not have a name.")
   public String getValueName() {
     return valueName;
   }
+
   public void setValueName(String valueName) {
     this.valueName = valueName;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -88,7 +90,8 @@ public class NameAndValue {
   public int hashCode() {
     return Objects.hash(value, valueName);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -111,8 +114,5 @@ public class NameAndValue {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

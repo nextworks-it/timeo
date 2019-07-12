@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -25,20 +26,23 @@ import java.io.IOException;
 
 /**
  * Provides state attributes for an entity that has lifeccycle aspects only.
- */@ApiModel(description = "Provides state attributes for an entity that has lifeccycle aspects only.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+ */
+@ApiModel(description = "Provides state attributes for an entity that has lifeccycle aspects only.")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class LifecycleStatePac {
-
   /**
    * Gets or Sets lifecycleState
    */
   @JsonAdapter(LifecycleStateEnum.Adapter.class)
   public enum LifecycleStateEnum {
-    
     PLANNED("PLANNED"),
+    
     POTENTIAL_AVAILABLE("POTENTIAL_AVAILABLE"),
+    
     POTENTIAL_BUSY("POTENTIAL_BUSY"),
+    
     INSTALLED("INSTALLED"),
+    
     PENDING_REMOVAL("PENDING_REMOVAL");
 
     private String value;
@@ -46,7 +50,7 @@ public class LifecycleStatePac {
     LifecycleStateEnum(String value) {
       this.value = value;
     }
-    
+
     public String getValue() {
       return value;
     }
@@ -55,7 +59,7 @@ public class LifecycleStatePac {
     public String toString() {
       return String.valueOf(value);
     }
-    
+
     public static LifecycleStateEnum fromValue(String text) {
       for (LifecycleStateEnum b : LifecycleStateEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
@@ -64,7 +68,7 @@ public class LifecycleStatePac {
       }
       return null;
     }
-    
+
     public static class Adapter extends TypeAdapter<LifecycleStateEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final LifecycleStateEnum enumeration) throws IOException {
@@ -78,28 +82,29 @@ public class LifecycleStatePac {
       }
     }
   }
-  
+
   @SerializedName("lifecycle-state")
   private LifecycleStateEnum lifecycleState = null;
-  
+
   public LifecycleStatePac lifecycleState(LifecycleStateEnum lifecycleState) {
     this.lifecycleState = lifecycleState;
     return this;
   }
 
-  
-  /**
-  * Get lifecycleState
-  * @return lifecycleState
+   /**
+   * Get lifecycleState
+   * @return lifecycleState
   **/
   @ApiModelProperty(value = "")
   public LifecycleStateEnum getLifecycleState() {
     return lifecycleState;
   }
+
   public void setLifecycleState(LifecycleStateEnum lifecycleState) {
     this.lifecycleState = lifecycleState;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -116,7 +121,8 @@ public class LifecycleStatePac {
   public int hashCode() {
     return Objects.hash(lifecycleState);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -138,8 +144,5 @@ public class LifecycleStatePac {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

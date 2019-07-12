@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **sipIdOrName** | **String** |  |  [optional]
 
 
-
 <a name="StateEnum"></a>
 ## Enum: StateEnum
 Name | Value

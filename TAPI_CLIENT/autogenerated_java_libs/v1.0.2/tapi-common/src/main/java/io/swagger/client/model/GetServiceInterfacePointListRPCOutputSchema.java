@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -29,39 +30,38 @@ import java.util.List;
 /**
  * GetServiceInterfacePointListRPCOutputSchema
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class GetServiceInterfacePointListRPCOutputSchema {
-
   @SerializedName("sip")
   private List<ServiceInterfacePoint> sip = null;
-  
+
   public GetServiceInterfacePointListRPCOutputSchema sip(List<ServiceInterfacePoint> sip) {
     this.sip = sip;
     return this;
   }
 
   public GetServiceInterfacePointListRPCOutputSchema addSipItem(ServiceInterfacePoint sipItem) {
-    
     if (this.sip == null) {
       this.sip = new ArrayList<ServiceInterfacePoint>();
     }
-    
     this.sip.add(sipItem);
     return this;
   }
-  
-  /**
-  * Get sip
-  * @return sip
+
+   /**
+   * Get sip
+   * @return sip
   **/
   @ApiModelProperty(value = "")
   public List<ServiceInterfacePoint> getSip() {
     return sip;
   }
+
   public void setSip(List<ServiceInterfacePoint> sip) {
     this.sip = sip;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -78,7 +78,8 @@ public class GetServiceInterfacePointListRPCOutputSchema {
   public int hashCode() {
     return Objects.hash(sip);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -100,8 +101,5 @@ public class GetServiceInterfacePointListRPCOutputSchema {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

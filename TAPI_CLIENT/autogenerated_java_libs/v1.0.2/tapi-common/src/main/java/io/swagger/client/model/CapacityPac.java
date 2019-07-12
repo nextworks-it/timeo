@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -26,52 +27,53 @@ import java.io.IOException;
 
 /**
  * The TopologicalEntity derives capacity from the underlying realization. A TopologicalEntity may be an abstraction and virtualization of a subset of the underlying capability offered in a view or may be directly reflecting the underlying realization. A TopologicalEntity may be directly used in the view or may be assigned to another view for use. The clients supported by a multi-layer TopologicalEntity may interact such that the resources used by one client may impact those available to another. This is derived from the LTP spec details. Represents the capacity available to user (client) along with client interaction and usage. A TopologicalEntity may reflect one or more client protocols and one or more members for each profile.
- */@ApiModel(description = "The TopologicalEntity derives capacity from the underlying realization. A TopologicalEntity may be an abstraction and virtualization of a subset of the underlying capability offered in a view or may be directly reflecting the underlying realization. A TopologicalEntity may be directly used in the view or may be assigned to another view for use. The clients supported by a multi-layer TopologicalEntity may interact such that the resources used by one client may impact those available to another. This is derived from the LTP spec details. Represents the capacity available to user (client) along with client interaction and usage. A TopologicalEntity may reflect one or more client protocols and one or more members for each profile.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+ */
+@ApiModel(description = "The TopologicalEntity derives capacity from the underlying realization. A TopologicalEntity may be an abstraction and virtualization of a subset of the underlying capability offered in a view or may be directly reflecting the underlying realization. A TopologicalEntity may be directly used in the view or may be assigned to another view for use. The clients supported by a multi-layer TopologicalEntity may interact such that the resources used by one client may impact those available to another. This is derived from the LTP spec details. Represents the capacity available to user (client) along with client interaction and usage. A TopologicalEntity may reflect one or more client protocols and one or more members for each profile.")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class CapacityPac {
-
   @SerializedName("available-capacity")
   private Capacity availableCapacity = null;
-  
+
   @SerializedName("total-potential-capacity")
   private Capacity totalPotentialCapacity = null;
-  
+
   public CapacityPac availableCapacity(Capacity availableCapacity) {
     this.availableCapacity = availableCapacity;
     return this;
   }
 
-  
-  /**
-  * Get availableCapacity
-  * @return availableCapacity
+   /**
+   * Capacity available to be assigned.
+   * @return availableCapacity
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "Capacity available to be assigned.")
   public Capacity getAvailableCapacity() {
     return availableCapacity;
   }
+
   public void setAvailableCapacity(Capacity availableCapacity) {
     this.availableCapacity = availableCapacity;
   }
-  
+
   public CapacityPac totalPotentialCapacity(Capacity totalPotentialCapacity) {
     this.totalPotentialCapacity = totalPotentialCapacity;
     return this;
   }
 
-  
-  /**
-  * Get totalPotentialCapacity
-  * @return totalPotentialCapacity
+   /**
+   * An optimistic view of the capacity of the TopologicalEntity assuming that any shared capacity is available to be taken.
+   * @return totalPotentialCapacity
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "An optimistic view of the capacity of the TopologicalEntity assuming that any shared capacity is available to be taken.")
   public Capacity getTotalPotentialCapacity() {
     return totalPotentialCapacity;
   }
+
   public void setTotalPotentialCapacity(Capacity totalPotentialCapacity) {
     this.totalPotentialCapacity = totalPotentialCapacity;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -89,7 +91,8 @@ public class CapacityPac {
   public int hashCode() {
     return Objects.hash(availableCapacity, totalPotentialCapacity);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -112,8 +115,5 @@ public class CapacityPac {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

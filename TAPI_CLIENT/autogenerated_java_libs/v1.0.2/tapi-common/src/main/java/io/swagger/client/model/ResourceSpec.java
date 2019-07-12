@@ -13,11 +13,13 @@
 
 package io.swagger.client.model;
 
+import java.util.Objects;
+import java.util.Arrays;
 
 /**
  * ResourceSpec
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class ResourceSpec {
 
   @Override
@@ -35,7 +37,8 @@ public class ResourceSpec {
   public int hashCode() {
     return Objects.hash();
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -56,8 +59,5 @@ public class ResourceSpec {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

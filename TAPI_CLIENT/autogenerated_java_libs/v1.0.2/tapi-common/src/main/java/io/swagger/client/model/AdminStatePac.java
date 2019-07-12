@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -25,17 +26,17 @@ import java.io.IOException;
 
 /**
  * Provides state attributes that are applicable to an entity that can be administered. Such an entity also has operational and lifecycle aspects.
- */@ApiModel(description = "Provides state attributes that are applicable to an entity that can be administered. Such an entity also has operational and lifecycle aspects.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+ */
+@ApiModel(description = "Provides state attributes that are applicable to an entity that can be administered. Such an entity also has operational and lifecycle aspects.")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class AdminStatePac {
-
   /**
    * Gets or Sets administrativeState
    */
   @JsonAdapter(AdministrativeStateEnum.Adapter.class)
   public enum AdministrativeStateEnum {
-    
     LOCKED("LOCKED"),
+    
     UNLOCKED("UNLOCKED");
 
     private String value;
@@ -43,7 +44,7 @@ public class AdminStatePac {
     AdministrativeStateEnum(String value) {
       this.value = value;
     }
-    
+
     public String getValue() {
       return value;
     }
@@ -52,7 +53,7 @@ public class AdminStatePac {
     public String toString() {
       return String.valueOf(value);
     }
-    
+
     public static AdministrativeStateEnum fromValue(String text) {
       for (AdministrativeStateEnum b : AdministrativeStateEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
@@ -61,7 +62,7 @@ public class AdminStatePac {
       }
       return null;
     }
-    
+
     public static class Adapter extends TypeAdapter<AdministrativeStateEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final AdministrativeStateEnum enumeration) throws IOException {
@@ -75,20 +76,23 @@ public class AdminStatePac {
       }
     }
   }
-  
+
   @SerializedName("administrative-state")
   private AdministrativeStateEnum administrativeState = null;
-  
+
   /**
    * Gets or Sets lifecycleState
    */
   @JsonAdapter(LifecycleStateEnum.Adapter.class)
   public enum LifecycleStateEnum {
-    
     PLANNED("PLANNED"),
+    
     POTENTIAL_AVAILABLE("POTENTIAL_AVAILABLE"),
+    
     POTENTIAL_BUSY("POTENTIAL_BUSY"),
+    
     INSTALLED("INSTALLED"),
+    
     PENDING_REMOVAL("PENDING_REMOVAL");
 
     private String value;
@@ -96,7 +100,7 @@ public class AdminStatePac {
     LifecycleStateEnum(String value) {
       this.value = value;
     }
-    
+
     public String getValue() {
       return value;
     }
@@ -105,7 +109,7 @@ public class AdminStatePac {
     public String toString() {
       return String.valueOf(value);
     }
-    
+
     public static LifecycleStateEnum fromValue(String text) {
       for (LifecycleStateEnum b : LifecycleStateEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
@@ -114,7 +118,7 @@ public class AdminStatePac {
       }
       return null;
     }
-    
+
     public static class Adapter extends TypeAdapter<LifecycleStateEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final LifecycleStateEnum enumeration) throws IOException {
@@ -128,17 +132,17 @@ public class AdminStatePac {
       }
     }
   }
-  
+
   @SerializedName("lifecycle-state")
   private LifecycleStateEnum lifecycleState = null;
-  
+
   /**
    * Gets or Sets operationalState
    */
   @JsonAdapter(OperationalStateEnum.Adapter.class)
   public enum OperationalStateEnum {
-    
     DISABLED("DISABLED"),
+    
     ENABLED("ENABLED");
 
     private String value;
@@ -146,7 +150,7 @@ public class AdminStatePac {
     OperationalStateEnum(String value) {
       this.value = value;
     }
-    
+
     public String getValue() {
       return value;
     }
@@ -155,7 +159,7 @@ public class AdminStatePac {
     public String toString() {
       return String.valueOf(value);
     }
-    
+
     public static OperationalStateEnum fromValue(String text) {
       for (OperationalStateEnum b : OperationalStateEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
@@ -164,7 +168,7 @@ public class AdminStatePac {
       }
       return null;
     }
-    
+
     public static class Adapter extends TypeAdapter<OperationalStateEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final OperationalStateEnum enumeration) throws IOException {
@@ -178,64 +182,65 @@ public class AdminStatePac {
       }
     }
   }
-  
+
   @SerializedName("operational-state")
   private OperationalStateEnum operationalState = null;
-  
+
   public AdminStatePac administrativeState(AdministrativeStateEnum administrativeState) {
     this.administrativeState = administrativeState;
     return this;
   }
 
-  
-  /**
-  * Get administrativeState
-  * @return administrativeState
+   /**
+   * Get administrativeState
+   * @return administrativeState
   **/
   @ApiModelProperty(value = "")
   public AdministrativeStateEnum getAdministrativeState() {
     return administrativeState;
   }
+
   public void setAdministrativeState(AdministrativeStateEnum administrativeState) {
     this.administrativeState = administrativeState;
   }
-  
+
   public AdminStatePac lifecycleState(LifecycleStateEnum lifecycleState) {
     this.lifecycleState = lifecycleState;
     return this;
   }
 
-  
-  /**
-  * Get lifecycleState
-  * @return lifecycleState
+   /**
+   * Get lifecycleState
+   * @return lifecycleState
   **/
   @ApiModelProperty(value = "")
   public LifecycleStateEnum getLifecycleState() {
     return lifecycleState;
   }
+
   public void setLifecycleState(LifecycleStateEnum lifecycleState) {
     this.lifecycleState = lifecycleState;
   }
-  
+
   public AdminStatePac operationalState(OperationalStateEnum operationalState) {
     this.operationalState = operationalState;
     return this;
   }
 
-  
-  /**
-  * Get operationalState
-  * @return operationalState
+   /**
+   * Get operationalState
+   * @return operationalState
   **/
   @ApiModelProperty(value = "")
   public OperationalStateEnum getOperationalState() {
     return operationalState;
   }
+
   public void setOperationalState(OperationalStateEnum operationalState) {
     this.operationalState = operationalState;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -254,7 +259,8 @@ public class AdminStatePac {
   public int hashCode() {
     return Objects.hash(administrativeState, lifecycleState, operationalState);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -278,8 +284,5 @@ public class AdminStatePac {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

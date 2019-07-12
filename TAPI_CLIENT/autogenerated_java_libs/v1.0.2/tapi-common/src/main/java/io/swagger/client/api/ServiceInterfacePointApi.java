@@ -22,12 +22,9 @@ import io.swagger.client.Pair;
 import io.swagger.client.ProgressRequestBody;
 import io.swagger.client.ProgressResponseBody;
 
-
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-
-
 
 
 import io.swagger.client.model.BandwidthProfile;
@@ -36,15 +33,11 @@ import io.swagger.client.model.CapacityValue;
 import io.swagger.client.model.NameAndValue;
 import io.swagger.client.model.ServiceInterfacePoint;
 
-
 import java.lang.reflect.Type;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-
 
 public class ServiceInterfacePointApi {
     private ApiClient apiClient;
@@ -65,21 +58,19 @@ public class ServiceInterfacePointApi {
         this.apiClient = apiClient;
     }
 
-    
     /**
      * Build call for createContextServiceInterfacePointNameNameById
-     * @param body namebody object (required)
      * @param uuid ID of uuid (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
-    public com.squareup.okhttp.Call createContextServiceInterfacePointNameNameByIdCall(NameAndValue body, String uuid, String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = body;
-        
+    public com.squareup.okhttp.Call createContextServiceInterfacePointNameNameByIdCall(String uuid, String valueName, NameAndValue name, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = name;
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/name/{value_name}/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()))
@@ -93,7 +84,7 @@ public class ServiceInterfacePointApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            
+            "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
@@ -119,15 +110,9 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createContextServiceInterfacePointNameNameByIdValidateBeforeCall(NameAndValue body, String uuid, String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
-        
-        // verify the required parameter 'body' is set
-        if (body == null) {
-            throw new ApiException("Missing the required parameter 'body' when calling createContextServiceInterfacePointNameNameById(Async)");
-        }
+    private com.squareup.okhttp.Call createContextServiceInterfacePointNameNameByIdValidateBeforeCall(String uuid, String valueName, NameAndValue name, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
@@ -139,58 +124,54 @@ public class ServiceInterfacePointApi {
             throw new ApiException("Missing the required parameter 'valueName' when calling createContextServiceInterfacePointNameNameById(Async)");
         }
         
+        // verify the required parameter 'name' is set
+        if (name == null) {
+            throw new ApiException("Missing the required parameter 'name' when calling createContextServiceInterfacePointNameNameById(Async)");
+        }
         
-        com.squareup.okhttp.Call call = createContextServiceInterfacePointNameNameByIdCall(body, uuid, valueName, progressListener, progressRequestListener);
+
+        com.squareup.okhttp.Call call = createContextServiceInterfacePointNameNameByIdCall(uuid, valueName, name, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
      * Create name by ID
      * Create operation of resource: name
-     * @param body namebody object (required)
      * @param uuid ID of uuid (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public void createContextServiceInterfacePointNameNameById(NameAndValue body, String uuid, String valueName) throws ApiException {
-        createContextServiceInterfacePointNameNameByIdWithHttpInfo(body, uuid, valueName);
+    public void createContextServiceInterfacePointNameNameById(String uuid, String valueName, NameAndValue name) throws ApiException {
+        createContextServiceInterfacePointNameNameByIdWithHttpInfo(uuid, valueName, name);
     }
 
     /**
      * Create name by ID
      * Create operation of resource: name
-     * @param body namebody object (required)
      * @param uuid ID of uuid (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public ApiResponse<Void> createContextServiceInterfacePointNameNameByIdWithHttpInfo(NameAndValue body, String uuid, String valueName) throws ApiException {
-        com.squareup.okhttp.Call call = createContextServiceInterfacePointNameNameByIdValidateBeforeCall(body, uuid, valueName, null, null);
+    public ApiResponse<Void> createContextServiceInterfacePointNameNameByIdWithHttpInfo(String uuid, String valueName, NameAndValue name) throws ApiException {
+        com.squareup.okhttp.Call call = createContextServiceInterfacePointNameNameByIdValidateBeforeCall(uuid, valueName, name, null, null);
         return apiClient.execute(call);
     }
 
     /**
      * Create name by ID (asynchronously)
      * Create operation of resource: name
-     * @param body namebody object (required)
      * @param uuid ID of uuid (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
-    public com.squareup.okhttp.Call createContextServiceInterfacePointNameNameByIdAsync(NameAndValue body, String uuid, String valueName, final ApiCallback<Void> callback) throws ApiException {
+    public com.squareup.okhttp.Call createContextServiceInterfacePointNameNameByIdAsync(String uuid, String valueName, NameAndValue name, final ApiCallback<Void> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -211,24 +192,22 @@ public class ServiceInterfacePointApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createContextServiceInterfacePointNameNameByIdValidateBeforeCall(body, uuid, valueName, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = createContextServiceInterfacePointNameNameByIdValidateBeforeCall(uuid, valueName, name, progressListener, progressRequestListener);
         apiClient.executeAsync(call, callback);
         return call;
     }
-    
     /**
      * Build call for createContextServiceInterfacePointServiceInterfacePointById
-     * @param body service-interface-pointbody object (required)
      * @param uuid ID of uuid (required)
+     * @param serviceInterfacePoint service-interface-pointbody object (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
-    public com.squareup.okhttp.Call createContextServiceInterfacePointServiceInterfacePointByIdCall(Object body, String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = body;
-        
+    public com.squareup.okhttp.Call createContextServiceInterfacePointServiceInterfacePointByIdCall(String uuid, ServiceInterfacePoint serviceInterfacePoint, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = serviceInterfacePoint;
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -241,7 +220,7 @@ public class ServiceInterfacePointApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            
+            "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
@@ -267,70 +246,60 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(Object body, String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
-        
-        // verify the required parameter 'body' is set
-        if (body == null) {
-            throw new ApiException("Missing the required parameter 'body' when calling createContextServiceInterfacePointServiceInterfacePointById(Async)");
-        }
+    private com.squareup.okhttp.Call createContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(String uuid, ServiceInterfacePoint serviceInterfacePoint, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling createContextServiceInterfacePointServiceInterfacePointById(Async)");
         }
         
+        // verify the required parameter 'serviceInterfacePoint' is set
+        if (serviceInterfacePoint == null) {
+            throw new ApiException("Missing the required parameter 'serviceInterfacePoint' when calling createContextServiceInterfacePointServiceInterfacePointById(Async)");
+        }
         
-        com.squareup.okhttp.Call call = createContextServiceInterfacePointServiceInterfacePointByIdCall(body, uuid, progressListener, progressRequestListener);
+
+        com.squareup.okhttp.Call call = createContextServiceInterfacePointServiceInterfacePointByIdCall(uuid, serviceInterfacePoint, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
      * Create service-interface-point by ID
      * Create operation of resource: service-interface-point
-     * @param body service-interface-pointbody object (required)
      * @param uuid ID of uuid (required)
+     * @param serviceInterfacePoint service-interface-pointbody object (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public void createContextServiceInterfacePointServiceInterfacePointById(Object body, String uuid) throws ApiException {
-        createContextServiceInterfacePointServiceInterfacePointByIdWithHttpInfo(body, uuid);
+    public void createContextServiceInterfacePointServiceInterfacePointById(String uuid, ServiceInterfacePoint serviceInterfacePoint) throws ApiException {
+        createContextServiceInterfacePointServiceInterfacePointByIdWithHttpInfo(uuid, serviceInterfacePoint);
     }
 
     /**
      * Create service-interface-point by ID
      * Create operation of resource: service-interface-point
-     * @param body service-interface-pointbody object (required)
      * @param uuid ID of uuid (required)
+     * @param serviceInterfacePoint service-interface-pointbody object (required)
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public ApiResponse<Void> createContextServiceInterfacePointServiceInterfacePointByIdWithHttpInfo(Object body, String uuid) throws ApiException {
-        com.squareup.okhttp.Call call = createContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(body, uuid, null, null);
+    public ApiResponse<Void> createContextServiceInterfacePointServiceInterfacePointByIdWithHttpInfo(String uuid, ServiceInterfacePoint serviceInterfacePoint) throws ApiException {
+        com.squareup.okhttp.Call call = createContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(uuid, serviceInterfacePoint, null, null);
         return apiClient.execute(call);
     }
 
     /**
      * Create service-interface-point by ID (asynchronously)
      * Create operation of resource: service-interface-point
-     * @param body service-interface-pointbody object (required)
      * @param uuid ID of uuid (required)
+     * @param serviceInterfacePoint service-interface-pointbody object (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
-    public com.squareup.okhttp.Call createContextServiceInterfacePointServiceInterfacePointByIdAsync(Object body, String uuid, final ApiCallback<Void> callback) throws ApiException {
+    public com.squareup.okhttp.Call createContextServiceInterfacePointServiceInterfacePointByIdAsync(String uuid, ServiceInterfacePoint serviceInterfacePoint, final ApiCallback<Void> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -351,11 +320,10 @@ public class ServiceInterfacePointApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(body, uuid, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = createContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(uuid, serviceInterfacePoint, progressListener, progressRequestListener);
         apiClient.executeAsync(call, callback);
         return call;
     }
-    
     /**
      * Build call for deleteContextServiceInterfacePointNameNameById
      * @param uuid ID of uuid (required)
@@ -364,11 +332,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call deleteContextServiceInterfacePointNameNameByIdCall(String uuid, String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/name/{value_name}/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()))
@@ -382,13 +349,13 @@ public class ServiceInterfacePointApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            
+            "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -408,10 +375,9 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "DELETE", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call deleteContextServiceInterfacePointNameNameByIdValidateBeforeCall(String uuid, String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
@@ -423,16 +389,10 @@ public class ServiceInterfacePointApi {
             throw new ApiException("Missing the required parameter 'valueName' when calling deleteContextServiceInterfacePointNameNameById(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = deleteContextServiceInterfacePointNameNameByIdCall(uuid, valueName, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -441,7 +401,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @param valueName ID of value_name (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public void deleteContextServiceInterfacePointNameNameById(String uuid, String valueName) throws ApiException {
         deleteContextServiceInterfacePointNameNameByIdWithHttpInfo(uuid, valueName);
@@ -454,7 +413,6 @@ public class ServiceInterfacePointApi {
      * @param valueName ID of value_name (required)
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<Void> deleteContextServiceInterfacePointNameNameByIdWithHttpInfo(String uuid, String valueName) throws ApiException {
         com.squareup.okhttp.Call call = deleteContextServiceInterfacePointNameNameByIdValidateBeforeCall(uuid, valueName, null, null);
@@ -469,7 +427,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call deleteContextServiceInterfacePointNameNameByIdAsync(String uuid, String valueName, final ApiCallback<Void> callback) throws ApiException {
 
@@ -496,7 +453,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, callback);
         return call;
     }
-    
     /**
      * Build call for deleteContextServiceInterfacePointServiceInterfacePointById
      * @param uuid ID of uuid (required)
@@ -504,11 +460,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call deleteContextServiceInterfacePointServiceInterfacePointByIdCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -521,13 +476,13 @@ public class ServiceInterfacePointApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            
+            "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -547,26 +502,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "DELETE", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call deleteContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling deleteContextServiceInterfacePointServiceInterfacePointById(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = deleteContextServiceInterfacePointServiceInterfacePointByIdCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -574,7 +522,6 @@ public class ServiceInterfacePointApi {
      * Delete operation of resource: service-interface-point
      * @param uuid ID of uuid (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public void deleteContextServiceInterfacePointServiceInterfacePointById(String uuid) throws ApiException {
         deleteContextServiceInterfacePointServiceInterfacePointByIdWithHttpInfo(uuid);
@@ -586,7 +533,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<Void> deleteContextServiceInterfacePointServiceInterfacePointByIdWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = deleteContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(uuid, null, null);
@@ -600,7 +546,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call deleteContextServiceInterfacePointServiceInterfacePointByIdAsync(String uuid, final ApiCallback<Void> callback) throws ApiException {
 
@@ -627,7 +572,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacity
      * @param uuid ID of uuid (required)
@@ -635,11 +579,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacityCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/available-capacity/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -658,7 +601,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -678,26 +621,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacityValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacity(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacityCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -706,7 +642,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return Capacity
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public Capacity retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacity(String uuid) throws ApiException {
         ApiResponse<Capacity> resp = retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacityWithHttpInfo(uuid);
@@ -719,7 +654,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;Capacity&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<Capacity> retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacityWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacityValidateBeforeCall(uuid, null, null);
@@ -734,7 +668,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacityAsync(String uuid, final ApiCallback<Capacity> callback) throws ApiException {
 
@@ -762,7 +695,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfile
      * @param uuid ID of uuid (required)
@@ -770,11 +702,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfileCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/available-capacity/bandwidth-profile/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -793,7 +724,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -813,26 +744,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfileValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfile(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfileCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -841,7 +765,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return BandwidthProfile
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public BandwidthProfile retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfile(String uuid) throws ApiException {
         ApiResponse<BandwidthProfile> resp = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfileWithHttpInfo(uuid);
@@ -854,7 +777,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;BandwidthProfile&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<BandwidthProfile> retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfileWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfileValidateBeforeCall(uuid, null, null);
@@ -869,7 +791,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfileAsync(String uuid, final ApiCallback<BandwidthProfile> callback) throws ApiException {
 
@@ -897,7 +818,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize
      * @param uuid ID of uuid (required)
@@ -905,11 +825,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/available-capacity/bandwidth-profile/committed-burst-size/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -928,7 +847,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -948,26 +867,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -976,7 +888,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return CapacityValue
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public CapacityValue retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize(String uuid) throws ApiException {
         ApiResponse<CapacityValue> resp = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeWithHttpInfo(uuid);
@@ -989,7 +900,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;CapacityValue&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<CapacityValue> retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeValidateBeforeCall(uuid, null, null);
@@ -1004,7 +914,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeAsync(String uuid, final ApiCallback<CapacityValue> callback) throws ApiException {
 
@@ -1032,7 +941,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate
      * @param uuid ID of uuid (required)
@@ -1040,11 +948,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/available-capacity/bandwidth-profile/committed-information-rate/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -1063,7 +970,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -1083,26 +990,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -1111,7 +1011,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return CapacityValue
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public CapacityValue retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate(String uuid) throws ApiException {
         ApiResponse<CapacityValue> resp = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateWithHttpInfo(uuid);
@@ -1124,7 +1023,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;CapacityValue&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<CapacityValue> retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateValidateBeforeCall(uuid, null, null);
@@ -1139,7 +1037,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateAsync(String uuid, final ApiCallback<CapacityValue> callback) throws ApiException {
 
@@ -1167,7 +1064,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSize
      * @param uuid ID of uuid (required)
@@ -1175,11 +1071,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSizeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/available-capacity/bandwidth-profile/peak-burst-size/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -1198,7 +1093,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -1218,26 +1113,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSizeValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSize(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSizeCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -1246,7 +1134,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return CapacityValue
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public CapacityValue retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSize(String uuid) throws ApiException {
         ApiResponse<CapacityValue> resp = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSizeWithHttpInfo(uuid);
@@ -1259,7 +1146,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;CapacityValue&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<CapacityValue> retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSizeWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSizeValidateBeforeCall(uuid, null, null);
@@ -1274,7 +1160,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSizeAsync(String uuid, final ApiCallback<CapacityValue> callback) throws ApiException {
 
@@ -1302,7 +1187,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRate
      * @param uuid ID of uuid (required)
@@ -1310,11 +1194,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRateCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/available-capacity/bandwidth-profile/peak-information-rate/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -1333,7 +1216,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -1353,26 +1236,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRateValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRate(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRateCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -1381,7 +1257,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return CapacityValue
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public CapacityValue retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRate(String uuid) throws ApiException {
         ApiResponse<CapacityValue> resp = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRateWithHttpInfo(uuid);
@@ -1394,7 +1269,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;CapacityValue&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<CapacityValue> retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRateWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRateValidateBeforeCall(uuid, null, null);
@@ -1409,7 +1283,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRateAsync(String uuid, final ApiCallback<CapacityValue> callback) throws ApiException {
 
@@ -1437,7 +1310,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSize
      * @param uuid ID of uuid (required)
@@ -1445,11 +1317,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSizeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/available-capacity/total-size/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -1468,7 +1339,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -1488,26 +1359,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSizeValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSize(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSizeCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -1516,7 +1380,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return CapacityValue
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public CapacityValue retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSize(String uuid) throws ApiException {
         ApiResponse<CapacityValue> resp = retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSizeWithHttpInfo(uuid);
@@ -1529,7 +1392,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;CapacityValue&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<CapacityValue> retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSizeWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSizeValidateBeforeCall(uuid, null, null);
@@ -1544,7 +1406,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSizeAsync(String uuid, final ApiCallback<CapacityValue> callback) throws ApiException {
 
@@ -1572,7 +1433,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointNameName
      * @param uuid ID of uuid (required)
@@ -1580,11 +1440,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointNameNameCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/name/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -1603,7 +1462,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -1623,26 +1482,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointNameNameValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointNameName(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointNameNameCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -1651,7 +1503,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return List&lt;String&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public List<String> retrieveContextServiceInterfacePointNameName(String uuid) throws ApiException {
         ApiResponse<List<String>> resp = retrieveContextServiceInterfacePointNameNameWithHttpInfo(uuid);
@@ -1664,7 +1515,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;List&lt;String&gt;&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<List<String>> retrieveContextServiceInterfacePointNameNameWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointNameNameValidateBeforeCall(uuid, null, null);
@@ -1679,7 +1529,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointNameNameAsync(String uuid, final ApiCallback<List<String>> callback) throws ApiException {
 
@@ -1707,7 +1556,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointNameNameById
      * @param uuid ID of uuid (required)
@@ -1716,11 +1564,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointNameNameByIdCall(String uuid, String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/name/{value_name}/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()))
@@ -1740,7 +1587,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -1760,10 +1607,9 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointNameNameByIdValidateBeforeCall(String uuid, String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
@@ -1775,16 +1621,10 @@ public class ServiceInterfacePointApi {
             throw new ApiException("Missing the required parameter 'valueName' when calling retrieveContextServiceInterfacePointNameNameById(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointNameNameByIdCall(uuid, valueName, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -1794,7 +1634,6 @@ public class ServiceInterfacePointApi {
      * @param valueName ID of value_name (required)
      * @return NameAndValue
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public NameAndValue retrieveContextServiceInterfacePointNameNameById(String uuid, String valueName) throws ApiException {
         ApiResponse<NameAndValue> resp = retrieveContextServiceInterfacePointNameNameByIdWithHttpInfo(uuid, valueName);
@@ -1808,7 +1647,6 @@ public class ServiceInterfacePointApi {
      * @param valueName ID of value_name (required)
      * @return ApiResponse&lt;NameAndValue&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<NameAndValue> retrieveContextServiceInterfacePointNameNameByIdWithHttpInfo(String uuid, String valueName) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointNameNameByIdValidateBeforeCall(uuid, valueName, null, null);
@@ -1824,7 +1662,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointNameNameByIdAsync(String uuid, String valueName, final ApiCallback<NameAndValue> callback) throws ApiException {
 
@@ -1852,18 +1689,16 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointServiceInterfacePoint
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointServiceInterfacePointCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/";
 
@@ -1881,7 +1716,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -1901,21 +1736,14 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointServiceInterfacePointValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
-        
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointServiceInterfacePointCall(progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -1923,7 +1751,6 @@ public class ServiceInterfacePointApi {
      * Retrieve operation of resource: service-interface-point
      * @return List&lt;String&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public List<String> retrieveContextServiceInterfacePointServiceInterfacePoint() throws ApiException {
         ApiResponse<List<String>> resp = retrieveContextServiceInterfacePointServiceInterfacePointWithHttpInfo();
@@ -1935,7 +1762,6 @@ public class ServiceInterfacePointApi {
      * Retrieve operation of resource: service-interface-point
      * @return ApiResponse&lt;List&lt;String&gt;&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<List<String>> retrieveContextServiceInterfacePointServiceInterfacePointWithHttpInfo() throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointServiceInterfacePointValidateBeforeCall(null, null);
@@ -1949,7 +1775,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointServiceInterfacePointAsync(final ApiCallback<List<String>> callback) throws ApiException {
 
@@ -1977,7 +1802,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointServiceInterfacePointById
      * @param uuid ID of uuid (required)
@@ -1985,11 +1809,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointServiceInterfacePointByIdCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -2008,7 +1831,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -2028,26 +1851,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointServiceInterfacePointById(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointServiceInterfacePointByIdCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -2056,7 +1872,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ServiceInterfacePoint
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ServiceInterfacePoint retrieveContextServiceInterfacePointServiceInterfacePointById(String uuid) throws ApiException {
         ApiResponse<ServiceInterfacePoint> resp = retrieveContextServiceInterfacePointServiceInterfacePointByIdWithHttpInfo(uuid);
@@ -2069,7 +1884,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;ServiceInterfacePoint&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<ServiceInterfacePoint> retrieveContextServiceInterfacePointServiceInterfacePointByIdWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(uuid, null, null);
@@ -2084,7 +1898,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointServiceInterfacePointByIdAsync(String uuid, final ApiCallback<ServiceInterfacePoint> callback) throws ApiException {
 
@@ -2112,7 +1925,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfile
      * @param uuid ID of uuid (required)
@@ -2120,11 +1932,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfileCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/total-potential-capacity/bandwidth-profile/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -2143,7 +1954,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -2163,26 +1974,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfileValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfile(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfileCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -2191,7 +1995,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return BandwidthProfile
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public BandwidthProfile retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfile(String uuid) throws ApiException {
         ApiResponse<BandwidthProfile> resp = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfileWithHttpInfo(uuid);
@@ -2204,7 +2007,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;BandwidthProfile&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<BandwidthProfile> retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfileWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfileValidateBeforeCall(uuid, null, null);
@@ -2219,7 +2021,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfileAsync(String uuid, final ApiCallback<BandwidthProfile> callback) throws ApiException {
 
@@ -2247,7 +2048,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize
      * @param uuid ID of uuid (required)
@@ -2255,11 +2055,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/total-potential-capacity/bandwidth-profile/committed-burst-size/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -2278,7 +2077,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -2298,26 +2097,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -2326,7 +2118,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return CapacityValue
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public CapacityValue retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize(String uuid) throws ApiException {
         ApiResponse<CapacityValue> resp = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeWithHttpInfo(uuid);
@@ -2339,7 +2130,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;CapacityValue&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<CapacityValue> retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeValidateBeforeCall(uuid, null, null);
@@ -2354,7 +2144,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeAsync(String uuid, final ApiCallback<CapacityValue> callback) throws ApiException {
 
@@ -2382,7 +2171,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate
      * @param uuid ID of uuid (required)
@@ -2390,11 +2178,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/total-potential-capacity/bandwidth-profile/committed-information-rate/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -2413,7 +2200,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -2433,26 +2220,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -2461,7 +2241,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return CapacityValue
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public CapacityValue retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate(String uuid) throws ApiException {
         ApiResponse<CapacityValue> resp = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateWithHttpInfo(uuid);
@@ -2474,7 +2253,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;CapacityValue&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<CapacityValue> retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateValidateBeforeCall(uuid, null, null);
@@ -2489,7 +2267,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateAsync(String uuid, final ApiCallback<CapacityValue> callback) throws ApiException {
 
@@ -2517,7 +2294,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSize
      * @param uuid ID of uuid (required)
@@ -2525,11 +2301,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSizeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/total-potential-capacity/bandwidth-profile/peak-burst-size/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -2548,7 +2323,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -2568,26 +2343,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSizeValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSize(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSizeCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -2596,7 +2364,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return CapacityValue
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public CapacityValue retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSize(String uuid) throws ApiException {
         ApiResponse<CapacityValue> resp = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSizeWithHttpInfo(uuid);
@@ -2609,7 +2376,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;CapacityValue&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<CapacityValue> retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSizeWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSizeValidateBeforeCall(uuid, null, null);
@@ -2624,7 +2390,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSizeAsync(String uuid, final ApiCallback<CapacityValue> callback) throws ApiException {
 
@@ -2652,7 +2417,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRate
      * @param uuid ID of uuid (required)
@@ -2660,11 +2424,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRateCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/total-potential-capacity/bandwidth-profile/peak-information-rate/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -2683,7 +2446,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -2703,26 +2466,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRateValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRate(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRateCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -2731,7 +2487,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return CapacityValue
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public CapacityValue retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRate(String uuid) throws ApiException {
         ApiResponse<CapacityValue> resp = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRateWithHttpInfo(uuid);
@@ -2744,7 +2499,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;CapacityValue&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<CapacityValue> retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRateWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRateValidateBeforeCall(uuid, null, null);
@@ -2759,7 +2513,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRateAsync(String uuid, final ApiCallback<CapacityValue> callback) throws ApiException {
 
@@ -2787,7 +2540,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacity
      * @param uuid ID of uuid (required)
@@ -2795,11 +2547,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacityCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/total-potential-capacity/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -2818,7 +2569,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -2838,26 +2589,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacityValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacity(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacityCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -2866,7 +2610,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return Capacity
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public Capacity retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacity(String uuid) throws ApiException {
         ApiResponse<Capacity> resp = retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacityWithHttpInfo(uuid);
@@ -2879,7 +2622,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;Capacity&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<Capacity> retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacityWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacityValidateBeforeCall(uuid, null, null);
@@ -2894,7 +2636,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacityAsync(String uuid, final ApiCallback<Capacity> callback) throws ApiException {
 
@@ -2922,7 +2663,6 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSize
      * @param uuid ID of uuid (required)
@@ -2930,11 +2670,10 @@ public class ServiceInterfacePointApi {
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSizeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/total-potential-capacity/total-size/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -2953,7 +2692,7 @@ public class ServiceInterfacePointApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -2973,26 +2712,19 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSizeValidateBeforeCall(String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSize(Async)");
         }
         
-        
+
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSizeCall(uuid, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -3001,7 +2733,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return CapacityValue
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public CapacityValue retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSize(String uuid) throws ApiException {
         ApiResponse<CapacityValue> resp = retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSizeWithHttpInfo(uuid);
@@ -3014,7 +2745,6 @@ public class ServiceInterfacePointApi {
      * @param uuid ID of uuid (required)
      * @return ApiResponse&lt;CapacityValue&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<CapacityValue> retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSizeWithHttpInfo(String uuid) throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSizeValidateBeforeCall(uuid, null, null);
@@ -3029,7 +2759,6 @@ public class ServiceInterfacePointApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSizeAsync(String uuid, final ApiCallback<CapacityValue> callback) throws ApiException {
 
@@ -3057,21 +2786,19 @@ public class ServiceInterfacePointApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for updateContextServiceInterfacePointNameNameById
-     * @param body namebody object (required)
      * @param uuid ID of uuid (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
-    public com.squareup.okhttp.Call updateContextServiceInterfacePointNameNameByIdCall(NameAndValue body, String uuid, String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = body;
-        
+    public com.squareup.okhttp.Call updateContextServiceInterfacePointNameNameByIdCall(String uuid, String valueName, NameAndValue name, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = name;
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/name/{value_name}/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()))
@@ -3085,7 +2812,7 @@ public class ServiceInterfacePointApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            
+            "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
@@ -3111,15 +2838,9 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "PUT", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call updateContextServiceInterfacePointNameNameByIdValidateBeforeCall(NameAndValue body, String uuid, String valueName, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
-        
-        // verify the required parameter 'body' is set
-        if (body == null) {
-            throw new ApiException("Missing the required parameter 'body' when calling updateContextServiceInterfacePointNameNameById(Async)");
-        }
+    private com.squareup.okhttp.Call updateContextServiceInterfacePointNameNameByIdValidateBeforeCall(String uuid, String valueName, NameAndValue name, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
@@ -3131,58 +2852,54 @@ public class ServiceInterfacePointApi {
             throw new ApiException("Missing the required parameter 'valueName' when calling updateContextServiceInterfacePointNameNameById(Async)");
         }
         
+        // verify the required parameter 'name' is set
+        if (name == null) {
+            throw new ApiException("Missing the required parameter 'name' when calling updateContextServiceInterfacePointNameNameById(Async)");
+        }
         
-        com.squareup.okhttp.Call call = updateContextServiceInterfacePointNameNameByIdCall(body, uuid, valueName, progressListener, progressRequestListener);
+
+        com.squareup.okhttp.Call call = updateContextServiceInterfacePointNameNameByIdCall(uuid, valueName, name, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
      * Update name by ID
      * Update operation of resource: name
-     * @param body namebody object (required)
      * @param uuid ID of uuid (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public void updateContextServiceInterfacePointNameNameById(NameAndValue body, String uuid, String valueName) throws ApiException {
-        updateContextServiceInterfacePointNameNameByIdWithHttpInfo(body, uuid, valueName);
+    public void updateContextServiceInterfacePointNameNameById(String uuid, String valueName, NameAndValue name) throws ApiException {
+        updateContextServiceInterfacePointNameNameByIdWithHttpInfo(uuid, valueName, name);
     }
 
     /**
      * Update name by ID
      * Update operation of resource: name
-     * @param body namebody object (required)
      * @param uuid ID of uuid (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public ApiResponse<Void> updateContextServiceInterfacePointNameNameByIdWithHttpInfo(NameAndValue body, String uuid, String valueName) throws ApiException {
-        com.squareup.okhttp.Call call = updateContextServiceInterfacePointNameNameByIdValidateBeforeCall(body, uuid, valueName, null, null);
+    public ApiResponse<Void> updateContextServiceInterfacePointNameNameByIdWithHttpInfo(String uuid, String valueName, NameAndValue name) throws ApiException {
+        com.squareup.okhttp.Call call = updateContextServiceInterfacePointNameNameByIdValidateBeforeCall(uuid, valueName, name, null, null);
         return apiClient.execute(call);
     }
 
     /**
      * Update name by ID (asynchronously)
      * Update operation of resource: name
-     * @param body namebody object (required)
      * @param uuid ID of uuid (required)
      * @param valueName ID of value_name (required)
+     * @param name namebody object (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
-    public com.squareup.okhttp.Call updateContextServiceInterfacePointNameNameByIdAsync(NameAndValue body, String uuid, String valueName, final ApiCallback<Void> callback) throws ApiException {
+    public com.squareup.okhttp.Call updateContextServiceInterfacePointNameNameByIdAsync(String uuid, String valueName, NameAndValue name, final ApiCallback<Void> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -3203,24 +2920,22 @@ public class ServiceInterfacePointApi {
             };
         }
 
-        com.squareup.okhttp.Call call = updateContextServiceInterfacePointNameNameByIdValidateBeforeCall(body, uuid, valueName, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = updateContextServiceInterfacePointNameNameByIdValidateBeforeCall(uuid, valueName, name, progressListener, progressRequestListener);
         apiClient.executeAsync(call, callback);
         return call;
     }
-    
     /**
      * Build call for updateContextServiceInterfacePointServiceInterfacePointById
-     * @param body service-interface-pointbody object (required)
      * @param uuid ID of uuid (required)
+     * @param serviceInterfacePoint service-interface-pointbody object (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
-    public com.squareup.okhttp.Call updateContextServiceInterfacePointServiceInterfacePointByIdCall(Object body, String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = body;
-        
+    public com.squareup.okhttp.Call updateContextServiceInterfacePointServiceInterfacePointByIdCall(String uuid, ServiceInterfacePoint serviceInterfacePoint, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = serviceInterfacePoint;
+
         // create path and map variables
         String localVarPath = "/config/context/service-interface-point/{uuid}/"
             .replaceAll("\\{" + "uuid" + "\\}", apiClient.escapeString(uuid.toString()));
@@ -3233,7 +2948,7 @@ public class ServiceInterfacePointApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            
+            "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
@@ -3259,70 +2974,60 @@ public class ServiceInterfacePointApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "PUT", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call updateContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(Object body, String uuid, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        
-        
-        // verify the required parameter 'body' is set
-        if (body == null) {
-            throw new ApiException("Missing the required parameter 'body' when calling updateContextServiceInterfacePointServiceInterfacePointById(Async)");
-        }
+    private com.squareup.okhttp.Call updateContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(String uuid, ServiceInterfacePoint serviceInterfacePoint, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
         // verify the required parameter 'uuid' is set
         if (uuid == null) {
             throw new ApiException("Missing the required parameter 'uuid' when calling updateContextServiceInterfacePointServiceInterfacePointById(Async)");
         }
         
+        // verify the required parameter 'serviceInterfacePoint' is set
+        if (serviceInterfacePoint == null) {
+            throw new ApiException("Missing the required parameter 'serviceInterfacePoint' when calling updateContextServiceInterfacePointServiceInterfacePointById(Async)");
+        }
         
-        com.squareup.okhttp.Call call = updateContextServiceInterfacePointServiceInterfacePointByIdCall(body, uuid, progressListener, progressRequestListener);
+
+        com.squareup.okhttp.Call call = updateContextServiceInterfacePointServiceInterfacePointByIdCall(uuid, serviceInterfacePoint, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
      * Update service-interface-point by ID
      * Update operation of resource: service-interface-point
-     * @param body service-interface-pointbody object (required)
      * @param uuid ID of uuid (required)
+     * @param serviceInterfacePoint service-interface-pointbody object (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public void updateContextServiceInterfacePointServiceInterfacePointById(Object body, String uuid) throws ApiException {
-        updateContextServiceInterfacePointServiceInterfacePointByIdWithHttpInfo(body, uuid);
+    public void updateContextServiceInterfacePointServiceInterfacePointById(String uuid, ServiceInterfacePoint serviceInterfacePoint) throws ApiException {
+        updateContextServiceInterfacePointServiceInterfacePointByIdWithHttpInfo(uuid, serviceInterfacePoint);
     }
 
     /**
      * Update service-interface-point by ID
      * Update operation of resource: service-interface-point
-     * @param body service-interface-pointbody object (required)
      * @param uuid ID of uuid (required)
+     * @param serviceInterfacePoint service-interface-pointbody object (required)
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public ApiResponse<Void> updateContextServiceInterfacePointServiceInterfacePointByIdWithHttpInfo(Object body, String uuid) throws ApiException {
-        com.squareup.okhttp.Call call = updateContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(body, uuid, null, null);
+    public ApiResponse<Void> updateContextServiceInterfacePointServiceInterfacePointByIdWithHttpInfo(String uuid, ServiceInterfacePoint serviceInterfacePoint) throws ApiException {
+        com.squareup.okhttp.Call call = updateContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(uuid, serviceInterfacePoint, null, null);
         return apiClient.execute(call);
     }
 
     /**
      * Update service-interface-point by ID (asynchronously)
      * Update operation of resource: service-interface-point
-     * @param body service-interface-pointbody object (required)
      * @param uuid ID of uuid (required)
+     * @param serviceInterfacePoint service-interface-pointbody object (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
-    public com.squareup.okhttp.Call updateContextServiceInterfacePointServiceInterfacePointByIdAsync(Object body, String uuid, final ApiCallback<Void> callback) throws ApiException {
+    public com.squareup.okhttp.Call updateContextServiceInterfacePointServiceInterfacePointByIdAsync(String uuid, ServiceInterfacePoint serviceInterfacePoint, final ApiCallback<Void> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -3343,9 +3048,8 @@ public class ServiceInterfacePointApi {
             };
         }
 
-        com.squareup.okhttp.Call call = updateContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(body, uuid, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = updateContextServiceInterfacePointServiceInterfacePointByIdValidateBeforeCall(uuid, serviceInterfacePoint, progressListener, progressRequestListener);
         apiClient.executeAsync(call, callback);
         return call;
     }
-    
 }

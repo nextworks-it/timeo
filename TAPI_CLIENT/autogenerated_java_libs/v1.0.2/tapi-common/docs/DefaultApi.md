@@ -13,11 +13,9 @@ Method | HTTP request | Description
 [**updateContextById**](DefaultApi.md#updateContextById) | **PUT** /config/context/ | Update context by ID
 
 
-
-
 <a name="createContextById"></a>
 # **createContextById**
-> createContextById(body)
+> createContextById(context)
 
 Create context by ID
 
@@ -30,13 +28,10 @@ Create operation of resource: context
 //import io.swagger.client.api.DefaultApi;
 
 
-
 DefaultApi apiInstance = new DefaultApi();
-
-Object body = null; // Object | contextbody object
-
+TapiContext context = new TapiContext(); // TapiContext | contextbody object
 try {
-    apiInstance.createContextById(body);
+    apiInstance.createContextById(context);
 } catch (ApiException e) {
     System.err.println("Exception when calling DefaultApi#createContextById");
     e.printStackTrace();
@@ -47,8 +42,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**Object**](Object.md)| contextbody object |
-
+ **context** | [**TapiContext**](TapiContext.md)| contextbody object |
 
 ### Return type
 
@@ -61,12 +55,11 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
-
+ - **Accept**: application/json
 
 <a name="createGetServiceInterfacePointDetailsById"></a>
 # **createGetServiceInterfacePointDetailsById**
-> GetServiceInterfacePointDetailsRPCOutputSchema createGetServiceInterfacePointDetailsById(body)
+> GetServiceInterfacePointDetailsRPCOutputSchema createGetServiceInterfacePointDetailsById(getServiceInterfacePointDetails)
 
 Create get-service-interface-point-details by ID
 
@@ -79,13 +72,10 @@ Create operation of resource: get-service-interface-point-details
 //import io.swagger.client.api.DefaultApi;
 
 
-
 DefaultApi apiInstance = new DefaultApi();
-
-GetServiceInterfacePointDetailsRPCInputSchema body = new GetServiceInterfacePointDetailsRPCInputSchema(); // GetServiceInterfacePointDetailsRPCInputSchema | get-service-interface-point-detailsbody object
-
+GetServiceInterfacePointDetailsRPCInputSchema getServiceInterfacePointDetails = new GetServiceInterfacePointDetailsRPCInputSchema(); // GetServiceInterfacePointDetailsRPCInputSchema | get-service-interface-point-detailsbody object
 try {
-    GetServiceInterfacePointDetailsRPCOutputSchema result = apiInstance.createGetServiceInterfacePointDetailsById(body);
+    GetServiceInterfacePointDetailsRPCOutputSchema result = apiInstance.createGetServiceInterfacePointDetailsById(getServiceInterfacePointDetails);
     System.out.println(result);
 } catch (ApiException e) {
     System.err.println("Exception when calling DefaultApi#createGetServiceInterfacePointDetailsById");
@@ -97,8 +87,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**GetServiceInterfacePointDetailsRPCInputSchema**](GetServiceInterfacePointDetailsRPCInputSchema.md)| get-service-interface-point-detailsbody object |
-
+ **getServiceInterfacePointDetails** | [**GetServiceInterfacePointDetailsRPCInputSchema**](GetServiceInterfacePointDetailsRPCInputSchema.md)| get-service-interface-point-detailsbody object |
 
 ### Return type
 
@@ -112,7 +101,6 @@ No authorization required
 
  - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="createGetServiceInterfacePointListById"></a>
 # **createGetServiceInterfacePointListById**
@@ -129,9 +117,7 @@ Create operation of resource: get-service-interface-point-list
 //import io.swagger.client.api.DefaultApi;
 
 
-
 DefaultApi apiInstance = new DefaultApi();
-
 try {
     GetServiceInterfacePointListRPCOutputSchema result = apiInstance.createGetServiceInterfacePointListById();
     System.out.println(result);
@@ -144,7 +130,6 @@ try {
 ### Parameters
 This endpoint does not need any parameter.
 
-
 ### Return type
 
 [**GetServiceInterfacePointListRPCOutputSchema**](GetServiceInterfacePointListRPCOutputSchema.md)
@@ -155,13 +140,12 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="createUpdateServiceInterfacePointById"></a>
 # **createUpdateServiceInterfacePointById**
-> createUpdateServiceInterfacePointById(body)
+> createUpdateServiceInterfacePointById(updateServiceInterfacePoint)
 
 Create update-service-interface-point by ID
 
@@ -174,13 +158,10 @@ Create operation of resource: update-service-interface-point
 //import io.swagger.client.api.DefaultApi;
 
 
-
 DefaultApi apiInstance = new DefaultApi();
-
-UpdateServiceInterfacePointRPCInputSchema body = new UpdateServiceInterfacePointRPCInputSchema(); // UpdateServiceInterfacePointRPCInputSchema | update-service-interface-pointbody object
-
+UpdateServiceInterfacePointRPCInputSchema updateServiceInterfacePoint = new UpdateServiceInterfacePointRPCInputSchema(); // UpdateServiceInterfacePointRPCInputSchema | update-service-interface-pointbody object
 try {
-    apiInstance.createUpdateServiceInterfacePointById(body);
+    apiInstance.createUpdateServiceInterfacePointById(updateServiceInterfacePoint);
 } catch (ApiException e) {
     System.err.println("Exception when calling DefaultApi#createUpdateServiceInterfacePointById");
     e.printStackTrace();
@@ -191,8 +172,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**UpdateServiceInterfacePointRPCInputSchema**](UpdateServiceInterfacePointRPCInputSchema.md)| update-service-interface-pointbody object |
-
+ **updateServiceInterfacePoint** | [**UpdateServiceInterfacePointRPCInputSchema**](UpdateServiceInterfacePointRPCInputSchema.md)| update-service-interface-pointbody object |
 
 ### Return type
 
@@ -205,8 +185,7 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
-
+ - **Accept**: application/json
 
 <a name="deleteContextById"></a>
 # **deleteContextById**
@@ -223,9 +202,7 @@ Delete operation of resource: context
 //import io.swagger.client.api.DefaultApi;
 
 
-
 DefaultApi apiInstance = new DefaultApi();
-
 try {
     apiInstance.deleteContextById();
 } catch (ApiException e) {
@@ -237,7 +214,6 @@ try {
 ### Parameters
 This endpoint does not need any parameter.
 
-
 ### Return type
 
 null (empty response body)
@@ -248,9 +224,8 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: Not defined
-
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 <a name="retrieveContext"></a>
 # **retrieveContext**
@@ -267,9 +242,7 @@ Retrieve operation of resource: context
 //import io.swagger.client.api.DefaultApi;
 
 
-
 DefaultApi apiInstance = new DefaultApi();
-
 try {
     TapiContext result = apiInstance.retrieveContext();
     System.out.println(result);
@@ -282,7 +255,6 @@ try {
 ### Parameters
 This endpoint does not need any parameter.
 
-
 ### Return type
 
 [**TapiContext**](TapiContext.md)
@@ -293,13 +265,12 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
-
 
 <a name="updateContextById"></a>
 # **updateContextById**
-> updateContextById(body)
+> updateContextById(context)
 
 Update context by ID
 
@@ -312,13 +283,10 @@ Update operation of resource: context
 //import io.swagger.client.api.DefaultApi;
 
 
-
 DefaultApi apiInstance = new DefaultApi();
-
-Object body = null; // Object | contextbody object
-
+TapiContext context = new TapiContext(); // TapiContext | contextbody object
 try {
-    apiInstance.updateContextById(body);
+    apiInstance.updateContextById(context);
 } catch (ApiException e) {
     System.err.println("Exception when calling DefaultApi#updateContextById");
     e.printStackTrace();
@@ -329,8 +297,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**Object**](Object.md)| contextbody object |
-
+ **context** | [**TapiContext**](TapiContext.md)| contextbody object |
 
 ### Return type
 
@@ -343,7 +310,5 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
-
-
+ - **Accept**: application/json
 

@@ -22,12 +22,9 @@ import io.swagger.client.Pair;
 import io.swagger.client.ProgressRequestBody;
 import io.swagger.client.ProgressResponseBody;
 
-
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-
-
 
 
 import io.swagger.client.model.GetServiceInterfacePointDetailsRPCInputSchema;
@@ -36,15 +33,11 @@ import io.swagger.client.model.GetServiceInterfacePointListRPCOutputSchema;
 import io.swagger.client.model.TapiContext;
 import io.swagger.client.model.UpdateServiceInterfacePointRPCInputSchema;
 
-
 import java.lang.reflect.Type;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-
 
 public class DefaultApi {
     private ApiClient apiClient;
@@ -65,19 +58,17 @@ public class DefaultApi {
         this.apiClient = apiClient;
     }
 
-    
     /**
      * Build call for createContextById
-     * @param body contextbody object (required)
+     * @param context contextbody object (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
-    public com.squareup.okhttp.Call createContextByIdCall(Object body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = body;
-        
+    public com.squareup.okhttp.Call createContextByIdCall(TapiContext context, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = context;
+
         // create path and map variables
         String localVarPath = "/config/context/";
 
@@ -89,7 +80,7 @@ public class DefaultApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            
+            "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
@@ -115,62 +106,52 @@ public class DefaultApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createContextByIdValidateBeforeCall(Object body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call createContextByIdValidateBeforeCall(TapiContext context, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
-        
-        // verify the required parameter 'body' is set
-        if (body == null) {
-            throw new ApiException("Missing the required parameter 'body' when calling createContextById(Async)");
+        // verify the required parameter 'context' is set
+        if (context == null) {
+            throw new ApiException("Missing the required parameter 'context' when calling createContextById(Async)");
         }
         
-        
-        com.squareup.okhttp.Call call = createContextByIdCall(body, progressListener, progressRequestListener);
+
+        com.squareup.okhttp.Call call = createContextByIdCall(context, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
      * Create context by ID
      * Create operation of resource: context
-     * @param body contextbody object (required)
+     * @param context contextbody object (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public void createContextById(Object body) throws ApiException {
-        createContextByIdWithHttpInfo(body);
+    public void createContextById(TapiContext context) throws ApiException {
+        createContextByIdWithHttpInfo(context);
     }
 
     /**
      * Create context by ID
      * Create operation of resource: context
-     * @param body contextbody object (required)
+     * @param context contextbody object (required)
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public ApiResponse<Void> createContextByIdWithHttpInfo(Object body) throws ApiException {
-        com.squareup.okhttp.Call call = createContextByIdValidateBeforeCall(body, null, null);
+    public ApiResponse<Void> createContextByIdWithHttpInfo(TapiContext context) throws ApiException {
+        com.squareup.okhttp.Call call = createContextByIdValidateBeforeCall(context, null, null);
         return apiClient.execute(call);
     }
 
     /**
      * Create context by ID (asynchronously)
      * Create operation of resource: context
-     * @param body contextbody object (required)
+     * @param context contextbody object (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
-    public com.squareup.okhttp.Call createContextByIdAsync(Object body, final ApiCallback<Void> callback) throws ApiException {
+    public com.squareup.okhttp.Call createContextByIdAsync(TapiContext context, final ApiCallback<Void> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -191,23 +172,21 @@ public class DefaultApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createContextByIdValidateBeforeCall(body, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = createContextByIdValidateBeforeCall(context, progressListener, progressRequestListener);
         apiClient.executeAsync(call, callback);
         return call;
     }
-    
     /**
      * Build call for createGetServiceInterfacePointDetailsById
-     * @param body get-service-interface-point-detailsbody object (required)
+     * @param getServiceInterfacePointDetails get-service-interface-point-detailsbody object (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
-    public com.squareup.okhttp.Call createGetServiceInterfacePointDetailsByIdCall(GetServiceInterfacePointDetailsRPCInputSchema body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = body;
-        
+    public com.squareup.okhttp.Call createGetServiceInterfacePointDetailsByIdCall(GetServiceInterfacePointDetailsRPCInputSchema getServiceInterfacePointDetails, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = getServiceInterfacePointDetails;
+
         // create path and map variables
         String localVarPath = "/operations/get-service-interface-point-details/";
 
@@ -245,51 +224,42 @@ public class DefaultApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createGetServiceInterfacePointDetailsByIdValidateBeforeCall(GetServiceInterfacePointDetailsRPCInputSchema body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call createGetServiceInterfacePointDetailsByIdValidateBeforeCall(GetServiceInterfacePointDetailsRPCInputSchema getServiceInterfacePointDetails, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
-        
-        // verify the required parameter 'body' is set
-        if (body == null) {
-            throw new ApiException("Missing the required parameter 'body' when calling createGetServiceInterfacePointDetailsById(Async)");
+        // verify the required parameter 'getServiceInterfacePointDetails' is set
+        if (getServiceInterfacePointDetails == null) {
+            throw new ApiException("Missing the required parameter 'getServiceInterfacePointDetails' when calling createGetServiceInterfacePointDetailsById(Async)");
         }
         
-        
-        com.squareup.okhttp.Call call = createGetServiceInterfacePointDetailsByIdCall(body, progressListener, progressRequestListener);
+
+        com.squareup.okhttp.Call call = createGetServiceInterfacePointDetailsByIdCall(getServiceInterfacePointDetails, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
      * Create get-service-interface-point-details by ID
      * Create operation of resource: get-service-interface-point-details
-     * @param body get-service-interface-point-detailsbody object (required)
+     * @param getServiceInterfacePointDetails get-service-interface-point-detailsbody object (required)
      * @return GetServiceInterfacePointDetailsRPCOutputSchema
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public GetServiceInterfacePointDetailsRPCOutputSchema createGetServiceInterfacePointDetailsById(GetServiceInterfacePointDetailsRPCInputSchema body) throws ApiException {
-        ApiResponse<GetServiceInterfacePointDetailsRPCOutputSchema> resp = createGetServiceInterfacePointDetailsByIdWithHttpInfo(body);
+    public GetServiceInterfacePointDetailsRPCOutputSchema createGetServiceInterfacePointDetailsById(GetServiceInterfacePointDetailsRPCInputSchema getServiceInterfacePointDetails) throws ApiException {
+        ApiResponse<GetServiceInterfacePointDetailsRPCOutputSchema> resp = createGetServiceInterfacePointDetailsByIdWithHttpInfo(getServiceInterfacePointDetails);
         return resp.getData();
     }
 
     /**
      * Create get-service-interface-point-details by ID
      * Create operation of resource: get-service-interface-point-details
-     * @param body get-service-interface-point-detailsbody object (required)
+     * @param getServiceInterfacePointDetails get-service-interface-point-detailsbody object (required)
      * @return ApiResponse&lt;GetServiceInterfacePointDetailsRPCOutputSchema&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public ApiResponse<GetServiceInterfacePointDetailsRPCOutputSchema> createGetServiceInterfacePointDetailsByIdWithHttpInfo(GetServiceInterfacePointDetailsRPCInputSchema body) throws ApiException {
-        com.squareup.okhttp.Call call = createGetServiceInterfacePointDetailsByIdValidateBeforeCall(body, null, null);
+    public ApiResponse<GetServiceInterfacePointDetailsRPCOutputSchema> createGetServiceInterfacePointDetailsByIdWithHttpInfo(GetServiceInterfacePointDetailsRPCInputSchema getServiceInterfacePointDetails) throws ApiException {
+        com.squareup.okhttp.Call call = createGetServiceInterfacePointDetailsByIdValidateBeforeCall(getServiceInterfacePointDetails, null, null);
         Type localVarReturnType = new TypeToken<GetServiceInterfacePointDetailsRPCOutputSchema>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -297,13 +267,12 @@ public class DefaultApi {
     /**
      * Create get-service-interface-point-details by ID (asynchronously)
      * Create operation of resource: get-service-interface-point-details
-     * @param body get-service-interface-point-detailsbody object (required)
+     * @param getServiceInterfacePointDetails get-service-interface-point-detailsbody object (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
-    public com.squareup.okhttp.Call createGetServiceInterfacePointDetailsByIdAsync(GetServiceInterfacePointDetailsRPCInputSchema body, final ApiCallback<GetServiceInterfacePointDetailsRPCOutputSchema> callback) throws ApiException {
+    public com.squareup.okhttp.Call createGetServiceInterfacePointDetailsByIdAsync(GetServiceInterfacePointDetailsRPCInputSchema getServiceInterfacePointDetails, final ApiCallback<GetServiceInterfacePointDetailsRPCOutputSchema> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -324,23 +293,21 @@ public class DefaultApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createGetServiceInterfacePointDetailsByIdValidateBeforeCall(body, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = createGetServiceInterfacePointDetailsByIdValidateBeforeCall(getServiceInterfacePointDetails, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetServiceInterfacePointDetailsRPCOutputSchema>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for createGetServiceInterfacePointListById
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call createGetServiceInterfacePointListByIdCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/operations/get-service-interface-point-list/";
 
@@ -358,7 +325,7 @@ public class DefaultApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -378,21 +345,14 @@ public class DefaultApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call createGetServiceInterfacePointListByIdValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
-        
-        
+
         com.squareup.okhttp.Call call = createGetServiceInterfacePointListByIdCall(progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -400,7 +360,6 @@ public class DefaultApi {
      * Create operation of resource: get-service-interface-point-list
      * @return GetServiceInterfacePointListRPCOutputSchema
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public GetServiceInterfacePointListRPCOutputSchema createGetServiceInterfacePointListById() throws ApiException {
         ApiResponse<GetServiceInterfacePointListRPCOutputSchema> resp = createGetServiceInterfacePointListByIdWithHttpInfo();
@@ -412,7 +371,6 @@ public class DefaultApi {
      * Create operation of resource: get-service-interface-point-list
      * @return ApiResponse&lt;GetServiceInterfacePointListRPCOutputSchema&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<GetServiceInterfacePointListRPCOutputSchema> createGetServiceInterfacePointListByIdWithHttpInfo() throws ApiException {
         com.squareup.okhttp.Call call = createGetServiceInterfacePointListByIdValidateBeforeCall(null, null);
@@ -426,7 +384,6 @@ public class DefaultApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call createGetServiceInterfacePointListByIdAsync(final ApiCallback<GetServiceInterfacePointListRPCOutputSchema> callback) throws ApiException {
 
@@ -454,19 +411,17 @@ public class DefaultApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for createUpdateServiceInterfacePointById
-     * @param body update-service-interface-pointbody object (required)
+     * @param updateServiceInterfacePoint update-service-interface-pointbody object (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
-    public com.squareup.okhttp.Call createUpdateServiceInterfacePointByIdCall(UpdateServiceInterfacePointRPCInputSchema body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = body;
-        
+    public com.squareup.okhttp.Call createUpdateServiceInterfacePointByIdCall(UpdateServiceInterfacePointRPCInputSchema updateServiceInterfacePoint, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = updateServiceInterfacePoint;
+
         // create path and map variables
         String localVarPath = "/operations/update-service-interface-point/";
 
@@ -478,7 +433,7 @@ public class DefaultApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            
+            "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
@@ -504,62 +459,52 @@ public class DefaultApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createUpdateServiceInterfacePointByIdValidateBeforeCall(UpdateServiceInterfacePointRPCInputSchema body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call createUpdateServiceInterfacePointByIdValidateBeforeCall(UpdateServiceInterfacePointRPCInputSchema updateServiceInterfacePoint, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
-        
-        // verify the required parameter 'body' is set
-        if (body == null) {
-            throw new ApiException("Missing the required parameter 'body' when calling createUpdateServiceInterfacePointById(Async)");
+        // verify the required parameter 'updateServiceInterfacePoint' is set
+        if (updateServiceInterfacePoint == null) {
+            throw new ApiException("Missing the required parameter 'updateServiceInterfacePoint' when calling createUpdateServiceInterfacePointById(Async)");
         }
         
-        
-        com.squareup.okhttp.Call call = createUpdateServiceInterfacePointByIdCall(body, progressListener, progressRequestListener);
+
+        com.squareup.okhttp.Call call = createUpdateServiceInterfacePointByIdCall(updateServiceInterfacePoint, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
      * Create update-service-interface-point by ID
      * Create operation of resource: update-service-interface-point
-     * @param body update-service-interface-pointbody object (required)
+     * @param updateServiceInterfacePoint update-service-interface-pointbody object (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public void createUpdateServiceInterfacePointById(UpdateServiceInterfacePointRPCInputSchema body) throws ApiException {
-        createUpdateServiceInterfacePointByIdWithHttpInfo(body);
+    public void createUpdateServiceInterfacePointById(UpdateServiceInterfacePointRPCInputSchema updateServiceInterfacePoint) throws ApiException {
+        createUpdateServiceInterfacePointByIdWithHttpInfo(updateServiceInterfacePoint);
     }
 
     /**
      * Create update-service-interface-point by ID
      * Create operation of resource: update-service-interface-point
-     * @param body update-service-interface-pointbody object (required)
+     * @param updateServiceInterfacePoint update-service-interface-pointbody object (required)
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public ApiResponse<Void> createUpdateServiceInterfacePointByIdWithHttpInfo(UpdateServiceInterfacePointRPCInputSchema body) throws ApiException {
-        com.squareup.okhttp.Call call = createUpdateServiceInterfacePointByIdValidateBeforeCall(body, null, null);
+    public ApiResponse<Void> createUpdateServiceInterfacePointByIdWithHttpInfo(UpdateServiceInterfacePointRPCInputSchema updateServiceInterfacePoint) throws ApiException {
+        com.squareup.okhttp.Call call = createUpdateServiceInterfacePointByIdValidateBeforeCall(updateServiceInterfacePoint, null, null);
         return apiClient.execute(call);
     }
 
     /**
      * Create update-service-interface-point by ID (asynchronously)
      * Create operation of resource: update-service-interface-point
-     * @param body update-service-interface-pointbody object (required)
+     * @param updateServiceInterfacePoint update-service-interface-pointbody object (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
-    public com.squareup.okhttp.Call createUpdateServiceInterfacePointByIdAsync(UpdateServiceInterfacePointRPCInputSchema body, final ApiCallback<Void> callback) throws ApiException {
+    public com.squareup.okhttp.Call createUpdateServiceInterfacePointByIdAsync(UpdateServiceInterfacePointRPCInputSchema updateServiceInterfacePoint, final ApiCallback<Void> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -580,22 +525,20 @@ public class DefaultApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createUpdateServiceInterfacePointByIdValidateBeforeCall(body, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = createUpdateServiceInterfacePointByIdValidateBeforeCall(updateServiceInterfacePoint, progressListener, progressRequestListener);
         apiClient.executeAsync(call, callback);
         return call;
     }
-    
     /**
      * Build call for deleteContextById
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call deleteContextByIdCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/";
 
@@ -607,13 +550,13 @@ public class DefaultApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            
+            "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -633,28 +576,20 @@ public class DefaultApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "DELETE", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call deleteContextByIdValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
-        
-        
+
         com.squareup.okhttp.Call call = deleteContextByIdCall(progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
      * Delete context by ID
      * Delete operation of resource: context
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public void deleteContextById() throws ApiException {
         deleteContextByIdWithHttpInfo();
@@ -665,7 +600,6 @@ public class DefaultApi {
      * Delete operation of resource: context
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<Void> deleteContextByIdWithHttpInfo() throws ApiException {
         com.squareup.okhttp.Call call = deleteContextByIdValidateBeforeCall(null, null);
@@ -678,7 +612,6 @@ public class DefaultApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call deleteContextByIdAsync(final ApiCallback<Void> callback) throws ApiException {
 
@@ -705,18 +638,16 @@ public class DefaultApi {
         apiClient.executeAsync(call, callback);
         return call;
     }
-    
     /**
      * Build call for retrieveContext
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
-        
+
         // create path and map variables
         String localVarPath = "/config/context/";
 
@@ -734,7 +665,7 @@ public class DefaultApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            
+            "application/json"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -754,21 +685,14 @@ public class DefaultApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
     private com.squareup.okhttp.Call retrieveContextValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
-        
-        
+
         com.squareup.okhttp.Call call = retrieveContextCall(progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
@@ -776,7 +700,6 @@ public class DefaultApi {
      * Retrieve operation of resource: context
      * @return TapiContext
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public TapiContext retrieveContext() throws ApiException {
         ApiResponse<TapiContext> resp = retrieveContextWithHttpInfo();
@@ -788,7 +711,6 @@ public class DefaultApi {
      * Retrieve operation of resource: context
      * @return ApiResponse&lt;TapiContext&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
     public ApiResponse<TapiContext> retrieveContextWithHttpInfo() throws ApiException {
         com.squareup.okhttp.Call call = retrieveContextValidateBeforeCall(null, null);
@@ -802,7 +724,6 @@ public class DefaultApi {
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
     public com.squareup.okhttp.Call retrieveContextAsync(final ApiCallback<TapiContext> callback) throws ApiException {
 
@@ -830,19 +751,17 @@ public class DefaultApi {
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
-    
     /**
      * Build call for updateContextById
-     * @param body contextbody object (required)
+     * @param context contextbody object (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        
      */
-    public com.squareup.okhttp.Call updateContextByIdCall(Object body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = body;
-        
+    public com.squareup.okhttp.Call updateContextByIdCall(TapiContext context, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = context;
+
         // create path and map variables
         String localVarPath = "/config/context/";
 
@@ -854,7 +773,7 @@ public class DefaultApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            
+            "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
@@ -880,62 +799,52 @@ public class DefaultApi {
         String[] localVarAuthNames = new String[] {  };
         return apiClient.buildCall(localVarPath, "PUT", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAuthNames, progressRequestListener);
     }
-    
+
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call updateContextByIdValidateBeforeCall(Object body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call updateContextByIdValidateBeforeCall(TapiContext context, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
-        
-        // verify the required parameter 'body' is set
-        if (body == null) {
-            throw new ApiException("Missing the required parameter 'body' when calling updateContextById(Async)");
+        // verify the required parameter 'context' is set
+        if (context == null) {
+            throw new ApiException("Missing the required parameter 'context' when calling updateContextById(Async)");
         }
         
-        
-        com.squareup.okhttp.Call call = updateContextByIdCall(body, progressListener, progressRequestListener);
+
+        com.squareup.okhttp.Call call = updateContextByIdCall(context, progressListener, progressRequestListener);
         return call;
 
-        
-        
-        
-        
-        
-        
     }
 
     /**
      * Update context by ID
      * Update operation of resource: context
-     * @param body contextbody object (required)
+     * @param context contextbody object (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public void updateContextById(Object body) throws ApiException {
-        updateContextByIdWithHttpInfo(body);
+    public void updateContextById(TapiContext context) throws ApiException {
+        updateContextByIdWithHttpInfo(context);
     }
 
     /**
      * Update context by ID
      * Update operation of resource: context
-     * @param body contextbody object (required)
+     * @param context contextbody object (required)
      * @return ApiResponse&lt;Void&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        
      */
-    public ApiResponse<Void> updateContextByIdWithHttpInfo(Object body) throws ApiException {
-        com.squareup.okhttp.Call call = updateContextByIdValidateBeforeCall(body, null, null);
+    public ApiResponse<Void> updateContextByIdWithHttpInfo(TapiContext context) throws ApiException {
+        com.squareup.okhttp.Call call = updateContextByIdValidateBeforeCall(context, null, null);
         return apiClient.execute(call);
     }
 
     /**
      * Update context by ID (asynchronously)
      * Update operation of resource: context
-     * @param body contextbody object (required)
+     * @param context contextbody object (required)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        
      */
-    public com.squareup.okhttp.Call updateContextByIdAsync(Object body, final ApiCallback<Void> callback) throws ApiException {
+    public com.squareup.okhttp.Call updateContextByIdAsync(TapiContext context, final ApiCallback<Void> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -956,9 +865,8 @@ public class DefaultApi {
             };
         }
 
-        com.squareup.okhttp.Call call = updateContextByIdValidateBeforeCall(body, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = updateContextByIdValidateBeforeCall(context, progressListener, progressRequestListener);
         apiClient.executeAsync(call, callback);
         return call;
     }
-    
 }

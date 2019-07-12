@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -29,39 +30,38 @@ import java.util.List;
 /**
  * TimeInterval
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class TimeInterval {
-
   @SerializedName("period")
   private List<TimePeriod> period = null;
-  
+
   public TimeInterval period(List<TimePeriod> period) {
     this.period = period;
     return this;
   }
 
   public TimeInterval addPeriodItem(TimePeriod periodItem) {
-    
     if (this.period == null) {
       this.period = new ArrayList<TimePeriod>();
     }
-    
     this.period.add(periodItem);
     return this;
   }
-  
-  /**
-  * Get period
-  * @return period
+
+   /**
+   * Get period
+   * @return period
   **/
   @ApiModelProperty(value = "")
   public List<TimePeriod> getPeriod() {
     return period;
   }
+
   public void setPeriod(List<TimePeriod> period) {
     this.period = period;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -78,7 +78,8 @@ public class TimeInterval {
   public int hashCode() {
     return Objects.hash(period);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -100,8 +101,5 @@ public class TimeInterval {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

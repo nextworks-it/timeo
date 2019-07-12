@@ -14,6 +14,7 @@
 package io.swagger.client.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -26,16 +27,15 @@ import java.io.IOException;
 /**
  * UpdateServiceInterfacePointRPCInputSchema
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2019-07-09T13:04:10.039+02:00[Europe/Rome]")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2019-07-12T16:06:31.513+02:00")
 public class UpdateServiceInterfacePointRPCInputSchema {
-
   /**
    * Gets or Sets state
    */
   @JsonAdapter(StateEnum.Adapter.class)
   public enum StateEnum {
-    
     LOCKED("LOCKED"),
+    
     UNLOCKED("UNLOCKED");
 
     private String value;
@@ -43,7 +43,7 @@ public class UpdateServiceInterfacePointRPCInputSchema {
     StateEnum(String value) {
       this.value = value;
     }
-    
+
     public String getValue() {
       return value;
     }
@@ -52,7 +52,7 @@ public class UpdateServiceInterfacePointRPCInputSchema {
     public String toString() {
       return String.valueOf(value);
     }
-    
+
     public static StateEnum fromValue(String text) {
       for (StateEnum b : StateEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
@@ -61,7 +61,7 @@ public class UpdateServiceInterfacePointRPCInputSchema {
       }
       return null;
     }
-    
+
     public static class Adapter extends TypeAdapter<StateEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final StateEnum enumeration) throws IOException {
@@ -75,49 +75,50 @@ public class UpdateServiceInterfacePointRPCInputSchema {
       }
     }
   }
-  
+
   @SerializedName("state")
   private StateEnum state = null;
-  
+
   @SerializedName("sip-id-or-name")
   private String sipIdOrName = null;
-  
+
   public UpdateServiceInterfacePointRPCInputSchema state(StateEnum state) {
     this.state = state;
     return this;
   }
 
-  
-  /**
-  * Get state
-  * @return state
+   /**
+   * Get state
+   * @return state
   **/
   @ApiModelProperty(value = "")
   public StateEnum getState() {
     return state;
   }
+
   public void setState(StateEnum state) {
     this.state = state;
   }
-  
+
   public UpdateServiceInterfacePointRPCInputSchema sipIdOrName(String sipIdOrName) {
     this.sipIdOrName = sipIdOrName;
     return this;
   }
 
-  
-  /**
-  * Get sipIdOrName
-  * @return sipIdOrName
+   /**
+   * Get sipIdOrName
+   * @return sipIdOrName
   **/
   @ApiModelProperty(value = "")
   public String getSipIdOrName() {
     return sipIdOrName;
   }
+
   public void setSipIdOrName(String sipIdOrName) {
     this.sipIdOrName = sipIdOrName;
   }
-  
+
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -135,7 +136,8 @@ public class UpdateServiceInterfacePointRPCInputSchema {
   public int hashCode() {
     return Objects.hash(state, sipIdOrName);
   }
-  
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -158,8 +160,5 @@ public class UpdateServiceInterfacePointRPCInputSchema {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
 }
-
-
 

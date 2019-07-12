@@ -19,16 +19,13 @@ import io.swagger.client.model.Capacity;
 import io.swagger.client.model.CapacityValue;
 import io.swagger.client.model.NameAndValue;
 import io.swagger.client.model.ServiceInterfacePoint;
-
 import org.junit.Test;
 import org.junit.Ignore;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * API tests for ServiceInterfacePointApi
@@ -49,14 +46,10 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void createContextServiceInterfacePointNameNameByIdTest() throws ApiException {
-        
-        NameAndValue body = null;
-        
         String uuid = null;
-        
         String valueName = null;
-        
-        api.createContextServiceInterfacePointNameNameById(body, uuid, valueName);
+        NameAndValue name = null;
+        api.createContextServiceInterfacePointNameNameById(uuid, valueName, name);
 
         // TODO: test validations
     }
@@ -71,12 +64,9 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void createContextServiceInterfacePointServiceInterfacePointByIdTest() throws ApiException {
-        
-        Object body = null;
-        
         String uuid = null;
-        
-        api.createContextServiceInterfacePointServiceInterfacePointById(body, uuid);
+        ServiceInterfacePoint serviceInterfacePoint = null;
+        api.createContextServiceInterfacePointServiceInterfacePointById(uuid, serviceInterfacePoint);
 
         // TODO: test validations
     }
@@ -91,11 +81,8 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void deleteContextServiceInterfacePointNameNameByIdTest() throws ApiException {
-        
         String uuid = null;
-        
         String valueName = null;
-        
         api.deleteContextServiceInterfacePointNameNameById(uuid, valueName);
 
         // TODO: test validations
@@ -111,9 +98,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void deleteContextServiceInterfacePointServiceInterfacePointByIdTest() throws ApiException {
-        
         String uuid = null;
-        
         api.deleteContextServiceInterfacePointServiceInterfacePointById(uuid);
 
         // TODO: test validations
@@ -129,9 +114,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacityTest() throws ApiException {
-        
         String uuid = null;
-        
         Capacity response = api.retrieveContextServiceInterfacePointAvailableCapacityAvailableCapacity(uuid);
 
         // TODO: test validations
@@ -147,9 +130,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfileTest() throws ApiException {
-        
         String uuid = null;
-        
         BandwidthProfile response = api.retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileBandwidthProfile(uuid);
 
         // TODO: test validations
@@ -165,9 +146,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeTest() throws ApiException {
-        
         String uuid = null;
-        
         CapacityValue response = api.retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize(uuid);
 
         // TODO: test validations
@@ -183,9 +162,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateTest() throws ApiException {
-        
         String uuid = null;
-        
         CapacityValue response = api.retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate(uuid);
 
         // TODO: test validations
@@ -201,9 +178,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSizeTest() throws ApiException {
-        
         String uuid = null;
-        
         CapacityValue response = api.retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakBurstSizePeakBurstSize(uuid);
 
         // TODO: test validations
@@ -219,9 +194,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRateTest() throws ApiException {
-        
         String uuid = null;
-        
         CapacityValue response = api.retrieveContextServiceInterfacePointAvailableCapacityBandwidthProfilePeakInformationRatePeakInformationRate(uuid);
 
         // TODO: test validations
@@ -237,9 +210,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSizeTest() throws ApiException {
-        
         String uuid = null;
-        
         CapacityValue response = api.retrieveContextServiceInterfacePointAvailableCapacityTotalSizeTotalSize(uuid);
 
         // TODO: test validations
@@ -255,9 +226,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointNameNameTest() throws ApiException {
-        
         String uuid = null;
-        
         List<String> response = api.retrieveContextServiceInterfacePointNameName(uuid);
 
         // TODO: test validations
@@ -273,11 +242,8 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointNameNameByIdTest() throws ApiException {
-        
         String uuid = null;
-        
         String valueName = null;
-        
         NameAndValue response = api.retrieveContextServiceInterfacePointNameNameById(uuid, valueName);
 
         // TODO: test validations
@@ -293,7 +259,6 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointServiceInterfacePointTest() throws ApiException {
-        
         List<String> response = api.retrieveContextServiceInterfacePointServiceInterfacePoint();
 
         // TODO: test validations
@@ -309,9 +274,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointServiceInterfacePointByIdTest() throws ApiException {
-        
         String uuid = null;
-        
         ServiceInterfacePoint response = api.retrieveContextServiceInterfacePointServiceInterfacePointById(uuid);
 
         // TODO: test validations
@@ -327,9 +290,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfileTest() throws ApiException {
-        
         String uuid = null;
-        
         BandwidthProfile response = api.retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileBandwidthProfile(uuid);
 
         // TODO: test validations
@@ -345,9 +306,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSizeTest() throws ApiException {
-        
         String uuid = null;
-        
         CapacityValue response = api.retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedBurstSizeCommittedBurstSize(uuid);
 
         // TODO: test validations
@@ -363,9 +322,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRateTest() throws ApiException {
-        
         String uuid = null;
-        
         CapacityValue response = api.retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfileCommittedInformationRateCommittedInformationRate(uuid);
 
         // TODO: test validations
@@ -381,9 +338,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSizeTest() throws ApiException {
-        
         String uuid = null;
-        
         CapacityValue response = api.retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakBurstSizePeakBurstSize(uuid);
 
         // TODO: test validations
@@ -399,9 +354,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRateTest() throws ApiException {
-        
         String uuid = null;
-        
         CapacityValue response = api.retrieveContextServiceInterfacePointTotalPotentialCapacityBandwidthProfilePeakInformationRatePeakInformationRate(uuid);
 
         // TODO: test validations
@@ -417,9 +370,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacityTest() throws ApiException {
-        
         String uuid = null;
-        
         Capacity response = api.retrieveContextServiceInterfacePointTotalPotentialCapacityTotalPotentialCapacity(uuid);
 
         // TODO: test validations
@@ -435,9 +386,7 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSizeTest() throws ApiException {
-        
         String uuid = null;
-        
         CapacityValue response = api.retrieveContextServiceInterfacePointTotalPotentialCapacityTotalSizeTotalSize(uuid);
 
         // TODO: test validations
@@ -453,14 +402,10 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void updateContextServiceInterfacePointNameNameByIdTest() throws ApiException {
-        
-        NameAndValue body = null;
-        
         String uuid = null;
-        
         String valueName = null;
-        
-        api.updateContextServiceInterfacePointNameNameById(body, uuid, valueName);
+        NameAndValue name = null;
+        api.updateContextServiceInterfacePointNameNameById(uuid, valueName, name);
 
         // TODO: test validations
     }
@@ -475,12 +420,9 @@ public class ServiceInterfacePointApiTest {
      */
     @Test
     public void updateContextServiceInterfacePointServiceInterfacePointByIdTest() throws ApiException {
-        
-        Object body = null;
-        
         String uuid = null;
-        
-        api.updateContextServiceInterfacePointServiceInterfacePointById(body, uuid);
+        ServiceInterfacePoint serviceInterfacePoint = null;
+        api.updateContextServiceInterfacePointServiceInterfacePointById(uuid, serviceInterfacePoint);
 
         // TODO: test validations
     }
