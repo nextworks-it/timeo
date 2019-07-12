@@ -107,13 +107,13 @@ function createNSITable(tableId, data, params) {
 //	console.log(JSON.stringify(data, null, 4));
 
 	var btnFlag = true;
-	var header = createTableHeaderByValues(['Id', 'Name', 'Description', 'NSD Id', 'Tenant', 'Instantiation State'], btnFlag, false);
+	var header = createTableHeaderByValues(['Id', 'Name', 'Description', 'NSD Id', 'Tenant', 'Instantiation State', 'IL'], btnFlag, false);
 	
 	table.innerHTML = header;
 	
 	var cbacks = ['nsi_details.html?nsiId=', 'terminateNSInstance'];
 	var names = ['View','Terminate'];
-    var columns = [['nsInstanceId'], ['nsName'], ['description'], ['nsdId'], ['tenantId'], ['nsState']];
+    var columns = [['nsInstanceId'], ['nsName'], ['description'], ['nsdId'], ['tenantId'], ['nsState'],['nsScaleStatus','nsScaleLevelId']];
 	var nsInfos = data['queryNsResult'];
 	table.innerHTML += '<tbody>';
 	
@@ -141,7 +141,7 @@ function createNSIDetailsTable(tableId, data, resId) {
 	if (!data.queryNsResult[0].pnfInfo || data.queryNsResult[0].pnfInfo.length < 1) {
 		headers = ['Id', 'NSD', 'VNF Info', 'NS Virtual Link', 'SAP Info'];
 	} else {
-		headers = ['Id', 'NSD', 'VNF Info', 'PNF Info', 'NS Virtual Link', 'SAP Info'];
+		headers = ['Id', 'NSD', 'VNF Info', 'PNF Info', 'IL', 'NS Virtual Link', 'SAP Info'];
 	}
 
 	table.innerHTML = '<table>';
@@ -271,6 +271,7 @@ function createNSITableContents(table, data, btnFlag, resId, names, cbacks, colu
 					|| columns[key].includes("nsName")
 					|| columns[key].includes("description")
 					|| columns[key].includes("nsState")
+					|| columns[key].includes("nsScaleStatus")	
 				){
 				subText += vals[0];
 			} else if (columns[key].includes('tenantId')) {

@@ -331,11 +331,23 @@ implements AsynchronousVimNotificationInterface,
 				configureVnfsInternal(configureVnfMsg);
 				break;
 			}
+			case SCALE_CONFIGURE_VNF: {
+				log.debug("Received request for VNF configuration after SCALE");
+				if (!(internalStatus == ResourceAllocationStatus.SCALE_CREATED_NETWORK_CONNECTIONS)) {
+					log.error("Wrong status. Discarding message.");
+					return;
+				}
+				ScaleConfigureVnfMessage configureVnfMsg = (ScaleConfigureVnfMessage)allocateMessage;
+				this.currentOperationId = configureVnfMsg.getOperationId();
+				scaleConfigureVnfsInternal(configureVnfMsg);
+				break;
+			}
 			
 			case VNFM_OPERATION_ACK: {
 				log.debug("Received notification about VNF operation");
 				if (!((internalStatus == ResourceAllocationStatus.CREATING_VNF) || (internalStatus == ResourceAllocationStatus.TERMINATING_VNF) || 
-						(internalStatus == ResourceAllocationStatus.CONFIGURING_VNF))) {
+						(internalStatus == ResourceAllocationStatus.CONFIGURING_VNF) || (internalStatus==ResourceAllocationStatus.SCALE_CREATING_VNF) || 
+						(internalStatus==ResourceAllocationStatus.SCALE_TERMINATING_VNF)||(internalStatus==ResourceAllocationStatus.SCALE_CONFIGURING_VNF))) {
 					log.error("Wrong status. Discarding message.");
 					return;
 				}
@@ -354,6 +366,18 @@ implements AsynchronousVimNotificationInterface,
 				this.currentOperationId = setupNetworkMessage.getOperationId();
 				this.originalRequest = setupNetworkMessage.getRequest();
 				setupUnderlyingNetworkConnectivityInternal(setupNetworkMessage);
+				break;
+			}
+			case SCALE_SETUP_UNDERLYING_CONNECTIVITY: {
+				log.debug("Received request to establish underlying connectivity");
+				if (internalStatus != ResourceAllocationStatus.SCALE_CREATED_VNF) {
+					log.error("Wrong status. Discarding message.");
+					return;
+				}
+				ScaleSetupUnderlyingConnectivityMessage setupNetworkMessage = (ScaleSetupUnderlyingConnectivityMessage)allocateMessage;
+				this.currentOperationId = setupNetworkMessage.getOperationId();
+				//this.originalRequest = setupNetworkMessage.getRequest();
+				scaleSetupUnderlyingNetworkConnectivityInternal(setupNetworkMessage);
 				break;
 			}
 			
@@ -382,7 +406,7 @@ implements AsynchronousVimNotificationInterface,
 			
 			case REMOVE_VNF: {
 				log.debug("Received request to remove the VNFs");
-				if (!((internalStatus == ResourceAllocationStatus.CONFIGURED_VNF) || (internalStatus == ResourceAllocationStatus.FAILED))) {
+				if (!((internalStatus == ResourceAllocationStatus.CONFIGURED_VNF) || (internalStatus == ResourceAllocationStatus.FAILED) || (internalStatus == ResourceAllocationStatus.SCALE_CONFIGURED_VNF))) {
 					log.error("Wrong status. Discarding message.");
 					return;
 				}
@@ -394,7 +418,7 @@ implements AsynchronousVimNotificationInterface,
 			}
 			case SCALE_REMOVE_VNF: {
 				log.debug("Received request to remove the VNFs due to scale");
-				if (!(internalStatus == ResourceAllocationStatus.CONFIGURED_VNF)) {
+				if (!(internalStatus == ResourceAllocationStatus.CONFIGURED_VNF || internalStatus == ResourceAllocationStatus.SCALE_CONFIGURED_VNF)) {
 					log.error("Wrong status. Discarding message.");
 					return;
 				}
@@ -782,6 +806,7 @@ implements AsynchronousVimNotificationInterface,
 			if (!(schedulingSolution.isSolutionFound())) manageError("Solution not found for the given NS instance ID. No paths are removed.", AllocationMessageType.SETUP_UNDERLYING_CONNECTIVITY);
 			
 			List<NetworkPath> networkPaths = schedulingSolution.getNetworkPaths();
+			log.debug("Found " + networkPaths.size() + " network paths to be removed.");
 			List<InterDcNetworkPath> idnps = schedulingSolution.getInterDcNetworkPaths();
 			log.debug("Found " + networkPaths.size() + " network paths and " + idnps.size() + " interDC network paths to be removed");
 			List<String> npIds = new ArrayList<>();
@@ -1245,17 +1270,16 @@ implements AsynchronousVimNotificationInterface,
 			VnfConfigurableProperties configParam = vnfd.getConfigurableProperties();
 			if ((configParam != null) && (!(configParam.getAdditionalConfigurableProperty().isEmpty()))) {
 				foundVnfToBeConfigured = true;
+				//TODO: To be verified after merge				
 				NsResourceSchedulingSolution solution =
 						resourceComputationDbWrapper.getNsResourceSchedulingSolution(nsInstanceId);
+				
 				Map<String, String> rcOutput = solution.getPnfAllocation().stream() // for each PnfAllocation
 						.map(PnfAllocation::getParameters) // Get its parameter map
 						.flatMap(m -> m.entrySet().stream()) // Flatten them all into a single list of entries
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)); // Collect into a single Map
-				Map<String, String> configValues = rau.buildConfigurationData(
-						configParam.getAdditionalConfigurableProperty(),
-						nsInfo.getConfigurationParameters(),
-						rcOutput
-				);
+				List<PnfInfo> pnfInfo = nsInfo.getPnfInfo();
+				Map<String, String> configValues = rau.buildConfigurationData(configParam.getAdditionalConfigurableProperty(), nsInfo.getConfigurationParameters(), rcOutput, pnfInfo);
 				ModifyVnfInformationRequest configRequest = new ModifyVnfInformationRequest(vnfId, configValues);
 				String operationId = vnfm.modifyVnfInformation(configRequest);
 				log.debug("Configuration request for VNF " + vnfId + " sent to the VNFM.");
@@ -1279,8 +1303,10 @@ implements AsynchronousVimNotificationInterface,
 			if ((configParams != null) && (!(configParams.isEmpty()))) {
 				foundPnfToBeConfigured = true;
 				Vnfm pnfm = pnfmMap.get(pnfId);
+				//TODO: To be verified after merge				
 				NsResourceSchedulingSolution solution =
 						resourceComputationDbWrapper.getNsResourceSchedulingSolution(nsInstanceId);
+				
 				Map<String, String> rcOutput = solution.getPnfAllocation().stream() // for each PnfAllocation
 						.map(PnfAllocation::getParameters) // Get its parameter map
 						.flatMap(m -> m.entrySet().stream()) // Flatten them all into a single list of entries
@@ -1289,7 +1315,8 @@ implements AsynchronousVimNotificationInterface,
 				Map<String, String> configValues = rau.buildConfigurationData(
 						configParams,
 						nsInfo.getConfigurationParameters(),
-						rcOutput
+						rcOutput,
+						pnfInfo
 				);
 				ModifyVnfInformationRequest configRequest = new ModifyVnfInformationRequest(pnfId, configValues);
 				String operationId = pnfm.modifyPnfInformation(configRequest);
@@ -1313,6 +1340,7 @@ implements AsynchronousVimNotificationInterface,
 			List<PnfInfo> pnfInfo = nsInfo.getPnfInfo();
 			boolean foundVnfToBeConfigured = configureVnfsInternal(vnfInstancesId, nsInfo);
 			boolean foundPnfToBeConfigured = configurePnfsInternal(pnfInfo, nsInfo);
+			
 			
 			if (!foundVnfToBeConfigured && !foundPnfToBeConfigured) {
 				log.debug("No VNF or PNF needs to be configured. Sending ACK to lifecycle manager");
@@ -1616,6 +1644,8 @@ implements AsynchronousVimNotificationInterface,
 				}
 				try {
 					String vnfPackageId = vnfPackageManagement.getOnboardedVnfPkgInfoFromVnfd(vnfdMap.get(vnfId).getVnfdId()).getOnboardedVnfPkgInfoId();
+					//TODO: this should be moved
+					vnfdMap.remove(vnfId);
 					vnfPackageManagement.notifyVnfInstanceDeletion(vnfPackageId, vnfId);
 				} catch (NotExistingEntityException e) {
 					log.error("Unable to notify VNF instance deletion to VNF package manager");

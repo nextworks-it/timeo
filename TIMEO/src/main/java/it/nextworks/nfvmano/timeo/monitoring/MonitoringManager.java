@@ -3,6 +3,7 @@ package it.nextworks.nfvmano.timeo.monitoring;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.nextworks.nfvmano.timeo.nso.NsManagementEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,12 @@ public class MonitoringManager implements NsMonitoringActivationInterface, Perfo
 	
 	@Autowired
 	VnfmHandler vnfmHandler;
+
+	@Autowired
+	NsManagementEngine engine;
+
+	@Autowired
+	MonitoringAlertDispatcher dispatcher;
 
 	private Map<String, NsMonitoringManager> nsMonitoringManagers = new HashMap<>(); //Key: NS_instance_ID
 	
@@ -140,8 +147,21 @@ public class MonitoringManager implements NsMonitoringActivationInterface, Perfo
 		if (this.nsMonitoringManagers.containsKey(nsInstanceId)) 
 			throw new AlreadyExistingEntityException("Monitoring already active for NS instance " + nsInstanceId + ". ");
 		NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
-		NsMonitoringManager nsMonitoringManager = new NsMonitoringManager(nsInstanceId, nsd, 
-				this.nsDbWrapper, this.monitoringDriver, this.vnfmHandler);
+		NsMonitoringManager nsMonitoringManager = new NsMonitoringManager(
+				nsInstanceId,
+				nsd,
+				this.nsDbWrapper,
+				this.monitoringDriver,
+				this.vnfmHandler,
+				new NsAlertManager(
+						engine,
+						nsInstanceId,
+						nsd.getMonitoredInfo(),
+						nsd.getAutoScalingRule(),
+						monitoringDriver,
+						dispatcher
+				)
+		);
 		log.debug("Instantiated new NS Monitoring Manager for NS instance " + nsInstanceId);
 		nsMonitoringManager.activateNsMonitoring(nsInfo);
 		this.nsMonitoringManagers.put(nsInstanceId,nsMonitoringManager);

@@ -5,7 +5,7 @@
 		"vnfInstanceToBeAdded":[],
 		"vnfInstanceToBeRemoved":[],
 		"scaleNsToLevelData":{
-			"nsInstantiationLevel":"il_vCDN_big",
+			"nsInstantiationLevel":"${scale_il}",
 			"nsScaleInfo":[]
 			
 		},
