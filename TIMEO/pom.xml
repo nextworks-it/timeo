@@ -246,11 +246,14 @@
             <version>1.0.0</version>
         </dependency>
 <!-- tapi arof dependecies  -->
+<!-- 
 	<dependency>
 		<groupId>io.swagger</groupId>
 		<artifactId>tapi-sdm-client</artifactId>
 		<version>1.0.1</version>
 	</dependency>
+	
+-->
 	<dependency>
 		<groupId>io.swagger</groupId>
 		<artifactId>tapi-arof-client</artifactId>
