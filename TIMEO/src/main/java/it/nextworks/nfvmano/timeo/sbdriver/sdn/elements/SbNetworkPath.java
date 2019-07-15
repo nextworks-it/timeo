@@ -34,17 +34,21 @@ public class SbNetworkPath {
     private String tenantId;
 
     private List<NetworkPathHop> hops = new ArrayList<>();
+    
+    SbNetworkPathType sbNpType;
 
     private Classifier trafficClassifier;
 
     public SbNetworkPath(String networkPathId,
                          String tenantId,
                          List<NetworkPathHop> hops,
-                         Classifier trafficClassifier) {
+                         Classifier trafficClassifier,
+                         SbNetworkPathType sbNpType) {
         this.networkPathId = networkPathId;
         this.tenantId = tenantId;
         if (hops != null) this.hops = hops;
         this.trafficClassifier = trafficClassifier;
+        this.sbNpType = sbNpType;
     }
 
     public String getNetworkPathId() {
@@ -60,4 +64,13 @@ public class SbNetworkPath {
     public Classifier getTrafficClassifier() {
         return trafficClassifier;
     }
+
+	/**
+	 * @return the sbNpType
+	 */
+	public SbNetworkPathType getSbNpType() {
+		return sbNpType;
+	}
+    
+    
 }

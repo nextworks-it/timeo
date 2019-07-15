@@ -157,7 +157,7 @@ public class ResourceComputationDbWrapper {
 			}
 			List<InterDcNetworkPath> idnps = input.getInterDcNetworkPaths();
 			for (InterDcNetworkPath idnp : idnps) {
-				InterDcNetworkPath targetIdnp = new InterDcNetworkPath(output, idnp.getNetworkPathId());
+				InterDcNetworkPath targetIdnp = new InterDcNetworkPath(output, idnp.getNetworkPathId(), idnp.getSbNpType());
 				interDcNetworkPathRepository.saveAndFlush(targetIdnp);
 				List<NetworkPathHop> hops = idnp.getHops();
 				for (NetworkPathHop hop : hops) {

@@ -6,18 +6,16 @@ import java.util.Map;
 
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
-import it.nextworks.nfvmano.libs.descriptors.nsd.Pnfd;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
-import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
 import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
 import it.nextworks.nfvmano.timeo.rc.elements.InterDcNetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPathType;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
-import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
 
 /**
  * Static algorithm for TAPI testing
@@ -84,7 +82,7 @@ public class BluespaceStaticAlgorithm extends AbstractNsResourceAllocationAlgori
 				"10.1.7.83_1");
 		hops.add(hop1);
 		hops.add(hop2);
-		InterDcNetworkPath idnp = new InterDcNetworkPath(networkPathId, hops);
+		InterDcNetworkPath idnp = new InterDcNetworkPath(networkPathId, hops, SbNetworkPathType.SDM);
 		interDcNetworkPaths.add(idnp);
 		
 		NsResourceSchedulingSolution solution = new NsResourceSchedulingSolution(request.getNsInstanceId(), 

@@ -17,6 +17,8 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPathType;
+
 /**
  * This entity models a network path to interconnect a PoP
  * Gateway to another PoP Gateway or to an arbitrary node
@@ -47,6 +49,8 @@ public class InterDcNetworkPath {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<NetworkPathHop> hops = new ArrayList<>();
 	
+	private SbNetworkPathType sbNpType;
+	
 	//TODO: add SDM constraints
 
 	public InterDcNetworkPath() { }
@@ -58,9 +62,11 @@ public class InterDcNetworkPath {
 	 * @param networkPathId ID of the network path
 	 */
 	public InterDcNetworkPath(NsResourceSchedulingSolution nsRss,
-			String networkPathId) {
+			String networkPathId,
+			SbNetworkPathType sbNpType) {
 		this.nsRss = nsRss;
 		this.networkPathId = networkPathId;
+		this.sbNpType = sbNpType;
 	}
 	
 	/**
@@ -70,9 +76,11 @@ public class InterDcNetworkPath {
 	 * @param hops Hops of the network path
 	 */
 	public InterDcNetworkPath(String networkPathId,
-			List<NetworkPathHop> hops) {
+			List<NetworkPathHop> hops,
+			SbNetworkPathType sbNpType) {
 		this.networkPathId = networkPathId;
 		if (hops != null) this.hops = hops;
+		this.sbNpType = sbNpType;
 	}
 
 	/**
@@ -94,6 +102,13 @@ public class InterDcNetworkPath {
 	 */
 	public List<NetworkPathHop> getHops() {
 		return hops;
+	}
+
+	/**
+	 * @return the sbNpType
+	 */
+	public SbNetworkPathType getSbNpType() {
+		return sbNpType;
 	}
 
 	

@@ -245,19 +245,13 @@
             <artifactId>swagger-java-client-monit-config-manager</artifactId>
             <version>1.0.0</version>
         </dependency>
-<!-- tapi arof dependecies  -->
-<!-- 
+<!-- tapi arof dependecies -->
+ 
+
 	<dependency>
-		<groupId>io.swagger</groupId>
-		<artifactId>tapi-sdm-client</artifactId>
-		<version>1.0.1</version>
-	</dependency>
-	
--->
-	<dependency>
-		<groupId>io.swagger</groupId>
-		<artifactId>tapi-arof-client</artifactId>
-		<version>1.0.1</version>
+		<groupId>io.swagger.tapi</groupId>
+		<artifactId>arof</artifactId>
+		<version>1.0.2</version>
 	</dependency>
         <dependency>
 			<groupId>it.nextworks.nfvmano</groupId>

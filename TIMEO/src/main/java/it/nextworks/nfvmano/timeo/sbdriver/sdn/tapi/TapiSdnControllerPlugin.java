@@ -15,11 +15,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.DefaultApi;
+import io.swagger.client.model.*;
 import io.swagger.client.model.Link;
 import io.swagger.client.model.Node;
-import io.swagger.client.model.NodeEdgePoint;
+import io.swagger.client.model.NodeEdgePointRef;
 import io.swagger.client.model.OwnedNodeEdgePointSchema;
-import io.swagger.client.model.SdmPoolPac;
+//import io.swagger.client.model.SdmPoolCapabilityPac;
 import io.swagger.client.model.ServiceInterfacePointRef;
 import io.swagger.client.model.Topology;
 import it.nextworks.nfvmano.libs.common.enums.LayerProtocol;
@@ -67,30 +68,34 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 		log.debug("Retrieving network topology via TAPI");
 		DefaultApi api = buildApiClient();
 		try {
-			List<String> topologyIds = api.retrieveContextTopologyTopology();
-			if (topologyIds == null) {
+			GetTopologyListRPCOutputSchema topologyList = api.createGetTopologyListById();
+			
+			//List<String> topologyIds = api.retrieveContextTopologyContextTopologyTopology();
+			if (topologyList == null) {
 				log.error("Null topology!");
 				throw new NotExistingEntityException("Impossible to read topology, null returned.");
 			}
-			System.out.println("Found " + topologyIds.size() + " topologies");
+			System.out.println("Found " + topologyList.getTopology().size() + " topologies");
 			
-			if (topologyIds.size() == 0) {
+			if (topologyList.getTopology().size() == 0) {
 				log.error("Empty topology list!");
 				throw new NotExistingEntityException("Impossible to read topology, empty list returned.");
-			} else if (topologyIds.size() > 1) {
+			} else if (topologyList.getTopology().size() > 1) {
 				log.error("More that one topology returned! Not yet supported");
 				throw new MethodNotImplementedException("Handling of multiple topologies is not yet supported");
 			} else {
 				//a single topology is present
-				String topologyPath = topologyIds.get(0);
-				log.debug("Found topology with path: " + topologyPath);
-				String uuid = getIdFromUrl(topologyPath);
-				log.debug("Topology ID: " + uuid);
+				String topologyUuid = topologyList.getTopology().get(0).getUuid();
+				log.debug("Found topology with uuid: " + topologyUuid);
+				//String uuid = getIdFromUrl(topologyPath);
+				//log.debug("Topology ID: " + uuid);
 				
-				Topology topology = api.retrieveContextTopologyTopologyById(uuid);
-				log.debug("Retrieved topology with ID: " + uuid);
+				GetTopologyDetailsRPCInputSchema topologyRequest = new GetTopologyDetailsRPCInputSchema();
+				topologyRequest.setTopologyIdOrName(topologyUuid);
+				GetTopologyDetailsRPCOutputSchema topologyOut = api.createGetTopologyDetailsById(topologyRequest);
+				log.debug("Retrieved topology with ID: " + topologyUuid);
 				
-				NetworkTopology result = translateTapiTopology(topology, api);
+				NetworkTopology result = translateTapiTopology(topologyOut.getTopology(), api);
 				log.debug("Topology successfully translated");
 				return result;
 			}
@@ -183,27 +188,23 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 			target.addNode(targetNode);
 			log.debug("Added node " + nodeId + " in target topology");
 			
-			List<NodeEdgePoint> ports = n.getOwnedNodeEdgePoint();
-			for (NodeEdgePoint p : ports) {
-				NodeEdgePoint.LayerProtocolNameEnum proto = p.getLayerProtocolName();
+			List<OwnedNodeEdgePointSchema> ports = n.getOwnedNodeEdgePoint();
+					
+			for (OwnedNodeEdgePointSchema p : ports) {
+				OwnedNodeEdgePointSchema.LayerProtocolNameEnum proto = p.getLayerProtocolName();
 				String portId = p.getUuid();
 				tmpPortToNodeMap.put(portId, nodeId);
 				TapiTopologyCp tapiCp;
-				if (proto.equals(NodeEdgePoint.LayerProtocolNameEnum.ETH)) {
+				if (proto.equals(OwnedNodeEdgePointSchema.LayerProtocolNameEnum.ETH)) {
 					tapiCp = new TapiTopologyCp(targetNode, null, null, null, portId);
 					log.debug("Created ETH port with ID " + portId);
 				}
-				else if (proto.equals(NodeEdgePoint.LayerProtocolNameEnum.SDM)) {
+				else if (proto.equals(OwnedNodeEdgePointSchema.LayerProtocolNameEnum.PHOTONIC_MEDIA)) {
 					tapiCp = new TapiTopologySdmCp(targetNode, null, null, null, portId);
 					log.debug("Created SDM port with ID " + portId);
-					OwnedNodeEdgePointSchema nodeSchema = api.retrieveContextTopologyNodeOwnedNodeEdgePointOwnedNodeEdgePointById(source.getUuid(), n.getUuid(), p.getUuid());
-					if (nodeSchema != null) {
-						SdmPoolPac sdmPool = nodeSchema.getSdmPool();
-						if (sdmPool != null) {
-							((TapiTopologySdmCp)tapiCp).setSdmPoolPac(sdmPool);
-							log.debug("Set SDM pool in SDM port");
-						}
-					}
+					
+					//TODO: add info of the port and check for AROF
+					
 				} else {
 					tapiCp = new TapiTopologyCp(targetNode, null, null, null, portId);
 					log.debug("Created generalized port with ID " + portId);
@@ -211,8 +212,9 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 				List<ServiceInterfacePointRef> sips = p.getMappedServiceInterfacePoint();
 				if (sips != null) {
 					for (ServiceInterfacePointRef sip : sips) {
-						tapiCp.addSip(sip.getServiceInterfacePointId());
-						log.debug("Added mapped Service Interface Point " + sip.getServiceInterfacePointId() + " to port.");
+						//tapiCp.addSip(sip.getServiceInterfacePointId());
+						tapiCp.addSip(sip.getServiceInterfacePointUuid());
+						log.debug("Added mapped Service Interface Point " + sip.getServiceInterfacePointUuid() + " to port.");
 					}
 				}
 				target.addCp(targetNode, tapiCp);
@@ -224,7 +226,11 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 		log.debug("Adding links to topology");
 		for (Link l : links) {
 			String linkId = l.getUuid();
-			List<String> neps = l.getNodeEdgePoint();
+			List<NodeEdgePointRef> neprs = l.getNodeEdgePoint();
+			List<String> neps = new ArrayList<>();
+			for (NodeEdgePointRef n : neprs) {
+				neps.add(n.getNodeEdgePointUuid());
+			}
 			String srcPortId = getIdFromUrl(neps.get(0));
 			String srcNodeId = tmpPortToNodeMap.get(srcPortId);
 			String dstPortId = getIdFromUrl(neps.get(1));
@@ -277,7 +283,7 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 	
 	private LayerProtocol convertLayerProtocol(Node.LayerProtocolNameEnum source) {
 		if (source.equals(Node.LayerProtocolNameEnum.ETH)) return LayerProtocol.ETHERNET;
-		else if (source.equals(Node.LayerProtocolNameEnum.SDM)) return LayerProtocol.SDM;
+		else if (source.equals(Node.LayerProtocolNameEnum.PHOTONIC_MEDIA)) return LayerProtocol.SDM;
 		else {
 			log.warn("Unsopported layer protocol. Setting to NOT_SPECIFIED.");
 			return LayerProtocol.NOT_SPECIFIED;
@@ -286,7 +292,7 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 	
 	private LayerProtocol convertLayerProtocol(Link.LayerProtocolNameEnum source) {
 		if (source.equals(Link.LayerProtocolNameEnum.ETH)) return LayerProtocol.ETHERNET;
-		else if (source.equals(Link.LayerProtocolNameEnum.SDM)) return LayerProtocol.SDM;
+		else if (source.equals(Link.LayerProtocolNameEnum.PHOTONIC_MEDIA)) return LayerProtocol.SDM;
 		else {
 			log.warn("Unsopported layer protocol. Setting to NOT_SPECIFIED.");
 			return LayerProtocol.NOT_SPECIFIED;

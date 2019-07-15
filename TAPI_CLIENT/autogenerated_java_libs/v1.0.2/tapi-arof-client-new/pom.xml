@@ -4,7 +4,7 @@
     <groupId>io.swagger.tapi</groupId>
     <artifactId>arof</artifactId>
     <packaging>jar</packaging>
-    <name>arof client</name>
+    <name>arof</name>
     <version>1.0.2</version>
     <url>https://github.com/swagger-api/swagger-codegen</url>
     <description>Swagger Java</description>
@@ -229,6 +229,13 @@
       <artifactId>tapi-topology</artifactId>
       <version>1.0.2</version>
     </dependency>
+<!--
+     <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>tapi-sdm</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+-->
      <dependency>
       <groupId>io.swagger.tapi</groupId>
       <artifactId>tapi-connectivity</artifactId>
@@ -237,7 +244,7 @@
     <dependency>
       <groupId>io.swagger.tapi</groupId>
       <artifactId>tapi-photonic</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
     </dependency>
         <!-- test dependencies -->
         <dependency>

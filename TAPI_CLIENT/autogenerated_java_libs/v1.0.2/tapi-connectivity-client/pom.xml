@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.swagger.tapi</groupId>
-  <artifactId>tapi-connectivity-client</artifactId>
+  <artifactId>tapi-connectivity</artifactId>
   <packaging>jar</packaging>
   <name>tapi-connectivity-client</name>
   <version>1.0.2</version>

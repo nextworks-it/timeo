@@ -137,6 +137,7 @@ import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerConsumerInterface;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.Classifier;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPath;
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPathType;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.VlanClassifier;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
 import it.nextworks.nfvmano.timeo.vnfm.OrVnfmNfvoAccess;
@@ -892,7 +893,7 @@ implements AsynchronousVimNotificationInterface,
 				List<SbNetworkPath> targetNetworkPath = new ArrayList<>();
 				Classifier trafficClassifier = new VlanClassifier(srcMac, dstMac, vlanId);
 				log.debug("Built classifier.");
-				SbNetworkPath sbNp = new SbNetworkPath(npId, tenantId, hops, trafficClassifier);
+				SbNetworkPath sbNp = new SbNetworkPath(npId, tenantId, hops, trafficClassifier, SbNetworkPathType.DEFAULT);
 				targetNetworkPath.add(sbNp);
 				log.debug("Built network path.");
 				invokeSdnControllerCreateNetworkPath(targetNetworkPath, npId);
@@ -905,7 +906,7 @@ implements AsynchronousVimNotificationInterface,
 				log.debug("Found " + hops.size() + " hops.");
 				//TODO: classifiers for inter-DC paths are still to be discussed
 				List<SbNetworkPath> targetNetworkPath = new ArrayList<>();
-				SbNetworkPath sbNp = new SbNetworkPath(npId, tenantId, hops, null);
+				SbNetworkPath sbNp = new SbNetworkPath(npId, tenantId, hops, null, idnp.getSbNpType());
 				targetNetworkPath.add(sbNp);
 				log.debug("Built interDC network path.");
 				invokeSdnControllerCreateNetworkPath(targetNetworkPath, npId);

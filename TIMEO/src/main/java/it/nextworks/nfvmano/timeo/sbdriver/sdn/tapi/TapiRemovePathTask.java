@@ -53,7 +53,7 @@ public class TapiRemovePathTask implements Runnable {
 		for (String pathId : networkPathIds) {
 			log.debug("Removing connection with ID " + pathId);
 			try {
-				api.deleteContextConnectivityServiceConnectivityServiceById(pathId);
+				api.createDeleteConnectivityServiceById(pathId);
 				log.debug("Removed connection with ID " + pathId);
 			} catch (ApiException e) {
 				log.debug("Got API exception while removing connection " + pathId + ": " + e.getMessage());
