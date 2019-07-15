@@ -202,10 +202,20 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 					log.debug("Created ETH port with ID " + portId);
 				}
 				else if (proto.equals(OwnedNodeEdgePointSchema.LayerProtocolNameEnum.PHOTONIC_MEDIA)) {
-					tapiCp = new TapiTopologySdmCp(targetNode, null, null, null, portId);
-					log.debug("Created SDM port with ID " + portId);
+					//it can be both SDM or AROF
 					
-					//TODO: add info of the port and check for AROF
+					ConnectionEndPointSchema cep = p.getCepList().getConnectionEndPoint().get(0);
+					String protoLayerQualifier = cep.getLayerProtocolQualifier();
+					
+					if (protoLayerQualifier.equals("tapi-arof:PHOTONIC_LAYER_QUALIFIER_AROF")) {
+						tapiCp = new TapiTopologyArofCp(targetNode, null, null, null, portId);
+						((TapiTopologyArofCp)tapiCp).setArofSpec(cep.getArofConnectionEndPointSpec());
+						log.debug("Created TAPI port with ID " + portId);
+					} else {
+						tapiCp = new TapiTopologySdmCp(targetNode, null, null, null, portId);
+						//TODO: add info of the port 
+						log.debug("Created SDM port with ID " + portId);
+					}
 					
 				} else {
 					tapiCp = new TapiTopologyCp(targetNode, null, null, null, portId);
@@ -214,7 +224,6 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 				List<ServiceInterfacePointRef> sips = p.getMappedServiceInterfacePoint();
 				if (sips != null) {
 					for (ServiceInterfacePointRef sip : sips) {
-						//tapiCp.addSip(sip.getServiceInterfacePointId());
 						tapiCp.addSip(sip.getServiceInterfacePointUuid());
 						log.debug("Added mapped Service Interface Point " + sip.getServiceInterfacePointUuid() + " to port.");
 					}

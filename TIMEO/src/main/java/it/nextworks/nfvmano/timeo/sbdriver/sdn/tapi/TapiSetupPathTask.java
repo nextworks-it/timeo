@@ -12,6 +12,7 @@ import io.swagger.client.model.Capacity;
 import io.swagger.client.model.CapacityValue;
 import io.swagger.client.model.CapacityValue.UnitEnum;
 import io.swagger.client.model.ConnectivityConstraint;
+import io.swagger.client.model.ConnectivityConstraint.ServiceTypeEnum;
 import io.swagger.client.model.ConnectivityServiceEndPoint;
 import io.swagger.client.model.ConnectivityServiceEndPoint.DirectionEnum;
 import io.swagger.client.model.ConnectivityServiceEndPoint.LayerProtocolNameEnum;
@@ -100,44 +101,64 @@ public class TapiSetupPathTask implements Runnable {
 	private void buildSdmPath(SbNetworkPath np) throws ApiException {
 		String csUuid = np.getNetworkPathId();
 		log.debug("Creating path with ID " + csUuid);
-//		ConnectivityServiceSchema connectivityService = new ConnectivityServiceSchema();
-//		
-//		//Getting ingress and egress service interface points from the first and last hop
-//		NetworkPathHop nphSrc = np.getHops().get(0);
-//		NetworkPathHop nphDst = np.getHops().get(np.getHops().size()-1);
-//		String source = nphSrc.getIngressServiceInterfacePoint();
-//		String destination = nphDst.getEgressServiceInterfacePoint();
-//		log.debug("Source SIP: " + source + " - Destination SIP: " + destination);
-//		
-//		ConnectivityServiceEndPoint srcEp = buildConnectivityServicePoint(source, csUuid+"-SRC");
-//		ConnectivityServiceEndPoint dstEp = buildConnectivityServicePoint(destination, csUuid+"-DST");
-//		connectivityService.addEndPointItem(srcEp);
-//		connectivityService.addEndPointItem(dstEp);
-//		log.debug("Connectivity Service EndPoints built");
-//		
-//		connectivityService.setUuid(csUuid);
-//		connectivityService.setServiceType(ConnectivityServiceSchema.ServiceTypeEnum.POINT_TO_POINT_CONNECTIVITY);
-//		
-//		//TODO: at the moment the capacity is static. To be read dynamically and encoded in the SbNetworkPath
-//		Capacity requestedCapacity = new Capacity();
-//		CapacityValue totalSize = new CapacityValue();
-//		totalSize.setUnit(CapacityValue.UnitEnum.MBPS);
-//		totalSize.setValue("100");
-//		requestedCapacity.setTotalSize(totalSize);
-//		connectivityService.setRequestedCapacity(requestedCapacity);
-//		log.debug("Capacity statically set.");
-//		
-//		//TODO: at the moment the SDM info are static. To be read dynamically and encoded in an extension of the SbNetworkPath
-//		SdmPropertiesPac includeCore = new SdmPropertiesPac();
-//		includeCore.setCoreId("1");
-//		SpectrumBand sb = new SpectrumBand();
-//		sb.setLowerFrequency("10");
-//		sb.setUpperFrequency("20");
-//		includeCore.setOccupiedSpectrum(sb);
-//		connectivityService.setIncludeCore(includeCore);
-//		log.debug("SDM info statically set.");
-//		api.createContextConnectivityContextConnectivityServiceConnectivityServiceById(csUuid, connectivityService);
-		log.debug("Created connectivity service with ID " + csUuid);
+		
+		CreateConnectivityServiceRPCInputSchema connectivityService = new CreateConnectivityServiceRPCInputSchema();
+		connectivityService.setUuid(csUuid);
+		
+		//Getting ingress and egress service interface points from the first and last hop
+		NetworkPathHop nphSrc = np.getHops().get(0);
+		NetworkPathHop nphDst = np.getHops().get(np.getHops().size()-1);
+		String source = nphSrc.getIngressServiceInterfacePoint();
+		String destination = nphDst.getEgressServiceInterfacePoint();
+		log.debug("Source SIP: " + source + " - Destination SIP: " + destination);
+		
+		ConnectivityServiceEndPoint srcEp = new ConnectivityServiceEndPoint();
+		ConnectivityServiceEndPoint dstEp = new ConnectivityServiceEndPoint();
+		
+		srcEp.setLayerProtocolName(LayerProtocolNameEnum.PHOTONIC_MEDIA);
+		srcEp.setProtectionRole(ProtectionRoleEnum.WORK);
+		srcEp.setLayerProtocolQualifier("tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_SDM");	//TODO: check what should go here
+		srcEp.setRole(RoleEnum.UNKNOWN);
+		
+		srcEp.setLocalId(source);
+		srcEp.setDirection(DirectionEnum.UNIDIRECTIONAL);
+		ServiceInterfacePointRef srcSip = new ServiceInterfacePointRef();
+		srcSip.setServiceInterfacePointUuid(source);
+		srcEp.setServiceInterfacePoint(srcSip);
+		
+		dstEp.setLayerProtocolName(LayerProtocolNameEnum.PHOTONIC_MEDIA);
+		dstEp.setProtectionRole(ProtectionRoleEnum.WORK);
+		dstEp.setLayerProtocolQualifier("tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_SDM");	//TODO: check what should go here
+		dstEp.setRole(RoleEnum.UNKNOWN);
+		
+		dstEp.setLocalId(destination);
+		dstEp.setDirection(DirectionEnum.UNIDIRECTIONAL);
+		ServiceInterfacePointRef dstSip = new ServiceInterfacePointRef();
+		dstSip.setServiceInterfacePointUuid(destination);
+		dstEp.setServiceInterfacePoint(dstSip);
+		
+		connectivityService.addEndPointItem(srcEp);
+		connectivityService.addEndPointItem(dstEp);
+		log.debug("Connectivity Service EndPoints built");
+		
+		//TODO: at the moment the capacity is static. To be read dynamically and encoded in the SbNetworkPath
+		ConnectivityConstraint cc = new ConnectivityConstraint();
+		Capacity requestedCapacity = new Capacity();
+		CapacityValue totalSize = new CapacityValue();
+		totalSize.setUnit(CapacityValue.UnitEnum.GHZ);
+		totalSize.setValue("50");
+		requestedCapacity.setTotalSize(totalSize);
+		cc.setRequestedCapacity(requestedCapacity);
+		connectivityService.setConnectivityConstraint(cc);
+		log.debug("Capacity statically set.");
+		
+		cc.setServiceType(ServiceTypeEnum.POINT_TO_POINT_CONNECTIVITY);
+		
+		//TODO: check how to encode SDM information
+		
+		CreateConnectivityServiceRPCOutputSchema response = api.createCreateConnectivityServiceById(connectivityService);
+		String createdConnectivityService = response.getService().toString();
+		log.debug("Created connectivity service " + createdConnectivityService);
 	}
 	
 	private void buildArofPath(SbNetworkPath np) throws ApiException {
