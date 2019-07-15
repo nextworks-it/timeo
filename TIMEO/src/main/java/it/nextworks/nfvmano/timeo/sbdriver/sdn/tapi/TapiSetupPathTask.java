@@ -145,18 +145,29 @@ public class TapiSetupPathTask implements Runnable {
 		log.debug("Creating path with ID " + csUuid);
 		
 		CreateConnectivityServiceRPCInputSchema createConnectivityService = new CreateConnectivityServiceRPCInputSchema();
-		//UUID uuid = UUID.randomUUID();
-		//createConnectivityService.setUuid(uuid.toString());
-		createConnectivityService.setUuid("xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxnxw");
+		createConnectivityService.setUuid(csUuid);
+		
+		//Getting ingress and egress service interface points from the first and last hop
+		//For AROF there is a single hop within a single node
+		NetworkPathHop nph = np.getHops().get(0);
+		String source = nph.getIngressServiceInterfacePoint();
+		String destination = nph.getEgressServiceInterfacePoint();
+		log.debug("Source SIP: " + source + " - Destination SIP: " + destination);
+
+		
+		
 		ConnectivityServiceEndPoint srcEndpoint = new ConnectivityServiceEndPoint();
 		srcEndpoint.setLayerProtocolName(LayerProtocolNameEnum.PHOTONIC_MEDIA);
 		srcEndpoint.setProtectionRole(ProtectionRoleEnum.WORK);
 		srcEndpoint.setLayerProtocolQualifier("tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_AROF");
 		srcEndpoint.setRole(RoleEnum.UNKNOWN);
-		srcEndpoint.setLocalId("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+		
+		srcEndpoint.setLocalId(source);
 		srcEndpoint.setDirection(DirectionEnum.UNIDIRECTIONAL);
 		ServiceInterfacePointRef srcSip = new ServiceInterfacePointRef();
-		srcSip.setServiceInterfacePointUuid("47620324-de3b-5b86-b3c3-d8657970ed1b");
+		
+		srcSip.setServiceInterfacePointUuid(source);
+		
 		srcEndpoint.setServiceInterfacePoint(srcSip);
 		createConnectivityService.addEndPointItem(srcEndpoint);
 		
@@ -166,10 +177,10 @@ public class TapiSetupPathTask implements Runnable {
 		dstEndpoint.setProtectionRole(ProtectionRoleEnum.WORK);
 		dstEndpoint.setLayerProtocolQualifier("tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_AROF");
 		dstEndpoint.setRole(RoleEnum.UNKNOWN);
-		dstEndpoint.setLocalId("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+		dstEndpoint.setLocalId(destination);
 		dstEndpoint.setDirection(DirectionEnum.UNIDIRECTIONAL);
 		ServiceInterfacePointRef dstSip = new ServiceInterfacePointRef();
-		dstSip.setServiceInterfacePointUuid("e10e8a0f-8d1a-5b70-a755-ee807039f3b4");
+		dstSip.setServiceInterfacePointUuid(destination);
 		dstEndpoint.setServiceInterfacePoint(dstSip);
 		createConnectivityService.addEndPointItem(dstEndpoint);
 		
@@ -177,34 +188,35 @@ public class TapiSetupPathTask implements Runnable {
 		Capacity c = new Capacity();
 		CapacityValue cv = new CapacityValue();
 		cv.setUnit(UnitEnum.GHZ);
-		cv.setValue("1");
+		cv.setValue("50");
 		c.setTotalSize(cv);
 		cc.setRequestedCapacity(c);
 		
 		createConnectivityService.setConnectivityConstraint(cc);
 		CreateConnectivityServiceRPCOutputSchema response = api.createCreateConnectivityServiceById(createConnectivityService);
 		
-		
+		String createdConnectivityService = response.getService().toString();
+		log.debug("Created connectivity service " + createdConnectivityService);
 	}
 	
-	/**
-	 * This method builds a Connectivity Service Endpoint in the format required by the TAPI CS service
-	 * 
-	 * @param sipUuid UUID of the Service Interface Point corresponding to the CS endpoint
-	 * @param localId ID assigned locally to the CS endpoint
-	 * @return the Connectivity Service Endpoint in the correct format
-	 */
-	private ConnectivityServiceEndPoint buildConnectivityServicePoint(String sipUuid, String localId) {
-		ConnectivityServiceEndPoint csEp = new ConnectivityServiceEndPoint();
-		csEp.setDirection(DirectionEnum.BIDIRECTIONAL);
-		csEp.setLayerProtocolName(ConnectivityServiceEndPoint.LayerProtocolNameEnum.ETH);
-		//csEp.setLocalId(localId);
-		csEp.setRole(ConnectivityServiceEndPoint.RoleEnum.SYMMETRIC);
-		String siprString = "/restconf/config/context/service-interface-point/" + sipUuid;
-		ServiceInterfacePointRef sipr = new ServiceInterfacePointRef();
-		sipr.setServiceInterfacePointUuid(siprString);
-		csEp.setServiceInterfacePoint(sipr);
-		return csEp;
-	}
+//	/**
+//	 * This method builds a Connectivity Service Endpoint in the format required by the TAPI CS service
+//	 * 
+//	 * @param sipUuid UUID of the Service Interface Point corresponding to the CS endpoint
+//	 * @param localId ID assigned locally to the CS endpoint
+//	 * @return the Connectivity Service Endpoint in the correct format
+//	 */
+//	private ConnectivityServiceEndPoint buildConnectivityServicePoint(String sipUuid, String localId) {
+//		ConnectivityServiceEndPoint csEp = new ConnectivityServiceEndPoint();
+//		csEp.setDirection(DirectionEnum.BIDIRECTIONAL);
+//		csEp.setLayerProtocolName(ConnectivityServiceEndPoint.LayerProtocolNameEnum.ETH);
+//		//csEp.setLocalId(localId);
+//		csEp.setRole(ConnectivityServiceEndPoint.RoleEnum.SYMMETRIC);
+//		String siprString = "/restconf/config/context/service-interface-point/" + sipUuid;
+//		ServiceInterfacePointRef sipr = new ServiceInterfacePointRef();
+//		sipr.setServiceInterfacePointUuid(siprString);
+//		csEp.setServiceInterfacePoint(sipr);
+//		return csEp;
+//	}
 
 }
