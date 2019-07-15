@@ -146,6 +146,8 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 	private DefaultApi buildApiClient() {
 		DefaultApi api = new DefaultApi();
 		ApiClient apiClient = new ApiClient();
+		//TODO: disable this
+		apiClient.setDebugging(true);
 		apiClient.setBasePath(basePath);
 		api.setApiClient(apiClient);
 		return api;
