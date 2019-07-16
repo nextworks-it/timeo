@@ -81,7 +81,7 @@ import java.util.UUID;
 /**
  * API tests for DefaultApi
  */
-//@Ignore
+@Ignore
 public class DefaultApiTest {
 
 	private final DefaultApi api = new DefaultApi();
