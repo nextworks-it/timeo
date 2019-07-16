@@ -34,6 +34,7 @@ import it.nextworks.nfvmano.timeo.common.exception.ScaleAllocationSolutionNotFou
 import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
 import it.nextworks.nfvmano.timeo.rc.algorithms.AlgorithmType;
 import it.nextworks.nfvmano.timeo.rc.algorithms.BluespaceAitAlgorithm;
+import it.nextworks.nfvmano.timeo.rc.algorithms.BluespaceArofFakeAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.algorithms.BluespaceStaticAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithm5tonic;
 import it.nextworks.nfvmano.timeo.rc.algorithms.VEPCStaticAlgorithmArno;
@@ -697,7 +698,9 @@ public class ResourceSchedulingManager {
 			case VEPC_STATIC_NXW:
 				return new VEPCStaticAlgorithmNXW();
 			case BLUESPACE_STATIC_NXW:
-				return new BluespaceStaticAlgorithm();			
+				return new BluespaceStaticAlgorithm();
+			case BLUESPACE_AROF_FAKE:
+				return new BluespaceArofFakeAlgorithm(vnfPackageManagement, pnfManagementService, rcProperties);
 			case NXW_DYNAMIC_ALGORITHM:
 				return new NxwDynamicAlgorithm(vnfPackageManagement, pnfManagementService, rcProperties);
 			case BLUESPACE_AIT:
