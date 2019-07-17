@@ -13,6 +13,7 @@ import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PhysicalEquipmentPort;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfType;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.repositories.PhysicalEquipmentPortRepository;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.repositories.PnfInstanceRepository;
 
@@ -70,6 +71,16 @@ public class PnfManagementService {
 	}
 	
 	/**
+	 * This method returns the list of PNF instances of a given type
+	 * 
+	 * @param pnfType type of the PNFs to be returned
+	 * @return the list of PNF instances with the given type
+	 */
+	public List<PnfInstance> getPnfInstancedFromType(PnfType pnfType) {
+		return pnfInstanceRepository.findByPnfType(pnfType);
+	}
+	
+	/**
 	 * This method creates a new PNF instance
 	 * 
 	 * @param pnfInstance PNF instance to be created
@@ -82,13 +93,13 @@ public class PnfManagementService {
 			throw new AlreadyExistingEntityException("PNF instance with ID " + pnfInstance.getPnfInstanceId() + " already present in DB. Impossible to create a new one.");
 		log.debug("Adding PNF instance with ID " + pnfInstance.getPnfInstanceId() + " in DB.");
 		
-		PnfInstance target = new PnfInstance(pnfInstance.getPnfInstanceId(), pnfInstance.getPnfdId(), pnfInstance.getPnfdVersion(), pnfInstance.getDescription(), pnfInstance.getLocation());
+		PnfInstance target = new PnfInstance(pnfInstance.getPnfInstanceId(), pnfInstance.getPnfdId(), pnfInstance.getPnfdVersion(), pnfInstance.getDescription(), pnfInstance.getLocation(), pnfInstance.getPnfType());
 		pnfInstanceRepository.saveAndFlush(target);
 		log.debug("PNF instance with ID " + pnfInstance.getPnfInstanceId() + " saved in DB.");
 		
 		List<PhysicalEquipmentPort> ports = pnfInstance.getPorts();
 		for (PhysicalEquipmentPort p : ports) {
-			PhysicalEquipmentPort targetPort = new PhysicalEquipmentPort(target, p.getPortId(), p.getAddresses(), p.isManagement());
+			PhysicalEquipmentPort targetPort = new PhysicalEquipmentPort(target, p.getPortId(), p.getAddresses(), p.isManagement(), p.getServiceInterfacePointId());
 			physicalEquipmentPortRepository.saveAndFlush(targetPort);
 			log.debug("Port " + p.getPortId() + " added to PNF " + pnfInstance.getPnfInstanceId() + " in DB.");
 		}

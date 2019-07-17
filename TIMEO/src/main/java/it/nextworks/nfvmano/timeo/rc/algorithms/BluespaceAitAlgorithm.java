@@ -13,6 +13,7 @@ import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.BluespaceNode;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.GeographicalArea;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.PhysicalServer;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.Rrh;
+import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.RrhBeam;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.ServiceRequest;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.VmRequirements;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.TransmissionMode;
@@ -33,6 +34,7 @@ import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.elements.SapData;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.PnfManagementService;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfType;
 import it.nextworks.nfvmano.timeo.catalogue.vnfpackagemanagement.VnfPackageManagementService;
 import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
 import it.nextworks.nfvmano.timeo.rc.algorithms.bluespace.AitAlgorithmRestClient;
@@ -92,6 +94,7 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
 			Nsd nsd,
 			Map<Vnfd, Map<String, String>> vnfds) throws NotExistingEntityException, FailedOperationException {
 		log.debug("Building request for blueSPACE resource allocation");
+		
 		log.debug("Building service requests.");
 		List<ServiceRequest> serviceRequests = new ArrayList<ServiceRequest>();
 		List<String> serviceAreaId = translateServiceAreaId(request.getSapData());
@@ -101,6 +104,7 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
 				serviceAreaId,
 				transmissionMode, 
 				vmRequirements);			//VM ID: VNFD_ID-INDEX-VDU_ID
+		serviceRequests.add(serviceRequest);
 		
 		log.debug("Setting geographical areas.");
 		List<GeographicalArea> geoAreas = readGeographicalAreas();
@@ -110,6 +114,14 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
 		
 		log.debug("Retrieving RRHs.");
 		List<Rrh> rrhs = new ArrayList<>();
+		List<PnfInstance> rrhPnfs = pnfManagementService.getPnfInstancedFromType(PnfType.RRH);
+		for (PnfInstance rrhPnf : rrhPnfs) {
+			String rrhId = rrhPnf.getPnfInstanceId();
+			List<RrhBeam> beams = new ArrayList<RrhBeam>();
+			//TODO: retrieve information about the PNF instance status. It may be based on a PNF Instance REST Client that adopts the same interface of the PNF
+			Rrh rrh = new Rrh(rrhId, beams);
+		}
+		
 		//TODO:
 		
 		log.debug("Retrieving nodes in network topology from SDN controller.");

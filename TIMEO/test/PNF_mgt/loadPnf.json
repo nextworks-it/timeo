@@ -4,19 +4,22 @@
 	"pnfdVersion": "0.0.1",
 	"description": "TEST PNF",
 	"location": "TEST_LOCATION",
+	"type": "UNDEFINED",
 	"ports": [{
 		"portId": "PORT_001",
 		"addresses": {
 			"MAC_ADDRESS": "MAC",
 			"IP_ADDRESS": "192.168.0.1" 
 		},
-		"management": true
+		"management": true,
+		"sip": "xxx"
 	}, {
 		"portId": "PORT_002",
 		"addresses": {
 			"MAC_ADDRESS": "MAC",
 			"IP_ADDRESS": "192.168.0.2" 
 		},
-		"management": false
+		"management": false,
+		"sip": "yyy"
 	}]
 }
