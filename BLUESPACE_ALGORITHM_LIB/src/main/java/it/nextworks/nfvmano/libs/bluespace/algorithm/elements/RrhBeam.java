@@ -19,7 +19,7 @@ public class RrhBeam {
 	
 	//the following three parameters should be static for the RRH and should be made available from the agent
 	//To be checked with Eulambia
-	private float bandwidth;		//default: 
+	private float bandwidth;		//default: 760.32f
 	private List<Subchannel> subchannels = new ArrayList<Subchannel>();
 	private GeographicalArea geographicalArea;
 	

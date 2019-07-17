@@ -18,10 +18,10 @@ public class Subchannel {
 	
 	private String subchannelId;
 	
-	//available in BBU info - same for every channel, in every beam, in every RRH
+	//available in RRH info - same for every channel, in every beam, in every RRH
 	private int subcarriers;
 	
-	//available in BBU info - same for every channel, in every beam, in every RRH
+	//available in RRH info - same for every channel, in every beam, in every RRH
 	private float subcarrierSpacing;	//default: 240 kHz
 	
 	//this should be made available in RRH monitoring info - to be checked with Eulambia

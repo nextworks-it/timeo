@@ -48,6 +48,8 @@ public class PnfInstance implements DescriptorInformationElement {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	List<PhysicalEquipmentPort> ports = new ArrayList<>();
 	
+	private PnfType pnfType;
+	
 	public PnfInstance() { }
 
 	/**
@@ -69,6 +71,31 @@ public class PnfInstance implements DescriptorInformationElement {
 		this.pnfdVersion = pnfdVersion;
 		this.description = description;
 		this.location = location;
+		this.pnfType = PnfType.UNDEFINED;
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param pnfInstanceId ID of the PNF instance.
+	 * @param pnfdId ID of the PNFD defining the PNF.
+	 * @param pnfdVersion version of the PNFD defining the PNF.
+	 * @param description Description of the PNF instance.
+	 * @param location Geographical location where the PNF is deployed.
+	 * @param pnfType type of the PNF
+	 */
+	public PnfInstance(String pnfInstanceId,
+			String pnfdId,
+			String pnfdVersion,
+			String description,
+			String location,
+			PnfType pnfType) {
+		this.pnfInstanceId = pnfInstanceId;
+		this.pnfdId = pnfdId;
+		this.pnfdVersion = pnfdVersion;
+		this.description = description;
+		this.location = location;
+		this.pnfType = pnfType;
 	}
 	
 	/**
@@ -125,6 +152,16 @@ public class PnfInstance implements DescriptorInformationElement {
 	@JsonProperty("ports")
 	public List<PhysicalEquipmentPort> getPorts() {
 		return ports;
+	}
+	
+	
+
+	/**
+	 * @return the pnfType
+	 */
+	@JsonProperty("type")
+	public PnfType getPnfType() {
+		return pnfType;
 	}
 
 	@JsonIgnore

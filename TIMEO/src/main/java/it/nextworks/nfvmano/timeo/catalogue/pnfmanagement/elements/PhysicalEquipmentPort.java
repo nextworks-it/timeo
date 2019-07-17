@@ -49,6 +49,9 @@ public class PhysicalEquipmentPort implements DescriptorInformationElement {
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private Map<AddressType, String> addresses = new HashMap<>();
 	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String serviceInterfacePointId;
+	
 	private boolean management;	//true if this is the port to be used to access the equipment for management purposes
 	
 	public PhysicalEquipmentPort() { }
@@ -59,16 +62,19 @@ public class PhysicalEquipmentPort implements DescriptorInformationElement {
 	 * @param pnf PNF instance this port belongs to
 	 * @param portId ID of the port
 	 * @param addresses addresses of the port, one per layer
-	 * @param management
+	 * @param management true if the port is used for management purposes
+	 * @param serviceInterfacePointId ID of the service interface point associated to the port
 	 */
 	public PhysicalEquipmentPort(PnfInstance pnf, 
 			String portId,
 			Map<AddressType, String> addresses,
-			boolean management) {
+			boolean management,
+			String serviceInterfacePointId) {
 		this.pnf = pnf;
 		this.portId = portId;
 		if (addresses != null) this.addresses = addresses;
 		this.management = management;
+		this.serviceInterfacePointId = serviceInterfacePointId;
 	}
 
 	/**
@@ -97,6 +103,16 @@ public class PhysicalEquipmentPort implements DescriptorInformationElement {
 		return management;
 	}
 	
+	
+	
+	/**
+	 * @return the serviceInterfacePointId
+	 */
+	@JsonProperty("sipId")
+	public String getServiceInterfacePointId() {
+		return serviceInterfacePointId;
+	}
+
 	@Override
 	public void isValid() throws MalformattedElementException {
 		if (portId == null) throw new MalformattedElementException("Physical equipment port without ID.");

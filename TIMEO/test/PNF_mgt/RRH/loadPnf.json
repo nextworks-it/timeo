@@ -1,0 +1,108 @@
+{
+	"pnfInstanceId": "RRH_001",
+	"pnfdId": "RRH_PNFD",
+	"pnfdVersion": "0.0.1",
+	"description": "RRH",
+	"location": "1",
+	"type": "RRH",
+	"ports": [{
+		"portId": "PORT_001",
+		"addresses": {
+			"MAC_ADDRESS": "MAC",
+			"IP_ADDRESS": "192.168.0.1" 
+		},
+		"management": true,
+		"sip": "xxx"
+	}, {
+		"portId": "PORT_002",
+		"addresses": {
+			"MAC_ADDRESS": "MAC",
+			"IP_ADDRESS": "192.168.0.2" 
+		},
+		"management": false,
+		"sip": "yyy"
+	}],
+	"metadata": [{
+		"rrhBeams": [{
+			"beamId": "1",
+			"bandwidth": 760.32,
+			"subchannels": [{
+				"subchannelId": "1",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}, {
+				"subchannelId": "2",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}, {
+				"subchannelId": "3",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}, {
+				"subchannelId": "4",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}]
+		},{
+			"beamId": "2",
+			"bandwidth": 760.32,
+			"subchannels": [{
+				"subchannelId": "1",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}, {
+				"subchannelId": "2",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}, {
+				"subchannelId": "3",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}, {
+				"subchannelId": "4",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}]
+		},{
+			"beamId": "3",
+			"bandwidth": 760.32,
+			"subchannels": [{
+				"subchannelId": "1",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}, {
+				"subchannelId": "2",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}, {
+				"subchannelId": "3",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}, {
+				"subchannelId": "4",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}]
+		},{
+			"beamId": "4",
+			"bandwidth": 760.32,
+			"subchannels": [{
+				"subchannelId": "1",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}, {
+				"subchannelId": "2",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}, {
+				"subchannelId": "3",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}, {
+				"subchannelId": "4",
+				"subcarriers": 10,
+				"subcarrierSpacing": 240
+			}]
+		}]
+	}]
+}
