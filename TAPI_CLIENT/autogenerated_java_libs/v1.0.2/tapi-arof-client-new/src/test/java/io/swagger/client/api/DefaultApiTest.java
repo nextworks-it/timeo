@@ -81,7 +81,7 @@ import java.util.UUID;
 /**
  * API tests for DefaultApi
  */
-//@Ignore
+@Ignore
 public class DefaultApiTest {
 
 	private final DefaultApi api = new DefaultApi();
@@ -112,6 +112,7 @@ public class DefaultApiTest {
 	 *          if the Api call fails
 	 */
 	@Test
+	@Ignore
 	public void createCreateConnectivityServiceByIdTest() throws ApiException {
 		api.setApiClient(new ApiClient()
 					.setConnectTimeout(0)
@@ -420,7 +421,7 @@ public class DefaultApiTest {
 	 *          if the Api call fails
 	 */
 	@Test
-	   
+	@Ignore
 	public void retrieveContextTest() throws ApiException {
 		api.setApiClient(new ApiClient()
 				.setBasePath("http://10.0.50.26:8182/restconf")
