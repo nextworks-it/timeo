@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+
 import it.nextworks.nfvmano.libs.bluespace.algorithm.messages.BluespaceAlgorithmAllocationRequest;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.messages.BluespaceAlgorithmAllocationResponse;
 import it.nextworks.nfvmano.libs.common.exceptions.FailedOperationException;
@@ -36,6 +38,8 @@ public class BluespaceAlgorithmRestController {
 		try {
 			BluespaceAlgorithmAllocationResponse response = algorithm.computeAllocation(request);
 			log.debug("Found solution.");
+			Gson gson = new Gson();
+			System.out.println(gson.toJson(response));
 			return new ResponseEntity<BluespaceAlgorithmAllocationResponse>(response, HttpStatus.OK);
 		} catch (MethodNotImplementedException e) {
 			log.error("Error. Method not implemented.");
