@@ -112,7 +112,7 @@ public class DefaultApiTest {
 	 *          if the Api call fails
 	 */
 	@Test
-	@Ignore
+	
 	public void createCreateConnectivityServiceByIdTest() throws ApiException {
 		api.setApiClient(new ApiClient()
 					.setConnectTimeout(0)
@@ -162,8 +162,8 @@ public class DefaultApiTest {
 		//CreateConnectivityServiceRPCInputRequest cr = new CreateConnectivityServiceRPCInputRequest();
 		//cr.setCreateConnectivityServiceRPCInputSchema(createConnectivityService);
 		//createConnectivityService.addEndPointItem();
-		CreateConnectivityServiceRPCOutputSchema response = api.createCreateConnectivityServiceById(createConnectivityService);
-		System.out.println(gson.toJson(response));
+		CreateConnectivityServiceRPCInputSchema response = api.createCreateConnectivityServiceById(createConnectivityService);
+		System.out.println(gson.toJson(response.getUuid()));
 		// TODO: test validations
 	}
 
