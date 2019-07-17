@@ -339,8 +339,10 @@ public class DefaultApi {
      * @return CreateConnectivityServiceRPCOutputSchema
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public CreateConnectivityServiceRPCOutputSchema createCreateConnectivityServiceById(CreateConnectivityServiceRPCInputRequest createConnectivityService) throws ApiException {
-        ApiResponse<CreateConnectivityServiceRPCOutputSchema> resp = createCreateConnectivityServiceByIdWithHttpInfo(createConnectivityService);
+    //public CreateConnectivityServiceRPCOutputSchema createCreateConnectivityServiceById(CreateConnectivityServiceRPCInputRequest createConnectivityService) throws ApiException {
+    public CreateConnectivityServiceRPCInputSchema createCreateConnectivityServiceById(CreateConnectivityServiceRPCInputRequest createConnectivityService) throws ApiException {
+        //ApiResponse<CreateConnectivityServiceRPCOutputSchema> resp = createCreateConnectivityServiceByIdWithHttpInfo(createConnectivityService);
+    	ApiResponse<CreateConnectivityServiceRPCInputSchema> resp = createCreateConnectivityServiceByIdWithHttpInfo(createConnectivityService);
         return resp.getData();
     }
     
@@ -352,11 +354,14 @@ public class DefaultApi {
      * @return CreateConnectivityServiceRPCOutputSchema
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public CreateConnectivityServiceRPCOutputSchema createCreateConnectivityServiceById(CreateConnectivityServiceRPCInputSchema createConnectivityService) throws ApiException {
-        ApiResponse<CreateConnectivityServiceRPCOutputSchema> resp = createCreateConnectivityServiceByIdWithHttpInfo(createConnectivityService);
+    //public CreateConnectivityServiceRPCOutputSchema createCreateConnectivityServiceById(CreateConnectivityServiceRPCInputSchema createConnectivityService) throws ApiException {
+    public CreateConnectivityServiceRPCInputSchema createCreateConnectivityServiceById(CreateConnectivityServiceRPCInputSchema createConnectivityService) throws ApiException {
+        ApiResponse<CreateConnectivityServiceRPCInputSchema> resp = createCreateConnectivityServiceByIdWithHttpInfo(createConnectivityService);
         return resp.getData();
     }
     
+    
+    //TODO: Modified to match CTTCs server return 
     /**
      * Create create-connectivity-service by ID
      * Create operation of resource: create-connectivity-service
@@ -364,9 +369,11 @@ public class DefaultApi {
      * @return ApiResponse&lt;CreateConnectivityServiceRPCOutputSchema&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<CreateConnectivityServiceRPCOutputSchema> createCreateConnectivityServiceByIdWithHttpInfo(CreateConnectivityServiceRPCInputRequest createConnectivityService) throws ApiException {
+    //public ApiResponse<CreateConnectivityServiceRPCOutputSchema> createCreateConnectivityServiceByIdWithHttpInfo(CreateConnectivityServiceRPCInputRequest createConnectivityService) throws ApiException {
+    public ApiResponse<CreateConnectivityServiceRPCInputSchema> createCreateConnectivityServiceByIdWithHttpInfo(CreateConnectivityServiceRPCInputRequest createConnectivityService) throws ApiException {
         com.squareup.okhttp.Call call = createCreateConnectivityServiceByIdValidateBeforeCall(createConnectivityService, null, null);
-        Type localVarReturnType = new TypeToken<CreateConnectivityServiceRPCOutputSchema>(){}.getType();
+        //Type localVarReturnType = new TypeToken<CreateConnectivityServiceRPCOutputSchema>(){}.getType();
+        Type localVarReturnType = new TypeToken<CreateConnectivityServiceRPCInputSchema>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
     
@@ -378,9 +385,10 @@ public class DefaultApi {
      * @return ApiResponse&lt;CreateConnectivityServiceRPCOutputSchema&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<CreateConnectivityServiceRPCOutputSchema> createCreateConnectivityServiceByIdWithHttpInfo(CreateConnectivityServiceRPCInputSchema createConnectivityService) throws ApiException {
+    //public ApiResponse<CreateConnectivityServiceRPCOutputSchema> createCreateConnectivityServiceByIdWithHttpInfo(CreateConnectivityServiceRPCInputSchema createConnectivityService) throws ApiException {
+    public ApiResponse<CreateConnectivityServiceRPCInputSchema> createCreateConnectivityServiceByIdWithHttpInfo(CreateConnectivityServiceRPCInputSchema createConnectivityService) throws ApiException {
         com.squareup.okhttp.Call call = createCreateConnectivityServiceByIdValidateBeforeCall(createConnectivityService, null, null);
-        Type localVarReturnType = new TypeToken<CreateConnectivityServiceRPCOutputSchema>(){}.getType();
+        Type localVarReturnType = new TypeToken<CreateConnectivityServiceRPCInputSchema>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
