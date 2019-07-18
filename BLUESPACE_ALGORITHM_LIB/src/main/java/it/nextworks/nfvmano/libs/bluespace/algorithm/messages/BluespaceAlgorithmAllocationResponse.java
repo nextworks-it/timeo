@@ -33,6 +33,9 @@ public class BluespaceAlgorithmAllocationResponse {
 		return serviceResponses;
 	}
 	
-	
+	public boolean hasSuccessfulResponse() {
+		if ((serviceResponses != null ) && (serviceResponses.size() >= 1)) return true;
+		else return false;
+	}
 
 }
