@@ -1,5 +1,6 @@
 package it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.metadatatypes;
 
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstanceMetadata;
 
 public class StringMetadata extends PnfInstanceMetadata {
@@ -12,8 +13,8 @@ public class StringMetadata extends PnfInstanceMetadata {
 	/**
 	 * @param value The value of the metadata info
 	 */
-	public StringMetadata(String value) {
-		super();
+	public StringMetadata(PnfInstance pnfInstance, String name, String value) {
+		super(pnfInstance, name);
 		this.value = value;
 	}
 

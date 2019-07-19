@@ -1,5 +1,6 @@
 package it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.metadatatypes;
 
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstanceMetadata;
 
 public class BooleanMetadata extends PnfInstanceMetadata {
@@ -24,8 +25,8 @@ public class BooleanMetadata extends PnfInstanceMetadata {
 	/**
 	 * @param value
 	 */
-	public BooleanMetadata(boolean value) {
-		super();
+	public BooleanMetadata(PnfInstance pnfInstance, String name,boolean value) {
+		super(pnfInstance, name);
 		this.value = value;
 	}
 	
