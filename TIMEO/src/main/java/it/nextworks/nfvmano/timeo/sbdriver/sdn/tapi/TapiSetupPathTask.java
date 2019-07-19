@@ -90,6 +90,7 @@ public class TapiSetupPathTask implements Runnable {
 				}
 			} catch (ApiException e) {
 				log.error("Got API exception while creating connectivity service");
+				log.error("ApiException Message:"+e.getMessage());
 				consumer.notifySdnControllerOperationResult(operationId, ResponseCode.FAILED_GENERIC, "Got API exception while creating connection " + np.getNetworkPathId() + ": " + e.getMessage());
 				return;
 			}
