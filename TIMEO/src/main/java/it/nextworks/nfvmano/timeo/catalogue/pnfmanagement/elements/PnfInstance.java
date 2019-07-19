@@ -53,6 +53,7 @@ public class PnfInstance implements DescriptorInformationElement {
 	
 	private PnfType pnfType;
 	
+	@OneToMany(mappedBy="pnfInstance")
 	private Map<String, PnfInstanceMetadata> pnfInstanceMetadata=new HashMap<>();
 	
 	public PnfInstance() { }

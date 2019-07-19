@@ -1,5 +1,6 @@
 package it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -20,6 +21,7 @@ import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.metadatatypes
 })
 public class PnfInstanceMetadata {
 	
-	
+	@JsonIgnore
+    private PnfInstance pnfInstance;
 
 }
