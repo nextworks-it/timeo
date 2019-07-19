@@ -1,5 +1,7 @@
 package it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements;
 
+import javax.persistence.Entity;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
@@ -19,6 +21,7 @@ import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.metadatatypes
         @Type(value = IntegerMetadata.class, name = "Integer"),
         @Type(value = BooleanMetadata.class, name = "Boolean"),
 })
+@Entity
 public class PnfInstanceMetadata {
 	
 	@JsonIgnore
