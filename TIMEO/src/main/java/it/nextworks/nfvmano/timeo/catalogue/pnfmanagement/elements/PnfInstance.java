@@ -54,7 +54,7 @@ public class PnfInstance implements DescriptorInformationElement {
 	private PnfType pnfType;
 	
 	@OneToMany(mappedBy="pnfInstance")
-	private Map<String, PnfInstanceMetadata> pnfInstanceMetadata=new HashMap<>();
+	private List<PnfInstanceMetadata> pnfInstanceMetadata=new ArrayList<>();
 	
 	public PnfInstance() { }
 
@@ -72,7 +72,7 @@ public class PnfInstance implements DescriptorInformationElement {
 			String pnfdVersion,
 			String description,
 			String location,
-			Map<String, PnfInstanceMetadata> pnfInstanceMetadata) {
+			List<PnfInstanceMetadata> pnfInstanceMetadata) {
 		this.pnfInstanceId = pnfInstanceId;
 		this.pnfdId = pnfdId;
 		this.pnfdVersion = pnfdVersion;
@@ -195,14 +195,14 @@ public class PnfInstance implements DescriptorInformationElement {
 	/**
 	 * @return the pnfInstanceMetadata
 	 */
-	public Map<String, PnfInstanceMetadata> getPnfInstanceMetadata() {
+	public List<PnfInstanceMetadata> getPnfInstanceMetadata() {
 		return pnfInstanceMetadata;
 	}
 
 	/**
 	 * @param pnfInstanceMetadata the pnfInstanceMetadata to set
 	 */
-	public void setPnfInstanceMetadata(Map<String, PnfInstanceMetadata> pnfInstanceMetadata) {
+	public void setPnfInstanceMetadata(List<PnfInstanceMetadata> pnfInstanceMetadata) {
 		this.pnfInstanceMetadata = pnfInstanceMetadata;
 	}
 	

@@ -33,5 +33,40 @@ public class PnfInstanceMetadata {
 	
 	@JsonIgnore
     private PnfInstance pnfInstance;
+	
+	private String name;
+
+	/**
+	 * @param pnfInstance 
+	 * @param name
+	 */
+	public PnfInstanceMetadata(PnfInstance pnfInstance,String name) {
+		super();
+		this.name = name;
+		this.pnfInstance=pnfInstance;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @return the pnfInstance
+	 */
+	public PnfInstance getPnfInstance() {
+		return pnfInstance;
+	}
+	
+	
 
 }
