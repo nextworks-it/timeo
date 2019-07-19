@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -53,7 +54,7 @@ public class PnfInstance implements DescriptorInformationElement {
 	
 	private PnfType pnfType;
 	
-	@OneToMany(mappedBy="pnfInstance")
+	@OneToMany(targetEntity=PnfInstanceMetadata.class, mappedBy="pnfInstance", fetch=FetchType.EAGER)
 	private List<PnfInstanceMetadata> pnfInstanceMetadata=new ArrayList<>();
 	
 	public PnfInstance() { }
