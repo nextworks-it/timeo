@@ -1,7 +1,9 @@
 package it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -9,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.apache.commons.collections15.map.HashedMap;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.OnDelete;
@@ -50,6 +53,8 @@ public class PnfInstance implements DescriptorInformationElement {
 	
 	private PnfType pnfType;
 	
+	private Map<String, PnfInstanceMetadata> pnfInstanceMetadata=new HashMap<>();
+	
 	public PnfInstance() { }
 
 	/**
@@ -65,15 +70,20 @@ public class PnfInstance implements DescriptorInformationElement {
 			String pnfdId,
 			String pnfdVersion,
 			String description,
-			String location) {
+			String location,
+			Map<String, PnfInstanceMetadata> pnfInstanceMetadata) {
 		this.pnfInstanceId = pnfInstanceId;
 		this.pnfdId = pnfdId;
 		this.pnfdVersion = pnfdVersion;
 		this.description = description;
 		this.location = location;
 		this.pnfType = PnfType.UNDEFINED;
+		if(pnfInstanceMetadata!=null)
+			this.pnfInstanceMetadata = pnfInstanceMetadata;
 	}
 	
+	
+
 	/**
 	 * Constructor
 	 * 
@@ -179,6 +189,20 @@ public class PnfInstance implements DescriptorInformationElement {
 		if (pnfdId == null) throw new MalformattedElementException("PNF instance without PNFD ID.");
 		if (pnfdVersion == null) throw new MalformattedElementException("PNF instance without PNFD version.");
 		if ((ports == null) || (ports.isEmpty())) throw new MalformattedElementException("PNF instance without ports. At least one port is needed to access the PNF.");
+	}
+	
+	/**
+	 * @return the pnfInstanceMetadata
+	 */
+	public Map<String, PnfInstanceMetadata> getPnfInstanceMetadata() {
+		return pnfInstanceMetadata;
+	}
+
+	/**
+	 * @param pnfInstanceMetadata the pnfInstanceMetadata to set
+	 */
+	public void setPnfInstanceMetadata(Map<String, PnfInstanceMetadata> pnfInstanceMetadata) {
+		this.pnfInstanceMetadata = pnfInstanceMetadata;
 	}
 	
 }
