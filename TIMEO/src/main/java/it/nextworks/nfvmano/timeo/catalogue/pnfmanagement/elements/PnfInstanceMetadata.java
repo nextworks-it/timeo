@@ -1,6 +1,8 @@
 package it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -23,6 +25,11 @@ import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.metadatatypes
 })
 @Entity
 public class PnfInstanceMetadata {
+	
+	@Id
+    @GeneratedValue
+    @JsonIgnore
+    private Long id;
 	
 	@JsonIgnore
     private PnfInstance pnfInstance;
