@@ -54,7 +54,9 @@ public class PnfInstance implements DescriptorInformationElement {
 	
 	private PnfType pnfType;
 	
-	@OneToMany(targetEntity=PnfInstanceMetadata.class, mappedBy="pnfInstance", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="pnfInstance",  cascade=CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<PnfInstanceMetadata> pnfInstanceMetadata=new ArrayList<>();
 	
 	public PnfInstance() { }

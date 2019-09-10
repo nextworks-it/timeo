@@ -13,8 +13,10 @@ import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PhysicalEquipmentPort;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstanceMetadata;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfType;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.repositories.PhysicalEquipmentPortRepository;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.repositories.PnfInstanceMetadataRepository;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.repositories.PnfInstanceRepository;
 
 /**
@@ -35,6 +37,9 @@ public class PnfManagementService {
 	
 	@Autowired
 	private PhysicalEquipmentPortRepository physicalEquipmentPortRepository;
+	
+	@Autowired
+	private PnfInstanceMetadataRepository pnfInstanceMetadataRepository;
 	
 	public PnfManagementService() {	}
 	
@@ -102,6 +107,13 @@ public class PnfManagementService {
 			PhysicalEquipmentPort targetPort = new PhysicalEquipmentPort(target, p.getPortId(), p.getAddresses(), p.isManagement(), p.getServiceInterfacePointId());
 			physicalEquipmentPortRepository.saveAndFlush(targetPort);
 			log.debug("Port " + p.getPortId() + " added to PNF " + pnfInstance.getPnfInstanceId() + " in DB.");
+		}
+		
+		List<PnfInstanceMetadata> metadata = pnfInstance.getPnfInstanceMetadata();
+		for (PnfInstanceMetadata data : metadata) {
+			PnfInstanceMetadata newData = data.setPnfInstance(target);
+			pnfInstanceMetadataRepository.saveAndFlush(newData);
+			
 		}
 		log.debug("PNF instance creation done.");
 	}
