@@ -54,6 +54,7 @@ import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -123,6 +124,11 @@ public class ResourceSchedulingManager {
 	@Qualifier(NfvoConstants.computationQueueExchange)
 	TopicExchange computationMessageExchange;
 
+	//Used to retrieve Indicator and Configuration information
+	//from the VNFs/PNFs in the Algorithm (AitAlgorithm)
+	@Autowired
+	TaskExecutor taskExecutor;
+	
 	private Queue queue;
 	
 	@Value("${timeo.algorithm}")
@@ -704,7 +710,7 @@ public class ResourceSchedulingManager {
 			case NXW_DYNAMIC_ALGORITHM:
 				return new NxwDynamicAlgorithm(vnfPackageManagement, pnfManagementService, rcProperties);
 			case BLUESPACE_AIT:
-				return new BluespaceAitAlgorithm(aitAlgorithmUrl, vnfPackageManagement, rcProperties, pnfManagementService);
+				return new BluespaceAitAlgorithm(aitAlgorithmUrl, vnfPackageManagement, rcProperties, pnfManagementService,taskExecutor);
 			default:
 				log.error("Algorithm type {} not yet implemented.", type);
 				throw new AlgorithmNotAvailableException();

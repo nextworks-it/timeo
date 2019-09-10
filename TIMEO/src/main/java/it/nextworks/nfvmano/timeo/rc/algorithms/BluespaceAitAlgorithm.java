@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.BluespaceNode;
@@ -32,6 +33,7 @@ import it.nextworks.nfvmano.libs.common.elements.KeyValuePair;
 import it.nextworks.nfvmano.libs.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
+import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.descriptors.common.elements.VirtualComputeDesc;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Pnfd;
@@ -42,6 +44,7 @@ import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.elements.LocationInfo;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.elements.SapData;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
+import it.nextworks.nfvmano.libs.vnfindicator.interfaces.elements.IndicatorInformation;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.PnfManagementService;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PhysicalEquipmentPort;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
@@ -66,6 +69,8 @@ import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.elements.WrapperComputeNode;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.wrapper.VimWrapperPlugin;
 import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
+import it.nextworks.nfvmano.timeo.vnfm.vnfdriver.RestVnfDriver;
+import it.nextworks.nfvmano.timeo.vnfm.vnfdriver.VnfRestClient;
 
 public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm {
 	
@@ -89,17 +94,23 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
 	
 	private VimPlugin vimPlugin;
 	private SdnControllerPlugin sdnPlugin;
+	private TaskExecutor taskExecutor;
+	
 	
 	public BluespaceAitAlgorithm(String aitAlgorithmUrl,
 			VnfPackageManagementService vnfPackageManagementService,
 			Map<String, String> properties,
-			PnfManagementService pnfManagementService) {
+			PnfManagementService pnfManagementService,
+			TaskExecutor taskExecutor
+			
+			) {
 		super(AlgorithmType.BLUESPACE_AIT);
 		this.vnfPackageManagementService = vnfPackageManagementService;
 		this.pnfManagementService = pnfManagementService;
 		this.properties = properties;
 		this.restClient = new AitAlgorithmRestClient(aitAlgorithmUrl, restTemplate);
 		geographicalAreas = StaticGeographicalAreas.getGeographicalAreas();
+		this.taskExecutor=taskExecutor;
 	}
 	
 	@Override
@@ -644,5 +655,15 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
 		 
 		return solution;
 	}
+	
+	
+	private List<IndicatorInformation> getPnfInstanceIndicatorInformation(PnfInstance pnfInstance) throws FailedOperationException{
+		log.debug("Retrieving IndicatorInformation for pnfInstance:"+pnfInstance.getPnfInstanceId());
+		RestVnfDriver restClient = new RestVnfDriver(pnfInstance.getPnfInstanceId(), pnfInstance.getManagementIpAddress(),restTemplate, taskExecutor);
+		List<IndicatorInformation> result = restClient.getIndicatorValue(new GeneralizedQueryRequest(null, null)).getIndicatorInformation();
+		return result;
+		
+	}
+	
 
 }
