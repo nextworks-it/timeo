@@ -178,6 +178,7 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
 			//TODO: retrieve information about the PNF instance status. It may be based on a PNF Instance REST Client that adopts the same interface of the PNF. At the moment ignored
 			Rrh rrh = new Rrh(rrhId, beams);
 			//TODO: model info in PNF instance + read info from metadata to fill beams element
+			rrhs.add(rrh);
 		}
 		
 		log.debug("Retrieving nodes in network topology from SDN controller.");
