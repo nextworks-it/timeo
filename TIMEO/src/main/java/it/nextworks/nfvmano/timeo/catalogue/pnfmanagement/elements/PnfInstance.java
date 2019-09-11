@@ -54,11 +54,13 @@ public class PnfInstance implements DescriptorInformationElement {
 	
 	private PnfType pnfType;
 	
+	/*
 	@OneToMany(mappedBy="pnfInstance",  cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<PnfInstanceMetadata> pnfInstanceMetadata=new ArrayList<>();
-	
+	*/
+
 	public PnfInstance() { }
 
 	/**
@@ -74,16 +76,18 @@ public class PnfInstance implements DescriptorInformationElement {
 			String pnfdId,
 			String pnfdVersion,
 			String description,
-			String location,
-			List<PnfInstanceMetadata> pnfInstanceMetadata) {
+			String location
+			//List<PnfInstanceMetadata> pnfInstanceMetadata
+	) {
 		this.pnfInstanceId = pnfInstanceId;
 		this.pnfdId = pnfdId;
 		this.pnfdVersion = pnfdVersion;
 		this.description = description;
 		this.location = location;
 		this.pnfType = PnfType.UNDEFINED;
-		if(pnfInstanceMetadata!=null)
-			this.pnfInstanceMetadata = pnfInstanceMetadata;
+		//if(pnfInstanceMetadata!=null)
+		//	this.pnfInstanceMetadata = pnfInstanceMetadata;
+
 	}
 	
 	
@@ -194,19 +198,21 @@ public class PnfInstance implements DescriptorInformationElement {
 		if (pnfdVersion == null) throw new MalformattedElementException("PNF instance without PNFD version.");
 		if ((ports == null) || (ports.isEmpty())) throw new MalformattedElementException("PNF instance without ports. At least one port is needed to access the PNF.");
 	}
-	
+
+
 	/**
 	 * @return the pnfInstanceMetadata
 	 */
-	public List<PnfInstanceMetadata> getPnfInstanceMetadata() {
-		return pnfInstanceMetadata;
-	}
+
+	//public List<PnfInstanceMetadata> getPnfInstanceMetadata() {
+	//	return pnfInstanceMetadata;
+	//}
 
 	/**
 	 * @param pnfInstanceMetadata the pnfInstanceMetadata to set
 	 */
-	public void setPnfInstanceMetadata(List<PnfInstanceMetadata> pnfInstanceMetadata) {
-		this.pnfInstanceMetadata = pnfInstanceMetadata;
-	}
+	//public void setPnfInstanceMetadata(List<PnfInstanceMetadata> pnfInstanceMetadata) {
+	//	this.pnfInstanceMetadata = pnfInstanceMetadata;
+	//}
 	
 }

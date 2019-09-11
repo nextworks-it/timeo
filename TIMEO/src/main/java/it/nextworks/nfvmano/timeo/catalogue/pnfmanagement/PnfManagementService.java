@@ -109,12 +109,12 @@ public class PnfManagementService {
 			log.debug("Port " + p.getPortId() + " added to PNF " + pnfInstance.getPnfInstanceId() + " in DB.");
 		}
 		
-		List<PnfInstanceMetadata> metadata = pnfInstance.getPnfInstanceMetadata();
+		/*List<PnfInstanceMetadata> metadata = pnfInstance.getPnfInstanceMetadata();
 		for (PnfInstanceMetadata data : metadata) {
 			PnfInstanceMetadata newData = data.setPnfInstance(target);
 			pnfInstanceMetadataRepository.saveAndFlush(newData);
 			
-		}
+		}*/
 		log.debug("PNF instance creation done.");
 	}
 
