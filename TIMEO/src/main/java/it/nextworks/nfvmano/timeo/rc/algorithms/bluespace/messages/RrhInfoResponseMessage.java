@@ -9,6 +9,11 @@ public class RrhInfoResponseMessage {
 
     private List<RrhBeam> rrhBeams = new ArrayList<>();
 
+
+    public RrhInfoResponseMessage(){
+
+    }
+
     public RrhInfoResponseMessage(List<RrhBeam> rrhBeams){
 
         if(rrhBeams !=null)
