@@ -1,16 +1,28 @@
 package it.nextworks.nfvmano.timeo.rc.algorithms.bluespace;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-
+import static org.mockito.Mockito.mock;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.BluespaceNode;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.BluespaceNodePort;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.GeographicalArea;
@@ -26,16 +38,66 @@ import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.PortType;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.TransmissionMode;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.messages.BluespaceAlgorithmAllocationRequest;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.messages.BluespaceAlgorithmAllocationResponse;
+import it.nextworks.nfvmano.libs.common.exceptions.FailedOperationException;
+import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
+import it.nextworks.nfvmano.libs.vnfindicator.interfaces.elements.IndicatorInformation;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.PnfInstanceMetadataTest;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.PnfManagementService;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfType;
+import it.nextworks.nfvmano.timeo.vnfm.vnfdriver.RestVnfDriver;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class BlueSpaceAitAlgorithmTest {
 
-	AitAlgorithmRestClient client;
+	private AitAlgorithmRestClient client;
+	private List<PnfInstance> pnfInstances;
+	private ThreadPoolExecutor executorService;
+	private RestTemplate restTemplate = new RestTemplate();
+	@Autowired
+	private TaskExecutor taskExecutor;
+	
 	
 	@Before
 	public void setup() {
-		RestTemplate restTemplate = new RestTemplate();
+		
+            
+		createExecutorService();
 		String algoUrl = "http://localhost:8088/bluespace/algorithm";
 		client = new AitAlgorithmRestClient(algoUrl, restTemplate);
+		ObjectMapper mapper = new ObjectMapper();
+		InputStream rrhDataStream;
+		InputStream bbuDataStream;
+		try {
+			rrhDataStream = PnfInstanceMetadataTest.class.getClassLoader()
+						.getResource("bluespace_rrh.json")
+				        .openStream();
+			bbuDataStream = PnfInstanceMetadataTest.class.getClassLoader()
+					.getResource("bluespace_bbu.json")
+			        .openStream();
+		
+			ArrayList<PnfInstance> pnfs = new ArrayList<PnfInstance>();
+			pnfs.add(mapper.readValue(rrhDataStream, new TypeReference<PnfInstance>() {}));
+			pnfs.add(mapper.readValue(bbuDataStream, new TypeReference<PnfInstance>() {}));
+			pnfInstances = pnfs;
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	
+	private void  createExecutorService() {
+		 executorService = new ThreadPoolExecutor  ( 2,
+	                2,
+	                1,
+	                TimeUnit.SECONDS,
+	                new ArrayBlockingQueue<>(5)
+	                );
 	}
 	
 	@Test
@@ -80,19 +142,28 @@ public class BlueSpaceAitAlgorithmTest {
 		Map<TransmissionMode, Double> datarate = buildDatarate();
 		
 		List<Rrh> rrhs = new ArrayList<Rrh>();
-		List<RrhBeam> beams = new ArrayList<RrhBeam>();
-		List<Subchannel> subchannels = new ArrayList<Subchannel>();
-		Subchannel subchannel1 = new Subchannel("Subchannel-01", 2, 240, true, TransmissionMode.M2, null);
-		subchannels.add(subchannel1);
-		Subchannel subchannel2 = new Subchannel("Subchannel-02", 2, 240, false, TransmissionMode.M2, null);
-		subchannels.add(subchannel2);
-		GeographicalArea geographicalArea = new GeographicalArea("1");
-		RrhBeam beam = new RrhBeam("BEAM-1", 760.32f, subchannels, geographicalArea, null, false);
-		beams.add(beam);
-		Rrh rrh = new Rrh("RRH-1", beams);
-		rrhs.add(rrh);
-		
 		List<BluespaceNode> nodes = new ArrayList<BluespaceNode>();
+		for(PnfInstance pnfInstance : pnfInstances) {
+			if(pnfInstance.getPnfType().equals(PnfType.RRH)) {
+				List<RrhBeam> beams = new ArrayList<RrhBeam>();
+				List<Subchannel> subchannels = new ArrayList<Subchannel>();
+				Subchannel subchannel1 = new Subchannel("Subchannel-01", 2, 240, true, TransmissionMode.M2, null);
+				subchannels.add(subchannel1);
+				Subchannel subchannel2 = new Subchannel("Subchannel-02", 2, 240, false, TransmissionMode.M2, null);
+				subchannels.add(subchannel2);
+				GeographicalArea geographicalArea = new GeographicalArea("1");
+				RrhBeam beam = new RrhBeam("BEAM-1", 760.32f, subchannels, geographicalArea, null, false);
+				beams.add(beam);
+				Rrh rrh = new Rrh(pnfInstance.getPnfInstanceId(), beams);
+				List<IndicatorInformation> rrhInfo = getPnfInstanceIndicators(pnfInstance);
+				
+				rrhs.add(rrh);
+			}else if(pnfInstance.getPnfType().equals(PnfType.BBU)) {
+				List<IndicatorInformation> bbuInfo = getPnfInstanceIndicators(pnfInstance);
+			}
+		}
+		
+		
 		List<BluespaceNodePort> portsRrh = new ArrayList<BluespaceNodePort>();
 		BluespaceNodePort portRrh = new BluespaceNodePort("rrh1-P1", PortType.EGRESS, "bbu1", "bbu1-P1", null);
 		portsRrh.add(portRrh);
@@ -139,6 +210,25 @@ public class BlueSpaceAitAlgorithmTest {
 		datarate.put(TransmissionMode.M3, 2838D);
 		datarate.put(TransmissionMode.M4, 5677D);
 		return datarate;
+	}
+	
+	private List<IndicatorInformation> getPnfInstanceIndicators(PnfInstance pnfInstance){
+		
+		
+		System.out.println("Retrieving Indicators for:"+pnfInstance.getPnfInstanceId()+"@"+pnfInstance.getManagementIpAddress());
+		RestVnfDriver restClient = new RestVnfDriver(pnfInstance.getPnfInstanceId(), pnfInstance.getManagementIpAddress(),restTemplate, taskExecutor);
+		
+		List<IndicatorInformation> result;
+		try {
+			result = restClient.getIndicatorValue(new GeneralizedQueryRequest(null, null)).getIndicatorInformation();
+			return result;
+		} catch (FailedOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ArrayList<IndicatorInformation>();
+		}
+		
+		
 	}
 
 }

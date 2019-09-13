@@ -6,23 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.web.client.RestTemplate;
-
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.BluespaceNode;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.BluespaceNodePort;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.GeographicalArea;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.LightPath;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.LightpathHop;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.PhysicalServer;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.Rrh;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.RrhBeam;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.ServiceRequest;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.ServiceResponse;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.SubcarrierResourceAllocation;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.VmRequirements;
+import it.nextworks.nfvmano.timeo.rc.algorithms.bluespace.RrhInfoRestClient;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.BluespaceNodeType;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.BluespaceSwitchingType;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.PortType;
@@ -174,7 +163,12 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
 		List<PnfInstance> rrhPnfs = pnfManagementService.getPnfInstancedFromType(PnfType.RRH);
 		for (PnfInstance rrhPnf : rrhPnfs) {
 			String rrhId = rrhPnf.getPnfInstanceId();
-			List<RrhBeam> beams = new ArrayList<RrhBeam>();
+
+			RrhInfoRestClient rrhInfoRestClient = new RrhInfoRestClient(new RestTemplate(), rrhPnf.getManagementIpAddress() );
+
+			List<RrhBeam> beams = rrhInfoRestClient.getRrhInfoValue(new GeneralizedQueryRequest()).getRrhBeams();
+			//this.getRrhBeams(rrhId);
+
 			//TODO: retrieve information about the PNF instance status. It may be based on a PNF Instance REST Client that adopts the same interface of the PNF. At the moment ignored
 			Rrh rrh = new Rrh(rrhId, beams);
 			//TODO: model info in PNF instance + read info from metadata to fill beams element
@@ -665,6 +659,8 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
 		return result;
 		
 	}
-	
+
+
+
 
 }

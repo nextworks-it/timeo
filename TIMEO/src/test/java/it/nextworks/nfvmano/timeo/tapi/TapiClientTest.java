@@ -1,37 +1,10 @@
 package it.nextworks.nfvmano.timeo.tapi;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import io.swagger.client.ApiClient;
-import io.swagger.client.ApiException;
-import io.swagger.client.api.DefaultApi;
-import io.swagger.client.model.Capacity;
-import io.swagger.client.model.CapacityValue;
-import io.swagger.client.model.ConnectivityServiceEndPoint;
-import io.swagger.client.model.ConnectivityServiceEndPoint.DirectionEnum;
-import io.swagger.client.model.ContextSchema;
-import io.swagger.client.model.Link;
-import io.swagger.client.model.Node;
-import io.swagger.client.model.NodeEdgePoint;
-import io.swagger.client.model.OwnedNodeEdgePointSchema;
-import io.swagger.client.model.ServiceInterfacePoint;
-import io.swagger.client.model.ServiceInterfacePointRef;
-import io.swagger.client.model.SpectrumBand;
-import io.swagger.client.model.Topology;
 import it.nextworks.nfvmano.libs.common.enums.ResponseCode;
-import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.sbdriver.SbDriversManager;
 import it.nextworks.nfvmano.timeo.sbdriver.VimManagementController;
-import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnController;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerConsumerInterface;
-import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
-import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerType;
-import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPath;
-import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPathType;
+import org.springframework.beans.factory.annotation.Autowired;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest

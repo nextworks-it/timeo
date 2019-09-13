@@ -1,11 +1,16 @@
 package it.nextworks.nfvmano.timeo.catalogue.pnfmanagement;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import it.nextworks.nfvmano.libs.common.exceptions.FailedOperationException;
+import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
+import it.nextworks.nfvmano.libs.vnfindicator.interfaces.elements.IndicatorInformation;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.metadatatypes.StringMetadata;
+import it.nextworks.nfvmano.timeo.vnfm.vnfdriver.RestVnfDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 import it.nextworks.nfvmano.libs.common.exceptions.AlreadyExistingEntityException;
@@ -18,6 +23,7 @@ import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfType;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.repositories.PhysicalEquipmentPortRepository;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.repositories.PnfInstanceMetadataRepository;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.repositories.PnfInstanceRepository;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * This service allows to add, remove and retrieve PNF instances into the catalogue.
@@ -34,13 +40,21 @@ public class PnfManagementService {
 	
 	@Autowired
 	private PnfInstanceRepository pnfInstanceRepository;
-	
+
 	@Autowired
 	private PhysicalEquipmentPortRepository physicalEquipmentPortRepository;
 	
 	@Autowired
 	private PnfInstanceMetadataRepository pnfInstanceMetadataRepository;
-	
+
+	@Autowired
+	private TaskExecutor taskExecutor;
+	//Map pnfInstanceId - RestClient to retrieve configuration information.
+	//TODO: Revise pnfLcm to NsResourceAllocationManager relationship
+	private Map<String, RestVnfDriver> pnfInstanceToRestClient = new HashMap();
+
+
+
 	public PnfManagementService() {	}
 	
 	/**
@@ -60,9 +74,12 @@ public class PnfManagementService {
 	 * @throws NotExistingEntityException if a PNF instance with the given ID does not exist in DB
 	 */
 	public PnfInstance getPnfInstance(String pnfInstanceId) throws NotExistingEntityException {
+
 		Optional<PnfInstance> pnfOpt = pnfInstanceRepository.findByPnfInstanceId(pnfInstanceId);
-		if (pnfOpt.isPresent()) return pnfOpt.get();
-		else throw new NotExistingEntityException("PNF instance with ID " + pnfInstanceId + " not available in DB.");
+		if(pnfOpt.isPresent()){
+
+			return pnfOpt.get();
+		}else throw new NotExistingEntityException("PNF instance with ID " + pnfInstanceId + " not available in DB.");
 	}
 	
 	/**
@@ -129,5 +146,51 @@ public class PnfManagementService {
 		PnfInstance pnfInstance = getPnfInstance(pnfInstanceId);
 		pnfInstanceRepository.delete(pnfInstance);
 		log.debug("PNF instance with ID " + pnfInstanceId + " removed from DB.");
+	}
+
+
+	public List<IndicatorInformation> getPnfInstanceIndicators(String pnfInstanceId){
+		Optional<PnfInstance> pnfOpt = pnfInstanceRepository.findByPnfInstanceId(pnfInstanceId);
+		if(pnfOpt.isPresent()) {
+			RestVnfDriver restVnfDriver;
+			PnfInstance pnfInstance = pnfOpt.get();
+			if (pnfInstanceToRestClient.containsKey(pnfInstanceId)) {
+				restVnfDriver = pnfInstanceToRestClient.get(pnfInstanceId);
+			} else {
+				restVnfDriver = new RestVnfDriver(pnfInstanceId, pnfInstance.getManagementIpAddress(), new RestTemplate(), taskExecutor);
+				pnfInstanceToRestClient.put(pnfInstanceId, restVnfDriver);
+			}
+			List<IndicatorInformation> result;
+			try {
+				result = restVnfDriver.getIndicatorValue(new GeneralizedQueryRequest(null, null)).getIndicatorInformation();
+				return result;
+			} catch (FailedOperationException e) {
+				log.error("Error retrieving PnfInstance Indicators:" + pnfInstanceId);
+				log.error(e.getMessage());
+				log.error(e.getStackTrace().toString());
+				return new ArrayList<>();
+			}
+		}else return new ArrayList<>();
+	}
+
+	private void updatePnfInstanceIndicators(String pnfInstanceId){
+		log.debug("Could not find PnfInstance");
+		Optional<PnfInstance> pnfOpt = pnfInstanceRepository.findByPnfInstanceId(pnfInstanceId);
+		if(pnfOpt.isPresent()){
+			List<IndicatorInformation>  indicatorInformations = getPnfInstanceIndicators(pnfInstanceId);
+			List<PnfInstanceMetadata> metadata = new ArrayList<>();
+			PnfInstance pInstance = pnfOpt.get();
+			for(IndicatorInformation ii : indicatorInformations){
+				metadata.add(new StringMetadata(pnfOpt.get(), ii.getIndicatorName(), ii.getIndicatorValue()));
+			}
+			pInstance.setPnfInstanceMetadata(metadata);
+			pnfInstanceRepository.saveAndFlush(pInstance);
+		}else{
+			log.debug("Could not find PnfInstance with id:"+pnfInstanceId);
+		}
+
+
+
+
 	}
 }

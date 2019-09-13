@@ -54,12 +54,12 @@ public class PnfInstance implements DescriptorInformationElement {
 	
 	private PnfType pnfType;
 	
-	/*
+
 	@OneToMany(mappedBy="pnfInstance",  cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<PnfInstanceMetadata> pnfInstanceMetadata=new ArrayList<>();
-	*/
+
 
 	public PnfInstance() { }
 
@@ -85,8 +85,8 @@ public class PnfInstance implements DescriptorInformationElement {
 		this.description = description;
 		this.location = location;
 		this.pnfType = PnfType.UNDEFINED;
-		//if(pnfInstanceMetadata!=null)
-		//	this.pnfInstanceMetadata = pnfInstanceMetadata;
+		if(pnfInstanceMetadata!=null)
+			this.pnfInstanceMetadata = pnfInstanceMetadata;
 
 	}
 	
@@ -203,16 +203,16 @@ public class PnfInstance implements DescriptorInformationElement {
 	/**
 	 * @return the pnfInstanceMetadata
 	 */
-
-	//public List<PnfInstanceMetadata> getPnfInstanceMetadata() {
-	//	return pnfInstanceMetadata;
-	//}
+	@JsonProperty("metadata")
+	public List<PnfInstanceMetadata> getPnfInstanceMetadata() {
+		return pnfInstanceMetadata;
+	}
 
 	/**
 	 * @param pnfInstanceMetadata the pnfInstanceMetadata to set
 	 */
-	//public void setPnfInstanceMetadata(List<PnfInstanceMetadata> pnfInstanceMetadata) {
-	//	this.pnfInstanceMetadata = pnfInstanceMetadata;
-	//}
+	public void setPnfInstanceMetadata(List<PnfInstanceMetadata> pnfInstanceMetadata) {
+		this.pnfInstanceMetadata = pnfInstanceMetadata;
+	}
 	
 }
