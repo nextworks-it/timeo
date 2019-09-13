@@ -275,6 +275,20 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
 			
 		} catch (Exception e) {
 			log.warn("Failure when collecting info about available servers from VIM. Computing a solution without considering computing resources.");
+			PhysicalServer server = new PhysicalServer("S1",
+					20,
+					8096,
+					100,
+					1000,
+					0,
+					null,
+					null,
+					2,
+					2048,
+					40,
+					400,
+					0);
+			servers.add(server);
 		}
 		
 		BluespaceAlgorithmAllocationRequest outputRequest = 
