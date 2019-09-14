@@ -603,9 +603,11 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
             String rrhId = lp.getRrhId();
 
             List<LightpathHop> origHops = lp.getHops();
+            int hopsNumber =0;
+            List<NetworkPathHop> hops = new ArrayList<>();
             if(origHops!=null && !origHops.isEmpty()){
-                int hopsNumber = origHops.size();
-                List<NetworkPathHop> hops = new ArrayList<>();
+                hopsNumber = origHops.size();
+
                 int hopNumber = 0;
                 String ingressServiceInterfacePoint = null;
                 String egressServiceInterfacePoint = null;
