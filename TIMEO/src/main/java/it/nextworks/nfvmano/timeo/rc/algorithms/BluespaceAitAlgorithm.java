@@ -248,9 +248,10 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
         log.debug("Retrieving managed servers from VIM.");
         List<PhysicalServer> servers = new ArrayList<>();
         //Builds the wrapper to get info about hosts capabilities from the extended OpenStack
-        VimWrapperPlugin wrapper = new VimWrapperPlugin(vimPlugin.getVim().getWrapperIp(), vimPlugin.getVim().getWrapperPort());
-        List<WrapperComputeNode> computeNodes = new ArrayList<>();
+
         try {
+            VimWrapperPlugin wrapper = new VimWrapperPlugin(vimPlugin.getVim().getWrapperIp(), vimPlugin.getVim().getWrapperPort());
+            List<WrapperComputeNode> computeNodes = new ArrayList<>();
             computeNodes = wrapper.getComputeDataForAlgorithm();
             for (WrapperComputeNode cn : computeNodes) {
                 //the wrapper compute node includes info only about the available resources, not the total and the used one.
