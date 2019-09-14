@@ -255,8 +255,9 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
 			for (WrapperComputeNode cn : computeNodes) {
 				//the wrapper compute node includes info only about the available resources, not the total and the used one.
 				//so we assume total = available and used = 0
-				PhysicalServer ps = new PhysicalServer(cn.getHostId(),	//server ID 
-						cn.getvCpu(), 									//total CPU
+				PhysicalServer ps = new PhysicalServer(cn.getHostId(),	//server ID
+                        //Multiplied the CPU by the virtualization factor of openstack
+						cn.getvCpu()*16, 									//total CPU
 						cn.getvRam(), 									//total memory
 						cn.getvDisk(), 									//total storage
 						10000, 											//total network - static - we assume 10 Gbps
@@ -277,6 +278,8 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
 			log.warn("Failure when collecting info about available servers from VIM. Computing a solution without considering computing resources.");
 
 		}
+
+		//TODO REMOVE THIS!, ADDED JUST FOR DEBUGGING PURPOSES
 		if(servers.isEmpty()){
 			log.warn("Adding fake compute server.");
 			PhysicalServer server = new PhysicalServer("S1",
