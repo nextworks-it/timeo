@@ -184,10 +184,12 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 		log.debug("Adding nodes to topology");
 		for (Node n : nodes) {
 			String nodeId = n.getUuid();
-			List<Node.LayerProtocolNameEnum> origProtocolLayers = n.getLayerProtocolName();
-			
+			//AROF j.brenes: AROF API nodes do not responde with the layer protocol supported, using
+			//the one supported by the topology
+			//List<Node.LayerProtocolNameEnum> origProtocolLayers = n.getLayerProtocolName();
+			List<Topology.LayerProtocolNameEnum> origProtocolLayers = source.getLayerProtocolName();
 			Set<LayerProtocol> supportedProtocolLayers = new HashSet<>();
-			for (Node.LayerProtocolNameEnum lp : origProtocolLayers) {
+			for (Topology.LayerProtocolNameEnum lp : origProtocolLayers) {
 				supportedProtocolLayers.add(convertLayerProtocol(lp));
 			}
 			TopologyNode targetNode = new TopologyNode(nodeId, new HashSet<>(), supportedProtocolLayers);
@@ -299,6 +301,15 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 	private LayerProtocol convertLayerProtocol(Node.LayerProtocolNameEnum source) {
 		if (source.equals(Node.LayerProtocolNameEnum.ETH)) return LayerProtocol.ETHERNET;
 		else if (source.equals(Node.LayerProtocolNameEnum.PHOTONIC_MEDIA)) return LayerProtocol.SDM;
+		else {
+			log.warn("Unsopported layer protocol. Setting to NOT_SPECIFIED.");
+			return LayerProtocol.NOT_SPECIFIED;
+		}
+	}
+
+	private LayerProtocol convertLayerProtocol(Topology.LayerProtocolNameEnum source) {
+		if (source.equals(Topology.LayerProtocolNameEnum.ETH)) return LayerProtocol.ETHERNET;
+		else if (source.equals(Topology.LayerProtocolNameEnum.PHOTONIC_MEDIA)) return LayerProtocol.SDM;
 		else {
 			log.warn("Unsopported layer protocol. Setting to NOT_SPECIFIED.");
 			return LayerProtocol.NOT_SPECIFIED;
