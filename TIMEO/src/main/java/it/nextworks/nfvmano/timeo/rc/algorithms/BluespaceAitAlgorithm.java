@@ -84,6 +84,7 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
     private VimPlugin vimPlugin;
     private SdnControllerPlugin sdnPlugin;
     private TaskExecutor taskExecutor;
+    private NetworkTopology networkTopology;
 
 
     public BluespaceAitAlgorithm(String aitAlgorithmUrl,
@@ -179,8 +180,11 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
         List<BluespaceNode> nodes = new ArrayList<>();
 
         try {
-            NetworkTopology netTopology = sdnPlugin.getNetworkTopology();
-            List<TopologyNode> netNodes = netTopology.nodes;
+            if(networkTopology==null){
+                networkTopology = sdnPlugin.getNetworkTopology();
+            }
+
+            List<TopologyNode> netNodes = networkTopology.nodes;
             for (TopologyNode nn : netNodes) {
 
 
@@ -342,8 +346,10 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
     private KeyValuePair getNeighbour (String origNodeId, String origPortId) throws Exception {
         log.debug("Searching for a neighbour node of node " + origNodeId + " and port " + origPortId + "  in network topology.");
 
-        NetworkTopology netTopology = sdnPlugin.getNetworkTopology();
-        List<TopologyLink> links = netTopology.links;
+        if(networkTopology==null)
+            networkTopology = sdnPlugin.getNetworkTopology();
+
+        List<TopologyLink> links = networkTopology.links;
 
         for (TopologyLink l : links) {
             if ( (origNodeId.equals(l.destination.nodeId)) && (origPortId.equals(l.destinationCp.cpId)) ) {
@@ -511,8 +517,9 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
     }
 
     private String findNetworkNodePortAssociatedToSip(String nodeId, String sipId) throws Exception {
-        NetworkTopology netTopology = sdnPlugin.getNetworkTopology();
-        List<TopologyNode> netNodes = netTopology.nodes;
+        if(networkTopology==null)
+            networkTopology = sdnPlugin.getNetworkTopology();
+        List<TopologyNode> netNodes = networkTopology.nodes;
         for (TopologyNode nn : netNodes) {
             if (nodeId.equals(nn.nodeId)) {
                 Set<TopologyCp> cps = nn.cps;
