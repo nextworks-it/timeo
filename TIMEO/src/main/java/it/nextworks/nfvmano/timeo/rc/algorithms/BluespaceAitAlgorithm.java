@@ -696,15 +696,15 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
 
         Map<String, String> configParameters = new HashMap<>();
 
-        configParameters.put("powerUp","1");
-        configParameters.put("sleepMode","0");
-        configParameters.put( "batteryChargeEnable","0");
-        configParameters.put("outputVoltage1Enable", "true");
-        configParameters.put("outputVoltage2Enable", "true");
-        configParameters.put("outputVoltage1Level", "1");
-        configParameters.put("outputVoltage2Level", "1");
+        configParameters.put("rcout.powerUp","1");
+        configParameters.put("rcout.sleepMode","0");
+        configParameters.put( "rcout.batteryChargeEnable","0");
+        configParameters.put("rcout.outputVoltage1Enable", "true");
+        configParameters.put("rcout.outputVoltage2Enable", "true");
+        configParameters.put("rcout.outputVoltage1Level", "1");
+        configParameters.put("rcout.outputVoltage2Level", "1");
         for(int i=0; i<=15; i++){
-            configParameters.put(String.format("paGain%02d", i), "0");
+            configParameters.put(String.format("rcout.paGain%02d", i), "0");
         }
 
         return configParameters;
