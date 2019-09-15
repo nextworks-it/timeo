@@ -68,7 +68,8 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 		log.debug("Retrieving network topology via TAPI");
 		DefaultApi api = buildApiClient();
 		try {
-			GetTopologyListRPCOutputSchema topologyList = api.createGetTopologyListById();
+			ContextSchema response = api.retrieveContext();
+			TopologyContext topologyList = response.getTopologyContext();
 			
 			//List<String> topologyIds = api.retrieveContextTopologyContextTopologyTopology();
 			if (topologyList == null) {
@@ -84,6 +85,7 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 				log.error("More that one topology returned! Not yet supported");
 				throw new MethodNotImplementedException("Handling of multiple topologies is not yet supported");
 			} else {
+				/* Commented old code
 				//a single topology is present
 				String topologyUuid = topologyList.getTopology().get(0).getUuid();
 				log.debug("Found topology with uuid: " + topologyUuid);
@@ -94,8 +96,9 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 				topologyRequest.setTopologyIdOrName(topologyUuid);
 				GetTopologyDetailsRPCOutputSchema topologyOut = api.createGetTopologyDetailsById(topologyRequest);
 				log.debug("Retrieved topology with ID: " + topologyUuid);
-				
-				NetworkTopology result = translateTapiTopology(topologyOut.getTopology(), api);
+				*/
+				Topology topologyOut = topologyList.getTopology().get(0);
+				NetworkTopology result = translateTapiTopology(topologyOut, api);
 				log.debug("Topology successfully translated");
 				return result;
 			}

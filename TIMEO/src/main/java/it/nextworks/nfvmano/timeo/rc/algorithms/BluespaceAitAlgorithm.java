@@ -575,17 +575,21 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
                 SubcarrierResourceAllocation sra = e.getValue();
                 //key: rrh ID, key: beam ID, key: subchannel ID, value: list of subcarrierIds
                 Map<String, Map<String , Map<String, List<String>>>> subcarrierResourceAllocation = sra.getSubcarrierResourceAllocation();
+
                 int index = 0;
                 for (Map.Entry<String, Map<String , Map<String, List<String>>>> e1 : subcarrierResourceAllocation.entrySet()) {
                     String rrhId = e1.getKey();
+                    Map<String, String> rrhConfigurationParameters = this.getRrhConfigurationParameters(rrhId);
+                    PnfInstance pnfInstance = pnfManagementService.getPnfInstance(rrhId);
                     PnfAllocation pa = new PnfAllocation(
                             null,																//nsRss
-                            pnfManagementService.getPnfInstance(rrhId).getPnfdId(), 			//pnfdId
-                            pnfManagementService.getPnfInstance(rrhId).getPnfdVersion(),     	//pnfdVersion
+                            pnfInstance.getPnfdId(), 			//pnfdId
+                            pnfInstance.getPnfdVersion(),     	//pnfdVersion
                             index,
                             rrhId,																//pnfInstanceId
                             null,																//pnfProfileId
-                            null 																//parameters
+                            rrhConfigurationParameters                            //parameters
+
                     );
                     index++;
                     pnfAllocation.add(pa);
@@ -685,6 +689,25 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
         List<IndicatorInformation> result = restClient.getIndicatorValue(new GeneralizedQueryRequest(null, null)).getIndicatorInformation();
         return result;
 
+    }
+
+
+    private Map<String,String> getRrhConfigurationParameters(String pnfInstanceId){
+
+        Map<String, String> configParameters = new HashMap<>();
+
+        configParameters.put("powerUp","1");
+        configParameters.put("sleepMode","0");
+        configParameters.put( "batteryChargeEnable","0");
+        configParameters.put("outputVoltage1Enable", "true");
+        configParameters.put("outputVoltage2Enable", "true");
+        configParameters.put("outputVoltage1Level", "1");
+        configParameters.put("outputVoltage2Level", "1");
+        for(int i=0; i<=15; i++){
+            configParameters.put(String.format("paGain%02d", i), "0");
+        }
+
+        return configParameters;
     }
 
 

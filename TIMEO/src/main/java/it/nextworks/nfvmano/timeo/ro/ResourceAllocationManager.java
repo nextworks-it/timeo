@@ -20,6 +20,8 @@ package it.nextworks.nfvmano.timeo.ro;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.PnfdRepository;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.repositories.PnfInstanceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.BindingBuilder;
@@ -33,6 +35,7 @@ import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 
@@ -92,7 +95,10 @@ public class ResourceAllocationManager {
 	
 	@Autowired
 	private NsdManagementService nsdManagement;
-	
+
+	@Autowired
+	private PnfInstanceRepository pnfInstanceRepository;
+
 	@Autowired
 	private VnfmHandler vnfmHandler;
 	
@@ -119,6 +125,10 @@ public class ResourceAllocationManager {
 
 	@Autowired
 	private SbDriversManager sbDriversManager;
+
+
+	@Autowired
+	private TaskExecutor taskExecutor;
 	
 	public ResourceAllocationManager() { }
 	
@@ -169,7 +179,7 @@ public class ResourceAllocationManager {
 			}
 			NsResourceAllocationManager nsResourceAllocationManager = new NsResourceAllocationManager(nsInstanceId, nsDbWrapper, vnfPackageManagement,
 					rabbitTemplate, resourceComputationDbWrapper, nsManagementEngine, nsdManagement, defaultVimPlugin, allocationMessageExchange, 
-					vimResourcePollingManager, vnfmHandler, vnfmOperationPollingManager, defaultSdnController);
+					vimResourcePollingManager, vnfmHandler, vnfmOperationPollingManager, defaultSdnController, pnfInstanceRepository);
 			Queue queue = createQueue(nsInstanceId, nsResourceAllocationManager);
 			nsResourceAllocationManager.setQueue(queue);
 			nsResourceManagers.put(nsInstanceId, nsResourceAllocationManager);
