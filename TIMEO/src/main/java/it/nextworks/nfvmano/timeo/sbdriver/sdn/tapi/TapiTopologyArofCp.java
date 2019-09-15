@@ -1,6 +1,7 @@
 package it.nextworks.nfvmano.timeo.sbdriver.sdn.tapi;
 
 import io.swagger.client.model.ArofConnectionEndPointSpec;
+import io.swagger.client.model.ArofServiceInterfacePointSpec;
 import it.nextworks.nfvmano.libs.common.enums.LayerProtocol;
 import it.nextworks.nfvmano.timeo.rc.elements.TopologyLink;
 import it.nextworks.nfvmano.timeo.rc.elements.TopologyNode;
@@ -8,6 +9,9 @@ import it.nextworks.nfvmano.timeo.rc.elements.TopologyNode;
 public class TapiTopologyArofCp extends TapiTopologyCp {
 
 	ArofConnectionEndPointSpec arofSpec;
+
+	//TODO AROF: The new API seems to model the CEP as ServiceInterfacePoints
+	private ArofServiceInterfacePointSpec arofServiceInterfacePointSpec;
 	
 	public TapiTopologyArofCp(TopologyNode node, TopologyLink outgoingLink, TopologyLink incomingLink, String address,
 			String cpId, String cpdId) {
@@ -35,6 +39,12 @@ public class TapiTopologyArofCp extends TapiTopologyCp {
 		this.arofSpec = arofSpec;
 	}
 
-	
-	
+
+	public ArofServiceInterfacePointSpec getArofServiceInterfacePointSpec() {
+		return arofServiceInterfacePointSpec;
+	}
+
+	public void setArofServiceInterfacePointSpec(ArofServiceInterfacePointSpec arofServiceInterfacePointSpec) {
+		this.arofServiceInterfacePointSpec = arofServiceInterfacePointSpec;
+	}
 }

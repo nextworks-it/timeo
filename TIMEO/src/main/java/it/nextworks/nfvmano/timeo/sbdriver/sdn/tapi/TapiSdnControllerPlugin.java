@@ -1,12 +1,6 @@
 package it.nextworks.nfvmano.timeo.sbdriver.sdn.tapi;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +92,7 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 				log.debug("Retrieved topology with ID: " + topologyUuid);
 				*/
 				Topology topologyOut = topologyList.getTopology().get(0);
-				NetworkTopology result = translateTapiTopology(topologyOut, api);
+				NetworkTopology result = translateTapiTopology(topologyOut, api, response);
 				log.debug("Topology successfully translated");
 				return result;
 			}
@@ -168,7 +162,7 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 	 * @throws NotExistingEntityException
 	 * @throws ApiException if the interaction with the SDN controller fails
 	 */
-	private NetworkTopology translateTapiTopology(Topology source, DefaultApi api) throws NotExistingEntityException, ApiException {
+	private NetworkTopology translateTapiTopology(Topology source, DefaultApi api, ContextSchema contextSchema) throws NotExistingEntityException, ApiException {
 		log.debug("Translating TAPI topology into TIMEO topology format.");
 		log.debug("Source TAPI topology: " + source.toString());
 		NetworkTopology target = new NetworkTopology(new ArrayList<>(), new ArrayList<>());
@@ -209,10 +203,12 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 				}
 				else if (proto.equals(OwnedNodeEdgePointSchema.LayerProtocolNameEnum.PHOTONIC_MEDIA)) {
 					//it can be both SDM or AROF
-					
+					//TODO: Verify this urgent j.brenes
+					/*The new AROF api doesnot have CepList *
 					ConnectionEndPointSchema cep = p.getCepList().getConnectionEndPoint().get(0);
 					String protoLayerQualifier = cep.getLayerProtocolQualifier();
 					
+
 					if (protoLayerQualifier.equals("tapi-arof:PHOTONIC_LAYER_QUALIFIER_AROF")) {
 						tapiCp = new TapiTopologyArofCp(targetNode, null, null, null, portId);
 						((TapiTopologyArofCp)tapiCp).setArofSpec(cep.getArofConnectionEndPointSpec());
@@ -220,6 +216,18 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 					} else {
 						tapiCp = new TapiTopologySdmCp(targetNode, null, null, null, portId);
 						//TODO: add info of the port 
+						log.debug("Created SDM port with ID " + portId);
+					}*/
+					List<String> protocolLayerQualifiers = p.getSupportedCepLayerProtocolQualifier();
+					if(protocolLayerQualifiers.contains("tapi-arof:PHOTONIC_LAYER_QUALIFIER_AROF")){
+
+						tapiCp = new TapiTopologyArofCp(targetNode, null, null, null, portId);
+						String sipUuid = p.getMappedServiceInterfacePoint().get(0).getServiceInterfacePointUuid();
+						((TapiTopologyArofCp)tapiCp).setArofServiceInterfacePointSpec(getArofConnectionEndPointSpec(sipUuid,contextSchema));
+						log.debug("Created TAPI port with ID " + portId);
+					}else{
+						tapiCp = new TapiTopologySdmCp(targetNode, null, null, null, portId);
+						//TODO: add info of the port
 						log.debug("Created SDM port with ID " + portId);
 					}
 					
@@ -296,6 +304,21 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 		String[] parts = url.split("/");
 		String uuid = parts[parts.length - 1];
 		return uuid;
+	}
+
+
+	private ArofServiceInterfacePointSpec getArofConnectionEndPointSpec(String sipUuid, ContextSchema contextSchema){
+		Optional<ServiceInterfacePoint> optServiceInterfacePoint = contextSchema.getServiceInterfacePoint().stream()
+				.filter(s -> s.getUuid().equals(sipUuid) )
+				.findFirst();
+		if(optServiceInterfacePoint.isPresent()){
+			return optServiceInterfacePoint.get().getArofServiceInterfacePointSpec();
+
+		}else{
+			log.debug("Failed to retrieve AROF ServiceInterfacePointSpec");
+			return null;
+		}
+
 	}
 	
 	private LayerProtocol convertLayerProtocol(Node.LayerProtocolNameEnum source) {
