@@ -1,10 +1,6 @@
 package it.nextworks.nfvmano.timeo.rc.algorithms;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.*;
 import org.slf4j.Logger;
@@ -668,8 +664,8 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
                     lastPortId = origHop.getPortId();
                 }
             }else{
-                String ingressServiceInterfacePoint = pnfManagementService.getPnfInstance(rrhId).getPorts().get(0).getServiceInterfacePointId();
-                String egressServiceInterfacePoint = pnfManagementService.getPnfInstance(bbuId).getPorts().get(0).getServiceInterfacePointId();
+                String ingressServiceInterfacePoint = this.findFirstPnfInstanceServiceInterfacePointId(pnfManagementService.getPnfInstance(rrhId));
+                String egressServiceInterfacePoint = this.findFirstPnfInstanceServiceInterfacePointId(pnfManagementService.getPnfInstance(bbuId));
                 NetworkPathHop nph = new NetworkPathHop(
                         0,
                         null,                 //nodeId
@@ -734,6 +730,16 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
         }
 
         return configParameters;
+    }
+
+
+    private String findFirstPnfInstanceServiceInterfacePointId(PnfInstance pnfInstance){
+        Optional<PhysicalEquipmentPort> optPort = pnfInstance.getPorts().stream()
+                .filter(p -> p.getServiceInterfacePointId()!=null)
+                .findFirst();
+        if(optPort.isPresent()){
+            return optPort.get().getServiceInterfacePointId();
+        }else return null;
     }
 
 
