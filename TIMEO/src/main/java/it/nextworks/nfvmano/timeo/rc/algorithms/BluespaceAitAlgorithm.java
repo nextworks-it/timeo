@@ -667,6 +667,23 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
                     lastNodeId = origHop.getNodeId();
                     lastPortId = origHop.getPortId();
                 }
+            }else{
+                String ingressServiceInterfacePoint = pnfManagementService.getPnfInstance(rrhId).getPorts().get(0).getServiceInterfacePointId();
+                String egressServiceInterfacePoint = pnfManagementService.getPnfInstance(bbuId).getPorts().get(0).getServiceInterfacePointId();
+                NetworkPathHop nph = new NetworkPathHop(
+                        0,
+                        null,                 //nodeId
+                        null,
+                        null,                //egressPortId
+                        null,                                //incomingLinkId - not used here
+                        null,                                //outgoingLinkId - not used here
+                        0,                                    //hopQueue - not used here
+                        true,
+                        true,
+                        ingressServiceInterfacePoint,
+                        egressServiceInterfacePoint
+                );
+                hops.add(nph);
             }
 
             //TODO: Fixed to AROF for demo purposes
