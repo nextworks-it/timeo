@@ -668,9 +668,11 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
                     lastPortId = origHop.getPortId();
                 }
             }
+
+            //TODO: Fixed to AROF for demo purposes
             InterDcNetworkPath idnp = new InterDcNetworkPath("np" + pathIndex,
                     hops,
-                    SbNetworkPathType.SDM);
+                    SbNetworkPathType.AROF);
             pathIndex++;
             interDcNetworkPaths.add(idnp);
         }
