@@ -220,6 +220,8 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
             }
         } catch (Exception e) {
             log.warn("Error while reading network topology. Computing a solution without considering network resources.");
+            log.error(e.getMessage());
+            log.error(e.getStackTrace().toString());
         }
 
         List<PnfInstance> pnfs = pnfManagementService.getAllPnfInstances();
