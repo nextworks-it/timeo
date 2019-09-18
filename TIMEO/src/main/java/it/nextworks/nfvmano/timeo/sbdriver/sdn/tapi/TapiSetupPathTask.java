@@ -151,7 +151,7 @@ public class TapiSetupPathTask implements Runnable {
 		totalSize.setValue("50");
 		requestedCapacity.setTotalSize(totalSize);
 		cc.setRequestedCapacity(requestedCapacity);
-		cc.setConnectivityDirection(ConnectivityConstraint.ConnectivityDirectionEnum.UNIDIRECTIONAL);
+		//cc.setConnectivityDirection(ConnectivityConstraint.ConnectivityDirectionEnum.UNIDIRECTIONAL);
 		connectivityService.setConnectivityConstraint(cc);
 		log.debug("Capacity statically set.");
 
@@ -220,6 +220,7 @@ public class TapiSetupPathTask implements Runnable {
 		cv.setUnit(UnitEnum.GHZ);
 		cv.setValue("50");
 		c.setTotalSize(cv);
+		cc.setConnectivityDirection(ConnectivityConstraint.ConnectivityDirectionEnum.UNIDIRECTIONAL);
 		cc.setRequestedCapacity(c);
 		log.debug("Issuing TAPI request to:" + api.getApiClient().getBasePath());
 		createConnectivityService.setConnectivityConstraint(cc);
