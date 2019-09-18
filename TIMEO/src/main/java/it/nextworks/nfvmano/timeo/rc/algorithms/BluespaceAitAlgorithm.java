@@ -683,7 +683,10 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
             }
 
             //TODO: Fixed to AROF for demo purposes
-            InterDcNetworkPath idnp = new InterDcNetworkPath("np" + pathIndex,
+            //String npId="np" + pathIndex;
+            String npId = UUID.randomUUID().toString();
+
+            InterDcNetworkPath idnp = new InterDcNetworkPath(npId,
                     hops,
                     SbNetworkPathType.AROF);
             pathIndex++;

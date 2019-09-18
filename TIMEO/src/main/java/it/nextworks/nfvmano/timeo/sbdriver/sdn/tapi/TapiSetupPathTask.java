@@ -138,8 +138,9 @@ public class TapiSetupPathTask implements Runnable {
 		dstSip.setServiceInterfacePointUuid(destination);
 		dstEp.setServiceInterfacePoint(dstSip);
 
-		connectivityService.addEndPointItem(srcEp);
 		connectivityService.addEndPointItem(dstEp);
+		connectivityService.addEndPointItem(srcEp);
+
 		log.debug("Connectivity Service EndPoints built");
 
 		//TODO: at the moment the capacity is static. To be read dynamically and encoded in the SbNetworkPath
@@ -150,6 +151,7 @@ public class TapiSetupPathTask implements Runnable {
 		totalSize.setValue("50");
 		requestedCapacity.setTotalSize(totalSize);
 		cc.setRequestedCapacity(requestedCapacity);
+		cc.setConnectivityDirection(ConnectivityConstraint.ConnectivityDirectionEnum.UNIDIRECTIONAL);
 		connectivityService.setConnectivityConstraint(cc);
 		log.debug("Capacity statically set.");
 
