@@ -145,8 +145,11 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 		ApiClient apiClient = new ApiClient()
 				.setBasePath(basePath)
 				.setDebugging(true)
-				.setConnectTimeout(0);
-		
+				.setConnectTimeout(0)
+                .setReadTimeout(30000)
+                .setWriteTimeout(30000);
+
+
 		api.setApiClient(apiClient);
 		return api;
 	}
