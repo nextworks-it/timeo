@@ -7,6 +7,10 @@ import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.elements.LocationInfo
 
 public class StaticGeographicalAreas {
 
+	static public String getDefaultAreaId(){
+		return "1";
+	}
+
 	/**
 	 * @return the geographicalAreas key: areaId; value: geographical coordinates
 	 */

@@ -409,7 +409,8 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
                 return e.getKey();
             }
         }
-        return null;
+        log.warn("Found geographical area to cover (" + latitude + ", " + longitude + ", " + range + "): Not found, using default: " + StaticGeographicalAreas.getDefaultAreaId());
+        return StaticGeographicalAreas.getDefaultAreaId();
     }
 
     /**
