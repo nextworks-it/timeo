@@ -2,6 +2,8 @@ package it.nextworks.nfvmano.timeo.sbdriver.sdn.tapi;
 
 import java.util.*;
 
+import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPathType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -154,7 +156,61 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 		return api;
 	}
 	
-	
+
+
+	public List<SbNetworkPath> getActivePaths() throws FailedOperationException{
+        log.debug("Retrieving TAPI active connections");
+        DefaultApi api = buildApiClient();
+        List<SbNetworkPath> sbNetworkPaths = new ArrayList<>();
+        try {
+            ContextSchema response = api.retrieveContext();
+            ConnectivityContext connectivityContext = response.getConnectivityContext();
+            List<ConnectivityService> connectivityServices = connectivityContext.getConnectivityService();
+            for(ConnectivityService connectivityService : connectivityServices){
+                SbNetworkPath currentPath = this.translateConnectivityService(connectivityService);
+                sbNetworkPaths.add(currentPath);
+            }
+            return sbNetworkPaths;
+
+        } catch (ApiException e) {
+            log.error("Failed to retrieve TAPI active connections");
+            log.error(e.getMessage());
+            log.error(e.getStackTrace().toString());
+            throw new FailedOperationException(e.getMessage());
+        }
+    }
+
+
+    private SbNetworkPath translateConnectivityService(ConnectivityService connectivityService) throws FailedOperationException{
+	    String npId = connectivityService.getUuid();
+        List<NetworkPathHop> hops = new ArrayList<>();
+        if(connectivityService.getEndPoint()!=null && connectivityService.getEndPoint().size()!=2){
+            String ingressServiceInterfacePoint = connectivityService.getEndPoint().get(0).getServiceInterfacePoint().getServiceInterfacePointUuid();
+            String egressServiceInterfacePoint = connectivityService.getEndPoint().get(1).getServiceInterfacePoint().getServiceInterfacePointUuid();
+            NetworkPathHop nph = new NetworkPathHop(
+                    0,
+                    null,                 //nodeId
+                    null,
+                    null,                //egressPortId
+                    null,                                //incomingLinkId - not used here
+                    null,                                //outgoingLinkId - not used here
+                    0,                                    //hopQueue - not used here
+                    true,
+                    true,
+                    ingressServiceInterfacePoint,
+                    egressServiceInterfacePoint
+            );
+            hops.add(nph);
+
+            return new SbNetworkPath(npId,
+                    null, //tenantId: not important for the moment
+                    hops,
+                    null,
+                    SbNetworkPathType.AROF);
+        }else throw new FailedOperationException("A ConnectivityService should have exactly two endpoints");
+
+    }
+
 	
 	/**
 	 * This method translates a topology in the TAPI format into a network topology in TIMEO format.

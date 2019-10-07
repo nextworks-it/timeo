@@ -92,5 +92,16 @@ public interface SdnControllerProviderInterface {
 	 * @throws MethodNotImplementedException if the SDN controller does not support the feature
 	 */
 	public String removePaths(List<String> networkPathIds, SdnControllerConsumerInterface consumer) throws NotExistingEntityException, FailedOperationException, MethodNotImplementedException;
-	
+
+
+
+	/**
+	 * Method used to get the list of active network paths.
+	 *
+	 * @return the list of active paths (i.e. setted and not removed)
+	 * @throws FailedOperationException if the operation fails
+	 * @throws MethodNotImplementedException if the SDN controller does not support the feature
+	 */
+	public List<SbNetworkPath> getActivePaths() throws  FailedOperationException, MethodNotImplementedException;
+
 }
