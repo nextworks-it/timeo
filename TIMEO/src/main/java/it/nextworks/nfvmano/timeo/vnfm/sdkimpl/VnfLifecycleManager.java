@@ -132,6 +132,7 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 	private VimPlugin vimPlugin;
 	private RestTemplate restTemplate;
 	private TaskExecutor taskExecutor;
+	private Map<String, String> currentConfiguParameters;
 	
 	private VnfDriver vnfDriver;
 	
@@ -157,6 +158,7 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 		this.internalStatus = VnfInternalStatus.INIT;
 		this.vimResourcePollingManager = vimResourcePollingManager;
 		this.sbDriversManager = sbDriversManager;
+		this.currentConfiguParameters= new HashMap<String, String>();
 	}
 	
 	
@@ -204,7 +206,8 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 			case CONFIGURE_VNF: {
 				log.debug("Received configure VNF message with operation ID " + operationId);
 				log.trace("START CONFIGURE VNF " + operationId);
-				if (!(internalStatus.equals(VnfInternalStatus.ALLOCATED))) {
+				//TODO: j.brenes verify the second condition. Added for the scaling procedure. 
+				if (!(internalStatus.equals(VnfInternalStatus.ALLOCATED)||internalStatus.equals(VnfInternalStatus.CONFIGURED))) {
 					signalError(operationId, "Received configure VNF message in wrong status.");
 					return;
 				}
@@ -383,15 +386,22 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 		internalStatus = VnfInternalStatus.CONFIGURING_VNF;
 		try {
 			Map<String, String> configParameters = request.getNewValues();
-			Set<KeyValuePair> vnfSpecificData = new HashSet<>();
-			for (Map.Entry<String, String> p : configParameters.entrySet()) {
-				vnfSpecificData.add(new KeyValuePair(p.getKey(), p.getValue()));
-				vnfDbWrapper.addGenericConfigParameterToVnfInfo(vnfInstanceId, p.getKey(), p.getValue());
+			if(!currentConfiguParameters.equals(configParameters)) {
+				Set<KeyValuePair> vnfSpecificData = new HashSet<>();
+				for (Map.Entry<String, String> p : configParameters.entrySet()) {
+					vnfSpecificData.add(new KeyValuePair(p.getKey(), p.getValue()));
+					vnfDbWrapper.addGenericConfigParameterToVnfInfo(vnfInstanceId, p.getKey(), p.getValue());
+				}
+				VnfConfiguration vnfConfigurationData = new VnfConfiguration(null, null, vnfSpecificData);
+				SetConfigurationRequest configRequest = new SetConfigurationRequest(vnfInstanceId, vnfConfigurationData, null);
+				log.debug("Configuration request sent to VNF.");
+				this.currentConfiguParameters=configParameters;
+				vnfDriver.setConfiguration(configRequest, this);
+			}else {
+				log.debug("VNF configuration parameters unchanged. Skipping");
+				this.processVnfConfigurationAck(OperationStatus.SUCCESSFULLY_DONE);
 			}
-			VnfConfiguration vnfConfigurationData = new VnfConfiguration(null, null, vnfSpecificData);
-			SetConfigurationRequest configRequest = new SetConfigurationRequest(vnfInstanceId, vnfConfigurationData, null);
-			log.debug("Configuration request sent to VNF.");
-			vnfDriver.setConfiguration(configRequest, this);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			signalError(currentOperation, e.getMessage());
@@ -430,6 +440,7 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 				if ( !(cpd.getAddressData().isEmpty()) && (cpd.getAddressData().get(0).isManagement())) {
 					log.debug("The instantiated port is for management access to the VNF");
 					String floatingIp = port.getMetadata().get("FLOATING_IP_ADDRESS");
+					vnfDbWrapper.setManagementIp(vnfInstanceId, floatingIp);
 					log.debug("IP to access the VNF: " + floatingIp);
 					this.vnfDriver = new RestVnfDriver(vnfInstanceId, floatingIp, restTemplate, taskExecutor);
 					log.debug("Created VNF driver");
@@ -804,6 +815,7 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 		List<VirtualNetworkInterfaceData> virtualNetworkInterface = new ArrayList<>();
 		List<VduCpd> intCpd = vdu.getIntCpd();
 		Map<String, String> ipAddresses = new HashMap<>();
+		Map<String, String> gwAddresses = new HashMap<>();
 		Map<String, String> floating = new HashMap<>();
 		String gatewayIp = null;
 		for (VduCpd cp : intCpd) {
@@ -823,9 +835,12 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 			String floatingIp = metadata.get("FLOATING_IP_ADDRESS");
 			ipAddresses.put(intCpdId, ipAddress);
 			floating.put(extCpId, floatingIp);
+			String cpGwIp = readNetworkGateway(portDescription.getNetworkId());
+			gwAddresses.put(extCpId, cpGwIp);
+			log.debug("Gateway Address: extCpId:"+extCpId+"cpGwIp:"+cpGwIp);
 			if (cp.getAddressData().get(0).isManagement()) {
 				log.debug("Management CP.");
-				gatewayIp = readNetworkGateway(portDescription.getNetworkId());
+				gatewayIp = cpGwIp;
 			}
 			VirtualNetworkInterfaceData vnic = new VirtualNetworkInterfaceData(portDescription.getNetworkId(), 
 					portId,						//networkPortId
@@ -850,7 +865,7 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 		String elaboratedScript = null;
 		if (scripts.size() == 1) {
 			log.debug("Found script for VNF instantiation.");
-			elaboratedScript = CloudInitGenerator.fillInCloudInitScript(scripts.get(0).getScript(), computeName, domainName, ipAddresses, gatewayIp, vnfDbWrapper.getVnfInfo(vnfInstanceId).getVnfConfigurableProperty(), floating);
+			elaboratedScript = CloudInitGenerator.fillInCloudInitScript(scripts.get(0).getScript(), computeName, domainName, ipAddresses, gatewayIp, vnfDbWrapper.getVnfInfo(vnfInstanceId).getVnfConfigurableProperty(), floating, gwAddresses);
 		}
 		
 		VirtualComputeFlavour computeData = new VirtualComputeFlavour(virtualComputeDescId, 
@@ -860,7 +875,7 @@ public class VnfLifecycleManager extends VeVnfmVnfmAccess implements Asynchronou
 				storageAttributes, 
 				virtualNetworkInterface);
 		
-		log.debug("Creating virtual compute flavour and getting its ID.");
+		log.debug("Computing virtual compute flavour ID.");
 		
 		String flavourId = vimPlugin.createComputeFlavour(new CreateComputeFlavourRequest(computeData));
 		

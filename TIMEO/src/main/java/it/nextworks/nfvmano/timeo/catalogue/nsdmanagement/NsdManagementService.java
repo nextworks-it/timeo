@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import it.nextworks.nfvmano.libs.records.nsinfo.PnfInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,9 +62,13 @@ import it.nextworks.nfvmano.libs.descriptors.common.elements.LifeCycleManagement
 import it.nextworks.nfvmano.libs.descriptors.common.elements.Rule;
 import it.nextworks.nfvmano.libs.descriptors.common.elements.VirtualLinkDf;
 import it.nextworks.nfvmano.libs.descriptors.common.elements.VirtualLinkProfile;
+import it.nextworks.nfvmano.libs.descriptors.nsd.AutoscalingAction;
+import it.nextworks.nfvmano.libs.descriptors.nsd.AutoscalingRuleCondition;
+import it.nextworks.nfvmano.libs.descriptors.nsd.AutoscalingRuleCriteria;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Dependencies;
 import it.nextworks.nfvmano.libs.descriptors.nsd.MonitoredData;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nfpd;
+import it.nextworks.nfvmano.libs.descriptors.nsd.NsAutoscalingRule;
 import it.nextworks.nfvmano.libs.descriptors.nsd.NsDf;
 import it.nextworks.nfvmano.libs.descriptors.nsd.NsLevel;
 import it.nextworks.nfvmano.libs.descriptors.nsd.NsProfile;
@@ -75,16 +80,21 @@ import it.nextworks.nfvmano.libs.descriptors.nsd.PnfExtCpd;
 import it.nextworks.nfvmano.libs.descriptors.nsd.PnfProfile;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Pnfd;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Sapd;
+import it.nextworks.nfvmano.libs.descriptors.nsd.ScaleNsToLevelData;
 import it.nextworks.nfvmano.libs.descriptors.nsd.VirtualLinkToLevelMapping;
 import it.nextworks.nfvmano.libs.descriptors.nsd.VnfProfile;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Vnffgd;
 import it.nextworks.nfvmano.libs.descriptors.onboardedvnfpackage.OnboardedVnfPkgInfo;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.VnfConfigurableProperties;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.AutoscalingActionRepository;
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.AutoscalingRuleConditionRepository;
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.AutoscalingRuleCriteriaRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.DependenciesRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.InternalNsdInfo;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.MonitoredDataRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.NfpdRepository;
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.NsAutoscalingRuleRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.NsLevelRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.NsProfileRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.NsScalingAspectRepository;
@@ -101,6 +111,7 @@ import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.PnfdInfoR
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.PnfdRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.RuleRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.SapdRepository;
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.ScaleNsToLevelDataRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.VirtualLinkDfRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.VirtualLinkProfileRepository;
 import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.repositories.VirtualLinkToLevelMappingRepository;
@@ -196,6 +207,21 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 	
 	@Autowired
 	PnfExtCpdRepository pnfExtCpdRepository;
+	
+	@Autowired
+	AutoscalingActionRepository autoscalingActionRepository;
+	
+	@Autowired
+	AutoscalingRuleConditionRepository autoscalingRuleConditionRepository;
+	
+	@Autowired
+	AutoscalingRuleCriteriaRepository autoscalingRuleCriteriaRepository;
+	
+	@Autowired
+	NsAutoscalingRuleRepository nsAutoscalingRuleRepository;
+	
+	@Autowired
+	ScaleNsToLevelDataRepository scaleNsToLevelDataRepository;
 	
 	@Autowired
 	private VnfPackageManagementService vnfPackageManagement;
@@ -656,8 +682,8 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 				queryResult.addAll(pnfdInfos);
 				log.debug("Added all PNFD infos found in DB");
 			} else {
-				log.error("Received query NSD with not supported filter.");
-				throw new MalformattedElementException("Received query NSD with not supported filter.");
+				log.error("Received query PNFD with not supported filter.");
+				throw new MalformattedElementException("Received query PNFD with not supported filter.");
 			}
 			return new QueryPnfdResponse(queryResult);
 		} else {
@@ -743,7 +769,7 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 		String pnfdId = input.getPnfdId();
 		String version = input.getVersion();
 		
-		Pnfd output = new Pnfd(pnfdId, input.getProvider(), version, input.getSecurity());
+		Pnfd output = new Pnfd(pnfdId, input.getProvider(), version, input.getSecurity(), input.getConfigurableProperty());
 		pnfdRepository.saveAndFlush(output);
 		
 		Pnfd createdPnfd = pnfdRepository.findByPnfdIdAndVersion(pnfdId, version).get();
@@ -1010,7 +1036,7 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 							log.error("NS Forwarding Path " + nfpdId + " already existing. Impossible to load a new one.");
 							throw new AlreadyExistingEntityException("NS Forwarding Path " + nsdId + " already existing.");
 						}
-						Nfpd nfpdTarget = new Nfpd(target, nfpdId, nfpd.getCpd());
+						Nfpd nfpdTarget = new Nfpd(target, nfpdId, nfpd.getCpd(), nfpd.getQos());
 						forwardingPathRepository.saveAndFlush(nfpdTarget);
 						log.debug("Stored forwarding path " + nfpdId);
 						if (nfpd.getNfpRule() != null) {
@@ -1047,10 +1073,36 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 	private void storeRule(Nsd input, Nsd output) throws AlreadyExistingEntityException {
 		if (input.getAutoScalingRule() != null) {
 			log.debug("Storing NSD autoscaling rules");
-			List<Rule> rules = input.getAutoScalingRule();
-			for (Rule r : rules) {
-				Rule targetRule = new Rule(output);
-				ruleRepository.saveAndFlush(targetRule);
+			List<NsAutoscalingRule> rules = input.getAutoScalingRule();
+			for (NsAutoscalingRule r : rules) {
+				NsAutoscalingRule targetRule = new NsAutoscalingRule(output, r.getRuleId());
+				nsAutoscalingRuleRepository.saveAndFlush(targetRule);
+				
+				AutoscalingRuleCondition ruleConditions = r.getRuleCondition();
+				AutoscalingRuleCondition targetArc = new AutoscalingRuleCondition(targetRule, ruleConditions.getName(), ruleConditions.getScalingType(), ruleConditions.isEnabled(), ruleConditions.getScaleInOperationType(), 
+						ruleConditions.getScaleOutOperationType(), ruleConditions.getThresholdTime(), ruleConditions.getCooldownTime(), ruleConditions.getInitialInstantiationLevel());
+				autoscalingRuleConditionRepository.saveAndFlush(targetArc);
+
+				List<AutoscalingRuleCriteria> scalingCriteria = ruleConditions.getScalingCriteria();
+				for (AutoscalingRuleCriteria sc : scalingCriteria) {
+					AutoscalingRuleCriteria targetSc = new AutoscalingRuleCriteria(targetArc, sc.getName(), sc.getScaleInThreshold(), sc.getScaleInRelationalOperation(),
+							sc.getScaleOutThreshold(), sc.getScaleOutRelationalOperation(), sc.getNsMonitoringParamRef());
+					autoscalingRuleCriteriaRepository.saveAndFlush(targetSc);
+				}
+
+				
+				List<AutoscalingAction> ruleActions = r.getRuleActions();
+				for (AutoscalingAction aa : ruleActions) {
+					AutoscalingAction targetAa = new AutoscalingAction(targetRule, aa.getScaleType());
+					autoscalingActionRepository.saveAndFlush(targetAa);
+					
+					ScaleNsToLevelData scaleNsToLevelData = aa.getScaleNsToLevelData();
+					if (scaleNsToLevelData != null) {
+						ScaleNsToLevelData sntldTarget = new ScaleNsToLevelData(targetAa, scaleNsToLevelData.getNsInstantiationLevel(), scaleNsToLevelData.getNsScaleInfo());
+						scaleNsToLevelDataRepository.saveAndFlush(sntldTarget);
+					}
+				}
+				
 				log.debug("Stored NSD autoscaling rule");
 			}
 			log.debug("All autoscaling rules have been stored");
@@ -1088,6 +1140,17 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 								nsP.getNsInstantiationLevelId(), nsP.getMinNumberOfInstances(), nsP.getMaxNumberOfInstances(), nsP.getAffinityOrAntiaffinityGroupId());
 						nsProfileRepository.saveAndFlush(nsProfileTarget);
 						log.debug("Stored NS profile " + nsP.getNsProfileId());
+						
+						List<NsVirtualLinkConnectivity> vlConns = nsP.getNsVirtualLinkConnectivity();
+						if (vlConns != null) {
+							log.debug("Storing NS VL connectivity for NS profile");
+							for (NsVirtualLinkConnectivity vlConn : vlConns) {
+								NsVirtualLinkConnectivity vlConnTarget = new NsVirtualLinkConnectivity(nsProfileTarget, vlConn.getVirtualLinkProfileId(),
+										vlConn.getCpdId());
+								nsVlConnectivityRepository.saveAndFlush(vlConnTarget);
+							}
+							log.debug("Stored NS VL connectivity for NS profile");
+						}
 					}
 					log.debug("Stored all NS profiles");
 				}
@@ -1449,6 +1512,41 @@ public class NsdManagementService implements NsdManagementProviderInterface {
 		log.debug(logString);
 
 		return vnfsParametersMap;
+	}
+
+	public Map<String, String> findPnfUserParameters(String nsdInfoId) throws NotExistingEntityException {
+		List<String> pnfsParameters = new ArrayList<>();
+
+		Map<String, String> pnfsParametersMap = new HashMap<>();
+
+		InternalNsdInfo iNsdInfo = null;
+		iNsdInfo = findNsdInfo(nsdInfoId);
+		log.debug("Found NSD info");
+
+		List<String> pnfdInfoIds = iNsdInfo.getPnfdInfoId();
+		for (String pnfdInfoId : pnfdInfoIds) {
+			PnfdInfo pnfdInfo = buildPnfdInfo(pnfdInfoId);
+			Pnfd pnfd = pnfdInfo.getPnfd();
+			//TODO: verify this j.brenes
+			String pnfdId = pnfdInfo.getPnfdId();
+			//String pnfdInfoName = "TEST";
+			List<String> configurableProperty = pnfd.getConfigurableProperty();
+			if (configurableProperty != null){
+				for( String pnfPorperty : configurableProperty ){
+					pnfsParametersMap.put(pnfPorperty, pnfdId);
+				}
+			}
+
+		}
+
+		pnfsParameters.addAll(pnfsParametersMap.keySet());
+		String logString = "User configuration parameters in NSD " + nsdInfoId + ": ";
+		for (String s : pnfsParameters) {
+			logString += s + " \n";
+		}
+		log.debug(logString);
+
+		return pnfsParametersMap;
 	}
 
 

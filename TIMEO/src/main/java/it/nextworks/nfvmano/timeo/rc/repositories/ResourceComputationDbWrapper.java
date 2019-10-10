@@ -15,7 +15,9 @@
 */
 package it.nextworks.nfvmano.timeo.rc.repositories;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -28,6 +30,10 @@ import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
+import it.nextworks.nfvmano.timeo.rc.elements.NsScaleSchedulingSolution;
+import it.nextworks.nfvmano.timeo.rc.elements.PnfAllocation;
+import it.nextworks.nfvmano.timeo.rc.elements.ScaleNsResourceAllocation;
+import it.nextworks.nfvmano.timeo.rc.elements.ScaleVnfResourceAllocation;
 import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 
 
@@ -35,21 +41,83 @@ import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 public class ResourceComputationDbWrapper {
 
 	private static final Logger log = LoggerFactory.getLogger(ResourceComputationDbWrapper.class);
-	
+
 	@Autowired
 	NetworkPathRepository networkPathRepository;
-	
+
 	@Autowired
 	NsResourceSchedulingSolutionRepository nsResourceSchedulingSolutionRepository;
 	
 	@Autowired
-	VnfResourceAllocationRepository vnfResourceAllocationRepository;
+	NsScaleSchedulingSolutionRepository nsScaleSchedulingSolutionRepository;
 	
+	@Autowired
+	ScaleNsResourceAllocationRepository scaleNsResourceAllocationRepository;
+
+		
+	@Autowired
+	ScaleVnfResourceAllocationRepository scaleVnfResourceAllocationRepository;
+
+	@Autowired
+	VnfResourceAllocationRepository vnfResourceAllocationRepository;
+
 	@Autowired
 	NetworkPathHopRepository networkPathHopRepository;
 	
-	public ResourceComputationDbWrapper() {	}
+	@Autowired
+	PnfAllocationRepository pnfAllocationRepository;
 	
+	public ResourceComputationDbWrapper() {	}
+
+	public synchronized void addNewNsScaleSchedulingSolution(NsScaleSchedulingSolution input) throws NotExistingEntityException, AlreadyExistingEntityException {
+		log.debug("Storing new NS scale scheduling solution in DB");
+		Optional<NsScaleSchedulingSolution> currentSS = nsScaleSchedulingSolutionRepository.findByNsInstanceId(input.getNsInstanceId());
+		if(currentSS.isPresent()) {
+			log.debug("removing previous solution");
+			nsScaleSchedulingSolutionRepository.delete(currentSS.get());
+		}
+		List<VnfResourceAllocation> overallVnfds = new ArrayList<>();
+		ArrayList<String> addedVnfds = new ArrayList<>();
+		NsResourceSchedulingSolution currentSolution = getNsResourceSchedulingSolution(input.getNsInstanceId());
+		for(ScaleVnfResourceAllocation vnfRA : input.getScaleNsResourceAllocation().getVnfResourceAllocation() ){
+			overallVnfds.add(vnfRA.getVnfResourceAllocation());
+			addedVnfds.add(vnfRA.getVnfdId());
+
+		}
+		for(VnfResourceAllocation vnfRA : currentSolution.getVnfResourceAllocation()){
+			if(!addedVnfds.contains(vnfRA.getVnfdId())){
+				overallVnfds.add(vnfRA);
+			}
+		}
+		//TODO: implement PNF, networkPaths, comuteNodes, NetworkNodes deallocation
+		List<PnfAllocation> overallPnfs = currentSolution.getPnfAllocation();
+		List<NetworkPath> overallNetworkPaths = currentSolution.getNetworkPaths();
+		Map<String,String> overallComputeNodes = currentSolution.getComputeNodesToBeActivated();
+		List<String> overallNetworkNodes = currentSolution.getNetworkNodesToBeActivated();
+		this.removeNsResourceSchedulingSolution(input.getNsInstanceId());
+		this.addNewNsResourceSchedulingSolution(new NsResourceSchedulingSolution
+				(input.getNsInstanceId(),
+						overallVnfds,
+						overallPnfs,
+						overallNetworkPaths,
+						input.isSolutionFound(),
+						overallNetworkNodes,
+						overallComputeNodes));
+
+		input.setPostScaleResourceSolution(this.getNsResourceSchedulingSolution(input.getNsInstanceId()));
+		log.debug("Storing nsScaleSolution");
+		nsScaleSchedulingSolutionRepository.saveAndFlush(input);
+		log.debug("Storing ScaleNsResourceAllocation");
+		scaleNsResourceAllocationRepository.saveAndFlush(input.getScaleNsResourceAllocation());
+		for(ScaleVnfResourceAllocation sVnf : input.getScaleNsResourceAllocation().getVnfResourceAllocation()) {
+			log.debug("Storing ScaleVnfResourceAllocation");
+			scaleVnfResourceAllocationRepository.saveAndFlush(sVnf);
+			
+		}
+
+
+	}
+
 	public synchronized void addNewNsResourceSchedulingSolution(NsResourceSchedulingSolution input) throws AlreadyExistingEntityException {
 		log.debug("Storing new NS resource scheduling solution in DB");
 		if (nsResourceSchedulingSolutionRepository.findByNsInstanceId(input.getNsInstanceId()).isPresent()) {
@@ -64,6 +132,11 @@ public class ResourceComputationDbWrapper {
 				VnfResourceAllocation targetVra = new VnfResourceAllocation(output, vra.getVnfdId(), vra.getVnfIndex(), vra.getVduId(),
 						vra.getVduIndex(), vra.getVimId(), vra.getZoneId(), vra.getHostId());
 				vnfResourceAllocationRepository.saveAndFlush(targetVra);
+			}
+			List<PnfAllocation> pas = input.getPnfAllocation();
+			for (PnfAllocation pa : pas) {
+				PnfAllocation targetPa = new PnfAllocation(output, pa.getPnfdId(), pa.getPnfdVersion(), pa.getIndex(), pa.getPnfInstanceId(), pa.getPnfProfileId(), pa.getParameters());
+				pnfAllocationRepository.saveAndFlush(targetPa);
 			}
 			List<NetworkPath> nps = input.getNetworkPaths();
 			for (NetworkPath np : nps) {
@@ -87,6 +160,16 @@ public class ResourceComputationDbWrapper {
 			return solOpt.get(); 
 		} else {
 			throw new NotExistingEntityException("NS resource scheduling solution not found for NS instance " + nsInstanceId);
+		}
+	}
+	
+	public NsScaleSchedulingSolution getNsScaleSchedulingSolution(String nsInstanceId) throws NotExistingEntityException {
+		log.debug("Retrieving NS scale scheduling solution from DB");
+		Optional<NsScaleSchedulingSolution> solOpt = nsScaleSchedulingSolutionRepository.findByNsInstanceId(nsInstanceId);
+		if (solOpt.isPresent()) {
+			return solOpt.get(); 
+		} else {
+			throw new NotExistingEntityException("NS scale scheduling solution not found for NS instance " + nsInstanceId);
 		}
 	}
 	
@@ -118,6 +201,17 @@ public class ResourceComputationDbWrapper {
 			log.error("VNF resource allocation solution for NS instance " + nsInstanceId + ", VNFD ID " + vnfdId + " and index " + index + " not found");
 			throw new NotExistingEntityException("Solution not found.");
 		} else return res;
+	}
+	
+	/**
+	 * Retrieve a PNF allocation solution
+	 * 
+	 * @param nsInstanceId ID of the NS instance
+	 * @return the list of PNFs to be used for that NS instance
+	 */
+	public List<PnfAllocation> getPnfAllocation(String nsInstanceId) throws NotExistingEntityException {
+		log.debug("Retrieving PNF allocation solution from DB");
+		return pnfAllocationRepository.findByNsRssNsInstanceId(nsInstanceId);
 	}
 	
 	/**

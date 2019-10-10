@@ -15,19 +15,30 @@
 */
 package it.nextworks.nfvmano.timeo.vnfm.sdkimpl;
 
-import java.util.List;
-import java.util.Map;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ResourceUtils;
 
 
 public class CloudInitGenerator {
 
 	private static final Logger log = LoggerFactory.getLogger(CloudInitGenerator.class);
-	
-	public CloudInitGenerator() { }
+
+	public CloudInitGenerator() {
+
+	}
 	
 	/**
 	 * Method to create the cloud init script with the right parameters
@@ -38,7 +49,8 @@ public class CloudInitGenerator {
 	 * @param ipAddresses IP addresses to be included in the script
 	 * @return the modified cloud init script
 	 */
-	public static String fillInCloudInitScript(String originalScript, String hostname, String domainName, Map<String, String> ipAddresses, String gatewayIpManagement, Map<String, String> userConfig, Map<String, String > floatingIps) {
+	public static String fillInCloudInitScript(String originalScript, String hostname, String domainName, Map<String, String> ipAddresses, String gatewayIpManagement, Map<String, String> userConfig, Map<String, String > floatingIps, Map<String, String> gwAddresses) {
+
 		log.debug("Processing cloud init script");
 		log.debug("Original script: \n" + originalScript);
 		log.debug("Hostname: " + hostname);
@@ -59,6 +71,11 @@ public class CloudInitGenerator {
 				.filter(entry -> (entry.getKey().startsWith("uservnf") && (entry.getKey().endsWith("domainname"))))
 				.map(Map.Entry<String,String>::getValue)
 				.collect(Collectors.toList());
+		Map<String, String> userVnfParameters = userConfig.entrySet()
+				.stream()
+				.filter(entry->(entry.getKey().startsWith("uservnf")))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
 		if (!(userConfigDomain.isEmpty())) {
 			String d = userConfigDomain.get(0);
 			log.debug("The domain name is set from the user: " + d);
@@ -70,8 +87,17 @@ public class CloudInitGenerator {
 		for (Map.Entry<String, String> e : ipAddresses.entrySet()) {
 			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$intCp." + e.getKey() + ".address", e.getValue());
 		}
-		for (Map.Entry<String, String> e : ipAddresses.entrySet()) {
+		for (Map.Entry<String, String> e : floatingIps.entrySet()) {
 			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$extCp." + e.getKey() + ".floating", e.getValue());
+		}
+		for (Map.Entry<String, String> e : gwAddresses.entrySet()) {
+			resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$extCp." + e.getKey() + ".gateway", e.getValue());
+		}
+		for (Map.Entry<String, String> e : userVnfParameters.entrySet()){
+
+				resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$" + e.getKey(), e.getValue());
+
+
 		}
 		resultingScript = CloudInitGenerator.modifyParameter(resultingScript, "$$config$$managementGw", gatewayIpManagement);
 		log.debug("Resulting cloud init script: \n" + resultingScript);
@@ -118,5 +144,8 @@ public class CloudInitGenerator {
 		}
 		return b.toString();
 	}
+
+
+
 
 }

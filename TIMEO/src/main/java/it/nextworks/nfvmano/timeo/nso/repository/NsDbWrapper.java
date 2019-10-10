@@ -25,7 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import it.nextworks.nfvmano.libs.catalogues.interfaces.elements.PnfdInfo;
 import it.nextworks.nfvmano.libs.common.elements.ResourceHandle;
+import it.nextworks.nfvmano.libs.common.enums.AddressType;
 import it.nextworks.nfvmano.libs.common.enums.InstantiationState;
 import it.nextworks.nfvmano.libs.common.enums.OperationStatus;
 import it.nextworks.nfvmano.libs.common.enums.VimResourceStatus;
@@ -35,6 +37,11 @@ import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsLinkPort;
 import it.nextworks.nfvmano.libs.records.nsinfo.NsVirtualLinkInfo;
+import it.nextworks.nfvmano.libs.records.nsinfo.PnfExtCpInfo;
+import it.nextworks.nfvmano.libs.records.nsinfo.PnfInfo;
+import it.nextworks.nfvmano.libs.records.nsinfo.SapInfo;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PhysicalEquipmentPort;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
 
 
 @Service
@@ -59,6 +66,9 @@ public class NsDbWrapper {
 	
 	@Autowired
 	NfpRepository nfpRepository;
+	
+	@Autowired
+	SapInfoRepository sapInfoRepository;
 	
 	@Autowired
 	InternalOperationRepository internalOperationRepository;
@@ -99,12 +109,53 @@ public class NsDbWrapper {
 		}
 	}
 	
+	//************************************* Methods related to PNF INFOs ***************************************************
+	
+	public synchronized String createPnfInfo(String nsInstanceId, PnfdInfo pnfdInfo, PnfInstance pnfInstance, String pnfName, String pnfProfileId) throws NotExistingEntityException {
+		log.debug("Creating a new PNF info associated to PNF instance " + pnfInstance.getPnfInstanceId() + " and included in NS " + nsInstanceId);
+		NsInfo nsInfo = getNsInfo(nsInstanceId);
+		log.debug("Creating new entry in DB.");
+		List<PnfExtCpInfo> cpInfo = new ArrayList<>();
+		List<PhysicalEquipmentPort> peps = pnfInstance.getPorts();
+		for (PhysicalEquipmentPort p : peps) {
+			String ipAddress = p.getAddresses().get(AddressType.IP_ADDRESS);
+			String cpdId = p.getPortId();
+			cpInfo.add(new PnfExtCpInfo(cpdId, ipAddress));
+		}
+		PnfInfo pnfInfo = new PnfInfo(nsInfo, pnfInstance.getPnfInstanceId(), pnfName, pnfdInfo.getPnfdId(), pnfdInfo.getPnfdInfoId(), pnfProfileId, cpInfo);
+		pnfInfoRepository.saveAndFlush(pnfInfo);
+		String pnfInfoId = pnfInfo.getId().toString();
+		log.debug("Created PNF info entry with ID " + pnfInfoId);
+		return pnfInfoId;
+	}
+	
+	public PnfInfo getPnfInfo(String pnfInfoId) throws NotExistingEntityException {
+		log.debug("Retrieving PNF " + pnfInfoId + " from DB.");
+		Long id = Long.parseLong(pnfInfoId);
+		Optional<PnfInfo> pnfInfoOpt = pnfInfoRepository.findById(id);
+		if (pnfInfoOpt.isPresent()) return pnfInfoOpt.get();
+		else {
+			log.error("PNF info " + pnfInfoId + " not found");
+			throw new NotExistingEntityException("PNF info " + pnfInfoId + " not found");
+		}
+	}
+	
+	public List<PnfInfo> getAllPnfInfo() {
+		log.debug("Retrieving all PNF infos");
+		return pnfInfoRepository.findAll();
+	}
+	
+	public synchronized void deletePnfInfo(String pnfInfoId) throws NotExistingEntityException {
+		log.debug("Deleting PNF info " + pnfInfoId + " from DB");
+		PnfInfo pnfInfo = getPnfInfo(pnfInfoId);
+		pnfInfoRepository.delete(pnfInfo);
+	}
 	
 	//*************************************  Methods related to NS INFOs ***************************************************
 	
 	public synchronized String createNsInfo(String nsdInstanceId, Nsd nsd, String nsName, String nsDescription, String tenantId) {
 		log.debug("Creating new NS info entry in DB.");
-		NsInfo nsInfo = new NsInfo(null, nsName, nsDescription, nsdInstanceId, null, null, null, null, InstantiationState.NOT_INSTANTIATED, 
+		NsInfo nsInfo = new NsInfo(null, nsName, nsDescription, nsdInstanceId, null, null, null, InstantiationState.NOT_INSTANTIATED, 
 				null, null, tenantId, null);
 		nsInfoRepository.saveAndFlush(nsInfo);
 		String nsInstanceId = nsInfo.getId().toString();
@@ -141,10 +192,11 @@ public class NsDbWrapper {
 		}
 	}
 	
-	public synchronized void setNsInfoDeploymentFlavour(String nsInstanceId, String dfId) throws NotExistingEntityException {
-		log.debug("Setting deployment flavour " + dfId + " for NS instance " + nsInstanceId);
+	public synchronized void setNsInfoDeploymentFlavour(String nsInstanceId, String dfId, String instantiationLevelId) throws NotExistingEntityException {
+		log.debug("Setting deployment flavour " + dfId +" IL "+instantiationLevelId+ " for NS instance " + nsInstanceId);
 		NsInfo nsInfo = getNsInfo(nsInstanceId);
 		nsInfo.setFlavourId(dfId);
+		nsInfo.setInstantiationLevel(instantiationLevelId);
 		nsInfoRepository.saveAndFlush(nsInfo);
 		log.debug("Deployment flavour set for NS instance " + nsInstanceId);
 	}
@@ -179,6 +231,14 @@ public class NsDbWrapper {
 		nsInfo.setNsState(instantiationState);
 		nsInfoRepository.saveAndFlush(nsInfo);
 		log.debug("Instantiation state set");
+	}
+	
+	public synchronized void setNsInfoMonitoringUrl(String nsInstanceId, String monitoringUrl) throws NotExistingEntityException {
+		log.debug("Setting monitoring URL for NS instance " + nsInstanceId);
+		NsInfo nsInfo = getNsInfo(nsInstanceId);
+		nsInfo.setMonitoringDashboardUrl(monitoringUrl);
+		nsInfoRepository.saveAndFlush(nsInfo);
+		log.debug("Monitoring URL set");
 	}
 	
 	//*************************************  Methods related to NS Virtual Link INFOs ***************************************************
@@ -275,6 +335,22 @@ public class NsDbWrapper {
 		log.debug("Removed NS Virtual Link " + nsVldId + " in NS instance " + nsInstanceId + " from DB");
 	}
 	
+	//*************************************  Methods related to NS User Access Info *********************************************
+	
+	public synchronized void addUserAccessInfo(String nsInstanceId, String sapdId, String vnfdId, String vnfId, String vnfExtCpdId, String address) throws NotExistingEntityException {
+		log.debug("Creating User Access Info for NS " + nsInstanceId + ". SAPD ID: " + sapdId + " - VNFD ID: " + vnfdId  + " - VNF ID: " + vnfId + " - VNF EXT CPD: " + vnfExtCpdId + " - IP: " + address);
+		SapInfo sapInfo = getSapInfo(nsInstanceId, sapdId);
+		sapInfo.addUserAccessInfo(sapdId, vnfdId, vnfId, vnfExtCpdId, address);
+		sapInfoRepository.saveAndFlush(sapInfo);
+		log.debug("User access info added in DB.");
+	}
+	
+	private SapInfo getSapInfo(String nsInstanceId, String sapdId) throws NotExistingEntityException {
+		Optional<SapInfo> sapInfoOpt = sapInfoRepository.findByNsInfoNsInstanceIdAndSapdId(nsInstanceId, sapdId);
+		if (sapInfoOpt.isPresent()) return sapInfoOpt.get();
+		else throw new NotExistingEntityException("SAP info for SAPD " + sapdId + " not available for NS instance " + nsInstanceId);
+	}
+	
 	//*************************************  Methods related to NS Link Ports ***************************************************
 	
 	public synchronized void createNsLinkPort(String nsInstanceId, String nsVldId, String cpId, ResourceHandle resourceHandle, boolean isSap, String portName) 
@@ -288,9 +364,9 @@ public class NsDbWrapper {
 		nsLinkPortRepository.saveAndFlush(port);
 		log.debug("NS link port created.");
 		NsInfo nsInfo = getNsInfo(nsInstanceId);
-		nsInfo.addSapInfo(resourceHandle.getResourceId(), cpId, portName, portName, null);
-		nsInfoRepository.saveAndFlush(nsInfo);
-		log.debug("SAP Info added in NS info");
+		SapInfo sapInfo = new SapInfo(nsInfo, resourceHandle.getResourceId(), cpId, portName, portName, null,  null);
+		sapInfoRepository.saveAndFlush(sapInfo);
+		log.debug("SAP Info added in DB");
 	}
 	
 	public synchronized void removeNsLinkPort(String nsInstanceId, String resourceId) throws NotExistingEntityException {
@@ -298,10 +374,12 @@ public class NsDbWrapper {
 		NsLinkPort port = getNsLinkPort(nsInstanceId, resourceId);
 		nsLinkPortRepository.delete(port);
 		log.debug("NS link port removed.");
-		NsInfo nsInfo = getNsInfo(nsInstanceId);
-		nsInfo.removeSapInfo(resourceId);
-		nsInfoRepository.saveAndFlush(nsInfo);
-		log.debug("SAP Info removed from NS info");
+		
+		Optional<SapInfo> sapInfo = sapInfoRepository.findBySapInstanceId(resourceId);
+		if (sapInfo.isPresent()) {
+			sapInfoRepository.delete(sapInfo.get());
+			log.debug("SAP Info removed from DB");
+		}
 	}
 	
 	public NsLinkPort getNsLinkPort(String nsInstanceId, String resourceId) throws NotExistingEntityException {

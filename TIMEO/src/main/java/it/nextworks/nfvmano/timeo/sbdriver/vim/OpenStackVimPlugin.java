@@ -404,7 +404,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 					break;
 				}
 				try{
-					log.debug("Attaching port  to router " + routerID);
+					log.debug("Attaching port to router " + routerID);
 					RouterInterface routerIf = os.networking().router().attachInterface(routerID, AttachInterfaceType.SUBNET, foundSubnet);
 					port = os.networking().port().get(routerIf.getPortId());
 				} catch(Exception e){
@@ -1094,7 +1094,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 	 * @return
 	 * @throws FailedOperationException
 	 */
-	private String getFlavour(VirtualComputeFlavour virtualComputeFlavor) throws FailedOperationException {
+	private String getFlavour(VirtualComputeFlavour virtualComputeFlavor, String name) throws FailedOperationException {
 		OSClientV3 os = null;
 		if (token == null || token.getExpires().compareTo(new Date()) < 0) {
 			log.debug("Token has expired, generating a new one");
@@ -1137,7 +1137,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 		Flavor flavor = null;
 		try {
 			flavor = os.compute().flavors()
-					.create(Builders.flavor().name(virtualComputeFlavor.getFlavourId()).disk(size)
+					.create(Builders.flavor().isPublic(true).name(name).disk(size)
 							.ram(virtualComputeFlavor.getVirtualMemory().getVirtualMemSize()*1024)
 							.vcpus(virtualComputeFlavor.getVirtualCpu().getNumVirtualCpu()).build());
 			return flavor.getId();
@@ -1355,18 +1355,33 @@ public class OpenStackVimPlugin extends VimPlugin {
 	@Override
 	public String createComputeFlavour(CreateComputeFlavourRequest request) 
 			throws MethodNotImplementedException, MalformattedElementException, FailedOperationException {
-		log.debug("Received request to create a new compute flavour");
+		log.debug("Received request for compute flavour ID");
 		VirtualComputeFlavour vcf = request.getFlavour();
 		if (vcf == null) {
 			log.error("Received null virtual compute flavour. Error.");
 			throw new MalformattedElementException("Received null virtual compute flavour. Error.");
 		}
 		try {
-			String flavourId = vimRepoWrapper.storeVirtualComputeFlavour(vcf);
-			log.debug("Virtual compute flavour created with ID " + flavourId);
-			return flavourId;
-		} catch (AlreadyExistingEntityException e) {
-			throw new FailedOperationException("Virtual compute flavour already existing.");
+			VirtualComputeFlavour oldVcf = vimRepoWrapper.retrieveVirtualComputeFlavour(vcf.getFlavourId());
+			log.debug("Found a virtual compute flavour with ID {}, checking equality.", vcf.getFlavourId());
+			if (!VimRepoWrapper.compareVcf(oldVcf, vcf)) {
+				log.error("ID '{}' is already used for a different vcf.", vcf.getFlavourId());
+				throw new FailedOperationException(
+						String.format("ID '%s' is already used for a different vcf", vcf.getFlavourId())
+				);
+			}
+			log.debug("Flavour {} already existing, reusing.", vcf.getFlavourId());
+			return vcf.getFlavourId();
+
+		} catch (NotExistingEntityException e) {
+			log.debug("Virtual compute flavour not yet existing, creating a new one.");
+			try {
+				String flavourId = vimRepoWrapper.storeVirtualComputeFlavour(vcf);
+				log.debug("Virtual compute flavour created with ID " + flavourId);
+				return flavourId;
+			} catch (AlreadyExistingEntityException e2) {
+				throw new FailedOperationException("Race condition: vcf created between polling and writing.");
+			}
 		}
 	}
 
@@ -1471,7 +1486,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 //			throw new FailedOperationException("VM already instantiated");
 //		}
 
-		String flavorID = getFlavour(virtualComputeFlavour);
+		String flavorID = getFlavour(virtualComputeFlavour, request.getComputeName());
 		if (flavorID == null) {
 			log.error("An error occurred during flavor creation");
 			throw new FailedOperationException("An error occurred during flavor creation");
@@ -1479,7 +1494,8 @@ public class OpenStackVimPlugin extends VimPlugin {
 
 		List<? extends Image> images = null;
 		try {
-			images = os.images().list();
+			//TODO: improve
+			images = os.images().listAll();
 		} catch (Exception e) {
 			log.error("An error occurred gathering Image list: " + e.getMessage());
 			throw new FailedOperationException("An error occurred gathering Image list: " + e.getMessage());

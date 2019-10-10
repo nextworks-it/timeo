@@ -29,6 +29,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
@@ -61,10 +62,20 @@ public class NsResourceSchedulingSolution {
 	
 	private String nsInstanceId;
 	
+	@OneToOne(fetch=FetchType.EAGER, mappedBy="postScaleResourceSolution", cascade=CascadeType.ALL, orphanRemoval = true)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JsonIgnore
+	private NsScaleSchedulingSolution nsScaleSchedulingSolution; 
+	
 	@OneToMany(mappedBy = "nsRss", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<VnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "nsRss", cascade=CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<PnfAllocation> pnfAllocation = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "nsRss", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
@@ -149,6 +160,35 @@ public class NsResourceSchedulingSolution {
 	 * Constructor
 	 * 
 	 * @param nsInstanceId	ID of the NS instance this resource allocation is associated to
+	 * @param vnfResourceAllocation information about the allocation of computing resources for the VNFs
+	 * @param pnfAllocation information about the PNF selected for the NS
+	 * @param networkPaths information about the allocation of network resources for the NS virtual links
+	 * @param solutionFound true if a suitable resource allocation solution has been found
+	 * @param networkNodesToBeActivated network nodes to be activated
+	 * @param computeNodesToBeActivated compute nodes to be activated
+	 */
+	public NsResourceSchedulingSolution(String nsInstanceId,
+			List<VnfResourceAllocation> vnfResourceAllocation,
+			List<PnfAllocation> pnfAllocation,
+			List<NetworkPath> networkPaths,
+			boolean solutionFound,
+			List<String> networkNodesToBeActivated,
+			Map<String,String> computeNodesToBeActivated) {
+		this.nsInstanceId = nsInstanceId;
+		if (vnfResourceAllocation != null) this.vnfResourceAllocation = vnfResourceAllocation;
+		if (pnfAllocation != null) this.pnfAllocation = pnfAllocation;
+		if (networkPaths != null) this.networkPaths = networkPaths;
+		this.solutionFound = solutionFound;
+		if (networkNodesToBeActivated != null) this.networkNodesToBeActivated = networkNodesToBeActivated;
+		if (computeNodesToBeActivated != null) this.computeNodesToBeActivated = computeNodesToBeActivated;
+	}
+	
+	
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param nsInstanceId	ID of the NS instance this resource allocation is associated to
 	 * @param networkNodesToBeActivated network nodes to be activated
 	 * @param computeNodesToBeActivated compute nodes to be activated
 	 */
@@ -207,6 +247,15 @@ public class NsResourceSchedulingSolution {
 	}
 	
 	
+	
+	
+	/**
+	 * @return the pnfAllocation
+	 */
+	public List<PnfAllocation> getPnfAllocation() {
+		return pnfAllocation;
+	}
+
 	@JsonIgnore
 	public Map<String,String> getAllComputeNodes() {
 		Map<String,String> computeNodes = new HashMap<String, String>();
