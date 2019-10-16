@@ -22,15 +22,7 @@ import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfType;
 import it.nextworks.nfvmano.timeo.catalogue.vnfpackagemanagement.VnfPackageManagementService;
 import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
 import it.nextworks.nfvmano.timeo.common.exception.ScaleAllocationSolutionNotFound;
-import it.nextworks.nfvmano.timeo.rc.elements.InterDcNetworkPath;
-import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
-import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
-import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
-import it.nextworks.nfvmano.timeo.rc.elements.NsScaleSchedulingSolution;
-import it.nextworks.nfvmano.timeo.rc.elements.PnfAllocation;
-import it.nextworks.nfvmano.timeo.rc.elements.ScaleNsResourceAllocation;
-import it.nextworks.nfvmano.timeo.rc.elements.ScaleVnfResourceAllocation;
-import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
+import it.nextworks.nfvmano.timeo.rc.elements.*;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPath;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPathType;
@@ -53,7 +45,7 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
 	private VnfPackageManagementService vnfPackageManagementService;
 	private Map<String, String> properties;
 	private PnfManagementService pnfManagementService;
-
+	private SdnControllerPlugin sdnPlugin;
 	//Key: RRH location id, value: range covered
 	private Map<String, List<LocationInfo>> geographicalAreas = new HashMap<>();
 	
@@ -74,6 +66,7 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
     	String defaultVim = properties.get("default_vim");
     	String defaultZone = properties.get("default_zone");
     	String defaultCompute = properties.get("default_compute");
+    	this.sdnPlugin = sdnPlugin;
     	for(String vnfdId : vnfdProperties.keySet()) {
     		OnboardedVnfPkgInfo pkg =vnfPackageManagementService.getOnboardedVnfPkgInfoFromVnfd(vnfdId); 
     		Vnfd currentVnfd = pkg.getVnfd();
@@ -85,18 +78,36 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
     	
         List<NetworkPath> networkPaths = new ArrayList<>();
         List<PnfAllocation> pnfs = new ArrayList<>();
+        int index = 0;
         for(String pnfdId : nsd.getPnfdId()) {
         	PnfInstance pnfInstance= pnfManagementService.getPnfInstancesFromPnfd(pnfdId).get(0);
-        	
-        	pnfs.add(new PnfAllocation(
-                    null,
-                    pnfdId,
-                    pnfInstance.getPnfdVersion(),
-                    0,
-                    pnfInstance.getPnfInstanceId(),
-                    "",
-                    Collections.emptyMap()
-            ));
+
+
+        	PnfAllocation pa;
+        	if(pnfInstance.getPnfType()==PnfType.RRH){
+				 pa = new PnfAllocation(
+						null,																//nsRss
+						pnfInstance.getPnfdId(), 			//pnfdId
+						pnfInstance.getPnfdVersion(),     	//pnfdVersion
+						index,
+						pnfInstance.getPnfInstanceId(),																//pnfInstanceId
+						null,																//pnfProfileId
+						this.getRrhConfigurationParameters()                            //parameters
+
+				);
+			}else{
+        		pa = new PnfAllocation(
+						null,
+						pnfdId,
+						pnfInstance.getPnfdVersion(),
+						0,
+						pnfInstance.getPnfInstanceId(),
+						"",
+						Collections.emptyMap()
+				);
+			}
+
+        	pnfs.add(pa);
            
 
         }
@@ -113,45 +124,54 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
 		//For AROF there is a single hop within a single node
 		try {
 			List<SbNetworkPath> activePaths =  sdnPlugin.getActivePaths();
-			List<NetworkPathHop> activeNetworkHops = new ArrayList<>();
-			for(SbNetworkPath sbNetworkPath : activePaths){
-				activeNetworkHops.addAll(sbNetworkPath.getHops());
+			List<SbNetworkPath> availablePaths = sdnPlugin.getAvailablePaths();
+
+			PnfInstance rrhInstance = getRrhInstancesForSapLocation(request.getSapData().get(0)).get(0);
+			List<PnfInstance> bbuInstances = pnfManagementService.getPnfInstancedFromType(PnfType.BBU);
+			NetworkPathHop hop1 = null;
+			for(PnfInstance bbuInstance : bbuInstances){
+				try{
+					hop1 = computeFreeArofNetworkPathHop(bbuInstance, rrhInstance, activePaths, availablePaths);
+
+					break;
+				} catch (NoNetworkPathAvailableException e) {
+					log.debug("No NetworkPathHop available, trying next BBU");
+				}
 			}
-			getAvaialbleNetworkPathHopSip(activeNetworkHops, request.getSapData());
-
-			NetworkPathHop hop1 = new NetworkPathHop(0,
-					"987eed57-65ce-59ff-82ca-c4b1939d4213", 					//node ID
-					"919efb60-4036-5247-8335-0a1b3a9f1c90", 					//port associated to src SIP
-					"b4b19675-6a83-5f4b-95e6-885b8ea26bd3", 					//port associated to dst SIP
-					null,
-					null,
-					0,
-					true,
-					true,
-					"47620324-de3b-5b86-b3c3-d8657970ed1b",
-					"bd240ba2-cfc5-5dc8-b21b-14e2ce67dce0");
-			hops.add(hop1);
-			InterDcNetworkPath idnp = new InterDcNetworkPath(networkPathId, hops, SbNetworkPathType.AROF);
-			interDcNetworkPaths.add(idnp);
 
 
-			return new NsResourceSchedulingSolution(
-					request.getNsInstanceId(),
-					vnfResourceAllocation,
-					pnfs,
-					networkPaths,
-					interDcNetworkPaths,
-					true,
-					networkNodesToBeActivated,
-					computeNodesToBeActivated
-			);
-		} catch (FailedOperationException e) {
-			e.printStackTrace();
+			if(hop1!= null){
+				hops.add(hop1);
+				InterDcNetworkPath idnp = new InterDcNetworkPath(networkPathId, hops, SbNetworkPathType.AROF);
+				interDcNetworkPaths.add(idnp);
+
+
+				return new NsResourceSchedulingSolution(
+						request.getNsInstanceId(),
+						vnfResourceAllocation,
+						pnfs,
+						networkPaths,
+						interDcNetworkPaths,
+						true,
+						networkNodesToBeActivated,
+						computeNodesToBeActivated
+				);
+			}else{
+				return null;
+			}
+
+
 		} catch (MethodNotImplementedException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
+			log.error(e.getStackTrace().toString());
+			return null;
+		} catch (FailedOperationException e) {
+			log.error(e.getMessage());
+			log.error(e.getStackTrace().toString());
+			return null;
 		}
 
-    }
+	}
     
     @Override
     public NsScaleSchedulingSolution computeNsScaleAllocationSolution(ScaleNsRequest request, NsInfo nsi,
@@ -224,7 +244,7 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
 										.filter(hop -> hop.getIngressServiceInterfacePoint().equals(rrhSip) && hop.getEgressServiceInterfacePoint().equals(bbuSip))
 										.findFirst();
 								if(!nph.isPresent()){
-									return new NetworkPathHop()
+									return new NetworkPathHop();
 								}
 							}
 						}
@@ -297,6 +317,143 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
 		double distance = Math.pow((latitude1 - latitude) * (latitude1 - latitude) + (longitude1 + longitude) * (longitude1 + longitude), 0.5);
 		if (distance <= (range - range1)) return true;
 		else return false;
+	}
+
+	private String findFirstPnfInstanceServiceInterfacePointId(PnfInstance pnfInstance){
+		Optional<PhysicalEquipmentPort> optPort = pnfInstance.getPorts().stream()
+				.filter(p -> p.getServiceInterfacePointId()!=null)
+				.findFirst();
+		if(optPort.isPresent()){
+			return optPort.get().getServiceInterfacePointId();
+		}else return null;
+	}
+
+	private boolean isNetworkPathAvailable(NetworkPathHop nph, List<SbNetworkPath>  activePaths, List<SbNetworkPath>  availablePaths, NetworkTopology networkTopology){
+
+
+
+			boolean found= false;
+			for(SbNetworkPath availablePath : availablePaths){
+				Optional<NetworkPathHop> availableNph = availablePath.getHops().stream()
+					.filter(aux-> aux.getIngressServiceInterfacePoint().equals(nph.getIngressServiceInterfacePoint())
+					&& aux.getEgressServiceInterfacePoint().equals(nph.getEgressServiceInterfacePoint()))
+					.findFirst();
+				if(availableNph.isPresent()){
+					found = true;
+					break;
+				}
+			}
+			if(!found)
+				return false;
+			for(SbNetworkPath sbNetworkPath: activePaths){
+				for(NetworkPathHop activeNph : sbNetworkPath.getHops()){
+					String activeIngress = activeNph.getIngressServiceInterfacePoint();
+					String activeEgress = activeNph.getEgressServiceInterfacePoint();
+					String currentIngress = nph.getIngressServiceInterfacePoint();
+					String currentEgress = nph.getEgressServiceInterfacePoint();
+					if(currentIngress.equals(activeIngress)&&currentEgress.equals(activeEgress))
+						return false;
+				}
+			}
+			return true;
+
+
+	}
+
+
+	private NetworkPathHop computeFreeArofNetworkPathHop(PnfInstance bbuInstance, PnfInstance rrhInstance, List<SbNetworkPath> activePaths, List<SbNetworkPath> availablePaths) throws NotExistingEntityException, NoNetworkPathAvailableException {
+		String bbuInstanceId = bbuInstance.getPnfInstanceId();
+		String rrhInstanceId = rrhInstance.getPnfInstanceId();
+		log.debug("Computing ingress and egress SIPs for bbu:"+bbuInstanceId+" and rrh:"+rrhInstanceId);
+
+		try {
+
+			NetworkTopology networkTopology= sdnPlugin.getNetworkTopology();
+			List<String> bbuSips = bbuInstance.getPorts().stream()
+					.filter(p -> p.getServiceInterfacePointId()!=null)
+					.map(p -> p.getServiceInterfacePointId())
+					.collect(Collectors.toList());
+
+			List<String> rrhSips = rrhInstance.getPorts().stream()
+					.filter(p -> p.getServiceInterfacePointId()!=null)
+					.map(p -> p.getServiceInterfacePointId())
+					.collect(Collectors.toList());
+
+
+			for(String bbuSip: bbuSips){
+				for(String rrhSip: rrhSips){
+					String ingressServiceInterfacePoint = bbuSip;
+					String egressServiceInterfacePoint = rrhSip;
+					NetworkPathHop nph = new NetworkPathHop(
+							0,
+							null,                 //nodeId
+							null,
+							null,                //egressPortId
+							null,                                //incomingLinkId - not used here
+							null,                                //outgoingLinkId - not used here
+							0,                                    //hopQueue - not used here
+							true,
+							true,
+							ingressServiceInterfacePoint,
+							egressServiceInterfacePoint
+					);
+					if(isNetworkPathAvailable(nph, activePaths, availablePaths, networkTopology)){
+						return nph;
+					}
+				}
+			}
+			throw new NoNetworkPathAvailableException("Couldnot find an available path between bbu:"+bbuInstanceId+" and rrh:"+rrhInstanceId);
+
+		} catch (Exception e) {
+			log.error("Error retrieving active paths");
+			log.error(e.getStackTrace().toString());
+			log.error(e.getMessage());
+			log.error("using first SIP");
+			String ingressServiceInterfacePoint = this.findFirstPnfInstanceServiceInterfacePointId(pnfManagementService.getPnfInstance(rrhInstanceId));
+			String egressServiceInterfacePoint = this.findFirstPnfInstanceServiceInterfacePointId(pnfManagementService.getPnfInstance(bbuInstanceId));
+
+			NetworkPathHop nph = new NetworkPathHop(
+					0,
+					null,                 //nodeId
+					null,
+					null,                //egressPortId
+					null,                                //incomingLinkId - not used here
+					null,                                //outgoingLinkId - not used here
+					0,                                    //hopQueue - not used here
+					true,
+					true,
+					ingressServiceInterfacePoint,
+					egressServiceInterfacePoint
+			);
+			return nph;
+		}
+
+	}
+
+	private class NoNetworkPathAvailableException extends Exception {
+
+		public NoNetworkPathAvailableException(String message){
+			super(message);
+		}
+	}
+
+
+	private Map<String,String> getRrhConfigurationParameters(){
+
+		Map<String, String> configParameters = new HashMap<>();
+
+		configParameters.put("rcoutput.powerUp","1");
+		configParameters.put("rcoutput.sleepMode","0");
+		configParameters.put( "rcoutput.batteryChargeEnable","0");
+		configParameters.put("rcoutput.outputVoltage1Enable", "true");
+		configParameters.put("rcoutput.outputVoltage2Enable", "true");
+		configParameters.put("rcoutput.outputVoltage1Level", "1");
+		configParameters.put("rcoutput.outputVoltage2Level", "1");
+		for(int i=0; i<=15; i++){
+			configParameters.put(String.format("rcoutput.paGain%02d", i), "0");
+		}
+
+		return configParameters;
 	}
 
 }
