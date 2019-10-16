@@ -328,37 +328,42 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
 		}else return null;
 	}
 
-	private boolean isNetworkPathAvailable(NetworkPathHop nph, List<SbNetworkPath>  activePaths, List<SbNetworkPath>  availablePaths, NetworkTopology networkTopology){
+
+	private boolean checkNetworkPathExists(String ingressSip, String egressSip, , List<SbNetworkPath>  availablePaths ){
 
 
-
-			boolean found= false;
-			for(SbNetworkPath availablePath : availablePaths){
-				Optional<NetworkPathHop> availableNph = availablePath.getHops().stream()
+		for(SbNetworkPath availablePath : availablePaths){
+			Optional<NetworkPathHop> availableNph = availablePath.getHops().stream()
 					.filter(aux->
-							(aux.getIngressServiceInterfacePoint().equals(nph.getIngressServiceInterfacePoint())
-								&& aux.getEgressServiceInterfacePoint().equals(nph.getEgressServiceInterfacePoint()))||
-							(aux.getIngressServiceInterfacePoint().equals(nph.getEgressServiceInterfacePoint())
-									&& aux.getEgressServiceInterfacePoint().equals(nph.getIngressServiceInterfacePoint())))
+							aux.getIngressServiceInterfacePoint().equals(ingressSip)
+									&& aux.getEgressServiceInterfacePoint().equals(egressSip))
 					.findFirst();
-				if(availableNph.isPresent()){
-					found = true;
-					break;
-				}
+			if(availableNph.isPresent()){
+				return true;
 			}
-			if(!found)
-				return false;
-			for(SbNetworkPath sbNetworkPath: activePaths){
-				for(NetworkPathHop activeNph : sbNetworkPath.getHops()){
-					String activeIngress = activeNph.getIngressServiceInterfacePoint();
-					String activeEgress = activeNph.getEgressServiceInterfacePoint();
-					String currentIngress = nph.getIngressServiceInterfacePoint();
-					String currentEgress = nph.getEgressServiceInterfacePoint();
-					if(currentIngress.equals(activeIngress)&&currentEgress.equals(activeEgress))
-						return false;
-				}
+		}
+		return false;
+	}
+
+	private boolean checkNetworkPathNotUsed(String ingresSip, String egressSip, List<SbNetworkPath>  activePaths){
+		for(SbNetworkPath sbNetworkPath: activePaths){
+			for(NetworkPathHop activeNph : sbNetworkPath.getHops()){
+				String activeIngress = activeNph.getIngressServiceInterfacePoint();
+				String activeEgress = activeNph.getEgressServiceInterfacePoint();
+
+				if(ingresSip.equals(activeIngress)&&egressSip.equals(activeEgress))
+					return false;
 			}
-			return true;
+		}
+		return true;
+
+	}
+	private boolean isNetworkPathAvailable(String ingressSip, String egressSip, List<SbNetworkPath>  activePaths, List<SbNetworkPath>  availablePaths, NetworkTopology networkTopology){
+
+			if (checkNetworkPathExists(ingressSip, egressSip, availablePaths)|| checkNetworkPathExists(egressSip, ingressSip, availablePaths)){
+				return checkNetworkPathNotUsed(ingressSip, egressSip,activePaths) && checkNetworkPathNotUsed(egressSip, ingressSip, activePaths);
+			}else return false;
+
 
 
 	}
@@ -385,22 +390,23 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
 
 			for(String bbuSip: bbuSips){
 				for(String rrhSip: rrhSips){
-					String ingressServiceInterfacePoint = bbuSip;
-					String egressServiceInterfacePoint = rrhSip;
-					NetworkPathHop nph = new NetworkPathHop(
-							0,
-							null,                 //nodeId
-							null,
-							null,                //egressPortId
-							null,                                //incomingLinkId - not used here
-							null,                                //outgoingLinkId - not used here
-							0,                                    //hopQueue - not used here
-							true,
-							true,
-							ingressServiceInterfacePoint,
-							egressServiceInterfacePoint
-					);
-					if(isNetworkPathAvailable(nph, activePaths, availablePaths, networkTopology)){
+
+
+
+					if(isNetworkPathAvailable(bbuSip, rrhSip, activePaths, availablePaths, networkTopology)){
+						NetworkPathHop nph = new NetworkPathHop(
+								0,
+								null,                 //nodeId
+								null,
+								null,                //egressPortId
+								null,                                //incomingLinkId - not used here
+								null,                                //outgoingLinkId - not used here
+								0,                                    //hopQueue - not used here
+								true,
+								true,
+								bbuSip,
+								rrhSip
+						);
 						return nph;
 					}
 				}
