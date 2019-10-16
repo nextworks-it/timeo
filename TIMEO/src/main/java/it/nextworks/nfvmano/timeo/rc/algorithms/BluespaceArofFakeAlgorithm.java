@@ -329,14 +329,12 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
 	}
 
 
-	private boolean checkNetworkPathExists(String ingressSip, String egressSip, , List<SbNetworkPath>  availablePaths ){
+	private boolean checkNetworkPathExists(String ingressSip, String egressSip, List<SbNetworkPath>  availablePaths ){
 
 
 		for(SbNetworkPath availablePath : availablePaths){
 			Optional<NetworkPathHop> availableNph = availablePath.getHops().stream()
-					.filter(aux->
-							aux.getIngressServiceInterfacePoint().equals(ingressSip)
-									&& aux.getEgressServiceInterfacePoint().equals(egressSip))
+					.filter(aux-> aux.getIngressServiceInterfacePoint().equals(ingressSip)&& aux.getEgressServiceInterfacePoint().equals(egressSip))
 					.findFirst();
 			if(availableNph.isPresent()){
 				return true;
