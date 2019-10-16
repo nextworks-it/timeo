@@ -15,8 +15,13 @@
 */
 package it.nextworks.nfvmano.timeo.sbdriver.sdn;
 
+import it.nextworks.nfvmano.libs.common.exceptions.FailedOperationException;
+import it.nextworks.nfvmano.libs.common.exceptions.MethodNotImplementedException;
 import it.nextworks.nfvmano.timeo.sbdriver.SbDriver;
 import it.nextworks.nfvmano.timeo.sbdriver.SbDriverType;
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPath;
+
+import java.util.List;
 
 public abstract class SdnControllerPlugin extends SbDriver implements SdnControllerProviderInterface {
 
@@ -50,6 +55,16 @@ public abstract class SdnControllerPlugin extends SbDriver implements SdnControl
 		return controller;
 	}
 	
-	
+
+	@Override
+	public List<SbNetworkPath> getActivePaths() throws MethodNotImplementedException, FailedOperationException {
+		throw new MethodNotImplementedException();
+	}
+
+	@Override
+	public List<SbNetworkPath> getAvailablePaths() throws MethodNotImplementedException, FailedOperationException {
+		throw new MethodNotImplementedException();
+	}
+
 
 }

@@ -180,11 +180,40 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
         }
     }
 
+	public List<SbNetworkPath> getAvailablePaths() throws FailedOperationException{
+		log.debug("Retrieving TAPI active connections");
+		DefaultApi api = buildApiClient();
+		List<SbNetworkPath> sbNetworkPaths = new ArrayList<>();
+		try {
+			ContextSchema response = api.retrieveContext();
+
+			TopologyContext topologyContext = response.getTopologyContext();
+			List<Topology> topologies = topologyContext.getTopology();
+
+			for(Topology topology: topologies){
+				List<Node> nodes = topology.getNode();
+				for(Node node: nodes ){
+					List<SbNetworkPath> currentPaths = this.translateNode(node);
+					sbNetworkPaths.addAll(currentPaths);
+				}
+
+
+			}
+			return sbNetworkPaths;
+
+		} catch (ApiException e) {
+			log.error("Failed to retrieve TAPI active connections");
+			log.error(e.getMessage());
+			log.error(e.getStackTrace().toString());
+			throw new FailedOperationException(e.getMessage());
+		}
+	}
+
 
     private SbNetworkPath translateConnectivityService(ConnectivityService connectivityService) throws FailedOperationException{
 	    String npId = connectivityService.getUuid();
         List<NetworkPathHop> hops = new ArrayList<>();
-        if(connectivityService.getEndPoint()!=null && connectivityService.getEndPoint().size()!=2){
+        if(connectivityService.getEndPoint()!=null && connectivityService.getEndPoint().size()==2){
             String ingressServiceInterfacePoint = connectivityService.getEndPoint().get(0).getServiceInterfacePoint().getServiceInterfacePointUuid();
             String egressServiceInterfacePoint = connectivityService.getEndPoint().get(1).getServiceInterfacePoint().getServiceInterfacePointUuid();
             NetworkPathHop nph = new NetworkPathHop(
@@ -210,6 +239,37 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
         }else throw new FailedOperationException("A ConnectivityService should have exactly two endpoints");
 
     }
+
+    private List<SbNetworkPath> translateNode(Node node){
+		List<SbNetworkPath> sbNetworkPaths = new ArrayList<>();
+		for(OwnedNodeEdgePointSchema ownedNodeEdgePointSchema: node.getOwnedNodeEdgePoint()){
+			String egressServiceInterfacePoint = ownedNodeEdgePointSchema.getMappedServiceInterfacePoint().get(0).getServiceInterfacePointUuid();
+			String ingressServiceInterfacePoint = ownedNodeEdgePointSchema.getMappedServiceInterfacePoint().get(1).getServiceInterfacePointUuid();
+			List<NetworkPathHop> hops = new ArrayList<>();
+			NetworkPathHop nph = new NetworkPathHop(
+					0,
+					null,                 //nodeId
+					null,
+					null,                //egressPortId
+					null,                                //incomingLinkId - not used here
+					null,                                //outgoingLinkId - not used here
+					0,                                    //hopQueue - not used here
+					true,
+					true,
+					ingressServiceInterfacePoint,
+					egressServiceInterfacePoint
+			);
+			hops.add(nph);
+			sbNetworkPaths.add(new SbNetworkPath(ownedNodeEdgePointSchema.getUuid(),
+					null, //tenantId: not important for the moment
+					hops,
+					null,
+					SbNetworkPathType.AROF));
+		}
+		return sbNetworkPaths;
+
+
+	}
 
 	
 	/**

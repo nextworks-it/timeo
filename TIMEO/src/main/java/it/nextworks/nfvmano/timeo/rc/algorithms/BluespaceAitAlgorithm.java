@@ -1,8 +1,11 @@
 package it.nextworks.nfvmano.timeo.rc.algorithms;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.*;
+import it.nextworks.nfvmano.libs.common.exceptions.MethodNotImplementedException;
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -667,21 +670,9 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
                     lastPortId = origHop.getPortId();
                 }
             }else{
-                String ingressServiceInterfacePoint = this.findFirstPnfInstanceServiceInterfacePointId(pnfManagementService.getPnfInstance(rrhId));
-                String egressServiceInterfacePoint = this.findFirstPnfInstanceServiceInterfacePointId(pnfManagementService.getPnfInstance(bbuId));
-                NetworkPathHop nph = new NetworkPathHop(
-                        0,
-                        null,                 //nodeId
-                        null,
-                        null,                //egressPortId
-                        null,                                //incomingLinkId - not used here
-                        null,                                //outgoingLinkId - not used here
-                        0,                                    //hopQueue - not used here
-                        true,
-                        true,
-                        ingressServiceInterfacePoint,
-                        egressServiceInterfacePoint
-                );
+
+
+                NetworkPathHop nph = computeFreeArofNetworkPathHop(pnfManagementService.getPnfInstance(bbuId), pnfManagementService.getPnfInstance(rrhId));
                 hops.add(nph);
             }
 
@@ -748,7 +739,95 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
         }else return null;
     }
 
+   private boolean isNetworkPathAvailable(NetworkPathHop nph, List<SbNetworkPath>  activePaths){
+
+        for(SbNetworkPath sbNetworkPath: activePaths){
+            for(NetworkPathHop activeNph : sbNetworkPath.getHops()){
+                String activeIngress = activeNph.getIngressServiceInterfacePoint();
+                String activeEgress = activeNph.getEgressServiceInterfacePoint();
+                String currentIngress = nph.getIngressServiceInterfacePoint();
+                String currentEgress = nph.getEgressServiceInterfacePoint();
+                if(currentIngress.equals(activeIngress)&&currentEgress.equals(activeEgress))
+                    return false;
+            }
+        }
+        return true;
+   }
 
 
+    private NetworkPathHop computeFreeArofNetworkPathHop(PnfInstance bbuInstance, PnfInstance rrhInstance) throws NotExistingEntityException, NoNetworkPathAvailableException {
+        String bbuInstanceId = bbuInstance.getPnfInstanceId();
+        String rrhInstanceId = rrhInstance.getPnfInstanceId();
+        log.debug("Computing ingress and egress SIPs for bbu:"+bbuInstanceId+" and rrh:"+rrhInstanceId);
 
+        try {
+            List <SbNetworkPath> activePaths = sdnPlugin.getActivePaths();
+            List<String> bbuSips = bbuInstance.getPorts().stream()
+                    .filter(p -> p.getServiceInterfacePointId()!=null)
+                    .map(p -> p.getServiceInterfacePointId())
+                    .collect(Collectors.toList());
+
+            List<String> rrhSips = rrhInstance.getPorts().stream()
+                    .filter(p -> p.getServiceInterfacePointId()!=null)
+                    .map(p -> p.getServiceInterfacePointId())
+                    .collect(Collectors.toList());
+
+
+            for(String bbuSip: bbuSips){
+                for(String rrhSip: rrhSips){
+                    String ingressServiceInterfacePoint = rrhSip;
+                    String egressServiceInterfacePoint = bbuSip;
+                    NetworkPathHop nph = new NetworkPathHop(
+                            0,
+                            null,                 //nodeId
+                            null,
+                            null,                //egressPortId
+                            null,                                //incomingLinkId - not used here
+                            null,                                //outgoingLinkId - not used here
+                            0,                                    //hopQueue - not used here
+                            true,
+                            true,
+                            ingressServiceInterfacePoint,
+                            egressServiceInterfacePoint
+                    );
+                    if(isNetworkPathAvailable(nph, activePaths)){
+                        return nph;
+                    }
+                }
+            }
+            throw new NoNetworkPathAvailableException("Couldnot find an available path between bbu:"+bbuInstanceId+" and rrh:"+rrhInstanceId);
+
+        } catch (Exception e) {
+           log.error("Error retrieving active paths");
+           log.error(e.getStackTrace().toString());
+           log.error(e.getMessage());
+           log.error("using first SIP");
+           String ingressServiceInterfacePoint = this.findFirstPnfInstanceServiceInterfacePointId(pnfManagementService.getPnfInstance(rrhInstanceId));
+           String egressServiceInterfacePoint = this.findFirstPnfInstanceServiceInterfacePointId(pnfManagementService.getPnfInstance(bbuInstanceId));
+
+            NetworkPathHop nph = new NetworkPathHop(
+                    0,
+                    null,                 //nodeId
+                    null,
+                    null,                //egressPortId
+                    null,                                //incomingLinkId - not used here
+                    null,                                //outgoingLinkId - not used here
+                    0,                                    //hopQueue - not used here
+                    true,
+                    true,
+                    ingressServiceInterfacePoint,
+                    egressServiceInterfacePoint
+            );
+            return nph;
+        }
+
+    }
+
+
+    private class NoNetworkPathAvailableException extends Exception {
+
+        public NoNetworkPathAvailableException(String message){
+            super(message);
+        }
+    }
 }

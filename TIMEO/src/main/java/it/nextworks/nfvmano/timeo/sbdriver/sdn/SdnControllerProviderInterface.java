@@ -104,4 +104,14 @@ public interface SdnControllerProviderInterface {
 	 */
 	public List<SbNetworkPath> getActivePaths() throws  FailedOperationException, MethodNotImplementedException;
 
+
+	/**
+	 * Method used to get the list of active network paths.
+	 *
+	 * @return the list of available paths (i.e. available in the topology but not used)
+	 * @throws FailedOperationException if the operation fails
+	 * @throws MethodNotImplementedException if the SDN controller does not support the feature
+	 */
+	public List<SbNetworkPath> getAvailablePaths() throws  FailedOperationException, MethodNotImplementedException;
+
 }
