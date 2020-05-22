@@ -12,6 +12,9 @@ public class ObfnRrhResourceAllocation {
     private int txGain;
     private int rxGain;
 
+    public ObfnRrhResourceAllocation() {
+    }
+
     public ObfnRrhResourceAllocation(String rrhId, boolean powerUp, boolean sleepMode, int txGain, int rxGain) {
         this.rrhId = rrhId;
         this.powerUp = powerUp;

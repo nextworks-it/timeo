@@ -10,6 +10,10 @@ public class ObfnBbuResourceAllocation {
     private int modulationScheme;
     private long intermediateFrequency;
 
+
+    public ObfnBbuResourceAllocation() {
+    }
+
     public ObfnBbuResourceAllocation(String bbuId, int operationMode, int subcarriersNumber, int pilotSpacing, int modulationScheme, long intermediateFrequency) {
         this.bbuId = bbuId;
         this.operationMode = operationMode;
