@@ -4,6 +4,7 @@ public enum SbNetworkPathType {
 
 	SDM,
 	AROF,
-	DEFAULT
+	DEFAULT,
+	OBFN
 	
 }

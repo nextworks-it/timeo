@@ -1,6 +1,6 @@
 package it.nextworks.nfvmano.timeo.rc.algorithms;
 
-import io.swagger.client.api.TopologycontextApi;
+
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.*;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.BluespaceNodeType;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.BluespaceSwitchingType;
@@ -58,9 +58,9 @@ import java.util.stream.Collectors;
 public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorithm {
 
     private static final Logger log = LoggerFactory.getLogger(BluespaceObfnAlgorithm.class);
+    private Map<String, String> raProperties;
 
     private VnfPackageManagementService vnfPackageManagementService;
-    private Map<String, String> properties;
     private PnfManagementService pnfManagementService;
 
     private RestTemplate restTemplate = new RestTemplate();
@@ -79,22 +79,34 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
     private SdnControllerPlugin sdnPlugin;
     private TaskExecutor taskExecutor;
     private NetworkTopology networkTopology;
+    private Nsd nsd;
+    private Map<Vnfd, Map<String,String>> vnfdMap;
 
-
+    /**
+     *
+     * @param aitAlgorithmUrl url of the server
+     * @param vnfPackageManagementService
+     * @param pnfManagementService
+     * @param taskExecutor
+     * @param raProperties additional properties required by the RA algorithm
+     *
+     */
     public BluespaceObfnAlgorithm(String aitAlgorithmUrl,
                                   VnfPackageManagementService vnfPackageManagementService,
-                                  Map<String, String> properties,
+
                                   PnfManagementService pnfManagementService,
-                                  TaskExecutor taskExecutor
+                                  TaskExecutor taskExecutor,
+                                  Map<String, String> raProperties
 
     ) {
         super(AlgorithmType.BLUESPACE_AIT);
         this.vnfPackageManagementService = vnfPackageManagementService;
         this.pnfManagementService = pnfManagementService;
-        this.properties = properties;
+
         this.restClient = new AitAlgorithmRestClient(aitAlgorithmUrl, restTemplate);
         geographicalAreas = StaticGeographicalAreas.getGeographicalAreas();
         this.taskExecutor=taskExecutor;
+        this.raProperties = raProperties;
     }
 
     @Override
@@ -110,6 +122,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
     )
             throws NotExistingEntityException, ResourceAllocationSolutionNotFound {
         log.debug("Computing resource allocation solution through BlueSPACE algorithm.");
+
         this.vimPlugin = vimPlugin;
         this.sdnPlugin = sdnPlugin;
         try {
@@ -137,9 +150,9 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
     }
 
     public static BluespaceAlgorithmAllocationRequest buildBluespaceRcRequest(InstantiateNsRequest request,
-                                                                      Map<Vnfd, Map<String, String>> vnfds,
-                                                                      List<PnfInstance> pnfInstances,
-                                                                      List<PhysicalServer> computeNodes,
+                                                                              Map<Vnfd, Map<String, String>> vnfds,
+                                                                              List<PnfInstance> pnfInstances,
+                                                                              List<PhysicalServer> computeNodes,
                                                                               NetworkTopology topology) throws NotExistingEntityException, FailedOperationException {
         log.debug("Building request for blueSPACE resource allocation");
 
@@ -257,13 +270,13 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
 
     public List<PhysicalServer> getAvailableComputeNodes(){
 
-            //VimWrapperPlugin wrapper = new VimWrapperPlugin(vimPlugin.getVim().getWrapperIp(), vimPlugin.getVim().getWrapperPort());
-            log.warn("Adding fake compute server.");
-            List<PhysicalServer> computeNodes = new ArrayList<>();
-            PhysicalServer cn = new PhysicalServer("server-id", 16, 16, 200000, 0, 0, "CPU_LEVEL", "GPU_LEVEL",0,0,0,0,0);
+        //VimWrapperPlugin wrapper = new VimWrapperPlugin(vimPlugin.getVim().getWrapperIp(), vimPlugin.getVim().getWrapperPort());
+        log.warn("Adding fake compute server.");
+        List<PhysicalServer> computeNodes = new ArrayList<>();
+        PhysicalServer cn = new PhysicalServer("server-id", 16, 16, 200000, 0, 0, "CPU_LEVEL", "GPU_LEVEL",0,0,0,0,0);
 
-            computeNodes.add(cn);
-            return computeNodes;
+        computeNodes.add(cn);
+        return computeNodes;
 
     }
 
@@ -493,9 +506,31 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
         //Format of vmAllocation - key: ID of the VM in service; value: ID of the server where the VM must be allocated
         //Format of VM ID : vmId = vnfdId + "-" + i + "-" + vduId;
 
-        Map<String,String> vmAllocation = sr.getVmAllocation();
-        List<VnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
+        List<VnfResourceAllocation> vnfResourceAllocations = translateRCVnfAllocation(response);
+        List<PnfAllocation> pnfAllocations = translateRCPnfAllocation(response);
+        List<InterDcNetworkPath> interDcNetworkPaths = new ArrayList<>();
 
+
+        NsResourceSchedulingSolution solution = new NsResourceSchedulingSolution(
+                sr.getServiceId(),				//nsInstanceId
+                vnfResourceAllocations,
+                pnfAllocations,
+                null,							//networkPaths
+                interDcNetworkPaths,
+                true, 							//solutionFound
+                null,							//networkNodesToBeActivated
+                null 							//computeNodesToBeActivated
+        );
+
+        return null;
+    }
+
+
+
+    private List<VnfResourceAllocation> translateRCVnfAllocation(BluespaceAlgorithmAllocationResponse response) throws MalformattedElementException {
+        log.debug("Translating RC VNF allocation");
+        List<VnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
+        Map<String, String> vmAllocation = response.getServiceResponses().get(0).getVmAllocation();
         if (vmAllocation != null) {
             for (Map.Entry<String, String> e : vmAllocation.entrySet()) {
                 String fullVmId = e.getKey();
@@ -517,154 +552,208 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
                         hostId);
                 vnfResourceAllocation.add(vnfRes);
             }
-        }
-
-        log.debug("Processing PNF allocation response");
-        //key: ID of the geographical area; value: resource allocation in RRHs
-        List<PnfAllocation> pnfAllocation = new ArrayList<>();
-        /*Map<String, SubcarrierResourceAllocation> rrhResourceAllocation = sr.getRrhResourceAllocation();
-        if (rrhResourceAllocation != null) {
-            for (Map.Entry<String, SubcarrierResourceAllocation> e : rrhResourceAllocation.entrySet()) {
-                SubcarrierResourceAllocation sra = e.getValue();
-                //key: rrh ID, key: beam ID, key: subchannel ID, value: list of subcarrierIds
-                Map<String, Map<String , Map<String, List<String>>>> subcarrierResourceAllocation = sra.getSubcarrierResourceAllocation();
-
-                int index = 0;
-                for (Map.Entry<String, Map<String , Map<String, List<String>>>> e1 : subcarrierResourceAllocation.entrySet()) {
-                    String rrhId = e1.getKey();
-                    Map<String, String> rrhConfigurationParameters = this.getRrhConfigurationParameters(rrhId);
-                    PnfInstance pnfInstance = pnfManagementService.getPnfInstance(rrhId);
-                    PnfAllocation pa = new PnfAllocation(
-                            null,																//nsRss
-                            pnfInstance.getPnfdId(), 			//pnfdId
-                            pnfInstance.getPnfdVersion(),     	//pnfdVersion
-                            index,
-                            rrhId,																//pnfInstanceId
-                            null,																//pnfProfileId
-                            rrhConfigurationParameters                            //parameters
-
-                    );
-                    index++;
-                    pnfAllocation.add(pa);
-                }
-            }
-        }
-        //Note: for the moment BBUs are ignored since no need to configure them
-
-        log.debug("Processing network path response");
-        //Note: this is not needed for AROF
-        List<InterDcNetworkPath> interDcNetworkPaths = new ArrayList<>();
-        List<LightPath> lightpaths = sr.getLightpaths();
-        int pathIndex = 0;
-        for (LightPath lp : lightpaths) {
-            String bbuId = lp.getBbuId();
-            String rrhId = lp.getRrhId();
-
-            List<LightpathHop> origHops = lp.getHops();
-            int hopsNumber =0;
-            List<NetworkPathHop> hops = new ArrayList<>();
-            if(origHops!=null && !origHops.isEmpty()){
-                hopsNumber = origHops.size();
-
-                int hopNumber = 0;
-                String ingressServiceInterfacePoint = null;
-                String egressServiceInterfacePoint = null;
-                boolean first = false;
-                boolean last = false;
-                String ingressPortId = null;
-                String lastNodeId = null;
-                String lastPortId = null;
-
-                for (LightpathHop origHop : origHops) {
-                    if (hopNumber == 0) {
-                        ingressServiceInterfacePoint = pnfManagementService.getPnfInstance(rrhId).getPorts().get(0).getServiceInterfacePointId();
-                        first = true;
-                        //it is the first hop, so the ingress port ID can be determined from the SIP
-                        ingressPortId = findNetworkNodePortAssociatedToSip(origHop.getNodeId(), ingressServiceInterfacePoint);
-                    } else {
-                        //need to find the ingress Port ID as neighbour of the egress port of the previous hop
-                        KeyValuePair ingress = getNeighbour(lastNodeId, lastPortId);
-                        ingressPortId = ingress.getValue();
-                    }
-                    if (hopNumber == (hopsNumber - 1)) {
-                        egressServiceInterfacePoint = pnfManagementService.getPnfInstance(bbuId).getPorts().get(0).getServiceInterfacePointId();
-                        last = true;
-                    }
-                    NetworkPathHop nph = new NetworkPathHop(
-                            hopNumber,
-                            origHop.getNodeId(),                 //nodeId
-                            ingressPortId,
-                            origHop.getPortId(),                //egressPortId
-                            null,                                //incomingLinkId - not used here
-                            null,                                //outgoingLinkId - not used here
-                            0,                                    //hopQueue - not used here
-                            first,
-                            last,
-                            ingressServiceInterfacePoint,
-                            egressServiceInterfacePoint
-                    );
-                    hops.add(nph);
-                    hopNumber++;
-                    ingressServiceInterfacePoint = null;
-                    egressServiceInterfacePoint = null;
-                    first = false;
-                    last = false;
-                    ingressPortId = null;
-                    lastNodeId = origHop.getNodeId();
-                    lastPortId = origHop.getPortId();
-                }
-            }else{
-
-
-                NetworkPathHop nph = computeFreeArofNetworkPathHop(pnfManagementService.getPnfInstance(bbuId), pnfManagementService.getPnfInstance(rrhId));
-                hops.add(nph);
+        }else{
+            log.debug("Empty vm allocation response, using default one");
+            for(Vnfd vnfd : vnfdMap.keySet()){
+                String vduId = vnfd.getVdu().get(0).getVduId();
+                String vnfdId = vnfd.getVnfdId();
+                String vim = raProperties.get("default_vim");
+                String zoneId = raProperties.get("default_zone");
+                String hostId = raProperties.get("default_compute");
+                VnfResourceAllocation vnfRes = new VnfResourceAllocation(
+                        null, 							//nsRss,
+                        vnfdId,
+                        0,
+                        vduId,
+                        0,								//vduIndex,
+                        vim,	//vimId
+                        zoneId,
+                        hostId);
+                vnfResourceAllocation.add(vnfRes);
             }
 
-            //TODO: Fixed to AROF for demo purposes
-            //String npId="np" + pathIndex;
-            String npId = UUID.randomUUID().toString();
-
-            InterDcNetworkPath idnp = new InterDcNetworkPath(npId,
-                    hops,
-                    SbNetworkPathType.AROF);
-            pathIndex++;
-            interDcNetworkPaths.add(idnp);
         }
+        return vnfResourceAllocation;
 
-        NsResourceSchedulingSolution solution = new NsResourceSchedulingSolution(
-                sr.getServiceId(),				//nsInstanceId
-                vnfResourceAllocation,
-                pnfAllocation,
-                null,							//networkPaths
-                interDcNetworkPaths,
-                true, 							//solutionFound
-                null,							//networkNodesToBeActivated
-                null 							//computeNodesToBeActivated
-        );
-*/
-        return null;
+
     }
 
-        private static BluespaceNodeType getPnfInstaceNodeType(List<PnfInstance> pnfInstances, String pnfInstanceId) {
 
-            Optional<PnfInstance> optPnf = pnfInstances.stream()
-                    .filter(p ->p.getPnfInstanceId().equals(pnfInstanceId))
-                    .findFirst();
-            if(optPnf.isPresent()){
-                PnfType type = optPnf.get().getPnfType();
-                if (type.equals(PnfType.BBU)) return BluespaceNodeType.BBU;
-                else if (type.equals(PnfType.RRH)) return BluespaceNodeType.RRH;
-                else return BluespaceNodeType.SWITCH;
-            }else return BluespaceNodeType.SWITCH;
+    private List<PnfAllocation> translateRCPnfAllocation(BluespaceAlgorithmAllocationResponse response) throws NotExistingEntityException {
+        log.debug("Translating PNF resource allocations");
+        List<PnfAllocation> pnfAllocation = new ArrayList<>();
+
+        List<ObfnRrhResourceAllocation>  rrhResourceAllocations = response.getServiceResponses().get(0).getRrhResourceAllocation();
+        int index = 0;
+        if (rrhResourceAllocations != null) {
+
+            for (ObfnRrhResourceAllocation rrhResourceAllocation : rrhResourceAllocations) {
+                String rrhId = rrhResourceAllocation.getRrhId();
+                PnfInstance pnfInstance = pnfManagementService.getPnfInstance(rrhId);
+                Map<String, String> rrhConfigurationParameters = translateRCRRHConfigurationParameters(rrhResourceAllocation);
+                log.debug("RRH resource allocation: "+rrhId);
+                log.debug(rrhConfigurationParameters.toString());
+                PnfAllocation pa = new PnfAllocation(
+                        null,																//nsRss
+                        pnfInstance.getPnfdId(), 			//pnfdId
+                        pnfInstance.getPnfdVersion(),     	//pnfdVersion
+                        index,
+                        rrhId,																//pnfInstanceId
+                        null,																//pnfProfileId
+                        rrhConfigurationParameters                            //parameters
+
+                );
+                pnfAllocation.add(pa);
+                index++;
+
+            }
+        }
+        List<ObfnBbuResourceAllocation>  bbuResourceAllocations = response.getServiceResponses().get(0).getBbuResourceAllocation();
+        if(bbuResourceAllocations!=null){
+            for(ObfnBbuResourceAllocation bbuResourceAllocation : bbuResourceAllocations){
+                String bbuId = bbuResourceAllocation.getBbuId();
+                PnfInstance pnfInstance = pnfManagementService.getPnfInstance(bbuId);
+                Map<String, String> bbuConfigurationParameters = translateRCBBUConfigurationParameters(bbuResourceAllocation);log.debug("BBU resource allocation: "+bbuId);
+                log.debug(bbuConfigurationParameters.toString());
+                PnfAllocation pa = new PnfAllocation(
+                        null,																//nsRss
+                        pnfInstance.getPnfdId(), 			//pnfdId
+                        pnfInstance.getPnfdVersion(),     	//pnfdVersion
+                        index,
+                        bbuId,																//pnfInstanceId
+                        null,																//pnfProfileId
+                        bbuConfigurationParameters                            //parameters
+
+                );
+                pnfAllocation.add(pa);
+                index++;
+
+            }
 
         }
+        return pnfAllocation;
+
+    }
 
 
-        private List<IndicatorInformation> getPnfInstanceIndicatorInformation(PnfInstance pnfInstance) throws FailedOperationException{
+    private Map<String, String> translateRCRRHConfigurationParameters(ObfnRrhResourceAllocation obfnRrhResourceAllocation){
+
+        Map<String, String> rrhConfigParams = new HashMap<>();
+        rrhConfigParams.put("rxGain", Integer.toString(obfnRrhResourceAllocation.getRxGain()));
+        rrhConfigParams.put("txGain",  Integer.toString(obfnRrhResourceAllocation.getTxGain()));
+        rrhConfigParams.put("powerUp",  Boolean.toString(obfnRrhResourceAllocation.isPowerUp()));
+        rrhConfigParams.put("sleepMode",  Boolean.toString(obfnRrhResourceAllocation.isSleepMode()));
+
+        return rrhConfigParams;
+    }
+
+    private Map<String, String> translateRCBBUConfigurationParameters(ObfnBbuResourceAllocation obfnBbuResourceAllocation){
+
+
+        /*
+         *  int operationMode;
+         *  int subcarriersNumber;
+         *  int pilotSpacing;
+            int modulationScheme;
+            long intermediateFrequency;
+         */
+        Map<String, String> bbuConfigParams = new HashMap<>();
+        bbuConfigParams.put("operationMode", Integer.toString(obfnBbuResourceAllocation.getOperationMode()));
+        bbuConfigParams.put("subcarriersNumber",  Integer.toString(obfnBbuResourceAllocation.getSubcarriersNumber()));
+        bbuConfigParams.put("pilotSpacing",  Integer.toString(obfnBbuResourceAllocation.getPilotSpacing()));
+        bbuConfigParams.put("intermediateFrequency",  Long.toString(obfnBbuResourceAllocation.getIntermediateFrequency()));
+        bbuConfigParams.put("modulationScheme",  Long.toString(obfnBbuResourceAllocation.getModulationScheme()));
+
+        return bbuConfigParams;
+    }
+
+
+    private static BluespaceNodeType getPnfInstaceNodeType(List<PnfInstance> pnfInstances, String pnfInstanceId) {
+
+        Optional<PnfInstance> optPnf = pnfInstances.stream()
+                .filter(p ->p.getPnfInstanceId().equals(pnfInstanceId))
+                .findFirst();
+        if(optPnf.isPresent()){
+            PnfType type = optPnf.get().getPnfType();
+            if (type.equals(PnfType.BBU)) return BluespaceNodeType.BBU;
+            else if (type.equals(PnfType.RRH)) return BluespaceNodeType.RRH;
+            else return BluespaceNodeType.SWITCH;
+        }else return BluespaceNodeType.SWITCH;
+
+    }
+
+
+    private List<IndicatorInformation> getPnfInstanceIndicatorInformation(PnfInstance pnfInstance) throws FailedOperationException{
         log.debug("Retrieving IndicatorInformation for pnfInstance:"+pnfInstance.getPnfInstanceId());
         RestVnfDriver restClient = new RestVnfDriver(pnfInstance.getPnfInstanceId(), pnfInstance.getManagementIpAddress(),restTemplate, taskExecutor);
         List<IndicatorInformation> result = restClient.getIndicatorValue(new GeneralizedQueryRequest(null, null)).getIndicatorInformation();
         return result;
+
+    }
+
+
+    private List<InterDcNetworkPath> translateRCInterDcNetworkPaths(BluespaceAlgorithmAllocationResponse response){
+
+        log.debug("Translating InterDC network paths");
+        List<InterDcNetworkPath> interDcNetworkPaths = new ArrayList<>();
+        List<LightPath> lightPaths = response.getServiceResponses().get(0).getLightpaths();
+        for(LightPath lightPath: lightPaths){
+            List<NetworkPathHop> pathHops = new ArrayList<>();
+            for (LightpathHop lightpathHop : lightPath.getHops()){
+                String nodeId = lightpathHop.getNodeId();
+                String ingressSip = lightpathHop.getInputPortId();
+                String egressSip = lightpathHop.getOutputPortId();
+                Map<String, String> obfnPathProps = getObfnLightPathProps(response, lightpathHop.getObfnId());
+                log.debug("obfn path parameters:"+obfnPathProps.toString());
+                NetworkPathHop nph = new NetworkPathHop(
+                        0,
+                        nodeId,                 //nodeId
+                        null,
+                        null,                //egressPortId
+                        null,                                //incomingLinkId - not used here
+                        null,                                //outgoingLinkId - not used here
+                        0,                                    //hopQueue - not used here
+                        true,
+                        true,
+                        ingressSip,
+                        egressSip,
+                        obfnPathProps
+                );
+                pathHops.add(nph);
+
+            }
+
+            InterDcNetworkPath idcPath = new InterDcNetworkPath(UUID.randomUUID().toString(),pathHops, SbNetworkPathType.OBFN );
+            interDcNetworkPaths.add(idcPath);
+        }
+        return interDcNetworkPaths;
+
+    }
+
+    private Map<String, String> getObfnLightPathProps(BluespaceAlgorithmAllocationResponse response, String obfnId){
+        log.debug("Translating obfn path parameters:"+obfnId);
+        /*
+         private String obfnId;
+        private int beamId;
+        private int beamOffsetX;
+        private int beamOffsetY;
+        private int beamWidth;
+        private int beamAngle;
+         */
+        Map<String,String> obfnProps = new HashMap<>();
+        List<ObfnResourceAllocation> obfnResourceAllocations = response.getServiceResponses().get(0).getObfnResourceAllocation();
+        for(ObfnResourceAllocation ra : obfnResourceAllocations){
+            if(ra.getObfnId().equals(obfnId)){
+                obfnProps.put("beamId", Integer.toString(ra.getBeamId()));
+                obfnProps.put("beamOffsetX", Integer.toString(ra.getBeamOffsetX()));
+                obfnProps.put("beamOffsetY", Integer.toString(ra.getBeamOffsetY()));
+                obfnProps.put("beamWidth", Integer.toString(ra.getBeamWidth()));
+                obfnProps.put("beamAngle", Integer.toString(ra.getBeamAngle()));
+                break;
+            }
+        }
+        return obfnProps;
+
 
     }
 
@@ -688,105 +777,10 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
     }
 
 
-    private String findFirstPnfInstanceServiceInterfacePointId(PnfInstance pnfInstance){
-        Optional<PhysicalEquipmentPort> optPort = pnfInstance.getPorts().stream()
-                .filter(p -> p.getServiceInterfacePointId()!=null)
-                .findFirst();
-        if(optPort.isPresent()){
-            return optPort.get().getServiceInterfacePointId();
-        }else return null;
-    }
-
-   private boolean isNetworkPathAvailable(NetworkPathHop nph, List<SbNetworkPath>  activePaths){
-
-        for(SbNetworkPath sbNetworkPath: activePaths){
-            for(NetworkPathHop activeNph : sbNetworkPath.getHops()){
-                String activeIngress = activeNph.getIngressServiceInterfacePoint();
-                String activeEgress = activeNph.getEgressServiceInterfacePoint();
-                String currentIngress = nph.getIngressServiceInterfacePoint();
-                String currentEgress = nph.getEgressServiceInterfacePoint();
-                if(currentIngress.equals(activeIngress)&&currentEgress.equals(activeEgress))
-                    return false;
-            }
-        }
-        return true;
-   }
 
 
-    private NetworkPathHop computeFreeArofNetworkPathHop(PnfInstance bbuInstance, PnfInstance rrhInstance) throws NotExistingEntityException, NoNetworkPathAvailableException {
-        String bbuInstanceId = bbuInstance.getPnfInstanceId();
-        String rrhInstanceId = rrhInstance.getPnfInstanceId();
-        log.debug("Computing ingress and egress SIPs for bbu:"+bbuInstanceId+" and rrh:"+rrhInstanceId);
-
-        try {
-            List <SbNetworkPath> activePaths = sdnPlugin.getActivePaths();
-            List<String> bbuSips = bbuInstance.getPorts().stream()
-                    .filter(p -> p.getServiceInterfacePointId()!=null)
-                    .map(p -> p.getServiceInterfacePointId())
-                    .collect(Collectors.toList());
-
-            List<String> rrhSips = rrhInstance.getPorts().stream()
-                    .filter(p -> p.getServiceInterfacePointId()!=null)
-                    .map(p -> p.getServiceInterfacePointId())
-                    .collect(Collectors.toList());
 
 
-            for(String bbuSip: bbuSips){
-                for(String rrhSip: rrhSips){
-                    String ingressServiceInterfacePoint = rrhSip;
-                    String egressServiceInterfacePoint = bbuSip;
-                    NetworkPathHop nph = new NetworkPathHop(
-                            0,
-                            null,                 //nodeId
-                            null,
-                            null,                //egressPortId
-                            null,                                //incomingLinkId - not used here
-                            null,                                //outgoingLinkId - not used here
-                            0,                                    //hopQueue - not used here
-                            true,
-                            true,
-                            ingressServiceInterfacePoint,
-                            egressServiceInterfacePoint
-                    );
-                    if(isNetworkPathAvailable(nph, activePaths)){
-                        return nph;
-                    }
-                }
-            }
-            throw new NoNetworkPathAvailableException("Couldnot find an available path between bbu:"+bbuInstanceId+" and rrh:"+rrhInstanceId);
 
-        } catch (Exception e) {
-           log.error("Error retrieving active paths");
-           log.error(e.getStackTrace().toString());
-           log.error(e.getMessage());
-           log.error("using first SIP");
-           String ingressServiceInterfacePoint = this.findFirstPnfInstanceServiceInterfacePointId(pnfManagementService.getPnfInstance(rrhInstanceId));
-           String egressServiceInterfacePoint = this.findFirstPnfInstanceServiceInterfacePointId(pnfManagementService.getPnfInstance(bbuInstanceId));
-
-            NetworkPathHop nph = new NetworkPathHop(
-                    0,
-                    null,                 //nodeId
-                    null,
-                    null,                //egressPortId
-                    null,                                //incomingLinkId - not used here
-                    null,                                //outgoingLinkId - not used here
-                    0,                                    //hopQueue - not used here
-                    true,
-                    true,
-                    ingressServiceInterfacePoint,
-                    egressServiceInterfacePoint
-            );
-            return nph;
-        }
-
-    }
-
-
-    private class NoNetworkPathAvailableException extends Exception {
-
-        public NoNetworkPathAvailableException(String message){
-            super(message);
-        }
-    }
 }
 

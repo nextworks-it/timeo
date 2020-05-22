@@ -15,12 +15,14 @@
 */
 package it.nextworks.nfvmano.timeo.rc.elements;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import java.util.Map;
 
 /**
  * This information element models a hop of a network path
@@ -56,7 +58,11 @@ public class NetworkPathHop {
 	
 	private String ingressServiceInterfacePoint;
 	private String egressServiceInterfacePoint;
-	
+
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private Map<String, String> hopProperties;
 	public NetworkPathHop() {
 		// TODO Auto-generated constructor stub
 	}
@@ -75,6 +81,7 @@ public class NetworkPathHop {
 	 * @param last true if this is the last hop
 	 * @param ingressServiceInterfacePoint ingress Service Interface Point - valid for first hop only - used when an ingress port can be associated to multiple service interface points as in TAPI 
 	 * @param egressServiceInterfacePoint egress Service Interface Point - valid for last hop only - used when an egress port can be associated to multiple service interface points as in TAPI
+	 * @param hopProperties additional Hop Properties, used to provide TAPI parameters
 	 */
 	public NetworkPathHop(int hopNumber,
 			String nodeId,
@@ -86,7 +93,8 @@ public class NetworkPathHop {
 			boolean first,
 			boolean last,
 			String ingressServiceInterfacePoint,
-			String egressServiceInterfacePoint) {
+			String egressServiceInterfacePoint,
+			Map<String, String> hopProperties) {
 		this.hopNumber = hopNumber;
 		this.nodeId = nodeId;
 		this.incomingLinkId = incomingLinkId;
@@ -98,8 +106,36 @@ public class NetworkPathHop {
 		this.last = last;
 		this.ingressServiceInterfacePoint = ingressServiceInterfacePoint;
 		this.egressServiceInterfacePoint = egressServiceInterfacePoint;
+		this.hopProperties = hopProperties;
 	}
-	
+
+
+	public NetworkPathHop(int hopNumber,
+						  String nodeId,
+						  String ingressPortId,
+						  String egressPortId,
+						  String incomingLinkId,
+						  String outgoingLinkId,
+						  int hopQueue,
+						  boolean first,
+						  boolean last,
+						  String ingressServiceInterfacePoint,
+						  String egressServiceInterfacePoint
+						 ) {
+		this.hopNumber = hopNumber;
+		this.nodeId = nodeId;
+		this.incomingLinkId = incomingLinkId;
+		this.ingressPortId = ingressPortId;
+		this.egressPortId = egressPortId;
+		this.outgoingLinkId = outgoingLinkId;
+		this.hopQueue = hopQueue;
+		this.first = first;
+		this.last = last;
+		this.ingressServiceInterfacePoint = ingressServiceInterfacePoint;
+		this.egressServiceInterfacePoint = egressServiceInterfacePoint;
+
+	}
+
 	/**
 	 * Constructor
 	 * 
@@ -262,7 +298,7 @@ public class NetworkPathHop {
 	}
 
 
-	
-	
-
+	public Map<String, String> getHopProperties() {
+		return hopProperties;
+	}
 }

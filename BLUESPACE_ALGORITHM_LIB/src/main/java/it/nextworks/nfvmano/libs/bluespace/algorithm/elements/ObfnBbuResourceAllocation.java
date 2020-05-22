@@ -31,6 +31,10 @@ public class ObfnBbuResourceAllocation {
         return subcarriersNumber;
     }
 
+    public long getIntermediateFrequency() {
+        return intermediateFrequency;
+    }
+
     public int getPilotSpacing() {
         return pilotSpacing;
     }
@@ -38,4 +42,6 @@ public class ObfnBbuResourceAllocation {
     public int getModulationScheme() {
         return modulationScheme;
     }
+
+
 }

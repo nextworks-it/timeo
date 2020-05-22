@@ -88,6 +88,35 @@ public class TapiTopologyUtilities {
         return target;
     }
 
+
+    /**
+     *
+     * @param contextSchema
+     * @return a map where the key is the Id of the connectivity service while the value contains the two SIPs of the connection
+     */
+    public static Map<String, List<String>> getObfnActivePaths(ContextSchema contextSchema){
+
+        Map<String, List<String>> values = new HashMap<>();
+        ConnectivityContext connectivityContext = contextSchema.getConnectivityContext();
+        List<ConnectivityService> connectivityServices = connectivityContext.getConnectivityService();
+        for(ConnectivityService connectivityService: connectivityServices){
+            ArrayList<String> sips  = new ArrayList<>();
+            String sip1 = connectivityService.getEndPoint().get(0).getLocalId();
+            String sip2 = connectivityService.getEndPoint().get(1).getLocalId();
+            TapiCpDirection port1direction = getTapiPortDirection(contextSchema, sip1);
+            if(port1direction.equals(TapiCpDirection.INPUT)){
+                sips.add(sip1);
+                sips.add(sip2);
+            }else if(port1direction.equals(TapiCpDirection.OUTPUT)){
+                sips.add(sip2);
+                sips.add(sip1);
+            }
+            values.put(connectivityService.getUuid(), sips);
+
+        }
+        return values;
+    }
+
     public static NetworkTopology translateTapiNodes(Topology source, ContextSchema contextSchema) throws NotExistingEntityException{
         List<Node> nodes = source.getNode();
         //if (links == null) throw new NotExistingEntityException("Topology without links");

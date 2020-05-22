@@ -32,13 +32,7 @@ import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.PnfManagementService;
 import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
 import it.nextworks.nfvmano.timeo.common.exception.ScaleAllocationSolutionNotFound;
 import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
-import it.nextworks.nfvmano.timeo.rc.algorithms.AlgorithmType;
-import it.nextworks.nfvmano.timeo.rc.algorithms.BluespaceAitAlgorithm;
-import it.nextworks.nfvmano.timeo.rc.algorithms.BluespaceArofFakeAlgorithm;
-import it.nextworks.nfvmano.timeo.rc.algorithms.BluespaceStaticAlgorithm;
-import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithm5tonic;
-import it.nextworks.nfvmano.timeo.rc.algorithms.VEPCStaticAlgorithmArno;
-import it.nextworks.nfvmano.timeo.rc.algorithms.VEPCStaticAlgorithmNXW;
+import it.nextworks.nfvmano.timeo.rc.algorithms.*;
 import it.nextworks.nfvmano.timeo.rc.algorithms.dijkstra.DijkstraAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.elements.*;
 import org.slf4j.Logger;
@@ -79,12 +73,6 @@ import it.nextworks.nfvmano.timeo.nso.NsManagementEngine;
 import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
-import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithmNXW;
-import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithmBluespaceNXW;
-import it.nextworks.nfvmano.timeo.rc.algorithms.DummyAlgorithm;
-import it.nextworks.nfvmano.timeo.rc.algorithms.DummyAlgorithmNXW;
-import it.nextworks.nfvmano.timeo.rc.algorithms.NsResourceAllocationAlgorithmInterface;
-import it.nextworks.nfvmano.timeo.rc.algorithms.NxwDynamicAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.algorithms.emma.EmmaNetCompAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
@@ -705,12 +693,13 @@ public class ResourceSchedulingManager {
 				return new VEPCStaticAlgorithmNXW();
 			case BLUESPACE_STATIC_NXW:
 				return new BluespaceStaticAlgorithm();
+
 			case BLUESPACE_AROF_FAKE:
 				return new BluespaceArofFakeAlgorithm(vnfPackageManagement, pnfManagementService, rcProperties);
 			case NXW_DYNAMIC_ALGORITHM:
 				return new NxwDynamicAlgorithm(vnfPackageManagement, pnfManagementService, rcProperties);
 			case BLUESPACE_AIT:
-				return new BluespaceAitAlgorithm(aitAlgorithmUrl, vnfPackageManagement, rcProperties, pnfManagementService,taskExecutor);
+				return new BluespaceObfnAlgorithm(aitAlgorithmUrl, vnfPackageManagement, pnfManagementService, taskExecutor, rcProperties);
 			default:
 				log.error("Algorithm type {} not yet implemented.", type);
 				throw new AlgorithmNotAvailableException();

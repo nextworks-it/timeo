@@ -217,7 +217,8 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
                     true,
                     true,
                     ingressServiceInterfacePoint,
-                    egressServiceInterfacePoint
+                    egressServiceInterfacePoint,
+					null
             );
             hops.add(nph);
 
@@ -247,7 +248,7 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 					true,
 					true,
 					ingressServiceInterfacePoint,
-					egressServiceInterfacePoint
+					egressServiceInterfacePoint, null
 			);
 			hops.add(nph);
 			sbNetworkPaths.add(new SbNetworkPath(ownedNodeEdgePointSchema.getUuid(),
