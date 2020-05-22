@@ -7,7 +7,13 @@ public class ObfnResourceAllocation {
     private int beamOffsetX;
     private int beamOffsetY;
     private int beamWidth;
+
+    public ObfnResourceAllocation() {
+    }
+
     private int beamAngle;
+
+
 
     public ObfnResourceAllocation(String obfnId, int beamId, int beamOffsetX, int beamOffsetY, int beamWidth, int beamAngle) {
         this.obfnId = obfnId;
