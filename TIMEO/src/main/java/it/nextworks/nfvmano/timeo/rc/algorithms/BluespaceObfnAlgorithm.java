@@ -508,7 +508,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
 
         List<VnfResourceAllocation> vnfResourceAllocations = translateRCVnfAllocation(response);
         List<PnfAllocation> pnfAllocations = translateRCPnfAllocation(response);
-        List<InterDcNetworkPath> interDcNetworkPaths = new ArrayList<>();
+        List<InterDcNetworkPath> interDcNetworkPaths = translateRCInterDcNetworkPaths();
 
 
         NsResourceSchedulingSolution solution = new NsResourceSchedulingSolution(
@@ -522,7 +522,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
                 null 							//computeNodesToBeActivated
         );
 
-        return null;
+        return solution;
     }
 
 
