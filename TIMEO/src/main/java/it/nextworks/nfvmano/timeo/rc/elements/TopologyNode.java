@@ -153,6 +153,8 @@ public class TopologyNode {
         this.idleVM.put("VM", idleVM);
     }
 
+    public void setCps(Set<TopologyCp> cps){ this.cps=cps;}
+
 	/**
 	 * @return the supportedProtocolLayers
 	 */

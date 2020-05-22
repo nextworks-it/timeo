@@ -215,7 +215,7 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
                         }
                     }
 
-                    BluespaceNodePort bnp = new BluespaceNodePort(cpId, PortType.UNSPECIFIED, neighbourNodeId, neighbourPortId, null);
+                    BluespaceNodePort bnp = new BluespaceNodePort(cpId, PortType.UNSPECIFIED, neighbourNodeId, neighbourPortId, null, null);
                     ports.add(bnp);
                 }
                 BluespaceNode bn = new BluespaceNode(nodeId, BluespaceNodeType.SWITCH, BluespaceSwitchingType.SPATIAL_SPECTRAL_SWITCHING, ports);
@@ -238,7 +238,7 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
                     String sipId = p.getServiceInterfacePointId();
                     if (sipId != null) {
                         KeyValuePair attachedNetworkNode = sipMappingToNetworkNodes.get(sipId);
-                        BluespaceNodePort bnPort = new BluespaceNodePort(p.getPortId(), PortType.INGRESS, attachedNetworkNode.getKey(), attachedNetworkNode.getValue(), null);
+                        BluespaceNodePort bnPort = new BluespaceNodePort(p.getPortId(), PortType.INGRESS, attachedNetworkNode.getKey(), attachedNetworkNode.getValue(), null, null);
                         bnPorts.add(bnPort);
                     }
                 }
@@ -310,7 +310,7 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
                         datarate,
                         rrhs,
                         nodes,
-                        servers);
+                        servers, null);
         log.debug("Request built");
         return outputRequest;
     }
@@ -578,6 +578,7 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
         log.debug("Processing PNF allocation response");
         //key: ID of the geographical area; value: resource allocation in RRHs
         List<PnfAllocation> pnfAllocation = new ArrayList<>();
+        /*
         Map<String, SubcarrierResourceAllocation> rrhResourceAllocation = sr.getRrhResourceAllocation();
         if (rrhResourceAllocation != null) {
             for (Map.Entry<String, SubcarrierResourceAllocation> e : rrhResourceAllocation.entrySet()) {
@@ -697,8 +698,8 @@ public class BluespaceAitAlgorithm extends AbstractNsResourceAllocationAlgorithm
                 null,							//networkNodesToBeActivated
                 null 							//computeNodesToBeActivated
         );
-
-        return solution;
+    */
+        return null;
     }
 
 

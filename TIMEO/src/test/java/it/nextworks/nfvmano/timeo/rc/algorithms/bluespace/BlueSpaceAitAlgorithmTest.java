@@ -11,6 +11,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ import it.nextworks.nfvmano.timeo.vnfm.vnfdriver.RestVnfDriver;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Ignore
 public class BlueSpaceAitAlgorithmTest {
 
 	private AitAlgorithmRestClient client;
@@ -165,12 +167,12 @@ public class BlueSpaceAitAlgorithmTest {
 		
 		
 		List<BluespaceNodePort> portsRrh = new ArrayList<BluespaceNodePort>();
-		BluespaceNodePort portRrh = new BluespaceNodePort("rrh1-P1", PortType.EGRESS, "bbu1", "bbu1-P1", null);
+		BluespaceNodePort portRrh = new BluespaceNodePort("rrh1-P1", PortType.EGRESS, "bbu1", "bbu1-P1", null, null);
 		portsRrh.add(portRrh);
 		BluespaceNode bn1 = new BluespaceNode("RRH-1", BluespaceNodeType.RRH, BluespaceSwitchingType.NO_SWITCHING, portsRrh);
 		nodes.add(bn1);
 		List<BluespaceNodePort> portsBbu = new ArrayList<BluespaceNodePort>();
-		BluespaceNodePort portBbu = new BluespaceNodePort("bbu1-P1", PortType.INGRESS, "RRH-1", "rrh1-P1", null);
+		BluespaceNodePort portBbu = new BluespaceNodePort("bbu1-P1", PortType.INGRESS, "RRH-1", "rrh1-P1", null, null);
 		portsBbu.add(portBbu);
 		BluespaceNode bn2 = new BluespaceNode("BBU-1", BluespaceNodeType.BBU, BluespaceSwitchingType.NO_SWITCHING, portsBbu, "RRH-1", "BEAM-1");
 		nodes.add(bn2);
@@ -197,7 +199,7 @@ public class BlueSpaceAitAlgorithmTest {
 				datarate, 
 				rrhs, 
 				nodes, 
-				servers);
+				servers, null);
 		
 		return request;
 	}

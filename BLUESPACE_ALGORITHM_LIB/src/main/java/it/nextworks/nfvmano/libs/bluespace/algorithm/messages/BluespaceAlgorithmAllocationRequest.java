@@ -5,11 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.BluespaceNode;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.GeographicalArea;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.PhysicalServer;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.Rrh;
-import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.ServiceRequest;
+import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.*;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.TransmissionMode;
 
 /**
@@ -30,6 +26,8 @@ public class BluespaceAlgorithmAllocationRequest {
 	private Map<TransmissionMode, Double> datarate = new HashMap<TransmissionMode, Double>();
 	
 	private List<Rrh> rrhs = new ArrayList<Rrh>();
+
+	private List<Bbu> bbus = new ArrayList<Bbu>();
 	
 	//from SDN controller + static info about PNFs
 	private List<BluespaceNode> nodes = new ArrayList<BluespaceNode>();
@@ -55,13 +53,19 @@ public class BluespaceAlgorithmAllocationRequest {
 			Map<TransmissionMode, Double> datarate,
 			List<Rrh> rrhs,
 			List<BluespaceNode> nodes,
-			List<PhysicalServer> servers) {
+			List<PhysicalServer> servers,
+											   List<Bbu> bbus) {
 		if (serviceRequests != null) this.serviceRequests = serviceRequests;
 		if (geographicalAreas != null) this.geographicalAreas = geographicalAreas;
 		if (datarate != null) this.datarate = datarate;
 		if (rrhs != null) this.rrhs = rrhs;
 		if (nodes != null) this.nodes = nodes;
 		if (servers != null) this.servers = servers;
+		if(bbus!=null) this.bbus = bbus;
+	}
+
+	public List<Bbu> getBbus() {
+		return bbus;
 	}
 
 	/**

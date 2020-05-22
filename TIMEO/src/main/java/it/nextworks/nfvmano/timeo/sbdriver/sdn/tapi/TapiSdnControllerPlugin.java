@@ -3,6 +3,7 @@ package it.nextworks.nfvmano.timeo.sbdriver.sdn.tapi;
 import java.util.*;
 
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
+import it.nextworks.nfvmano.timeo.rc.elements.TopologyCp;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPathType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,27 +78,16 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 			if (topologyList.getTopology().size() == 0) {
 				log.error("Empty topology list!");
 				throw new NotExistingEntityException("Impossible to read topology, empty list returned.");
-			} else if (topologyList.getTopology().size() > 1) {
-				log.error("More that one topology returned! Not yet supported");
-				throw new MethodNotImplementedException("Handling of multiple topologies is not yet supported");
-			} else {
-				/* Commented old code
-				//a single topology is present
-				String topologyUuid = topologyList.getTopology().get(0).getUuid();
-				log.debug("Found topology with uuid: " + topologyUuid);
-				//String uuid = getIdFromUrl(topologyPath);
-				//log.debug("Topology ID: " + uuid);
-				
-				GetTopologyDetailsRPCInputSchema topologyRequest = new GetTopologyDetailsRPCInputSchema();
-				topologyRequest.setTopologyIdOrName(topologyUuid);
-				GetTopologyDetailsRPCOutputSchema topologyOut = api.createGetTopologyDetailsById(topologyRequest);
-				log.debug("Retrieved topology with ID: " + topologyUuid);
-				*/
-				Topology topologyOut = topologyList.getTopology().get(0);
-				NetworkTopology result = translateTapiTopology(topologyOut, api, response);
-				log.debug("Topology successfully translated");
-				return result;
 			}
+			if (topologyList.getTopology().size() > 1)
+				log.debug("More that one topology returned!, using the first one");
+
+
+			Topology topologyOut = topologyList.getTopology().get(0);
+			NetworkTopology result = translateTapiTopology(topologyOut, api, response);
+			log.debug("Topology successfully translated");
+			return result;
+
 		} catch (ApiException e) {
 			log.error("Got API exception while getting topology");
 			throw new NotExistingEntityException("Impossible to read topology: got API exception");
@@ -282,188 +272,12 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 	 * @throws ApiException if the interaction with the SDN controller fails
 	 */
 	private NetworkTopology translateTapiTopology(Topology source, DefaultApi api, ContextSchema contextSchema) throws NotExistingEntityException, ApiException {
-		log.debug("Translating TAPI topology into TIMEO topology format.");
-		log.debug("Source TAPI topology: " + source.toString());
-		NetworkTopology target = new NetworkTopology(new ArrayList<>(), new ArrayList<>());
-		
-		List<Link> links = source.getLink();
-		List<Node> nodes = source.getNode();
-		if (links == null) throw new NotExistingEntityException("Topology without links");
-		if (nodes == null) throw new NotExistingEntityException("Topology without nodes");
-		log.debug("The TAPI topology has " + nodes.size() + " nodes and " + links.size() + " links.");
-		
-		Map<String, String> tmpPortToNodeMap = new HashMap<>();
-		
-		log.debug("Adding nodes to topology");
-		for (Node n : nodes) {
-			String nodeId = n.getUuid();
-			//AROF j.brenes: AROF API nodes do not responde with the layer protocol supported, using
-			//the one supported by the topology
-			//List<Node.LayerProtocolNameEnum> origProtocolLayers = n.getLayerProtocolName();
-			List<Topology.LayerProtocolNameEnum> origProtocolLayers = source.getLayerProtocolName();
-			Set<LayerProtocol> supportedProtocolLayers = new HashSet<>();
-			for (Topology.LayerProtocolNameEnum lp : origProtocolLayers) {
-				supportedProtocolLayers.add(convertLayerProtocol(lp));
-			}
-			TopologyNode targetNode = new TopologyNode(nodeId, new HashSet<>(), supportedProtocolLayers);
-			target.addNode(targetNode);
-			log.debug("Added node " + nodeId + " in target topology");
-			
-			List<OwnedNodeEdgePointSchema> ports = n.getOwnedNodeEdgePoint();
-					
-			for (OwnedNodeEdgePointSchema p : ports) {
-				OwnedNodeEdgePointSchema.LayerProtocolNameEnum proto = p.getLayerProtocolName();
-				String portId = p.getUuid();
-				tmpPortToNodeMap.put(portId, nodeId);
-				TapiTopologyCp tapiCp;
-				if (proto.equals(OwnedNodeEdgePointSchema.LayerProtocolNameEnum.ETH)) {
-					tapiCp = new TapiTopologyCp(targetNode, null, null, null, portId);
-					log.debug("Created ETH port with ID " + portId);
-				}
-				else if (proto.equals(OwnedNodeEdgePointSchema.LayerProtocolNameEnum.PHOTONIC_MEDIA)) {
-					//it can be both SDM or AROF
-					//TODO: Verify this urgent j.brenes
-					/*The new AROF api doesnot have CepList *
-					ConnectionEndPointSchema cep = p.getCepList().getConnectionEndPoint().get(0);
-					String protoLayerQualifier = cep.getLayerProtocolQualifier();
-					
-
-					if (protoLayerQualifier.equals("tapi-arof:PHOTONIC_LAYER_QUALIFIER_AROF")) {
-						tapiCp = new TapiTopologyArofCp(targetNode, null, null, null, portId);
-						((TapiTopologyArofCp)tapiCp).setArofSpec(cep.getArofConnectionEndPointSpec());
-						log.debug("Created TAPI port with ID " + portId);
-					} else {
-						tapiCp = new TapiTopologySdmCp(targetNode, null, null, null, portId);
-						//TODO: add info of the port 
-						log.debug("Created SDM port with ID " + portId);
-					}*/
-					List<String> protocolLayerQualifiers = p.getSupportedCepLayerProtocolQualifier();
-					if(protocolLayerQualifiers.contains("tapi-arof:PHOTONIC_LAYER_QUALIFIER_AROF")){
-
-						tapiCp = new TapiTopologyArofCp(targetNode, null, null, null, portId);
-						String sipUuid = p.getMappedServiceInterfacePoint().get(0).getServiceInterfacePointUuid();
-						((TapiTopologyArofCp)tapiCp).setArofServiceInterfacePointSpec(getArofConnectionEndPointSpec(sipUuid,contextSchema));
-						log.debug("Created TAPI port with ID " + portId);
-					}else{
-						tapiCp = new TapiTopologySdmCp(targetNode, null, null, null, portId);
-						//TODO: add info of the port
-						log.debug("Created SDM port with ID " + portId);
-					}
-					
-				} else {
-					tapiCp = new TapiTopologyCp(targetNode, null, null, null, portId);
-					log.debug("Created generalized port with ID " + portId);
-				}
-				List<ServiceInterfacePointRef> sips = p.getMappedServiceInterfacePoint();
-				if (sips != null) {
-					for (ServiceInterfacePointRef sip : sips) {
-						tapiCp.addSip(sip.getServiceInterfacePointUuid());
-						log.debug("Added mapped Service Interface Point " + sip.getServiceInterfacePointUuid() + " to port.");
-					}
-				}
-				target.addCp(targetNode, tapiCp);
-				log.debug("Added port to topology");
-			}
-		}
-		log.debug("All nodes and ports have been added to the topology");
-		
-		log.debug("Adding links to topology");
-		for (Link l : links) {
-			String linkId = l.getUuid();
-			List<NodeEdgePointRef> neprs = l.getNodeEdgePoint();
-			List<String> neps = new ArrayList<>();
-			for (NodeEdgePointRef n : neprs) {
-				neps.add(n.getNodeEdgePointUuid());
-			}
-			String srcPortId = getIdFromUrl(neps.get(0));
-			String srcNodeId = tmpPortToNodeMap.get(srcPortId);
-			String dstPortId = getIdFromUrl(neps.get(1));
-			String dstNodeId = tmpPortToNodeMap.get(dstPortId);
-			if ((srcNodeId != null) && (dstNodeId != null)) {
-				TapiTopologyLink targetLink = new TapiTopologyLink(linkId, 
-						target.fetchNodeById(srcNodeId),
-						target.fetchNodeById(dstNodeId),
-						target.getCpById(srcPortId),
-						target.getCpById(dstPortId));
-				log.debug("Created link with ID " + linkId + " between port " + srcPortId + " and port " + dstPortId);
-				targetLink.setDirection(l.getDirection());
-				if (l.getAvailableCapacity() != null) {
-					targetLink.setAvailableCapacity(l.getAvailableCapacity());
-					log.debug("Set available capacity");
-				}
-				if (l.getTotalPotentialCapacity() != null) {
-					targetLink.setTotalPotentialCapacity(l.getTotalPotentialCapacity());
-					log.debug("Set total potential capacity");
-				}
-				if (l.getLatencyCharacteristic() != null) {
-					targetLink.setLatencyCharacteristic(l.getLatencyCharacteristic());
-					log.debug("Set latency");
-				}
-				if (l.getLayerProtocolName() != null) {
-					List<LayerProtocol> supportedProtocolLayers = new ArrayList<>();
-					for (Link.LayerProtocolNameEnum lp : l.getLayerProtocolName()) {
-						supportedProtocolLayers.add(convertLayerProtocol(lp));
-					}
-					targetLink.setLayerProtocol(supportedProtocolLayers);
-					log.debug("Set protocol layers");
-				}
-				target.addLink(targetLink);
-				target.getCpById(srcPortId).setOutgoingLink(targetLink);
-				target.getCpById(dstPortId).setIncomingLink(targetLink);
-			} else {
-				log.error("Source or destination node not found for link " + linkId + ". Skipping it.");
-			}
-		}
-		log.debug("All links have been added to the topology");
-		
-		return target;
-	}
-	
-	private String getIdFromUrl(String url) {
-		String[] parts = url.split("/");
-		String uuid = parts[parts.length - 1];
-		return uuid;
-	}
-
-
-	private ArofServiceInterfacePointSpec getArofConnectionEndPointSpec(String sipUuid, ContextSchema contextSchema){
-		Optional<ServiceInterfacePoint> optServiceInterfacePoint = contextSchema.getServiceInterfacePoint().stream()
-				.filter(s -> s.getUuid().equals(sipUuid) )
-				.findFirst();
-		if(optServiceInterfacePoint.isPresent()){
-			return optServiceInterfacePoint.get().getArofServiceInterfacePointSpec();
-
-		}else{
-			log.debug("Failed to retrieve AROF ServiceInterfacePointSpec");
-			return null;
-		}
+		return TapiTopologyUtilities.translateTapiTopology(source, contextSchema);
 
 	}
-	
-	private LayerProtocol convertLayerProtocol(Node.LayerProtocolNameEnum source) {
-		if (source.equals(Node.LayerProtocolNameEnum.ETH)) return LayerProtocol.ETHERNET;
-		else if (source.equals(Node.LayerProtocolNameEnum.PHOTONIC_MEDIA)) return LayerProtocol.SDM;
-		else {
-			log.warn("Unsopported layer protocol. Setting to NOT_SPECIFIED.");
-			return LayerProtocol.NOT_SPECIFIED;
-		}
-	}
 
-	private LayerProtocol convertLayerProtocol(Topology.LayerProtocolNameEnum source) {
-		if (source.equals(Topology.LayerProtocolNameEnum.ETH)) return LayerProtocol.ETHERNET;
-		else if (source.equals(Topology.LayerProtocolNameEnum.PHOTONIC_MEDIA)) return LayerProtocol.SDM;
-		else {
-			log.warn("Unsopported layer protocol. Setting to NOT_SPECIFIED.");
-			return LayerProtocol.NOT_SPECIFIED;
-		}
-	}
-	
-	private LayerProtocol convertLayerProtocol(Link.LayerProtocolNameEnum source) {
-		if (source.equals(Link.LayerProtocolNameEnum.ETH)) return LayerProtocol.ETHERNET;
-		else if (source.equals(Link.LayerProtocolNameEnum.PHOTONIC_MEDIA)) return LayerProtocol.SDM;
-		else {
-			log.warn("Unsopported layer protocol. Setting to NOT_SPECIFIED.");
-			return LayerProtocol.NOT_SPECIFIED;
-		}
-	}
+
+
+
+
 }

@@ -3,6 +3,7 @@ package it.nextworks.nfvmano.libs.bluespace.algorithm.elements;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.BluespaceNodeType;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.BluespaceSwitchingType;
 
@@ -21,7 +22,9 @@ public class BluespaceNode {
 	private List<BluespaceNodePort> ports = new ArrayList<BluespaceNodePort>();
 	
 	//the following two parameters are valid only for BBU nodes
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String connectedRrhId;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String connectedRrhBeamId;
 
 	public BluespaceNode() { }

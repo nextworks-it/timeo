@@ -16,7 +16,7 @@ public class ServiceResponse {
 	private String serviceId;
 	
 	//key: ID of the geographical area; value: resource allocation in RRHs
-	private Map<String, SubcarrierResourceAllocation> rrhResourceAllocation = new HashMap<String, SubcarrierResourceAllocation>();
+	//private Map<String, SubcarrierResourceAllocation> rrhResourceAllocation = new HashMap<String, SubcarrierResourceAllocation>();
 	
 	//list of lightpaths between RRHs and BBUs
 	private List<LightPath> lightpaths = new ArrayList<LightPath>();
@@ -26,7 +26,13 @@ public class ServiceResponse {
 	
 	//key: ID of the server; Value: List of ID of the BBUs corresponding to the MEC server
 	private Map<String, List<String>> mecToBbuMapping = new HashMap<String, List<String>>();
+
+	private List<ObfnResourceAllocation> obfnResourceAllocation;
 	
+	private List<ObfnBbuResourceAllocation> bbuResourceAllocation;
+
+	private List<ObfnRrhResourceAllocation> rrhResourceAllocation;
+
 	public ServiceResponse() { }
 	
 	/**
@@ -37,18 +43,27 @@ public class ServiceResponse {
 	 * @param lightpaths details of optical resource allocation in the fronthaul
 	 * @param vmAllocation details about the allocation of the VMs on the available servers
 	 * @param mecToBbuMapping details about the mapping between the MEC servers and the corresponding BBUs
-	 * 
+	 * @param obfnResourceAllocation details the obfn resource allocations.
+	 * @param rrhResourceAllocation details the rrh resource allocations.
+	 * @param bbuResourceAllocation details the bbu resource allocations.
 	 */
 	public ServiceResponse(String serviceId, 
-			Map<String, SubcarrierResourceAllocation> rrhResourceAllocation,
+			//Map<String, SubcarrierResourceAllocation> rrhResourceAllocation,
 			List<LightPath> lightpaths,
 			Map<String, String> vmAllocation,
-			Map<String, List<String>> mecToBbuMapping) {
+			Map<String, List<String>> mecToBbuMapping,
+						   List<ObfnResourceAllocation> obfnResourceAllocation,
+						   List<ObfnRrhResourceAllocation> rrhResourceAllocation,
+						   List<ObfnBbuResourceAllocation> bbuResourceAllocation
+						   ) {
 		this.serviceId = serviceId;
 		if (rrhResourceAllocation != null) this.rrhResourceAllocation = rrhResourceAllocation;
 		if (lightpaths != null) this.lightpaths = lightpaths;
 		if (vmAllocation != null) this.vmAllocation = vmAllocation;
 		if (mecToBbuMapping != null) this.mecToBbuMapping = mecToBbuMapping;
+		if (obfnResourceAllocation!=null) this.obfnResourceAllocation = obfnResourceAllocation;
+		if( rrhResourceAllocation!=null) this.rrhResourceAllocation = rrhResourceAllocation;
+		if (bbuResourceAllocation!=null) this.bbuResourceAllocation = bbuResourceAllocation;
 	}
 
 	/**
@@ -58,10 +73,23 @@ public class ServiceResponse {
 		return serviceId;
 	}
 
-	/**
+	/*
 	 * @return the rrhResourceAllocation
-	 */
+
 	public Map<String, SubcarrierResourceAllocation> getRrhResourceAllocation() {
+		return rrhResourceAllocation;
+	}
+	*/
+
+	public List<ObfnResourceAllocation> getObfnResourceAllocation() {
+		return obfnResourceAllocation;
+	}
+
+	public List<ObfnBbuResourceAllocation> getBbuResourceAllocation() {
+		return bbuResourceAllocation;
+	}
+
+	public List<ObfnRrhResourceAllocation> getRrhResourceAllocation() {
 		return rrhResourceAllocation;
 	}
 

@@ -16,6 +16,7 @@
 package it.nextworks.nfvmano.timeo.rc.elements;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -103,6 +104,8 @@ public class NetworkTopology {
 		if (prevCp != null) {
 			throw new IllegalStateException("Address " + cp.address + " already in use.");
 		}
+		if(node.cps==null)
+			node.cps = new HashSet<>();
 		node.cps.add(cp);
 		id2cpMap.put(cp.cpId, cp);
 		if (cp.address != null) {

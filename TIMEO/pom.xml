@@ -172,6 +172,13 @@
             <scope>test</scope>
         </dependency>
 
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>2.9.2</version>
+
+            </dependency>
+
 
         <!-- Swagger autodoc -->
 
@@ -250,7 +257,7 @@
 
 	<dependency>
 		<groupId>io.swagger.tapi</groupId>
-		<artifactId>arof</artifactId>
+		<artifactId>tapi-arof-obfn-client</artifactId>
 		<version>1.0.2</version>
 	</dependency>
         <dependency>

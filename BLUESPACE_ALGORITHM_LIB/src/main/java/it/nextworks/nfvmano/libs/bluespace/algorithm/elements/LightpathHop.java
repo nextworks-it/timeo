@@ -9,28 +9,31 @@ package it.nextworks.nfvmano.libs.bluespace.algorithm.elements;
 public class LightpathHop {
 
 	private String nodeId;
-	private String portId;
-	private String coreId;
-	private String wavelengthId;
-	
+	private String inputPortId;
+	private String outputPortId;
+	private String obfnId;
+	//private String wavelengthId;
+
+
 	public LightpathHop() {	}
 	
 	/**
 	 * Constructor
 	 * 
 	 * @param nodeId ID of the optical node
-	 * @param portId ID of the port
-	 * @param coreId ID of the core within the port
-	 * @param wavelengthId ID of the wavelength within the core
+	 * @param inputPortId ID of the input port (SIP)
+	 * @param outputPortId ID of the output port (SIP)
+	 *
 	 */
 	public LightpathHop(String nodeId,
-			String portId, 
-			String coreId,
-			String wavelengthId) {
+			String inputPortId,
+			String outputPortId,
+			String obfnId) {
 		this.nodeId = nodeId;
-		this.portId = portId;
-		this.coreId = coreId;
-		this.wavelengthId = wavelengthId;
+		this.inputPortId = inputPortId;
+		this.outputPortId = outputPortId;
+		//this.wavelengthId = wavelengthId;
+		this.obfnId = obfnId;
 	}
 
 	/**
@@ -40,27 +43,19 @@ public class LightpathHop {
 		return nodeId;
 	}
 
-	/**
-	 * @return the portId
-	 */
-	public String getPortId() {
-		return portId;
+	public String getObfnId() {
+		return obfnId;
 	}
 
 	/**
-	 * @return the coreId
+	 * @return the InputPortId
 	 */
-	public String getCoreId() {
-		return coreId;
+	public String getInputPortId() {
+		return inputPortId;
 	}
 
-	/**
-	 * @return the wavelengthId
-	 */
-	public String getWavelengthId() {
-		return wavelengthId;
-	}
 
-	
-	
+	public String getOutputPortId() {
+		return outputPortId;
+	}
 }

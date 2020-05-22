@@ -1,0 +1,103 @@
+{
+  "serviceResponse": [
+    {
+      "lightpaths": [
+        {
+          "bbuId": "bbu0",                    // I guess should correspond to "vnf-name" in bbu-settings.json, how? -> Addresses bbu-agent "bbu0"
+          //"arofId": "arof0",                  // In principle different bbu should be able to be mapped to different arof instance, this -> Addresses arof-agent "arof0"
+          "obfnId": "obfn0",                  // It makes more sense to me setting "beam" as property of obfn -> Addresses obfn-agent "obfn0"
+          // However, we could set "beamId" here and make "arof" and "obfn" subkeys (nested keys) of beam
+          "rrhId": "rrh0",                    // corresponds to "vnf-name" in bbu-settings.json?, configuration follows in rrhResourceAllocation key -> Addresses rrh-agent "rrh0"
+          "direction": "Downlink",            // suggestion here, however not sure who is going to use this information
+
+          "hops": [                           // not sure about hops configuration, but should correspond to fiber segment?
+            {
+              "coreId": "string",             // This corresponds to fiber core?
+              "nodeId": "string",             // which are these nodes here? [incl. arof and obfn selection through SDN ctrl]
+              "portId": "string",             // port of what?
+              "wavelengthId": "197.9"         // wavelength in THz, this goes where?
+            }
+          ]
+        },
+        {
+          /* Here we establish the UL path, same BBU and RRH, but different arof and obfn as compared to DL */
+
+          /* the bbU and rrh IDs, must be same as set for DL */
+          "bbuId": "bbu0",                    // I guess should correspond to "vnf-name" in bbu-settings.json, how? -> Addresses bbu-agent "bbu0"
+          //"arofId": "arof1",                  // In principle different bbu should be able to be mapped to different arof instance, this -> Addresses arof-agent "arof0"
+          "obfnId": "obfn1",                  // It makes more sense to me setting "beam" as property of obfn -> Addresses obfn-agent "obfn0"
+          // However, we could set "beamId" here and make "arof" and "obfn" subkeys (nested keys) of beam
+          "rrhId": "rrh0",                    // corresponds to "vnf-name" in bbu-settings.json?, configuration follows in rrhResourceAllocation key -> Addresses rrh-agent "rrh0"
+          "direction": "Uplink",              // suggestion here, however not sure who is going to use this information
+
+          "hops": [                           // not sure about hops configuration, but should correspond to fiber segment?
+            {
+              "coreId": "string",             // This corresponds to fiber core?
+              "nodeId": "string",             // which are these nodes here? [incl. arof and obfn selection through SDN ctrl]
+              "portId": "string",             // port of what?
+              "wavelengthId": "190.1"         // wavelength in THz, this goes where?
+            }
+          ]
+        }
+      ],
+
+      "mecToBbuMapping": {                    // Also not sure how to handle this one
+        "additionalProp1": [
+          "string"
+        ],
+        "additionalProp2": [
+          "string"
+        ],
+        "additionalProp3": [
+          "string"
+        ]
+      },
+
+      "bbuResourceAllocation": [
+        {
+          "bbuId": "bbu0",
+          "operationMode": "4",               // int in [0,4] - Numerology (μ): 2, 2E, 3, 4, 4bS
+          "subcarriersNumber": "3168",        // int in [4,3168] - Number of Modulated subcarriers
+          "pilotSpacing": "0",                // int in [4,3168] - obsolete
+          "modulationScheme": "0",            // int in [0,3] - 0-> QPSK, 1->16-QAM, 2->64-QAM, 3->256-QAM
+          "intermediateFrequency": "5000000"  // int in [2250000-5500000] - IF in MHz
+        }
+      ],
+
+      "obfnResourceAllocation": [
+        {
+          "obfnId": "obfn0",
+          "beamId": "0",                      // int in [0,3] - beam #
+          "beamOffsetX": "60",                // float in [-90,90]  - beam x offset angle
+          "beamOffsetY": "40",                // float in [-90,90]  - beam y offset angle
+          "beamWidth": "20",                  // float in [0,90]    - beam width half angle
+        },
+        {
+          "obfnId": "obfn1",
+          "beamId": "0",                      // int in [0,3] - beam #
+          "beamOffsetX": "60",                // float in [-90,90]  - beam x offset angle
+          "beamOffsetY": "40",                // float in [-90,90]  - beam y offset angle
+          "beamWidth": "20",                  // float in [0,90]    - beam width half angle
+        }
+      ],
+
+      "rrhResourceAllocation": [
+        {
+          "rrhId": "rrh0",
+          "powerUp": "true",                  // Not sure if this should originate from here
+          "sleepMode": "false",               // Not sure if this should originate from here or POF
+          "txGain": "100",                    // int in [0,100], %of max tx gain
+          "rxGain": "100"                     // int in [0,100], %of max rx gain
+        }
+      ],
+
+      "serviceId": "string",                  // copied from request
+
+      "vmAllocation": {                       // Also, not sure how to handle this
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "uuid": "6e0abcf9-037c-4b0a-b444-fe37a09f46ea",
+  "end-point": [
+    {
+      "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+      "protection-role": "WORK",
+      "role": "UNKNOWN",
+      "local-id": "1506716d-dc3e-4645-86e1-4cb8ba6a116b",
+      "direction": "UNIDIRECTIONAL",
+      "service-interface-point": {
+        "service-interface-point-uuid": "1506716d-dc3e-4645-86e1-4cb8ba6a116b"
+      },
+      "layer-protocol-name": "PHOTONIC_MEDIA"
+    },
+    {
+      "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+      "protection-role": "WORK",
+      "role": "UNKNOWN",
+      "local-id": "21506245-7504-44c8-8e3a-ff2504779bab",
+      "direction": "UNIDIRECTIONAL",
+      "service-interface-point": {
+        "service-interface-point-uuid": "21506245-7504-44c8-8e3a-ff2504779bab"
+      },
+      "layer-protocol-name": "PHOTONIC_MEDIA"
+    }
+  ],
+  "connectivity-constraint": {
+    "connectivity-direction": "UNIDIRECTIONAL",
+    "requested-capacity": {
+      "total-size": {
+        "value": 1,
+        "unit": "GBPS"
+      }
+    }
+  },
+  "obfn-connectivity-constraint-spec": {
+    "wavelength-reference-pool": [
+      {
+        "wavelength-id": 0,
+        "central-frequency": {
+          "frequency-constraint": {
+            "adjustment-granularity": "G_6_25GHZ",
+            "grid-type": "FLEX"
+          },
+          "central-frequency": 197900
+        }
+      }
+    ],
+    "obfn-pool": [
+      {
+        "obfn-id": 0,
+        "beam_enable": true,
+        "offset-angle-X": 60,
+        "offset-angle-Y": 40,
+        "width": 20
+      }
+    ]
+  }
+}

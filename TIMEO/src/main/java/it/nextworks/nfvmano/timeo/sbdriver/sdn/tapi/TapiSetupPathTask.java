@@ -148,7 +148,7 @@ public class TapiSetupPathTask implements Runnable {
 		Capacity requestedCapacity = new Capacity();
 		CapacityValue totalSize = new CapacityValue();
 		totalSize.setUnit(CapacityValue.UnitEnum.GHZ);
-		totalSize.setValue("50");
+		totalSize.setValue(50);
 		requestedCapacity.setTotalSize(totalSize);
 		cc.setRequestedCapacity(requestedCapacity);
 		//cc.setConnectivityDirection(ConnectivityConstraint.ConnectivityDirectionEnum.UNIDIRECTIONAL);
@@ -220,7 +220,7 @@ public class TapiSetupPathTask implements Runnable {
 		Capacity c = new Capacity();
 		CapacityValue cv = new CapacityValue();
 		cv.setUnit(UnitEnum.GHZ);
-		cv.setValue("50");
+		cv.setValue(50);
 		c.setTotalSize(cv);
 		cc.setConnectivityDirection(ConnectivityConstraint.ConnectivityDirectionEnum.UNIDIRECTIONAL);
 		cc.setRequestedCapacity(c);

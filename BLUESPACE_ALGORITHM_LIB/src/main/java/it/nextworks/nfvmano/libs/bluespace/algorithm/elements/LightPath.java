@@ -11,7 +11,6 @@ import java.util.List;
 public class LightPath {
 
 	private String rrhId;
-	private String beamId;
 	private String bbuId;
 	private List<LightpathHop> hops;
 	
@@ -21,16 +20,16 @@ public class LightPath {
 	 * Constructors
 	 * 
 	 * @param rrhId ID of the RRH at the edge of the path
-	 * @param beamId ID of the beam at the RRH at the edge of the path
 	 * @param bbuId ID of the bbu at the edge of the path
 	 * @param hops specification of optical resources to be allocated on the lightpath
+	 *
 	 */
 	public LightPath(String rrhId, 
-			String beamId,
 			String bbuId,
-			List<LightpathHop> hops) {
+			List<LightpathHop> hops
+					) {
 		this.rrhId = rrhId;
-		this.beamId = beamId;
+
 		this.bbuId = bbuId;
 		if (hops != null) this.hops = hops;
 	}
@@ -49,12 +48,7 @@ public class LightPath {
 		return rrhId;
 	}
 
-	/**
-	 * @return the beamId
-	 */
-	public String getBeamId() {
-		return beamId;
-	}
+
 
 	/**
 	 * @return the bbuId
@@ -62,7 +56,6 @@ public class LightPath {
 	public String getBbuId() {
 		return bbuId;
 	}
-	
-	
+
 
 }
