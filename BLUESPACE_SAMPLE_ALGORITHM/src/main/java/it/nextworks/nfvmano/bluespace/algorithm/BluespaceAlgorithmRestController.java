@@ -1,5 +1,7 @@
 package it.nextworks.nfvmano.bluespace.algorithm;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +33,13 @@ public class BluespaceAlgorithmRestController {
 	BluespaceAlgorithmService algorithm;
 	
 	public BluespaceAlgorithmRestController() {	}
-	
+
+
+	@ApiResponses({
+			@ApiResponse(code = 200, response = BluespaceAlgorithmAllocationResponse.class, message = "")
+	})
 	@RequestMapping(value = "/computation", method = RequestMethod.POST)
+
 	public ResponseEntity<?> computeResourceAllocation(@RequestBody BluespaceAlgorithmAllocationRequest request) {
 		log.debug("Received request for blueSPACE resource computation");
 		try {
