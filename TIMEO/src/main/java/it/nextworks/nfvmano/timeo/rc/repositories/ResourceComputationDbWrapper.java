@@ -152,6 +152,7 @@ public class ResourceComputationDbWrapper {
 					NetworkPathHop targetHop = new NetworkPathHop(targetNp, hop.getHopNumber(), hop.getNodeId(), hop.getIngressPortId(),
 							hop.getEgressPortId(), hop.getIncomingLinkId(), hop.getOutgoingLinkId(), hop.getHopQueue(), hop.isFirst(), hop.isLast(), 
 							hop.getIngressServiceInterfacePoint(), hop.getEgressServiceInterfacePoint());
+					targetHop.setHopProperties(hop.getHopProperties());
 					networkPathHopRepository.saveAndFlush(targetHop);
 				}
 			}

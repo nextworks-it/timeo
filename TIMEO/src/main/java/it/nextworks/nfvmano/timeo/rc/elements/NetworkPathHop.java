@@ -136,6 +136,10 @@ public class NetworkPathHop {
 
 	}
 
+	public void setHopProperties(Map<String, String> hopProperties) {
+		this.hopProperties = hopProperties;
+	}
+
 	/**
 	 * Constructor
 	 * 
