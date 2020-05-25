@@ -297,6 +297,8 @@ public class TapiSetupPathTask implements Runnable {
 				obfn.setYOffsetAngle(new Integer(hopProps.get("beamOffsetY")));
 
 				obfnPool.add(obfn);
+				obfnConnectivityConstraintSpec.setObfnPool(obfnPool);
+
 				CapacityValue cv = new CapacityValue();
 				cv.setUnit(UnitEnum.GHZ);
 				cv.setValue(50);
@@ -305,6 +307,8 @@ public class TapiSetupPathTask implements Runnable {
 				cc.setRequestedCapacity(c);
 				log.debug("Issuing TAPI request to:" + api.getApiClient().getBasePath());
 				createConnectivityService.setConnectivityConstraint(cc);
+				log.debug("Setting obfnConnectivityConstraint");
+				createConnectivityService.setObfnConnectivityConstraintSpec(obfnConnectivityConstraintSpec);
 				String activeConnectionId = getActiveConnectionId(activePaths, source, destination);
 				if(activeConnectionId==null){
 					String csUuid = UUID.randomUUID().toString();
