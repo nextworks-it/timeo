@@ -23,6 +23,7 @@ public class ObfnResourceAllocation {
         this.beamWidth = beamWidth;
         this.beamAngle = beamAngle;
         this.beamOffsetY = beamOffsetY;
+        this.centralFrenquency =centralFrenquency;
     }
 
 
