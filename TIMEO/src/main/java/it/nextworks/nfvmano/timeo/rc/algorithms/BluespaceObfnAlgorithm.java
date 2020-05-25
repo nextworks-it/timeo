@@ -749,6 +749,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
                 obfnProps.put("beamOffsetY", Integer.toString(ra.getBeamOffsetY()));
                 obfnProps.put("beamWidth", Integer.toString(ra.getBeamWidth()));
                 obfnProps.put("beamAngle", Integer.toString(ra.getBeamAngle()));
+                obfnProps.put("centralFrequency", Integer.toString(ra.getCentralFrenquency()));
                 break;
             }
         }

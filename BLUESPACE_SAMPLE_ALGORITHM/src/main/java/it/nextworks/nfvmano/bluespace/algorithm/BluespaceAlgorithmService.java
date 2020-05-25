@@ -64,10 +64,10 @@ public class BluespaceAlgorithmService implements BluespaceAlgorithmInterface {
 		List<LightPath> lightpaths = new ArrayList<LightPath>();
 
 		String bbuId = findFirstBbuId(request);
-		ObfnResourceAllocation ul1 = new ObfnResourceAllocation("ul-1", 0, 0, 0, 0, 0);
-		ObfnResourceAllocation dl1 = new ObfnResourceAllocation("dl-1", 0, 0, 0, 0, 0 );
-		ObfnResourceAllocation ul2 = new ObfnResourceAllocation("ul-2", 0, 0, 0, 0, 0 );
-		ObfnResourceAllocation dl2 = new ObfnResourceAllocation("dl-2", 0, 0, 0, 0, 0 );
+		ObfnResourceAllocation ul1 = new ObfnResourceAllocation("ul-1", 0, 60, 40, 20, 0, 190100);
+		ObfnResourceAllocation dl1 = new ObfnResourceAllocation("dl-1", 0, 60, 40, 20, 0,197900 );
+		ObfnResourceAllocation ul2 = new ObfnResourceAllocation("ul-2", 0, 20, -20, 40, 0,190100 );
+		ObfnResourceAllocation dl2 = new ObfnResourceAllocation("dl-2", 0, 20, -20, 40, 0 ,0);
 		LightpathHop uLHop = new LightpathHop("test","1d2c5cd7-91eb-488f-a0bc-913908130bd4", "e967dff5-c899-4324-9382-ae518d505448", ul1.getObfnId() );
 		LightpathHop dLHop = new LightpathHop("test","1506716d-dc3e-4645-86e1-4cb8ba6a116b", "21506245-7504-44c8-8e3a-ff2504779bab", dl1.getObfnId() );
 

@@ -311,6 +311,19 @@ public class TapiSetupPathTask implements Runnable {
 				createConnectivityService.setObfnConnectivityConstraintSpec(obfnConnectivityConstraintSpec);
 				String activeConnectionId = getActiveConnectionId(activePaths, source, destination);
 				if(activeConnectionId==null){
+
+					List<WavelengthReference> wavelengthResourcePool = new ArrayList<>();
+					WavelengthReference wavelengthReference = new WavelengthReference();
+					CentralFrequency cf = new CentralFrequency();
+					cf.setCentralFrequency(Long.parseLong(hopProps.get("centralFrequency")));
+					FrequencyConstraint fc = new FrequencyConstraint();
+					fc.setAdjustmentGranularity(FrequencyConstraint.AdjustmentGranularityEnum.G_6_25GHZ);
+					fc.setGridType(FrequencyConstraint.GridTypeEnum.FLEX);
+					cf.setFrequencyConstraint(fc);
+					wavelengthReference.setWavelengthId(0);
+					wavelengthReference.setCentralFrequency(cf);
+					wavelengthResourcePool.add(wavelengthReference);
+					obfnConnectivityConstraintSpec.setWavelengthReferencePool(wavelengthResourcePool);
 					String csUuid = UUID.randomUUID().toString();
 					log.debug("Creating new connection:"+csUuid);
 					createConnectivityService.setUuid(csUuid);
