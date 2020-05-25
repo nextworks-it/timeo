@@ -292,6 +292,7 @@ public class TapiSetupPathTask implements Runnable {
 				List<Obfn> obfnPool = new ArrayList<>();
 				Obfn obfn = new Obfn();
 				obfn.setBeamEnable(true);
+				obfn.setObfnId(new Integer(hopProps.get("beamId")));
 				obfn.setWidth(new Integer(hopProps.get(("beamWidth"))));
 				obfn.setXOffsetAngle(new Integer(hopProps.get("beamOffsetX")));
 				obfn.setYOffsetAngle(new Integer(hopProps.get("beamOffsetY")));
