@@ -280,9 +280,9 @@ public class TapiSetupPathTask implements Runnable {
 				ServiceInterfacePointRef dstSip = new ServiceInterfacePointRef();
 				dstSip.setServiceInterfacePointUuid(destination);
 				dstEndpoint.setServiceInterfacePoint(dstSip);
-
-				createConnectivityService.addEndPointItem(dstEndpoint);
 				createConnectivityService.addEndPointItem(srcEndpoint);
+				createConnectivityService.addEndPointItem(dstEndpoint);
+				
 
 				ConnectivityConstraint cc = new ConnectivityConstraint();
 				Capacity c = new Capacity();
