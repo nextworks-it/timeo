@@ -2,24 +2,24 @@ package it.nextworks.nfvmano.libs.bluespace.algorithm.elements;
 
 public class BluespaceSupportedWavelength {
 
-    private long upperFrequency;
-    private long lowerFrequency;
+    private float upperFrequency;
+    private float lowerFrequency;
     private BluespaceFrequencyConstraint bluespaceFrequencyConstraint;
 
     public BluespaceSupportedWavelength(){
 
     }
-    public BluespaceSupportedWavelength(long upperFrequency, long lowerFrequency, BluespaceFrequencyConstraint bluespaceFrequencyConstraint) {
+    public BluespaceSupportedWavelength(float upperFrequency, float lowerFrequency, BluespaceFrequencyConstraint bluespaceFrequencyConstraint) {
         this.upperFrequency = upperFrequency;
         this.lowerFrequency = lowerFrequency;
         this.bluespaceFrequencyConstraint = bluespaceFrequencyConstraint;
     }
 
-    public long getUpperFrequency() {
+    public float getUpperFrequency() {
         return upperFrequency;
     }
 
-    public long getLowerFrequency() {
+    public float getLowerFrequency() {
         return lowerFrequency;
     }
 

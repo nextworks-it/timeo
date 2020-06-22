@@ -50,13 +50,15 @@ import it.nextworks.nfvmano.timeo.vnfm.vnfdriver.RestVnfDriver;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Ignore
+
 public class BlueSpaceAitAlgorithmTest {
 
 	private AitAlgorithmRestClient client;
 	private List<PnfInstance> pnfInstances;
 	private ThreadPoolExecutor executorService;
 	private RestTemplate restTemplate = new RestTemplate();
+	private BluespaceAlgorithmAllocationRequest request;
+
 	@Autowired
 	private TaskExecutor taskExecutor;
 	
@@ -78,11 +80,14 @@ public class BlueSpaceAitAlgorithmTest {
 			bbuDataStream = PnfInstanceMetadataTest.class.getClassLoader()
 					.getResource("bluespace_bbu.json")
 			        .openStream();
-		
+			InputStream  raRequestStream = BlueSpaceAitAlgorithmTest.class.getClassLoader()
+					.getResource("example-bluespace-ra-request.json")
+					.openStream();
 			ArrayList<PnfInstance> pnfs = new ArrayList<PnfInstance>();
 			pnfs.add(mapper.readValue(rrhDataStream, new TypeReference<PnfInstance>() {}));
 			pnfs.add(mapper.readValue(bbuDataStream, new TypeReference<PnfInstance>() {}));
 			pnfInstances = pnfs;
+			request =mapper.readValue(raRequestStream, new TypeReference<BluespaceAlgorithmAllocationRequest>(){});
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -105,7 +110,7 @@ public class BlueSpaceAitAlgorithmTest {
 	@Test
 	public void testAlgorithm() {
 		System.out.println("*************************************** Test bluespace external algorithm ********************************************");
-		BluespaceAlgorithmAllocationRequest request = prepareRequest();
+
 		
 		try {
 			BluespaceAlgorithmAllocationResponse response = client.computeAllocation(request);
@@ -116,7 +121,7 @@ public class BlueSpaceAitAlgorithmTest {
 		}
 	}
 	
-	private BluespaceAlgorithmAllocationRequest prepareRequest() {
+	private BluespaceAlgorithmAllocationRequest prepareRequestFromScratch() {
 		List<ServiceRequest> serviceRequests = new ArrayList<ServiceRequest>();
 		List<String> serviceAreaId = new ArrayList<>();
 		serviceAreaId.add("1");

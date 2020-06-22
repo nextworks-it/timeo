@@ -5,28 +5,28 @@ import com.google.gson.annotations.SerializedName;
 public class SupportedWavelength {
 
     @SerializedName("upper-frequency")
-    private long upperFrequency;
+    private float upperFrequency;
 
     @SerializedName("lower-frequency")
-    private long lowerFrequency;
+    private float lowerFrequency;
 
 
     @SerializedName("frequency-constraint")
     private FrequencyConstraint frequencyConstraint;
 
-    public long getUpperFrequency() {
+    public float getUpperFrequency() {
         return upperFrequency;
     }
 
-    public void setUpperFrequency(long upperFrequency) {
+    public void setUpperFrequency(float upperFrequency) {
         this.upperFrequency = upperFrequency;
     }
 
-    public long getLowerFrequency() {
+    public float getLowerFrequency() {
         return lowerFrequency;
     }
 
-    public void setLowerFrequency(long lowerFrequency) {
+    public void setLowerFrequency(float lowerFrequency) {
         this.lowerFrequency = lowerFrequency;
     }
 
