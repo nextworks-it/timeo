@@ -205,7 +205,12 @@ public class TapiTopologyUtilities {
         if(optSip.isPresent()){
             ObfnServiceInterfacePointSpec obfnSpec = optSip.get().getObfnServiceInterfacePointSpec();
             SupportedWavelength supWavelength = obfnSpec.getSupportedWavelength();
-            TapiFrequencyConstraint fc = new TapiFrequencyConstraint(supWavelength.getFrequencyConstraint().getAdjustmentGranularity().toString(),
+
+            String adjustmentGranularity = null;
+            if (supWavelength.getFrequencyConstraint().getAdjustmentGranularity()!=null ){
+                adjustmentGranularity = supWavelength.getFrequencyConstraint().getAdjustmentGranularity().toString();
+            }
+            TapiFrequencyConstraint fc = new TapiFrequencyConstraint(adjustmentGranularity,
                     supWavelength.getFrequencyConstraint().getGridType().toString());
             TapiSupportedWavelength supportedWavelength = new TapiSupportedWavelength(supWavelength.getUpperFrequency(),
                     supWavelength.getLowerFrequency(),  fc);
