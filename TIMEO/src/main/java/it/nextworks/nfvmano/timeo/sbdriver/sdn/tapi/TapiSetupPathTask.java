@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -333,14 +334,8 @@ public class TapiSetupPathTask implements Runnable {
 				log.debug("Creating new connection:"+csUuid);
 
 				createConnectivityService.setUuid(csUuid);
-				String json =  "";
-				try{
-					json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(createConnectivityService);
-					log.debug(json);
-				} catch (JsonProcessingException e) {
-					log.debug("Error de-serializing request:", e);
-				}
-
+				String json = new Gson().toJson(createConnectivityService);
+				log.debug(json);
 
 				CreateConnectivityServiceRPCInputSchema responseCreate = api.createCreateConnectivityServiceById(createConnectivityService);
 				String replyUuid = responseCreate.getUuid();
@@ -348,13 +343,8 @@ public class TapiSetupPathTask implements Runnable {
 			}else{
 				log.debug("Updating connection:"+activeConnectionId);
 				createConnectivityService.setUuid(activeConnectionId);
-				String json =  "";
-				try{
-					json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(createConnectivityService);
-					log.debug(json);
-				} catch (JsonProcessingException e) {
-					log.debug("Error de-serializing request:", e);
-				}
+				String json = new Gson().toJson(createConnectivityService);
+				log.debug(json);
 				CreateConnectivityServiceRPCInputSchema responseUpdate = api.updateCreateConnectivityServiceById(createConnectivityService);
 
 				String replyUuid = responseUpdate.getUuid();
