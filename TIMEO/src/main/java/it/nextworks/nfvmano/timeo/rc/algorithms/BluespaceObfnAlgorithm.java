@@ -80,7 +80,9 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
     private TaskExecutor taskExecutor;
     private NetworkTopology networkTopology;
     private Nsd nsd;
-    private Map<Vnfd, Map<String,String>> vnfdMap;
+
+    //vnfdId as key
+    private Map<String, Map<String,String>> vnfdMap;
 
     /**
      *
@@ -137,6 +139,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
             BluespaceAlgorithmAllocationResponse remoteResponse = restClient.computeAllocation(localRequest);
             if ((remoteResponse == null) || (!(remoteResponse.hasSuccessfulResponse()))) throw new ResourceAllocationSolutionNotFound("Null response from the remote algorithm.");
             log.debug("Received response from remote algorithm");
+            vnfdMap = nsd.getVnfdDataFromFlavour(request.getFlavourId(), request.getNsInstantiationLevelId());
             NsResourceSchedulingSolution localResponse = translateBluespaceRcSolution(remoteResponse);
             log.debug("Successfully translated bluespace algorithm response into local response format");
             return localResponse;
@@ -527,7 +530,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
 
 
 
-    private List<VnfResourceAllocation> translateRCVnfAllocation(BluespaceAlgorithmAllocationResponse response) throws MalformattedElementException {
+    private List<VnfResourceAllocation> translateRCVnfAllocation(BluespaceAlgorithmAllocationResponse response) throws MalformattedElementException, NotExistingEntityException {
         log.debug("Translating RC VNF allocation");
         List<VnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
         Map<String, String> vmAllocation = response.getServiceResponses().get(0).getVmAllocation();
@@ -554,9 +557,9 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
             }
         }else{
             log.debug("Empty vm allocation response, using default one");
-            for(Vnfd vnfd : vnfdMap.keySet()){
+            for(String vnfdId : vnfdMap.keySet()){
+                Vnfd vnfd = vnfPackageManagementService.getVnfd(vnfdId).get(0);
                 String vduId = vnfd.getVdu().get(0).getVduId();
-                String vnfdId = vnfd.getVnfdId();
                 String vim = raProperties.get("default_vim");
                 String zoneId = raProperties.get("default_zone");
                 String hostId = raProperties.get("default_compute");
