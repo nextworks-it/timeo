@@ -249,119 +249,119 @@ public class TapiSetupPathTask implements Runnable {
 		ContextSchema response = null;
 		ObjectMapper objectMapper = new ObjectMapper();
 
-		try {
-			response = api.retrieveContext();
 
-			Map<String, List<String>> activePaths = TapiTopologyUtilities.getObfnActivePaths(response);
+		response = api.retrieveContext();
 
-			for(NetworkPathHop nph : networkPath.getHops()){
-				CreateConnectivityServiceRPCInputSchema createConnectivityService = new CreateConnectivityServiceRPCInputSchema();
+		Map<String, List<String>> activePaths = TapiTopologyUtilities.getObfnActivePaths(response);
 
-
-				//Getting ingress and egress service interface points from the first and last hop
-				//For AROF there is a single hop within a single node
-
-				String source = nph.getIngressServiceInterfacePoint();
-				String destination = nph.getEgressServiceInterfacePoint();
-				log.debug("Source SIP: " + source + " - Destination SIP: " + destination);
-				ConnectivityServiceEndPoint srcEndpoint = new ConnectivityServiceEndPoint();
-				srcEndpoint.setLayerProtocolName(LayerProtocolNameEnum.PHOTONIC_MEDIA);
-				srcEndpoint.setProtectionRole(ProtectionRoleEnum.WORK);
-				srcEndpoint.setLayerProtocolQualifier("tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_OBFN");
-				srcEndpoint.setRole(RoleEnum.UNKNOWN);
-				srcEndpoint.setLocalId(source);
-				srcEndpoint.setDirection(DirectionEnum.UNIDIRECTIONAL);
-				ServiceInterfacePointRef srcSip = new ServiceInterfacePointRef();
-				srcSip.setServiceInterfacePointUuid(source);
-				srcEndpoint.setServiceInterfacePoint(srcSip);
-				ConnectivityServiceEndPoint dstEndpoint = new ConnectivityServiceEndPoint();
-				dstEndpoint.setLayerProtocolName(LayerProtocolNameEnum.PHOTONIC_MEDIA);
-				dstEndpoint.setProtectionRole(ProtectionRoleEnum.WORK);
-				dstEndpoint.setLayerProtocolQualifier("tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_OBFN");
-				dstEndpoint.setRole(RoleEnum.UNKNOWN);
-				dstEndpoint.setLocalId(destination);
-				dstEndpoint.setDirection(DirectionEnum.UNIDIRECTIONAL);
-				ServiceInterfacePointRef dstSip = new ServiceInterfacePointRef();
-				dstSip.setServiceInterfacePointUuid(destination);
-				dstEndpoint.setServiceInterfacePoint(dstSip);
-				createConnectivityService.addEndPointItem(srcEndpoint);
-				createConnectivityService.addEndPointItem(dstEndpoint);
+		for(NetworkPathHop nph : networkPath.getHops()){
+			CreateConnectivityServiceRPCInputSchema createConnectivityService = new CreateConnectivityServiceRPCInputSchema();
 
 
-				ConnectivityConstraint cc = new ConnectivityConstraint();
-				Capacity c = new Capacity();
-				ObfnConnectivityConstraintSpec obfnConnectivityConstraintSpec  = new ObfnConnectivityConstraintSpec();
-				Map<String,String> hopProps = nph.getHopProperties();
+			//Getting ingress and egress service interface points from the first and last hop
+			//For AROF there is a single hop within a single node
 
-				List<Obfn> obfnPool = new ArrayList<>();
-				Obfn obfn = new Obfn();
-				obfn.setBeamEnable(true);
-				obfn.setObfnId(new Integer(hopProps.get("beamId")));
-				obfn.setWidth(new Integer(hopProps.get(("beamWidth"))));
-				obfn.setXOffsetAngle(new Integer(hopProps.get("beamOffsetX")));
-				obfn.setYOffsetAngle(new Integer(hopProps.get("beamOffsetY")));
-
-				obfnPool.add(obfn);
-				obfnConnectivityConstraintSpec.setObfnPool(obfnPool);
-
-				CapacityValue cv = new CapacityValue();
-				cv.setUnit(UnitEnum.GHZ);
-				cv.setValue(50);
-				c.setTotalSize(cv);
-				cc.setConnectivityDirection(ConnectivityConstraint.ConnectivityDirectionEnum.UNIDIRECTIONAL);
-				cc.setRequestedCapacity(c);
-				log.debug("Issuing TAPI request to:" + api.getApiClient().getBasePath());
-				createConnectivityService.setConnectivityConstraint(cc);
-				log.debug("Setting obfnConnectivityConstraint");
-				createConnectivityService.setObfnConnectivityConstraintSpec(obfnConnectivityConstraintSpec);
-				String activeConnectionId = getActiveConnectionId(activePaths, source, destination);
-				if(activeConnectionId==null){
-
-					List<WavelengthReference> wavelengthResourcePool = new ArrayList<>();
-					WavelengthReference wavelengthReference = new WavelengthReference();
-					CentralFrequency cf = new CentralFrequency();
-					cf.setCentralFrequency(Long.parseLong(hopProps.get("centralFrequency")));
-					FrequencyConstraint fc = new FrequencyConstraint();
-					fc.setAdjustmentGranularity(FrequencyConstraint.AdjustmentGranularityEnum.G_6_25GHZ);
-					fc.setGridType(FrequencyConstraint.GridTypeEnum.FLEX);
-					cf.setFrequencyConstraint(fc);
-					//wavelengthReference.setWavelengthId(0);
-					wavelengthReference.setCentralFrequency(cf);
-					wavelengthResourcePool.add(wavelengthReference);
-					obfnConnectivityConstraintSpec.setWavelengthReferencePool(wavelengthResourcePool);
-					String csUuid = UUID.randomUUID().toString();
-					log.debug("Creating new connection:"+csUuid);
-
-					createConnectivityService.setUuid(csUuid);
-					String json =  "";
-					try{
-						json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(createConnectivityService);
-						log.debug(json);
-					} catch (JsonProcessingException e) {
-						log.debug("Error de-serializing request:", e);
-					}
+			String source = nph.getIngressServiceInterfacePoint();
+			String destination = nph.getEgressServiceInterfacePoint();
+			log.debug("Source SIP: " + source + " - Destination SIP: " + destination);
+			ConnectivityServiceEndPoint srcEndpoint = new ConnectivityServiceEndPoint();
+			srcEndpoint.setLayerProtocolName(LayerProtocolNameEnum.PHOTONIC_MEDIA);
+			srcEndpoint.setProtectionRole(ProtectionRoleEnum.WORK);
+			srcEndpoint.setLayerProtocolQualifier("tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_OBFN");
+			srcEndpoint.setRole(RoleEnum.UNKNOWN);
+			srcEndpoint.setLocalId(source);
+			srcEndpoint.setDirection(DirectionEnum.UNIDIRECTIONAL);
+			ServiceInterfacePointRef srcSip = new ServiceInterfacePointRef();
+			srcSip.setServiceInterfacePointUuid(source);
+			srcEndpoint.setServiceInterfacePoint(srcSip);
+			ConnectivityServiceEndPoint dstEndpoint = new ConnectivityServiceEndPoint();
+			dstEndpoint.setLayerProtocolName(LayerProtocolNameEnum.PHOTONIC_MEDIA);
+			dstEndpoint.setProtectionRole(ProtectionRoleEnum.WORK);
+			dstEndpoint.setLayerProtocolQualifier("tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_OBFN");
+			dstEndpoint.setRole(RoleEnum.UNKNOWN);
+			dstEndpoint.setLocalId(destination);
+			dstEndpoint.setDirection(DirectionEnum.UNIDIRECTIONAL);
+			ServiceInterfacePointRef dstSip = new ServiceInterfacePointRef();
+			dstSip.setServiceInterfacePointUuid(destination);
+			dstEndpoint.setServiceInterfacePoint(dstSip);
+			createConnectivityService.addEndPointItem(srcEndpoint);
+			createConnectivityService.addEndPointItem(dstEndpoint);
 
 
-					CreateConnectivityServiceRPCInputSchema responseCreate = api.createCreateConnectivityServiceById(createConnectivityService);
-					String replyUuid = responseCreate.getUuid();
-					log.debug("Created connectivity service " + replyUuid);
-				}else{
-					log.debug("Updating connection:"+activeConnectionId);
-					createConnectivityService.setUuid(activeConnectionId);
-					String json =  "";
-					try{
-						json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(createConnectivityService);
-						log.debug(json);
-					} catch (JsonProcessingException e) {
-						log.debug("Error de-serializing request:", e);
-					}
-					CreateConnectivityServiceRPCInputSchema responseUpdate = api.updateCreateConnectivityServiceById(createConnectivityService);
+			ConnectivityConstraint cc = new ConnectivityConstraint();
+			Capacity c = new Capacity();
+			ObfnConnectivityConstraintSpec obfnConnectivityConstraintSpec  = new ObfnConnectivityConstraintSpec();
+			Map<String,String> hopProps = nph.getHopProperties();
 
-					String replyUuid = responseUpdate.getUuid();
-					log.debug("Update connectivity service " + replyUuid);
+			List<Obfn> obfnPool = new ArrayList<>();
+			Obfn obfn = new Obfn();
+			obfn.setBeamEnable(true);
+			obfn.setObfnId(new Integer(hopProps.get("beamId")));
+			obfn.setWidth(new Integer(hopProps.get(("beamWidth"))));
+			obfn.setXOffsetAngle(new Integer(hopProps.get("beamOffsetX")));
+			obfn.setYOffsetAngle(new Integer(hopProps.get("beamOffsetY")));
+
+			obfnPool.add(obfn);
+			obfnConnectivityConstraintSpec.setObfnPool(obfnPool);
+
+			CapacityValue cv = new CapacityValue();
+			cv.setUnit(UnitEnum.GHZ);
+			cv.setValue(50);
+			c.setTotalSize(cv);
+			cc.setConnectivityDirection(ConnectivityConstraint.ConnectivityDirectionEnum.UNIDIRECTIONAL);
+			cc.setRequestedCapacity(c);
+			log.debug("Issuing TAPI request to:" + api.getApiClient().getBasePath());
+			createConnectivityService.setConnectivityConstraint(cc);
+			log.debug("Setting obfnConnectivityConstraint");
+			createConnectivityService.setObfnConnectivityConstraintSpec(obfnConnectivityConstraintSpec);
+			String activeConnectionId = getActiveConnectionId(activePaths, source, destination);
+			if(activeConnectionId==null){
+
+				List<WavelengthReference> wavelengthResourcePool = new ArrayList<>();
+				WavelengthReference wavelengthReference = new WavelengthReference();
+				CentralFrequency cf = new CentralFrequency();
+				cf.setCentralFrequency(Long.parseLong(hopProps.get("centralFrequency")));
+				FrequencyConstraint fc = new FrequencyConstraint();
+				fc.setAdjustmentGranularity(FrequencyConstraint.AdjustmentGranularityEnum.G_6_25GHZ);
+				fc.setGridType(FrequencyConstraint.GridTypeEnum.FLEX);
+				cf.setFrequencyConstraint(fc);
+				//wavelengthReference.setWavelengthId(0);
+				wavelengthReference.setCentralFrequency(cf);
+				wavelengthResourcePool.add(wavelengthReference);
+				obfnConnectivityConstraintSpec.setWavelengthReferencePool(wavelengthResourcePool);
+				String csUuid = UUID.randomUUID().toString();
+				log.debug("Creating new connection:"+csUuid);
+
+				createConnectivityService.setUuid(csUuid);
+				String json =  "";
+				try{
+					json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(createConnectivityService);
+					log.debug(json);
+				} catch (JsonProcessingException e) {
+					log.debug("Error de-serializing request:", e);
 				}
 
+
+				CreateConnectivityServiceRPCInputSchema responseCreate = api.createCreateConnectivityServiceById(createConnectivityService);
+				String replyUuid = responseCreate.getUuid();
+				log.debug("Created connectivity service " + replyUuid);
+			}else{
+				log.debug("Updating connection:"+activeConnectionId);
+				createConnectivityService.setUuid(activeConnectionId);
+				String json =  "";
+				try{
+					json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(createConnectivityService);
+					log.debug(json);
+				} catch (JsonProcessingException e) {
+					log.debug("Error de-serializing request:", e);
+				}
+				CreateConnectivityServiceRPCInputSchema responseUpdate = api.updateCreateConnectivityServiceById(createConnectivityService);
+
+				String replyUuid = responseUpdate.getUuid();
+				log.debug("Update connectivity service " + replyUuid);
 			}
+
+		}
 
 
 
