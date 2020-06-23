@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -241,10 +243,12 @@ public class TapiSetupPathTask implements Runnable {
 	}
 
 
-	private  void buildObfnPath(SbNetworkPath networkPath){
+	private  void buildObfnPath(SbNetworkPath networkPath) throws ApiException {
 		//String csUuid = np.getNetworkPathId();
 		log.debug("Creating /Updating network path");
 		ContextSchema response = null;
+		ObjectMapper objectMapper = new ObjectMapper();
+
 		try {
 			response = api.retrieveContext();
 
@@ -321,28 +325,45 @@ public class TapiSetupPathTask implements Runnable {
 					fc.setAdjustmentGranularity(FrequencyConstraint.AdjustmentGranularityEnum.G_6_25GHZ);
 					fc.setGridType(FrequencyConstraint.GridTypeEnum.FLEX);
 					cf.setFrequencyConstraint(fc);
-					wavelengthReference.setWavelengthId(0);
+					//wavelengthReference.setWavelengthId(0);
 					wavelengthReference.setCentralFrequency(cf);
 					wavelengthResourcePool.add(wavelengthReference);
 					obfnConnectivityConstraintSpec.setWavelengthReferencePool(wavelengthResourcePool);
 					String csUuid = UUID.randomUUID().toString();
 					log.debug("Creating new connection:"+csUuid);
+
 					createConnectivityService.setUuid(csUuid);
+					String json =  "";
+					try{
+						json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(createConnectivityService);
+						log.debug(json);
+					} catch (JsonProcessingException e) {
+						log.debug("Error de-serializing request:", e);
+					}
+
+
 					CreateConnectivityServiceRPCInputSchema responseCreate = api.createCreateConnectivityServiceById(createConnectivityService);
 					String replyUuid = responseCreate.getUuid();
 					log.debug("Created connectivity service " + replyUuid);
 				}else{
 					log.debug("Updating connection:"+activeConnectionId);
 					createConnectivityService.setUuid(activeConnectionId);
+					String json =  "";
+					try{
+						json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(createConnectivityService);
+						log.debug(json);
+					} catch (JsonProcessingException e) {
+						log.debug("Error de-serializing request:", e);
+					}
 					CreateConnectivityServiceRPCInputSchema responseUpdate = api.updateCreateConnectivityServiceById(createConnectivityService);
+
 					String replyUuid = responseUpdate.getUuid();
 					log.debug("Update connectivity service " + replyUuid);
 				}
 
 			}
-		} catch (ApiException e) {
-			e.printStackTrace();
-		}
+
+
 
 	}
 
