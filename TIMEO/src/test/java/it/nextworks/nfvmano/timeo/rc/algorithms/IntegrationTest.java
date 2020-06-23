@@ -31,6 +31,7 @@ import it.nextworks.nfvmano.timeo.rc.elements.TopologyNode;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.Vim;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.wrapper.VimWrapperPlugin;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -51,6 +52,7 @@ import static org.mockito.Mockito.when;
  *
  * @author Marco Capitani (m.capitani AT nextworks.it)
  */
+@Ignore
 public class IntegrationTest {
 
     private Vnfd eNB;

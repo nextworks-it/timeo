@@ -531,7 +531,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
         log.debug("Translating RC VNF allocation");
         List<VnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
         Map<String, String> vmAllocation = response.getServiceResponses().get(0).getVmAllocation();
-        if (vmAllocation != null) {
+        if (vmAllocation != null && !vmAllocation.isEmpty()) {
             for (Map.Entry<String, String> e : vmAllocation.entrySet()) {
                 String fullVmId = e.getKey();
                 String hostId = e.getValue();
