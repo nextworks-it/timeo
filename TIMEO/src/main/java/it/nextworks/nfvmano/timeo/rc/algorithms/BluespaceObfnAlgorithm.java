@@ -140,7 +140,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
             if ((remoteResponse == null) || (!(remoteResponse.hasSuccessfulResponse()))) throw new ResourceAllocationSolutionNotFound("Null response from the remote algorithm.");
             log.debug("Received response from remote algorithm");
             vnfdMap = nsd.getVnfdDataFromFlavour(request.getFlavourId(), request.getNsInstantiationLevelId());
-            NsResourceSchedulingSolution localResponse = translateBluespaceRcSolution(remoteResponse);
+            NsResourceSchedulingSolution localResponse = translateBluespaceRcSolution(remoteResponse, networkTopology);
             log.debug("Successfully translated bluespace algorithm response into local response format");
             return localResponse;
         } catch (FailedOperationException e) {
@@ -497,7 +497,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
     }
 
 
-    private NsResourceSchedulingSolution translateBluespaceRcSolution(BluespaceAlgorithmAllocationResponse response)
+    private NsResourceSchedulingSolution translateBluespaceRcSolution(BluespaceAlgorithmAllocationResponse response, NetworkTopology networkTopology)
             throws MalformattedElementException, NotExistingEntityException, Exception {
         log.debug("Processing response from blueSPACE algorithm and translating it into TIMEO resource allocation format.");
         ServiceResponse sr = response.getServiceResponses().get(0);
@@ -511,7 +511,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
 
         List<VnfResourceAllocation> vnfResourceAllocations = translateRCVnfAllocation(response);
         List<PnfAllocation> pnfAllocations = translateRCPnfAllocation(response);
-        List<InterDcNetworkPath> interDcNetworkPaths = translateRCInterDcNetworkPaths(response);
+        List<InterDcNetworkPath> interDcNetworkPaths = translateRCInterDcNetworkPaths(response, networkTopology);
 
 
         NsResourceSchedulingSolution solution = new NsResourceSchedulingSolution(
@@ -695,7 +695,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
     }
 
 
-    private List<InterDcNetworkPath> translateRCInterDcNetworkPaths(BluespaceAlgorithmAllocationResponse response){
+    private List<InterDcNetworkPath> translateRCInterDcNetworkPaths(BluespaceAlgorithmAllocationResponse response, NetworkTopology networkTopology){
 
         log.debug("Translating InterDC network paths");
         List<InterDcNetworkPath> interDcNetworkPaths = new ArrayList<>();
@@ -706,7 +706,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
                 String nodeId = lightpathHop.getNodeId();
                 String ingressSip = lightpathHop.getInputPortId();
                 String egressSip = lightpathHop.getOutputPortId();
-                Map<String, String> obfnPathProps = getObfnLightPathProps(response, lightpathHop.getObfnId());
+                Map<String, String> obfnPathProps = getObfnLightPathProps(response, lightpathHop, networkTopology);
                 log.debug("obfn path parameters:"+obfnPathProps.toString());
                 NetworkPathHop nph = new NetworkPathHop(
                         0,
@@ -733,7 +733,8 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
 
     }
 
-    private Map<String, String> getObfnLightPathProps(BluespaceAlgorithmAllocationResponse response, String obfnId){
+    private Map<String, String> getObfnLightPathProps(BluespaceAlgorithmAllocationResponse response, LightpathHop lightpathHop, NetworkTopology networkTopology){
+        String obfnId = lightpathHop.getObfnId();
         log.debug("Translating obfn path parameters:"+obfnId);
         /*
          private String obfnId;
@@ -748,11 +749,47 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
         for(ObfnResourceAllocation ra : obfnResourceAllocations){
             if(ra.getObfnId().equals(obfnId)){
                 obfnProps.put("beamId", Integer.toString(ra.getBeamId()));
-                obfnProps.put("beamOffsetX", Integer.toString(ra.getBeamOffsetX()));
-                obfnProps.put("beamOffsetY", Integer.toString(ra.getBeamOffsetY()));
-                obfnProps.put("beamWidth", Integer.toString(ra.getBeamWidth()));
-                obfnProps.put("beamAngle", Integer.toString(ra.getBeamAngle()));
-                obfnProps.put("centralFrequency", Integer.toString(ra.getCentralFrenquency()));
+
+                TapiTopologyObfnCp topologyObfnCp = (TapiTopologyObfnCp) networkTopology.getCpById(lightpathHop.getInputPortId());
+                String beamOffsetX;
+                if(ra.getBeamOffsetX()==0){
+                    log.debug("Using default beamOffsetX");
+                    beamOffsetX = Integer.toString(topologyObfnCp.getTapiObfnCpSpec().getSupportedLowerAngle());
+
+                }else{
+                    beamOffsetX = Integer.toString(ra.getBeamOffsetX());
+                }
+
+                String beamOffsetY;
+                if(ra.getBeamOffsetY()==0){
+                    log.debug("Using default beamOffsetY");
+                    beamOffsetY = Integer.toString(topologyObfnCp.getTapiObfnCpSpec().getSupportedLowerAngle());
+
+                }else{
+                    beamOffsetY = Integer.toString(ra.getBeamOffsetY());
+                }
+
+                String beamWidth;
+                if(ra.getBeamWidth()==0){
+                    log.debug("Using default beamWidth");
+                    beamWidth= Integer.toString(topologyObfnCp.getTapiObfnCpSpec().getSupportedMinWidth());
+                }else{
+                    beamWidth= Integer.toString(ra.getBeamWidth());
+                }
+
+                String centralFrequency;
+                if(ra.getCentralFrenquency()==0){
+                    log.debug("Using default centralFrequency");
+                    centralFrequency= Float.toString(topologyObfnCp.getTapiObfnCpSpec().getTapiSupportedWavelength().getLowerFrequency());
+                }else{
+                    centralFrequency= Float.toString(ra.getCentralFrenquency());
+                }
+
+                obfnProps.put("beamOffsetX", beamOffsetX);
+                obfnProps.put("beamOffsetY", beamOffsetY);
+                obfnProps.put("beamWidth",beamWidth);
+                //obfnProps.put("beamAngle", Integer.toString(ra.getBeamAngle()));
+                obfnProps.put("centralFrequency", centralFrequency);
                 break;
             }
         }
