@@ -301,7 +301,7 @@ public class TapiSetupPathTask implements Runnable {
 			obfn.setWidth(new Integer(hopProps.get(("beamWidth"))));
 			obfn.setXOffsetAngle(new Integer(hopProps.get("beamOffsetX")));
 			obfn.setYOffsetAngle(new Integer(hopProps.get("beamOffsetY")));
-
+			log.debug("Retrieved obfn specs:"+hopProps);
 			obfnPool.add(obfn);
 			obfnConnectivityConstraintSpec.setObfnPool(obfnPool);
 
@@ -321,6 +321,7 @@ public class TapiSetupPathTask implements Runnable {
 				log.debug("Creating new connection:"+csUuid);
 				List<WavelengthReference> wavelengthResourcePool = new ArrayList<>();
 				WavelengthReference wavelengthReference = new WavelengthReference();
+
 				CentralFrequency cf = new CentralFrequency();
 				cf.setCentralFrequency(Long.parseLong(hopProps.get("centralFrequency")));
 				FrequencyConstraint fc = new FrequencyConstraint();
