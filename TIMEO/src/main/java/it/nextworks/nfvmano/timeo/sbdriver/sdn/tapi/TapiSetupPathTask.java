@@ -359,12 +359,13 @@ public class TapiSetupPathTask implements Runnable {
 
 
 	private String getActiveConnectionId(Map<String, List<String>> activeConnections, String ingressSip, String egressSip){
-
+		log.debug("Retrieving current connection between: "+ingressSip+" "+egressSip);
 		for(String connectionUuid: activeConnections.keySet()){
 			List<String> sips = activeConnections.get(connectionUuid);
-			if(sips.get(0).equals(ingressSip)&&sips.get(1).equals(egressSip))
+			if(sips.get(0).equals(ingressSip)&&sips.get(1).equals(egressSip)) {
+				log.debug("FOUND active connection:"+ connectionUuid);
 				return connectionUuid;
-
+			}
 		}
 		return null;
 	}
