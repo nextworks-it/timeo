@@ -317,7 +317,8 @@ public class TapiSetupPathTask implements Runnable {
 			createConnectivityService.setObfnConnectivityConstraintSpec(obfnConnectivityConstraintSpec);
 			String activeConnectionId = getActiveConnectionId(activePaths, source, destination);
 			if(activeConnectionId==null){
-
+				String csUuid = UUID.randomUUID().toString();
+				log.debug("Creating new connection:"+csUuid);
 				List<WavelengthReference> wavelengthResourcePool = new ArrayList<>();
 				WavelengthReference wavelengthReference = new WavelengthReference();
 				CentralFrequency cf = new CentralFrequency();
@@ -330,9 +331,6 @@ public class TapiSetupPathTask implements Runnable {
 				wavelengthReference.setCentralFrequency(cf);
 				wavelengthResourcePool.add(wavelengthReference);
 				obfnConnectivityConstraintSpec.setWavelengthReferencePool(wavelengthResourcePool);
-				String csUuid = UUID.randomUUID().toString();
-				log.debug("Creating new connection:"+csUuid);
-
 				createConnectivityService.setUuid(csUuid);
 				String json = new Gson().toJson(createConnectivityService);
 				log.debug(json);
@@ -367,6 +365,7 @@ public class TapiSetupPathTask implements Runnable {
 				return connectionUuid;
 			}
 		}
+		log.debug("NO active connection FOUND");
 		return null;
 	}
 	//	/**
