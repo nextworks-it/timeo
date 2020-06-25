@@ -5,16 +5,16 @@ import com.google.gson.annotations.SerializedName;
 public class CentralFrequency {
 
     @SerializedName("central-frequency")
-    private long centralFrequency;
+    private float centralFrequency;
 
     @SerializedName("frequency-constraint")
     private FrequencyConstraint frequencyConstraint;
 
-    public long getCentralFrequency() {
+    public float getCentralFrequency() {
         return centralFrequency;
     }
 
-    public void setCentralFrequency(long centralFrequency) {
+    public void setCentralFrequency(float centralFrequency) {
         this.centralFrequency = centralFrequency;
     }
 

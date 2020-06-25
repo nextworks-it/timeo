@@ -98,7 +98,7 @@ public class TapiSetupPathTask implements Runnable {
 						break;
 					}
 				}
-			} catch (ApiException e) {
+			} catch (Exception e) {
 				log.error("Got API exception while creating connectivity service");
 				log.error("ApiException Message:"+e.getMessage());
 				consumer.notifySdnControllerOperationResult(operationId, ResponseCode.FAILED_GENERIC, "Got API exception while creating connection " + np.getNetworkPathId() + ": " + e.getMessage());
@@ -323,7 +323,7 @@ public class TapiSetupPathTask implements Runnable {
 				WavelengthReference wavelengthReference = new WavelengthReference();
 
 				CentralFrequency cf = new CentralFrequency();
-				cf.setCentralFrequency(Long.parseLong(hopProps.get("centralFrequency")));
+				cf.setCentralFrequency(Float.parseFloat(hopProps.get("centralFrequency")));
 				FrequencyConstraint fc = new FrequencyConstraint();
 				fc.setAdjustmentGranularity(FrequencyConstraint.AdjustmentGranularityEnum.G_6_25GHZ);
 				fc.setGridType(FrequencyConstraint.GridTypeEnum.FLEX);
