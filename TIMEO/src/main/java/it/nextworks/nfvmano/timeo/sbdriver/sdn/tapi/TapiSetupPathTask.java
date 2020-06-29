@@ -306,7 +306,7 @@ public class TapiSetupPathTask implements Runnable {
 			obfnConnectivityConstraintSpec.setObfnPool(obfnPool);
 
 			CapacityValue cv = new CapacityValue();
-			cv.setUnit(UnitEnum.GHZ);
+			cv.setUnit(UnitEnum.GBPS);
 			cv.setValue(50);
 			c.setTotalSize(cv);
 			cc.setConnectivityDirection(ConnectivityConstraint.ConnectivityDirectionEnum.UNIDIRECTIONAL);
