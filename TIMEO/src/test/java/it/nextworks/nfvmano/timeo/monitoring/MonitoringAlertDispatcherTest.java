@@ -4,6 +4,7 @@ import it.nextworks.nfvmano.libs.common.enums.ThresholdCrossingDirection;
 import it.nextworks.nfvmano.libs.monit.interfaces.PerformanceManagementConsumerInterface;
 import it.nextworks.nfvmano.libs.monit.interfaces.messages.ThresholdCrossedNotification;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.mockito.Matchers.any;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.verify;
  *
  * @author Marco Capitani <m.capitani AT nextworks.it>
  */
+@Ignore
 public class MonitoringAlertDispatcherTest {
 
     private MonitoringAlertDispatcher dispatcher;

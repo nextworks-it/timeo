@@ -25,7 +25,7 @@ public class TestTapiTopologyTranslator {
 
         Gson gson = gsonBuilder.create();
         //Gson gson =  new Gson();
-        InputStream in = TestTapiTopologyTranslator.class.getResourceAsStream("/retrieved-obfn-context-v1-1.json");
+        InputStream in = TestTapiTopologyTranslator.class.getResourceAsStream("/retrieved-obfn-context-v1-2.json");
         Reader reader  = null;
         try {
             reader = new InputStreamReader(in, "UTF-8");

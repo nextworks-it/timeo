@@ -268,7 +268,7 @@ public class TapiSetupPathTask implements Runnable {
 			ConnectivityServiceEndPoint srcEndpoint = new ConnectivityServiceEndPoint();
 			srcEndpoint.setLayerProtocolName(LayerProtocolNameEnum.PHOTONIC_MEDIA);
 			srcEndpoint.setProtectionRole(ProtectionRoleEnum.WORK);
-			srcEndpoint.setLayerProtocolQualifier("tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_OBFN");
+			srcEndpoint.setLayerProtocolQualifier("tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN");
 			srcEndpoint.setRole(RoleEnum.UNKNOWN);
 			srcEndpoint.setLocalId(source);
 			srcEndpoint.setDirection(DirectionEnum.UNIDIRECTIONAL);
@@ -278,7 +278,7 @@ public class TapiSetupPathTask implements Runnable {
 			ConnectivityServiceEndPoint dstEndpoint = new ConnectivityServiceEndPoint();
 			dstEndpoint.setLayerProtocolName(LayerProtocolNameEnum.PHOTONIC_MEDIA);
 			dstEndpoint.setProtectionRole(ProtectionRoleEnum.WORK);
-			dstEndpoint.setLayerProtocolQualifier("tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_OBFN");
+			dstEndpoint.setLayerProtocolQualifier("tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN");
 			dstEndpoint.setRole(RoleEnum.UNKNOWN);
 			dstEndpoint.setLocalId(destination);
 			dstEndpoint.setDirection(DirectionEnum.UNIDIRECTIONAL);
