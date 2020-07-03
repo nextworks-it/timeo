@@ -12,16 +12,15 @@ public class ObfnResourceAllocation {
     public ObfnResourceAllocation() {
     }
 
-    private int beamAngle;
 
 
 
-    public ObfnResourceAllocation(String obfnId, int beamId, int beamOffsetX, int beamOffsetY, int beamWidth, int beamAngle, float centralFrenquency) {
+
+    public ObfnResourceAllocation(String obfnId, int beamId, int beamOffsetX, int beamOffsetY, int beamWidth,  float centralFrenquency) {
         this.obfnId = obfnId;
         this.beamId = beamId;
         this.beamOffsetX = beamOffsetX;
         this.beamWidth = beamWidth;
-        this.beamAngle = beamAngle;
         this.beamOffsetY = beamOffsetY;
         this.centralFrenquency =centralFrenquency;
     }
@@ -51,7 +50,5 @@ public class ObfnResourceAllocation {
         return beamOffsetY;
     }
 
-    public int getBeamAngle() {
-        return beamAngle;
-    }
+
 }
