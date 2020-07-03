@@ -147,7 +147,13 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
                 log.debug("Using default response");
                 ObjectMapper mapper = new ObjectMapper();
                 InputStream responseStream = BluespaceObfnAlgorithm.class.getResourceAsStream("/default-ra-response.json");
-                remoteResponse = mapper.readValue(responseStream, new TypeReference<BluespaceAlgorithmAllocationResponse>() {});
+                BluespaceAlgorithmAllocationResponse defaultResponse = mapper.readValue(responseStream, new TypeReference<BluespaceAlgorithmAllocationResponse>() {});
+                ServiceResponse defaultSr = defaultResponse.getServiceResponses().get(0);
+                ServiceResponse sr = new ServiceResponse(request.getNsInstanceId(), defaultSr.getLightpaths(), defaultSr.getVmAllocation(), defaultSr.getMecToBbuMapping()
+                        , defaultSr.getObfnResourceAllocation(), defaultSr.getRrhResourceAllocation(), defaultSr.getBbuResourceAllocation() );
+                List<ServiceResponse> listSr = new ArrayList<>();
+                listSr.add(sr);
+                remoteResponse = new BluespaceAlgorithmAllocationResponse(listSr);
 
             }
 
