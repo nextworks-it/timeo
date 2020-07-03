@@ -1,6 +1,8 @@
 package it.nextworks.nfvmano.timeo.rc.algorithms;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.elements.*;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.BluespaceNodeType;
 import it.nextworks.nfvmano.libs.bluespace.algorithm.enums.BluespaceSwitchingType;
@@ -52,6 +54,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -136,7 +139,18 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
                     vnfds,
                     pnfs,
                     computeNodes, networkTopology);
-            BluespaceAlgorithmAllocationResponse remoteResponse = restClient.computeAllocation(localRequest);
+            BluespaceAlgorithmAllocationResponse remoteResponse;
+            try{
+                    remoteResponse = restClient.computeAllocation(localRequest);
+            }catch(FailedOperationException e){
+                log.error("Failed resource computation for NS instance " + request.getNsInstanceId() + ": " + e.getMessage(), e);
+                log.debug("Using default response");
+                ObjectMapper mapper = new ObjectMapper();
+                InputStream responseStream = BluespaceObfnAlgorithm.class.getResourceAsStream("/default-ra-response.json");
+                remoteResponse = mapper.readValue(responseStream, new TypeReference<BluespaceAlgorithmAllocationResponse>() {});
+
+            }
+
             if ((remoteResponse == null) || (!(remoteResponse.hasSuccessfulResponse()))) throw new ResourceAllocationSolutionNotFound("Null response from the remote algorithm.");
             log.debug("Received response from remote algorithm");
             vnfdMap = nsd.getVnfdDataFromFlavour(request.getFlavourId(), request.getNsInstantiationLevelId());
@@ -144,7 +158,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
             log.debug("Successfully translated bluespace algorithm response into local response format");
             return localResponse;
         } catch (FailedOperationException e) {
-            log.error("Failed resource computation for NS instance " + request.getNsInstanceId() + ": " + e.getMessage());
+            log.error("Failed resource computation for NS instance " + request.getNsInstanceId() + ": " + e.getMessage(), e);
             throw new ResourceAllocationSolutionNotFound("Failed resource computation for NS instance " + request.getNsInstanceId() + ": " + e.getMessage());
         } catch (Exception e) {
             log.error("Generic error: " + e.getMessage());

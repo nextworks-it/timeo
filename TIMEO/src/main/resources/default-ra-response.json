@@ -1,0 +1,65 @@
+{
+  "serviceResponses": [
+    {
+      "serviceId": "$NSI_ID",
+      "lightpaths": [
+        {
+          "rrhId": "RRH_001",
+          "bbuId": "BBU_001",
+          "hops": [
+            {
+              "nodeId": "test",
+              "inputPortId": "1d2c5cd7-91eb-488f-a0bc-913908130bd4",
+              "outputPortId": "e967dff5-c899-4324-9382-ae518d505448",
+              "obfnId": "ul-1"
+            },
+            {
+              "nodeId": "test",
+              "inputPortId": "1506716d-dc3e-4645-86e1-4cb8ba6a116b",
+              "outputPortId": "21506245-7504-44c8-8e3a-ff2504779bab",
+              "obfnId": "dl-1"
+            }
+          ]
+        }
+      ],
+      "vmAllocation": {},
+      "mecToBbuMapping": {},
+      "obfnResourceAllocation": [
+        {
+          "obfnId": "ul-1",
+          "beamId": 0,
+          "beamOffsetX": 0,
+          "beamOffsetY": 0,
+          "beamWidth": 0
+
+        },
+        {
+          "obfnId": "dl-1",
+          "beamId": 0,
+          "beamOffsetX": 0,
+          "beamOffsetY": 0,
+          "beamWidth": 0
+
+        }
+      ],
+      "bbuResourceAllocation": [
+        {
+          "bbuId": "BBU_001",
+          "operationMode": 4,
+          "subcarriersNumber": 3168,
+          "pilotSpacing": 0,
+          "modulationScheme": 0
+        }
+      ],
+      "rrhResourceAllocation": [
+        {
+          "rrhId": "RRH_001",
+          "powerUp": true,
+          "sleepMode": true,
+          "txGain": 100,
+          "rxGain": 100
+        }
+      ]
+    }
+  ]
+}
