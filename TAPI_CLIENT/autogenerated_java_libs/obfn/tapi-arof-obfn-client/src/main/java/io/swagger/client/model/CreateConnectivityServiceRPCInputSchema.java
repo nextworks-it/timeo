@@ -60,7 +60,12 @@ public class CreateConnectivityServiceRPCInputSchema   {
 	private ConnectivityConstraint connectivityConstraint = null;
 
 
-	@SerializedName("obfn-connectivity-constraint-spec")
+	//ADDED
+    @SerializedName("performance")
+    private ObfnPerformance performance = null;
+
+
+    @SerializedName("obfn-connectivity-constraint-spec")
 	private ObfnConnectivityConstraintSpec obfnConnectivityConstraintSpec = null;
 
 	public ObfnConnectivityConstraintSpec getObfnConnectivityConstraintSpec() {
@@ -80,7 +85,15 @@ public class CreateConnectivityServiceRPCInputSchema   {
 	@SerializedName("routing-constraint")
 	private RoutingConstraint routingConstraint = null;
 
-	public CreateConnectivityServiceRPCInputSchema resilienceConstraint(ResilienceConstraint resilienceConstraint) {
+    public ObfnPerformance getPerformance() {
+        return performance;
+    }
+
+    public void setPerformance(ObfnPerformance performance) {
+        this.performance = performance;
+    }
+
+    public CreateConnectivityServiceRPCInputSchema resilienceConstraint(ResilienceConstraint resilienceConstraint) {
 		this.resilienceConstraint = resilienceConstraint;
 		return this;
 	}

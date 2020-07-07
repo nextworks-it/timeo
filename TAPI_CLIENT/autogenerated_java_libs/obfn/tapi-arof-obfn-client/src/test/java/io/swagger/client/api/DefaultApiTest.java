@@ -662,6 +662,39 @@ public class DefaultApiTest {
 			System.out.println("Null objs");
 		}
 	}
+
+
+	@Test
+    public void parseUpdateRequestTest(){
+        try {
+
+
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.registerTypeAdapterFactory(new ValidatorAdapterFactory());
+
+            Gson gson = gsonBuilder.create();
+            //Gson gson =  new Gson();
+            InputStream in = DefaultApiTest.class.getResourceAsStream("/update-response.json");
+
+			/*String readLine;
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+			while (((readLine = br.readLine()) != null)) {
+				System.out.println(readLine);
+
+
+			}*/
+
+            Reader reader  = new InputStreamReader(in, "UTF-8");
+            CreateConnectivityServiceRPCInputSchema response= gson.fromJson(reader, CreateConnectivityServiceRPCInputSchema.class);
+            System.out.println(response.getUuid());
+
+
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }
 
 
