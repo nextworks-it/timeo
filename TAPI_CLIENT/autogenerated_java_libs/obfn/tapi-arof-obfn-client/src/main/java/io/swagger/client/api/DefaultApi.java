@@ -318,7 +318,7 @@ public class DefaultApi {
         // create path and map variables
         //TODO: modified this to match CTTCs implementation (as requested by them in skype)
         String uuid = createConnectivityService.getUuid();
-        String localVarPath = "/config/context/connectivity-service/"+uuid+"/";
+        String localVarPath = "/config/context/connectivity-service/"+uuid;
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
