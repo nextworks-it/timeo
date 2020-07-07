@@ -275,7 +275,10 @@ public class TapiTopologyUtilities {
         log.debug("Determining used beams for:"+ingressSip);
         List<Integer> usedBeams = new ArrayList<>();
         for(ConnectivityService cs : contextSchema.getConnectivityContext().getConnectivityService()){
-            if(cs.getEndPoint().get(0).getServiceInterfacePoint().equals(ingressSip) || cs.getEndPoint().get(1).getServiceInterfacePoint().equals(ingressSip) ){
+            String sip1 = cs.getEndPoint().get(0).getServiceInterfacePoint().getServiceInterfacePointUuid();
+            String sip2 = cs.getEndPoint().get(1).getServiceInterfacePoint().getServiceInterfacePointUuid();
+            log.debug("CS sips: "+sip1+" "+sip2);
+            if(sip1.equals(ingressSip) || sip2.equals(ingressSip) ){
                 for(Obfn obfnSpec : cs.getObfnConnectivityConstraintSpec().getObfnPool()){
                    usedBeams.add(new Integer(obfnSpec.getObfnId()));
                 }
