@@ -190,6 +190,14 @@ public class PnfInstance implements DescriptorInformationElement {
 		return null;
 	}
 
+	@JsonIgnore
+	public int getManagementPort() {
+		for (PhysicalEquipmentPort p : ports) {
+			if (p.isManagement()) return Integer.parseInt(p.getAddresses().get(AddressType.PORT));
+		}
+		return 8888;
+	}
+
 
 	@Override
 	public void isValid() throws MalformattedElementException {

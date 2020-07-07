@@ -51,6 +51,12 @@ public class VnfRestClient {
 		this.indicatorApiUrl = "http://" + vnfIpAddress + ":8888/vnfind/v1";
 	}
 
+	public VnfRestClient(RestTemplate restTemplate, String vnfIpAddress, int port) {
+		this.restTemplate = restTemplate;
+		this.configurationApiUrl = "http://" + vnfIpAddress + ":"+port+"/vnfconfig/v1/configuration";
+		this.indicatorApiUrl = "http://" + vnfIpAddress + ":"+port+"/vnfind/v1";
+	}
+
 	public SetConfigurationResponse setConfiguration(SetConfigurationRequest request)
 			throws FailedOperationException {
 		log.debug("Sending VNF configuration request to VNF.");

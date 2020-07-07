@@ -157,7 +157,7 @@ public class PnfManagementService {
 			if (pnfInstanceToRestClient.containsKey(pnfInstanceId)) {
 				restVnfDriver = pnfInstanceToRestClient.get(pnfInstanceId);
 			} else {
-				restVnfDriver = new RestVnfDriver(pnfInstanceId, pnfInstance.getManagementIpAddress(), new RestTemplate(), taskExecutor);
+				restVnfDriver = new RestVnfDriver(pnfInstanceId, pnfInstance.getManagementIpAddress(), pnfInstance.getManagementPort(), new RestTemplate(), taskExecutor);
 				pnfInstanceToRestClient.put(pnfInstanceId, restVnfDriver);
 			}
 			List<IndicatorInformation> result;

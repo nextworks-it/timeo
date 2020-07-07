@@ -73,6 +73,18 @@ public class RestVnfDriver extends VnfDriver implements Consumer<VnfGetIndicator
 		restClient = new VnfRestClient(restTemplate, managementIpAddress);
 	}
 
+	public RestVnfDriver(
+			String vnfInstanceId,
+			String managementIpAddress,
+			int port,
+			RestTemplate restTemplate,
+			TaskExecutor taskExecutor
+	) {
+		super(VnfDriverType.REST, vnfInstanceId);
+		this.taskExecutor = taskExecutor;
+		restClient = new VnfRestClient(restTemplate, managementIpAddress, port);
+	}
+
 	@Override
 	public void setConfiguration(SetConfigurationRequest request,
 			VnfConfigurationConsumerInterface consumer) {

@@ -87,7 +87,8 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 			NsDbWrapper nsDbWrapper,
 			RestTemplate restTemplate,
 			TaskExecutor taskExecutor,
-			String managementIp) {
+			String managementIp,
+							   int managementPort) {
 		this.pnfId = pnfId;
 		this.internalStatus = VnfInternalStatus.ALLOCATED;
 		this.pnfd = pnfd;
@@ -98,9 +99,10 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 		//this.restTemplate = restTemplate;
 		//this.taskExecutor = taskExecutor;
 		//this.managementIp = managementIp;
-		this.pnfDriver = new RestVnfDriver(pnfId, managementIp, restTemplate, taskExecutor);
+		this.pnfDriver = new RestVnfDriver(pnfId, managementIp, managementPort, restTemplate, taskExecutor);
 		log.debug("Created REST-based PNF driver for PNF " + pnfId + " with IP " + managementIp);
 		this.currentConfiguParameters= new HashMap<String, String>();
+
 	}
 	
 	/**
