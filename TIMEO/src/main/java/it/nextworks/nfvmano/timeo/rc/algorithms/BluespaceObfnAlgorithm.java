@@ -662,10 +662,10 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
     private Map<String, String> translateRCRRHConfigurationParameters(ObfnRrhResourceAllocation obfnRrhResourceAllocation){
 
         Map<String, String> rrhConfigParams = new HashMap<>();
-        rrhConfigParams.put("rxGain", Integer.toString(obfnRrhResourceAllocation.getRxGain()));
-        rrhConfigParams.put("txGain",  Integer.toString(obfnRrhResourceAllocation.getTxGain()));
-        rrhConfigParams.put("powerUp",  Boolean.toString(obfnRrhResourceAllocation.isPowerUp()));
-        rrhConfigParams.put("sleepMode",  Boolean.toString(obfnRrhResourceAllocation.isSleepMode()));
+        rrhConfigParams.put("rcoutput.rxGain", Integer.toString(obfnRrhResourceAllocation.getRxGain()));
+        rrhConfigParams.put("rcoutput.txGain",  Integer.toString(obfnRrhResourceAllocation.getTxGain()));
+        rrhConfigParams.put("rcoutput.powerUp",  Boolean.toString(obfnRrhResourceAllocation.isPowerUp()));
+        rrhConfigParams.put("rcoutput.sleepMode",  Boolean.toString(obfnRrhResourceAllocation.isSleepMode()));
 
         return rrhConfigParams;
     }
@@ -681,11 +681,11 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
             long intermediateFrequency;
          */
         Map<String, String> bbuConfigParams = new HashMap<>();
-        bbuConfigParams.put("operationMode", Integer.toString(obfnBbuResourceAllocation.getOperationMode()));
-        bbuConfigParams.put("subcarriersNumber",  Integer.toString(obfnBbuResourceAllocation.getSubcarriersNumber()));
-        bbuConfigParams.put("pilotSpacing",  Integer.toString(obfnBbuResourceAllocation.getPilotSpacing()));
-        bbuConfigParams.put("intermediateFrequency",  Long.toString(obfnBbuResourceAllocation.getIntermediateFrequency()));
-        bbuConfigParams.put("modulationScheme",  Long.toString(obfnBbuResourceAllocation.getModulationScheme()));
+        bbuConfigParams.put("rcoutput.operationMode", Integer.toString(obfnBbuResourceAllocation.getOperationMode()));
+        bbuConfigParams.put("rcoutput.subcarriersNumber",  Integer.toString(obfnBbuResourceAllocation.getSubcarriersNumber()));
+        bbuConfigParams.put("rcoutput.pilotSpacing",  Integer.toString(obfnBbuResourceAllocation.getPilotSpacing()));
+        bbuConfigParams.put("rcoutput.intermediateFrequency",  Long.toString(obfnBbuResourceAllocation.getIntermediateFrequency()));
+        bbuConfigParams.put("rcoutput.modulationScheme",  Long.toString(obfnBbuResourceAllocation.getModulationScheme()));
 
         return bbuConfigParams;
     }
