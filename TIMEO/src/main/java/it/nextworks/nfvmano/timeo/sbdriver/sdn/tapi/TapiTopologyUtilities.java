@@ -3,6 +3,7 @@ package it.nextworks.nfvmano.timeo.sbdriver.sdn.tapi;
 
 import io.swagger.client.model.*;
 import it.nextworks.nfvmano.libs.common.enums.LayerProtocol;
+import it.nextworks.nfvmano.libs.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkTopology;
 import it.nextworks.nfvmano.timeo.rc.elements.TopologyCp;
@@ -157,8 +158,9 @@ public class TapiTopologyUtilities {
                     }else if (protocolLayerQualifiers.contains("tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN")){
                         for(ServiceInterfacePointRef sipRef: p.getMappedServiceInterfacePoint()){
                             TapiObfnCpSpec cpSpec = getTapiObfnCpSpec(contextSchema, sipRef.getServiceInterfacePointUuid() );
+                            List<Integer> usedBeams = getObfnUsedBeams(sipRef.getServiceInterfacePointUuid(), contextSchema);
                             TapiCpDirection direction = getTapiPortDirection(contextSchema, sipRef.getServiceInterfacePointUuid());
-                            TapiTopologyCp tapiCp = new TapiTopologyObfnCp(targetNode, sipRef.getServiceInterfacePointUuid(), cpSpec, direction);
+                            TapiTopologyCp tapiCp = new TapiTopologyObfnCp(targetNode, sipRef.getServiceInterfacePointUuid(), cpSpec, direction, usedBeams);
                             log.debug("Created TAPI port with ID " + portId);
                             target.addCp(targetNode, tapiCp);
                             connectionPoints.add(tapiCp);
@@ -215,6 +217,7 @@ public class TapiTopologyUtilities {
             TapiSupportedWavelength supportedWavelength = new TapiSupportedWavelength(supWavelength.getUpperFrequency(),
                     supWavelength.getLowerFrequency(),  fc);
 
+
             return new TapiObfnCpSpec(obfnSpec.getSupportedLowerAngle(),
                     obfnSpec.getSupportedUpperAngle(),
                     obfnSpec.getSupportedMinWidth(),
@@ -262,6 +265,24 @@ public class TapiTopologyUtilities {
             return null;
         }
 
+
+
+    }
+
+
+
+    public static List<Integer> getObfnUsedBeams(String ingressSip, ContextSchema contextSchema){
+        log.debug("Determining used beams for:"+ingressSip);
+        List<Integer> usedBeams = new ArrayList<>();
+        for(ConnectivityService cs : contextSchema.getConnectivityContext().getConnectivityService()){
+            if(cs.getEndPoint().get(0).getServiceInterfacePoint().equals(ingressSip) || cs.getEndPoint().get(1).getServiceInterfacePoint().equals(ingressSip) ){
+                for(Obfn obfnSpec : cs.getObfnConnectivityConstraintSpec().getObfnPool()){
+                   usedBeams.add(new Integer(obfnSpec.getObfnId()));
+                }
+            }
+        }
+        log.debug("Found used beams: "+usedBeams);
+        return usedBeams;
 
 
     }

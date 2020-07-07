@@ -1,5 +1,7 @@
 package it.nextworks.nfvmano.timeo.sbdriver.sdn.tapi;
 
+import java.util.List;
+
 public class TapiObfnCpSpec {
 
     private int supportedLowerAngle;
@@ -9,6 +11,7 @@ public class TapiObfnCpSpec {
     private int supportedBeams;
     private TapiSupportedWavelength tapiSupportedWavelength;
 
+
     public TapiObfnCpSpec(int supportedLowerAngle, int supportedUpperAngle, int supportedMinWidth, int supportedMaxwidth, int supportedBeams, TapiSupportedWavelength tapiSupportedWavelength) {
         this.supportedLowerAngle = supportedLowerAngle;
         this.supportedUpperAngle = supportedUpperAngle;
@@ -16,6 +19,7 @@ public class TapiObfnCpSpec {
         this.supportedMaxwidth = supportedMaxwidth;
         this.supportedBeams = supportedBeams;
         this.tapiSupportedWavelength = tapiSupportedWavelength;
+
     }
 
     public int getSupportedLowerAngle() {
@@ -41,4 +45,7 @@ public class TapiObfnCpSpec {
     public TapiSupportedWavelength getTapiSupportedWavelength() {
         return tapiSupportedWavelength;
     }
+
+
+
 }

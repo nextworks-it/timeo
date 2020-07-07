@@ -60,9 +60,27 @@ public class ConnectivityService {
 	@SerializedName("topology-constraint")
 	private TopologyConstraint topologyConstraint = null;
 
+	//TODO: Added
+	@SerializedName("performance")
+	private ObfnPerformance performance = null;
+
+	//TODO: Added
+	@SerializedName("obfn-connectivity-constraint-spec")
+	private ObfnConnectivityConstraintSpec obfnConnectivityConstraintSpec = null;
+
+
+
+	public ObfnConnectivityConstraintSpec getObfnConnectivityConstraintSpec() {
+		return obfnConnectivityConstraintSpec;
+	}
 
 	@SerializedName("name")
 	private List<NameAndValue> name = null;
+
+
+	public ObfnPerformance getPerformance() {
+		return performance;
+	}
 
 	/**
 	 * @return the connectivityConstraint

@@ -39,8 +39,29 @@ public class ConnectionEndPointSchema {
   @SerializedName("uuid")
   private String uuid = null;
 
+
+
   @SerializedName("name")
   private List<NameAndValue> name = null;
+
+
+
+  //TODO: Added
+  @SerializedName("tapi-obfn:obfn-connection-end-point-spec")
+  private ObfnConnectivityConstraintSpec obfnConnectivityConstraintSpec = null;
+
+
+  @SerializedName("tapi-photonic-media:media-channel-connection-end-point-spec")
+  private ObfnMediaChannelConnectionEndpointSpec mediaChannelConnectionEndpointSpec;
+
+
+  public ObfnMediaChannelConnectionEndpointSpec getMediaChannelConnectionEndpointSpec() {
+    return mediaChannelConnectionEndpointSpec;
+  }
+
+  public ObfnConnectivityConstraintSpec getObfnConnectivityConstraintSpec() {
+    return obfnConnectivityConstraintSpec;
+  }
 
   /**
    * Gets or Sets lifecycleState

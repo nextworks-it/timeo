@@ -129,7 +129,18 @@ public class BlueSpaceObfnAlgorithmTest {
 
 
 	}
-	
+
+	@Test
+	public void readDefaultResponse(){
+
+		ObjectMapper mapper = new ObjectMapper();
+		InputStream responseStream = BluespaceObfnAlgorithm.class.getResourceAsStream("/default-ra-response.json");
+		try {
+			BluespaceAlgorithmAllocationResponse remoteResponse = mapper.readValue(responseStream, new TypeReference<BluespaceAlgorithmAllocationResponse>() {});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 
 }

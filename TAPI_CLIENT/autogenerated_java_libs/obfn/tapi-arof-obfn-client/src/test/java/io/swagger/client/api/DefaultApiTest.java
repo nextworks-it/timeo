@@ -570,7 +570,7 @@ public class DefaultApiTest {
 
 			Gson gson = gsonBuilder.create();
 			//Gson gson =  new Gson();
-			InputStream in = DefaultApiTest.class.getResourceAsStream("/context-obfn.json");
+			InputStream in = DefaultApiTest.class.getResourceAsStream("/context-obfn-v1-1.json");
 
 			/*String readLine;
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));

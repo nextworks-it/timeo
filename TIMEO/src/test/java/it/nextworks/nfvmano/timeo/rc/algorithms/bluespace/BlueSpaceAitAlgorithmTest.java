@@ -50,7 +50,7 @@ import it.nextworks.nfvmano.timeo.vnfm.vnfdriver.RestVnfDriver;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-
+@Ignore
 public class BlueSpaceAitAlgorithmTest {
 
 	private AitAlgorithmRestClient client;
