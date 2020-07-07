@@ -774,10 +774,11 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
                 TapiTopologyObfnCp topologyObfnCp = (TapiTopologyObfnCp) networkTopology.getCpById(lightpathHop.getInputPortId());
                 Integer beamId = new Integer(ra.getBeamId());
 
+                log.debug("Determining if beam available:"+beamId+" "+topologyObfnCp.getUsedBeams());
                 if(topologyObfnCp.getUsedBeams().contains(beamId)){
                    log.debug("Selected beamId currently in use, selecting an available one");
                    beamId = topologyObfnCp.getAvailableBeam();
-                    log.debug("free beam: "+beamId);
+                   log.debug("free beam: "+beamId);
                 }
                 obfnProps.put("beamId", beamId.toString());
                 String beamOffsetX;
