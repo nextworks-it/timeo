@@ -27,6 +27,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -94,7 +95,18 @@ public class VnfRestClient {
 					throw new FailedOperationException("HTTP response code with failed VNF configuration from: "+configurationApiUrl);
 				}
 				}
+			} catch (HttpStatusCodeException ex){
+				log.warn("HttpStatuscodeException while invoking REST API for VNF configuration: "+configurationApiUrl+" "+ex.getMessage(), ex);
+				log.warn(ex.getResponseBodyAsString());
+				count++;
+				try {
+					Thread.sleep(10000);
+				} catch (Exception e1) {
+					log.error("Error during VNF/PNF configuration: "+configurationApiUrl, e1);
+				}
+
 			} catch (RestClientException e) {
+
 				log.warn("Error while invoking REST API for VNF configuration: "+configurationApiUrl+" "+e.getMessage(), e);
 				count++;
 				try {

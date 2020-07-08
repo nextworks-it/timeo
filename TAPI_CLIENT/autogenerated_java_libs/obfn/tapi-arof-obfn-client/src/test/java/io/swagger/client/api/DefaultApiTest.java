@@ -264,6 +264,26 @@ public class DefaultApiTest {
 
 	}
 
+	@Test
+	public void failedUpdateTest(){
+		try {
+			api.setApiClient(new ApiClient()
+					.setConnectTimeout(0)
+					.setReadTimeout(0)
+					.setWriteTimeout(0)
+					.setBasePath("http://localhost:8182/restconf")
+					.setDebugging(true));
+			CreateConnectivityServiceRPCInputSchema createConnectivityService = this.getRequestFromFile("/failed-update-request-2.json");
+			CreateConnectivityServiceRPCInputSchema responseUpdate = api.updateCreateConnectivityServiceById(createConnectivityService);
+			System.out.println(responseUpdate.getUuid());
+
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}
+
+	}
 	/**
 	 * Create delete-connectivity-service by ID
 	 *
