@@ -89,23 +89,24 @@ public class VnfRestClient {
 					return httpResponse.getBody();
 				}
 				default: {
-					log.error("HTTP response code with failed VNF configuration.");
-					throw new FailedOperationException("HTTP response code with failed VNF configuration.");
+					String errorResponseString = httpResponse.getBody().toString();
+					log.error("HTTP response code with failed VNF configuration from: "+configurationApiUrl+ " "+errorResponseString);
+					throw new FailedOperationException("HTTP response code with failed VNF configuration from: "+configurationApiUrl);
 				}
 				}
 			} catch (RestClientException e) {
-				log.warn("Error while invoking REST API for VNF configuration: " + e.getMessage());
+				log.warn("Error while invoking REST API for VNF configuration: "+configurationApiUrl+" "+e.getMessage(), e);
 				count++;
 				try {
 					Thread.sleep(10000);
 				} catch (Exception e1) {
-					e1.printStackTrace();
+					log.error("Error during VNF/PNF configuration: "+configurationApiUrl, e1);
 				}
 			}
 			
 		}
-		log.error("Error while invoking REST API for VNF configuration");
-		throw new FailedOperationException("Error while invoking REST API for VNF configuration: ");
+		log.error("Error while invoking REST API for VNF configuration: "+configurationApiUrl);
+		throw new FailedOperationException("Error while invoking REST API for VNF configuration: "+ configurationApiUrl);
 	}
 
 	public GetIndicatorValueResponse getIndicatorValue(GeneralizedQueryRequest request)
@@ -136,12 +137,12 @@ public class VnfRestClient {
 		);
 		switch (httpResponse.getStatusCode()) {
 			case OK:
-				log.debug("Received GET VNF indicator response.");
+				log.debug("Received GET VNF indicator response from:"+indicatorApiUrl);
 				String responseString;
 				try {
 					responseString = mapper.writeValueAsString(httpResponse.getBody());
 				} catch (JsonProcessingException exc) {
-					log.error("Cannot parse response.");
+					log.error("Cannot parse response.", exc);
 					throw new FailedOperationException(exc);
 				}
 				log.debug(responseString);
@@ -153,12 +154,12 @@ public class VnfRestClient {
 				try {
 					errorResponseString = mapper.writeValueAsString(httpResponse.getBody());
 				} catch (JsonProcessingException exc) {
-					log.error("Cannot parse error response.");
+					log.error("Cannot parse error response.", exc);
 					throw new FailedOperationException(exc);
 				}
 				log.debug("Response:");
 				log.debug(errorResponseString);
-				throw new FailedOperationException("GET VNF indicator value operation failed at the VNF.");
+				throw new FailedOperationException("GET VNF indicator value operation failed at the VNF from: "+indicatorApiUrl);
 
 		}
 	}
