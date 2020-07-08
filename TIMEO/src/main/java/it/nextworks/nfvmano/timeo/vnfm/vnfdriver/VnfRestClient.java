@@ -97,7 +97,7 @@ public class VnfRestClient {
 				}
 			} catch (HttpStatusCodeException ex){
 				log.warn("HttpStatuscodeException while invoking REST API for VNF configuration: "+configurationApiUrl+" "+ex.getMessage(), ex);
-				log.warn(ex.getResponseBodyAsString());
+				log.warn("Response body: "+ex.getResponseBodyAsString());
 				count++;
 				try {
 					Thread.sleep(10000);
