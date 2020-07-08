@@ -662,11 +662,18 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
     private Map<String, String> translateRCRRHConfigurationParameters(ObfnRrhResourceAllocation obfnRrhResourceAllocation){
 
         Map<String, String> rrhConfigParams = new HashMap<>();
-        rrhConfigParams.put("rcoutput.rxGain", Integer.toString(obfnRrhResourceAllocation.getRxGain()));
-        rrhConfigParams.put("rcoutput.txGain",  Integer.toString(obfnRrhResourceAllocation.getTxGain()));
+        //rrhConfigParams.put("rcoutput.rxGain", Integer.toString(obfnRrhResourceAllocation.getRxGain()));
+        //rrhConfigParams.put("rcoutput.txGain",  Integer.toString(obfnRrhResourceAllocation.getTxGain()));
+        //TODO: the Pa gains should be calcuated, for the moment just copying the txGain
+
+        for(int i=0;i<16; i++){
+            String paGainKey = String.format("rcoutput.paGain%02d", i);
+            rrhConfigParams.put(paGainKey, Integer.toString(obfnRrhResourceAllocation.getTxGain()));
+        }
+
         rrhConfigParams.put("rcoutput.powerUp",  Boolean.toString(obfnRrhResourceAllocation.isPowerUp()));
         rrhConfigParams.put("rcoutput.sleepMode",  Boolean.toString(obfnRrhResourceAllocation.isSleepMode()));
-
+        //TODO: add   "batteryChargeEnable", "outputVoltage1Enable", "outputVoltage1Level", "outputVoltage2Enable"
         return rrhConfigParams;
     }
 
