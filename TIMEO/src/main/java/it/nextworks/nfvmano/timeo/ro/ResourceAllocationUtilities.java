@@ -98,7 +98,8 @@ public class ResourceAllocationUtilities {
 					));
 				}
 				// else
-				configuration.put(configParam, value);
+				String key = configParam.replaceFirst("rcoutput.", "");
+				configuration.put(key, value);
 			} else if(configParam.startsWith("vnf")){
 				String [] splits = configParam.split("\\.");
 				if (splits.length == 5) {
