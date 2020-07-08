@@ -673,7 +673,11 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
 
         rrhConfigParams.put("rcoutput.powerUp",  Boolean.toString(obfnRrhResourceAllocation.isPowerUp()));
         rrhConfigParams.put("rcoutput.sleepMode",  Boolean.toString(obfnRrhResourceAllocation.isSleepMode()));
-        //TODO: add   "batteryChargeEnable", "outputVoltage1Enable", "outputVoltage1Level", "outputVoltage2Enable"
+        //TODO:
+        rrhConfigParams.put("rcoutput.batteryChargeEnable", "0");
+        rrhConfigParams.put("rcoutput.outputVoltage1Enable","0");
+        rrhConfigParams.put("rcoutput.outputVoltage1Level","0");
+        rrhConfigParams.put("rcoutput.outputVoltage2Enable", "0");
         return rrhConfigParams;
     }
 
