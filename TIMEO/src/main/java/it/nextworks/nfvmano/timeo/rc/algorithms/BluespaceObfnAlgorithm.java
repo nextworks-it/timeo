@@ -665,10 +665,23 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
         //rrhConfigParams.put("rcoutput.rxGain", Integer.toString(obfnRrhResourceAllocation.getRxGain()));
         //rrhConfigParams.put("rcoutput.txGain",  Integer.toString(obfnRrhResourceAllocation.getTxGain()));
         //TODO: the Pa gains should be calcuated, for the moment just copying the txGain
+        int txGain = obfnRrhResourceAllocation.getTxGain();
+
+        if(txGain<0 || txGain>100){
+            log.warn("tx gain out of range: "+txGain+" using default");
+            txGain=100;
+        }
+
+        int rxGain = obfnRrhResourceAllocation.getRxGain();
+
+        if(rxGain<0 || rxGain>100){
+            log.warn("rx gain out of range: "+rxGain+" using default");
+            rxGain=100;
+        }
 
         for(int i=0;i<16; i++){
             String paGainKey = String.format("rcoutput.paGain%02d", i);
-            rrhConfigParams.put(paGainKey, Integer.toString(obfnRrhResourceAllocation.getTxGain()));
+            rrhConfigParams.put(paGainKey, Integer.toString(txGain));
         }
 
         rrhConfigParams.put("rcoutput.powerUp",  Boolean.toString(obfnRrhResourceAllocation.isPowerUp()));
