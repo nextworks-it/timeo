@@ -692,11 +692,41 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
             long intermediateFrequency;
          */
         Map<String, String> bbuConfigParams = new HashMap<>();
-        bbuConfigParams.put("rcoutput.operationMode", Integer.toString(obfnBbuResourceAllocation.getOperationMode()));
-        bbuConfigParams.put("rcoutput.subcarriersNumber",  Integer.toString(obfnBbuResourceAllocation.getSubcarriersNumber()));
-        bbuConfigParams.put("rcoutput.pilotSpacing",  Integer.toString(obfnBbuResourceAllocation.getPilotSpacing()));
-        bbuConfigParams.put("rcoutput.intermediateFrequency",  Long.toString(obfnBbuResourceAllocation.getIntermediateFrequency()));
-        bbuConfigParams.put("rcoutput.modulationScheme",  Long.toString(obfnBbuResourceAllocation.getModulationScheme()));
+
+
+
+        Long intermediateFrequency = obfnBbuResourceAllocation.getIntermediateFrequency();
+        if(intermediateFrequency< 2250000 || intermediateFrequency> 5000000){
+            log.warn("intermediate frequency out of range: "+intermediateFrequency+" using default");
+            intermediateFrequency = new Long(5000000);
+        }
+        bbuConfigParams.put("rcoutput.intermediateFrequency",  intermediateFrequency.toString());
+        int modulationScheme = obfnBbuResourceAllocation.getModulationScheme();
+        if(modulationScheme<0 || modulationScheme>3){
+            log.warn("modulation scheme out of range: "+modulationScheme+" using default");
+            modulationScheme = 1;
+        }
+        bbuConfigParams.put("rcoutput.modulationScheme",  Integer.toString(modulationScheme));
+        int subcarriersNumber = obfnBbuResourceAllocation.getSubcarriersNumber();
+        if(subcarriersNumber<4 || subcarriersNumber>3168){
+            log.warn("subcarriers number out of range: "+subcarriersNumber+" using default");
+            subcarriersNumber=3168;
+        }
+        bbuConfigParams.put("rcoutput.subcarriersNumber",  Integer.toString(subcarriersNumber));
+
+        int operationMode = obfnBbuResourceAllocation.getOperationMode();
+        if(operationMode<0||operationMode>4){
+            log.warn("operation mode out of range: "+operationMode+" using default");
+            operationMode=4;
+        }
+        bbuConfigParams.put("rcoutput.operationMode", Integer.toString(operationMode));
+
+        int pilotSpacing = obfnBbuResourceAllocation.getPilotSpacing();
+        if(pilotSpacing<4 || pilotSpacing>3168){
+            log.warn("pilot spacing out of range: "+pilotSpacing+" using default");
+            pilotSpacing=14;
+        }
+        bbuConfigParams.put("rcoutput.pilotSpacing",  Integer.toString(pilotSpacing));
 
         return bbuConfigParams;
     }
