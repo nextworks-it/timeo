@@ -95,6 +95,7 @@ public class NsManager {
 		this.nsManagementEngine = nsManagementEngine;
 		this.monitoringAddress = monitoringAddress;
 		this.timeoAddress = timeoAddress;
+		profileStatusChangeEvent();
 	}
 
 	/**
@@ -116,6 +117,7 @@ public class NsManager {
 			case INSTANTIATE_NS_REQUEST: {
 				log.trace("START INSTANTIATE NS FOR NS " + nsInstanceId);
 				log.debug("Received instantiate NS message with operation ID " + operationId);
+
 				InstantiateNsRequestMessage instantiateMsg = (InstantiateNsRequestMessage)em;
 				//TODO: message to be moved in DB for persistency issues
 				this.instantiateMessage = instantiateMsg;
@@ -470,6 +472,7 @@ public class NsManager {
 		if (internalStatus != InternalNsStatus.REMOVING_NS_VLS) throw new WrongInternalStatusException();
 		log.debug("Starting procedure to release resource allocation solution");
 		internalStatus = InternalNsStatus.RELEASING_COMPUTED_RESOURCES;
+		profileStatusChangeEvent();
 		try {
 			resourceSchedulingManager.releaseResources(terminateMessage);
 		} catch (Exception e) {
@@ -481,6 +484,7 @@ public class NsManager {
 		if (internalStatus != InternalNsStatus.TERMINATING_VNFS) throw new WrongInternalStatusException();
 		log.debug("Starting procedure to destroy underlying connectivity.");
 		internalStatus = InternalNsStatus.TERMINATING_CONNECTIVITY;
+		profileStatusChangeEvent();
 		resourceAllocationManager.destroyUnderlyingConnectivity(nsInstanceId, operationId);
 	}
 	
@@ -488,6 +492,7 @@ public class NsManager {
 		if (internalStatus != InternalNsStatus.TERMINATING_CONNECTIVITY) throw new WrongInternalStatusException();
 		log.debug("Starting procedure to release NS Virtual Links.");
 		internalStatus = InternalNsStatus.REMOVING_NS_VLS;
+		profileStatusChangeEvent();
 		resourceAllocationManager.terminateNsVls(nsInstanceId, operationId);
 	}
 	
@@ -495,6 +500,7 @@ public class NsManager {
 		if (!((internalStatus == InternalNsStatus.ALLOCATED) || (internalStatus == InternalNsStatus.FAILED)||(internalStatus==InternalNsStatus.SCALE_ALLOCATED))) throw new WrongInternalStatusException();
 		log.debug("Starting procedure to terminate Network Service.");
 		internalStatus = InternalNsStatus.TERMINATING_MONITORING;
+		profileStatusChangeEvent();
 		//TODO: check if we really need to make this asynchronous...
 		try {
 			monitoringManager.deactivateNsMonitoring(nsInstanceId);
@@ -502,6 +508,7 @@ public class NsManager {
 			log.error("Failure while deactivating monitoring for NS instance " + nsInstanceId + ". Continuing termination.");
 		}
 		internalStatus = InternalNsStatus.TERMINATING_VNFS;
+		profileStatusChangeEvent();
 		resourceAllocationManager.terminateVnfs(nsInstanceId, message.getOperationId(), message);	
 	}
 	
@@ -519,9 +526,11 @@ public class NsManager {
 		//TODO: To be verified
 		String currentLevel =  nsInfo.getNsScaleStatus().get(0).getNsScaleLevelId();
 		internalStatus = InternalNsStatus.COMPUTING_SCALING_RESOURCES;
+		profileStatusChangeEvent();
 		if(currentLevel.equals(sNsLevelData.getNsInstantiationLevel()) ){
 			//TODO: what happens if it is the same instantiation level?
 			internalStatus=InternalNsStatus.SCALE_ALLOCATED;
+			profileStatusChangeEvent();
 			nsDbWrapper.updateInternalOperation(message.getOperationId(), OperationStatus.SUCCESSFULLY_DONE, null);
 		}else{
 			resourceSchedulingManager.scaleResources(message);
@@ -537,6 +546,7 @@ public class NsManager {
 		//TODO: Here it should check if the VNFs and PNFs defined in the instantiate NS request are available
 		//At the moment we are assuming all the VNFs should be created from scratch.
 		internalStatus = InternalNsStatus.COMPUTING_RESOURCES;
+		profileStatusChangeEvent();
 		try {
 			resourceSchedulingManager.reserveResources(message);
 		} catch (Exception e) {
@@ -548,6 +558,7 @@ public class NsManager {
 		if (internalStatus != InternalNsStatus.COMPUTING_RESOURCES) throw new WrongInternalStatusException();
 		log.debug("Starting procedure to allocate the resources for a new Network Service.");
 		internalStatus = InternalNsStatus.ALLOCATING_NS_VLS;
+		profileStatusChangeEvent();
 		resourceAllocationManager.allocateNsVls(nsInstanceId, operationId, instantiateMessage);
 	}
 	
@@ -555,6 +566,7 @@ public class NsManager {
 		if (internalStatus != InternalNsStatus.ALLOCATING_NS_VLS) throw new WrongInternalStatusException();
 		log.debug("Starting procedure to instantiate VNFs");
 		internalStatus = InternalNsStatus.CREATING_VNFS;
+		profileStatusChangeEvent();
 		resourceAllocationManager.allocateVnf(nsInstanceId, operationId, instantiateMessage);
 	}
 	
@@ -562,6 +574,7 @@ public class NsManager {
 		if (internalStatus != InternalNsStatus.SCALE_TERMINATING_VNFS) throw new WrongInternalStatusException();
 		log.debug("Starting procedure to scale VNFs");
 		internalStatus = InternalNsStatus.SCALE_CREATING_VNFS;
+		profileStatusChangeEvent();
 		resourceAllocationManager.scaleAllocateVnfs(nsInstanceId, operationId, scaleMessage);
 		
 		
@@ -573,6 +586,7 @@ public class NsManager {
 		if (internalStatus != InternalNsStatus.CREATING_CONNECTIVITY) throw new WrongInternalStatusException();
 		log.debug("Starting procedures to configure VNFs");
 		internalStatus = InternalNsStatus.CONFIGURING_VNFS;
+		profileStatusChangeEvent();
 		resourceAllocationManager.configureVnfs(nsInstanceId, operationId, instantiateMessage);
 	}
 	
@@ -582,6 +596,7 @@ public class NsManager {
 		if (internalStatus != InternalNsStatus.SCALE_CREATING_CONNECTIVITY) throw new WrongInternalStatusException();
 		log.debug("Starting procedures to configure VNFs");
 		internalStatus = InternalNsStatus.SCALE_CONFIGURING_VNFS;
+		profileStatusChangeEvent();
 		resourceAllocationManager.configureVnfs(nsInstanceId, operationId, scaleMessage);
 	}
 	
@@ -591,6 +606,7 @@ public class NsManager {
 			log.debug("Starting procedures to setup underlying connectivity");
 			//TODO: check if this is needed from configuration
 			internalStatus = InternalNsStatus.SCALE_CREATING_CONNECTIVITY;
+			profileStatusChangeEvent();
 			resourceAllocationManager.setupUnderlyingConnectivity(nsInstanceId, operationId, scaleMessage);
 	}
 	
@@ -600,6 +616,7 @@ public class NsManager {
 		log.debug("Starting procedures to setup underlying connectivity");
 		//TODO: check if this is needed from configuration
 		internalStatus = InternalNsStatus.CREATING_CONNECTIVITY;
+		profileStatusChangeEvent();
 		resourceAllocationManager.setupUnderlyingConnectivity(nsInstanceId, operationId, instantiateMessage);
 	}
 	
@@ -607,12 +624,14 @@ public class NsManager {
 		//if (internalStatus != InternalNsStatus.CREATING_CONNECTIVITY) throw new WrongInternalStatusException();
 		if (internalStatus != InternalNsStatus.CONFIGURING_VNFS) throw new WrongInternalStatusException();
 		internalStatus = InternalNsStatus.ALLOCATED;
+		this.profileStatusChangeEvent();
 		try {
 			Nsd nsd = nsManagementEngine.retrieveNsd(nsInstanceId);
 			monitoringManager.activateNsMonitoring(nsInstanceId, nsd);
 			log.debug("Requested monitoring activation for NS instance " + nsInstanceId);
 			nsDbWrapper.setNsInfoInstantiationState(nsInstanceId, InstantiationState.INSTANTIATED);
 			log.debug("NS service " + nsInstanceId + " successfully instantiated. DB updated");
+
 		} catch (Exception e) {
 			log.error("Impossible to update NS info instantiation status");
 		}
@@ -632,6 +651,7 @@ public class NsManager {
 	private void confirmComputedResourceRelease(String operationId) throws WrongInternalStatusException {
 		if (internalStatus != InternalNsStatus.RELEASING_COMPUTED_RESOURCES) throw new WrongInternalStatusException();
 		internalStatus = InternalNsStatus.TERMINATED;
+		profileStatusChangeEvent();
 		try {
 			nsDbWrapper.setNsInfoInstantiationState(nsInstanceId, InstantiationState.NOT_INSTANTIATED);
 			log.debug("NS service " + nsInstanceId + " successfully terminated. DB updated");
@@ -645,6 +665,7 @@ public class NsManager {
 		if (internalStatus != InternalNsStatus.COMPUTING_SCALING_RESOURCES) throw new WrongInternalStatusException();
 		log.debug("Starting procedure to scale VNFs");
 		internalStatus = InternalNsStatus.SCALE_TERMINATING_VNFS;
+		profileStatusChangeEvent();
 		resourceAllocationManager.scaleTerminateVnfs(nsInstanceId, operationId, scaleMessage);
 		
 	}
@@ -653,6 +674,7 @@ public class NsManager {
 		if (internalStatus!=InternalNsStatus.SCALE_CONFIGURING_VNFS) throw new WrongInternalStatusException();
 		//TODO: which should be the state afterwards?
 		internalStatus=InternalNsStatus.SCALE_ALLOCATED;
+		profileStatusChangeEvent();
 		try {
 			log.debug("NS SCALE procedure finished correctly, storing results for NS:"+this.nsInstanceId+
 					"operation: "+operationId);
@@ -665,5 +687,9 @@ public class NsManager {
 			log.error("Impossible to update NS information after NS SCALE");
 		}
 		
+	}
+
+	private void profileStatusChangeEvent(){
+		log.info("PROFILING\t"+internalStatus+"\t"+System.currentTimeMillis());
 	}
 }
