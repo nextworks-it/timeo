@@ -35,12 +35,5 @@ public class TapiTopologyObfnCp  extends TapiTopologyCp{
         return usedBeams;
     }
 
-    public Integer getAvailableBeam(){
-        for(int i=0; i<tapiObfnCpSpec.getSupportedBeams(); i++){
-            Integer currentBeamId = new Integer(i);
-            if(!usedBeams.contains(currentBeamId ))
-                return currentBeamId;
-        }
-        return -1;
-    }
+
 }

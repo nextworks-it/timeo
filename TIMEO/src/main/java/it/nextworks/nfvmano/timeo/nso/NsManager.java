@@ -690,6 +690,6 @@ public class NsManager {
 	}
 
 	private void profileStatusChangeEvent(){
-		log.info("PROFILING\t"+internalStatus+"\t"+System.currentTimeMillis());
+		log.info("PROFILING\t"+nsInstanceId+"\t"+internalStatus+"\t"+System.currentTimeMillis());
 	}
 }

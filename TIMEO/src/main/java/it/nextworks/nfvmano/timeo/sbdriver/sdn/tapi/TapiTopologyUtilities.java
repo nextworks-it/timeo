@@ -274,6 +274,7 @@ public class TapiTopologyUtilities {
     public static List<Integer> getObfnUsedBeams(String ingressSip, ContextSchema contextSchema){
         log.debug("Determining used beams for:"+ingressSip);
         List<Integer> usedBeams = new ArrayList<>();
+        /* Disabled this becuase the context from CTTC it is not updated
         for(ConnectivityService cs : contextSchema.getConnectivityContext().getConnectivityService()){
             String sip1 = cs.getEndPoint().get(0).getServiceInterfacePoint().getServiceInterfacePointUuid();
             String sip2 = cs.getEndPoint().get(1).getServiceInterfacePoint().getServiceInterfacePointUuid();
@@ -283,7 +284,7 @@ public class TapiTopologyUtilities {
                    usedBeams.add(new Integer(obfnSpec.getObfnId()));
                 }
             }
-        }
+        }*/
         log.debug("Found used beams: "+usedBeams);
         return usedBeams;
 

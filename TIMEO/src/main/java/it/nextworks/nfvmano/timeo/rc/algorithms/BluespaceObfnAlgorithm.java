@@ -831,7 +831,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
                 log.debug("Determining if beam available:"+beamId+" "+topologyObfnCp.getUsedBeams());
                 if(topologyObfnCp.getUsedBeams().contains(beamId)){
                    log.debug("Selected beamId currently in use, selecting an available one");
-                   beamId = topologyObfnCp.getAvailableBeam();
+                   //beamId = topologyObfnCp.getAvailableBeam();
                    log.debug("free beam: "+beamId);
                 }
                 obfnProps.put("beamId", beamId.toString());
