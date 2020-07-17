@@ -71,7 +71,7 @@ public class TapiRemovePathTask implements Runnable {
 		for (SbNetworkPath path : networkPaths) {
 			log.debug("Removing connection with ID " + path.getNetworkPathId());
 			try {
-				if(sbNpType==SbNetworkPathType.OBFN){
+				if(path.getSbNpType().equals(SbNetworkPathType.OBFN)){
 					removeObfnPath(path);
 				}else{
 					api.createDeleteConnectivityServiceById(path.getNetworkPathId());
