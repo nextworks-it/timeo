@@ -62,6 +62,7 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 		super(SdnControllerType.SDN_CONTROLLER_TAPI, controller);
 		this.basePath = controller.getUrl();
 		this.taskExecutor = taskExecutor;
+		this.configuredPaths = new HashMap<>();
 
 	}
 	
