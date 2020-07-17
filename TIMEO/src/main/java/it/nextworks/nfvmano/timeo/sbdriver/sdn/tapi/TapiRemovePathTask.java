@@ -139,13 +139,10 @@ public class TapiRemovePathTask implements Runnable {
 				dstEndpoint.setServiceInterfacePoint(dstSip);
 				createConnectivityService.addEndPointItem(srcEndpoint);
 				createConnectivityService.addEndPointItem(dstEndpoint);
-
-
 				ConnectivityConstraint cc = new ConnectivityConstraint();
 				Capacity c = new Capacity();
 				ObfnConnectivityConstraintSpec obfnConnectivityConstraintSpec  = new ObfnConnectivityConstraintSpec();
 				Map<String,String> hopProps = nph.getHopProperties();
-
 				List<Obfn> obfnPool = new ArrayList<>();
 				Obfn obfn = new Obfn();
 				obfn.setBeamEnable(false);
@@ -156,17 +153,32 @@ public class TapiRemovePathTask implements Runnable {
 				log.debug("Retrieved obfn specs:"+hopProps);
 				obfnPool.add(obfn);
 				obfnConnectivityConstraintSpec.setObfnPool(obfnPool);
-
 				CapacityValue cv = new CapacityValue();
 				cv.setUnit(CapacityValue.UnitEnum.GBPS);
 				cv.setValue(50);
 				c.setTotalSize(cv);
 				cc.setConnectivityDirection(ConnectivityConstraint.ConnectivityDirectionEnum.UNIDIRECTIONAL);
 				cc.setRequestedCapacity(c);
-				log.debug("Issuing TAPI request to:" + api.getApiClient().getBasePath());
+
 				createConnectivityService.setConnectivityConstraint(cc);
 				log.debug("Setting obfnConnectivityConstraint");
 				createConnectivityService.setObfnConnectivityConstraintSpec(obfnConnectivityConstraintSpec);
+				List<WavelengthReference> wavelengthResourcePool = new ArrayList<>();
+				WavelengthReference wavelengthReference = new WavelengthReference();
+
+				CentralFrequency cf = new CentralFrequency();
+				cf.setCentralFrequency(Float.parseFloat(hopProps.get("centralFrequency")));
+				FrequencyConstraint fc = new FrequencyConstraint();
+				fc.setAdjustmentGranularity(FrequencyConstraint.AdjustmentGranularityEnum.G_6_25GHZ);
+				fc.setGridType(FrequencyConstraint.GridTypeEnum.FLEX);
+				cf.setFrequencyConstraint(fc);
+				//wavelengthReference.setWavelengthId(0);
+				wavelengthReference.setCentralFrequency(cf);
+				wavelengthResourcePool.add(wavelengthReference);
+				obfnConnectivityConstraintSpec.setWavelengthReferencePool(wavelengthResourcePool);
+				createConnectivityService.setUuid(activeConnectionId);
+				String json = new Gson().toJson(createConnectivityService);
+				log.debug(json);
 				CreateConnectivityServiceRPCInputSchema responseCreate = api.updateCreateConnectivityServiceById(createConnectivityService);
 				String replyUuid = responseCreate.getUuid();
 				log.debug("pUT connectivity service " + replyUuid);
