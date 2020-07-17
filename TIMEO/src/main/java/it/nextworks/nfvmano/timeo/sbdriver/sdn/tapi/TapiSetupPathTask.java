@@ -317,7 +317,7 @@ public class TapiSetupPathTask implements Runnable {
 			log.debug("Setting obfnConnectivityConstraint");
 			createConnectivityService.setObfnConnectivityConstraintSpec(obfnConnectivityConstraintSpec);
 			String activeConnectionId = getActiveConnectionId(activePaths, source, destination);
-			if(activeConnectionId==null){
+ 			if(activeConnectionId==null){
 				String csUuid = UUID.randomUUID().toString();
 				log.debug("Creating new connection:"+csUuid);
 				List<WavelengthReference> wavelengthResourcePool = new ArrayList<>();
