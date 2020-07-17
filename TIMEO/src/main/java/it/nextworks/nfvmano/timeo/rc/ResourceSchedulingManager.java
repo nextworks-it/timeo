@@ -700,6 +700,8 @@ public class ResourceSchedulingManager {
 				return new NxwDynamicAlgorithm(vnfPackageManagement, pnfManagementService, rcProperties);
 			case BLUESPACE_AIT:
 				return new BluespaceObfnAlgorithm(aitAlgorithmUrl, vnfPackageManagement, pnfManagementService, taskExecutor, rcProperties);
+			case BLUESPACE_OBFN_STATIC:
+				return new BluespaceObfnAlgorithmStatic(aitAlgorithmUrl, vnfPackageManagement, pnfManagementService, taskExecutor, rcProperties);
 			default:
 				log.error("Algorithm type {} not yet implemented.", type);
 				throw new AlgorithmNotAvailableException();
