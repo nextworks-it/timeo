@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.tapi.ObfnCSRecordRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +97,9 @@ public class SbDriversManager {
 
 	@Autowired
 	TaskExecutorSetPowerStates taskExecutorSetPowerStates;
+
+	@Autowired
+	ObfnCSRecordRepository obfnCSRecordRepository;
 
 	private RestTemplate restTemplate = new RestTemplate();
 	
@@ -190,7 +194,7 @@ public class SbDriversManager {
 			);
 		} else if (controller.getSdnControllerType().equals(SdnControllerType.SDN_CONTROLLER_TAPI)) {
 			log.debug("Built TAPI SDN controller");
-			return new TapiSdnControllerPlugin(controller, taskExecutor);
+			return new TapiSdnControllerPlugin(controller, taskExecutor,obfnCSRecordRepository);
 		} else {
 			throw new MalformattedElementException("Unsupported SDN controller type. Skipping.");
 		}

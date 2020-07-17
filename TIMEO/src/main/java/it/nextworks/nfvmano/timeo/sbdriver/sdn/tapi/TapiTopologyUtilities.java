@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TapiTopologyUtilities {
     private static final Logger log = LoggerFactory.getLogger(TapiTopologyUtilities.class);
@@ -158,9 +159,9 @@ public class TapiTopologyUtilities {
                     }else if (protocolLayerQualifiers.contains("tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN")){
                         for(ServiceInterfacePointRef sipRef: p.getMappedServiceInterfacePoint()){
                             TapiObfnCpSpec cpSpec = getTapiObfnCpSpec(contextSchema, sipRef.getServiceInterfacePointUuid() );
-                            List<Integer> usedBeams = getObfnUsedBeams(sipRef.getServiceInterfacePointUuid(), contextSchema);
+                            //List<Integer> usedBeams = getObfnUsedBeams(sipRef.getServiceInterfacePointUuid(), contextSchema);
                             TapiCpDirection direction = getTapiPortDirection(contextSchema, sipRef.getServiceInterfacePointUuid());
-                            TapiTopologyCp tapiCp = new TapiTopologyObfnCp(targetNode, sipRef.getServiceInterfacePointUuid(), cpSpec, direction, usedBeams);
+                            TapiTopologyCp tapiCp = new TapiTopologyObfnCp(targetNode, sipRef.getServiceInterfacePointUuid(), cpSpec, direction, new ArrayList<>());
                             log.debug("Created TAPI port with ID " + portId);
                             target.addCp(targetNode, tapiCp);
                             connectionPoints.add(tapiCp);
@@ -271,20 +272,17 @@ public class TapiTopologyUtilities {
 
 
 
-    public static List<Integer> getObfnUsedBeams(String ingressSip, ContextSchema contextSchema){
-        log.debug("Determining used beams for:"+ingressSip);
-        List<Integer> usedBeams = new ArrayList<>();
-        /* Disabled this becuase the context from CTTC it is not updated
+    public static List<String> getObfnUsedBeams(String csId, ContextSchema contextSchema){
+        log.debug("Determining used beams for cs:"+csId);
+        List<String> usedBeams = new ArrayList<>();
         for(ConnectivityService cs : contextSchema.getConnectivityContext().getConnectivityService()){
-            String sip1 = cs.getEndPoint().get(0).getServiceInterfacePoint().getServiceInterfacePointUuid();
-            String sip2 = cs.getEndPoint().get(1).getServiceInterfacePoint().getServiceInterfacePointUuid();
-            log.debug("CS sips: "+sip1+" "+sip2);
-            if(sip1.equals(ingressSip) || sip2.equals(ingressSip) ){
-                for(Obfn obfnSpec : cs.getObfnConnectivityConstraintSpec().getObfnPool()){
-                   usedBeams.add(new Integer(obfnSpec.getObfnId()));
-                }
+
+            if(cs.getUuid().equals(csId)){
+                usedBeams = cs.getObfnConnectivityConstraintSpec().getObfnPool().stream().map(e -> Integer.toString(e.getObfnId()))
+                        .collect(Collectors.toList());
             }
-        }*/
+
+        }
         log.debug("Found used beams: "+usedBeams);
         return usedBeams;
 

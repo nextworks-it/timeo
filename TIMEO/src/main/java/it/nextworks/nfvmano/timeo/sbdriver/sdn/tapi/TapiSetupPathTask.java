@@ -1,9 +1,6 @@
 package it.nextworks.nfvmano.timeo.sbdriver.sdn.tapi;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,6 +46,7 @@ public class TapiSetupPathTask implements Runnable {
 	private DefaultApi api;
 	private SdnControllerConsumerInterface consumer;
 	private List<SbNetworkPath> networkPath = new ArrayList<>();
+	//private ObfnCSRecordRepository obfnCSRecordRepository;
 
 
 	/**
@@ -62,11 +60,14 @@ public class TapiSetupPathTask implements Runnable {
 	public TapiSetupPathTask(String operationId,
 							 DefaultApi api,
 							 SdnControllerConsumerInterface consumer,
-							 List<SbNetworkPath> networkPath) {
+							 List<SbNetworkPath> networkPath
+	//						 ObfnCSRecordRepository obfnCSRecordRepository
+	) {
 		this.operationId = operationId;
 		this.api = api;
 		this.consumer = consumer;
 		if (networkPath != null) this.networkPath = networkPath;
+		//this.obfnCSRecordRepository = obfnCSRecordRepository;
 	}
 
 	@Override
@@ -248,7 +249,7 @@ public class TapiSetupPathTask implements Runnable {
 		//String csUuid = np.getNetworkPathId();
 		log.debug("Creating /Updating network path");
 		ContextSchema response = null;
-		ObjectMapper objectMapper = new ObjectMapper();
+
 
 
 		response = api.retrieveContext();
@@ -339,6 +340,10 @@ public class TapiSetupPathTask implements Runnable {
 				CreateConnectivityServiceRPCInputSchema responseCreate = api.createCreateConnectivityServiceById(createConnectivityService);
 				String replyUuid = responseCreate.getUuid();
 				log.debug("Created connectivity service " + replyUuid);
+				Map<String, String > interDcBeamMap = new HashMap<>();
+				interDcBeamMap.put(networkPath.getNetworkPathId(), hopProps.get("beamId"));
+				ObfnCSRecord pathRecord  = new ObfnCSRecord(activeConnectionId, interDcBeamMap);
+				//obfnCSRecordRepository.saveAndFlush(pathRecord);
 			}else{
 				log.debug("Updating connection:"+activeConnectionId);
 				createConnectivityService.setUuid(activeConnectionId);
@@ -348,6 +353,18 @@ public class TapiSetupPathTask implements Runnable {
 
 				String replyUuid = responseUpdate.getUuid();
 				log.debug("Update connectivity service " + replyUuid);
+				/*Optional<ObfnCSRecord> record = obfnCSRecordRepository.findByObfnCsId(activeConnectionId);
+				if(record.isPresent()){
+					log.debug("updating obfn record");
+					ObfnCSRecord recordV  = record.get();
+					recordV.addInterDcPath(networkPath.getNetworkPathId(),hopProps.get("beamId") );
+					obfnCSRecordRepository.saveAndFlush(recordV);
+				}else{
+					log.warn("obfn record not found");
+				}
+
+				 */
+
 			}
 
 		}

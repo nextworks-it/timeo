@@ -53,11 +53,16 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 	
 	private String basePath;	//should be something like "http://localhost:8182/restconf"
 
+	private Map<String, SbNetworkPath> configuredPaths;
+
+
 	public TapiSdnControllerPlugin(SdnController controller,
-			ThreadPoolTaskExecutor taskExecutor) {
+			ThreadPoolTaskExecutor taskExecutor,
+								   ObfnCSRecordRepository obfnCSRecordRepository) {
 		super(SdnControllerType.SDN_CONTROLLER_TAPI, controller);
 		this.basePath = controller.getUrl();
 		this.taskExecutor = taskExecutor;
+
 	}
 	
 	@Override
@@ -114,16 +119,23 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 		DefaultApi api = buildApiClient();
 		log.debug("Starting thread to create network paths through TAPI connectivity service");
 		taskExecutor.execute(new TapiSetupPathTask(operationId, api, consumer, networkPath));
+		for(SbNetworkPath sbNetworkPath: networkPath){
+			configuredPaths.put(sbNetworkPath.getNetworkPathId(), sbNetworkPath);
+		}
 		return operationId;
 	}
 	
 	@Override
-	public String removePaths(List<String> networkPathIds, SdnControllerConsumerInterface consumer) throws NotExistingEntityException, FailedOperationException, MethodNotImplementedException {
+	public String removePaths(List<String> networkPathIds, SdnControllerConsumerInterface consumer ) throws NotExistingEntityException, FailedOperationException, MethodNotImplementedException {
 		log.debug("Removing network path through TAPI connectivity service");
 		String operationId = UUID.randomUUID().toString();
 		DefaultApi api = buildApiClient();
 		log.debug("Starting thread to remove network paths through TAPI connectivity service");
-		taskExecutor.execute(new TapiRemovePathTask(operationId, api, consumer, networkPathIds));
+		List<SbNetworkPath> networkPaths = new ArrayList<>();
+		for(String networkPathId: networkPathIds){
+			networkPaths.add(configuredPaths.get(networkPathId));
+		}
+		taskExecutor.execute(new TapiRemovePathTask(operationId, api, consumer, networkPaths));
 		return operationId;
 	}
 
