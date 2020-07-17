@@ -137,7 +137,7 @@ public class BluespaceObfnAlgorithmStatic extends AbstractNsResourceAllocationAl
                          log.debug("Using default response");
                 ObjectMapper mapper = new ObjectMapper();
                 String inputFile = "/default-ra-response-1.json";
-                if(localRequest.getServiceRequests().get(0).getServiceAreaId().equals("2"))
+                if(localRequest.getServiceRequests().get(0).getServiceAreaId().contains("2"))
                     inputFile = "/default-ra-response-2.json";
                 InputStream responseStream = BluespaceObfnAlgorithmStatic.class.getResourceAsStream(inputFile);
                 BluespaceAlgorithmAllocationResponse defaultResponse = mapper.readValue(responseStream, new TypeReference<BluespaceAlgorithmAllocationResponse>() {});
