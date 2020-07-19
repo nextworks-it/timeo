@@ -104,7 +104,8 @@ public class TapiRemovePathTask implements Runnable {
 			String destination = nph.getEgressServiceInterfacePoint();
 			String activeConnectionId = getActiveConnectionId(activePaths, source, destination);
 			List<String> activeBeams = TapiTopologyUtilities.getObfnUsedBeams(activeConnectionId, response);
-			if(activeBeams.size()==1){
+			String beamId = nph.getHopProperties().get("beamId");
+			if(activeBeams.size()==1 && activeBeams.contains(beamId)){
 				log.debug("Delete CS:"+activeConnectionId);
 				api.createDeleteConnectivityServiceById(activeConnectionId);
 			}else{
@@ -146,7 +147,7 @@ public class TapiRemovePathTask implements Runnable {
 				List<Obfn> obfnPool = new ArrayList<>();
 				Obfn obfn = new Obfn();
 				obfn.setBeamEnable(false);
-				obfn.setObfnId(new Integer(hopProps.get("beamId")));
+				obfn.setObfnId(new Integer(beamId));
 				obfn.setWidth(new Integer(hopProps.get(("beamWidth"))));
 				obfn.setXOffsetAngle(new Integer(hopProps.get("beamOffsetX")));
 				obfn.setYOffsetAngle(new Integer(hopProps.get("beamOffsetY")));

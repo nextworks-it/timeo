@@ -278,7 +278,9 @@ public class TapiTopologyUtilities {
         for(ConnectivityService cs : contextSchema.getConnectivityContext().getConnectivityService()){
 
             if(cs.getUuid().equals(csId)){
-                usedBeams = cs.getObfnConnectivityConstraintSpec().getObfnPool().stream().map(e -> Integer.toString(e.getObfnId()))
+                usedBeams = cs.getObfnConnectivityConstraintSpec().getObfnPool().stream()
+                        .filter(e -> e.isBeamEnable())
+                        .map(e -> Integer.toString(e.getObfnId()))
                         .collect(Collectors.toList());
             }
 

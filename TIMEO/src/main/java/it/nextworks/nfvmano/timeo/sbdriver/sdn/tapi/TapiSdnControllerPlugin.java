@@ -137,6 +137,11 @@ public class TapiSdnControllerPlugin extends SdnControllerPlugin {
 			networkPaths.add(configuredPaths.get(networkPathId));
 		}
 		taskExecutor.execute(new TapiRemovePathTask(operationId, api, consumer, networkPaths));
+        for(String networkPathId: networkPathIds){
+            networkPaths.add(configuredPaths.get(networkPathId));
+            configuredPaths.remove(networkPathId);
+        }
+
 		return operationId;
 	}
 
