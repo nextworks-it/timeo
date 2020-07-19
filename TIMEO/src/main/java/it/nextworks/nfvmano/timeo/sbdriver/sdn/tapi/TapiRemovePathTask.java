@@ -108,7 +108,7 @@ public class TapiRemovePathTask implements Runnable {
 			if(activeBeams.size()==1 && activeBeams.contains(beamId)){
 				log.debug("Delete CS:"+activeConnectionId);
 				api.createDeleteConnectivityServiceById(activeConnectionId);
-			}else{
+			}else if(activeBeams.contains(beamId)){
 				log.debug("UPDATE CS:"+activeConnectionId);
 				CreateConnectivityServiceRPCInputSchema createConnectivityService = new CreateConnectivityServiceRPCInputSchema();
 
@@ -183,7 +183,9 @@ public class TapiRemovePathTask implements Runnable {
 				CreateConnectivityServiceRPCInputSchema responseCreate = api.updateCreateConnectivityServiceById(createConnectivityService);
 				String replyUuid = responseCreate.getUuid();
 				log.debug("pUT connectivity service " + replyUuid);
-			}
+			}else{
+			    log.debug("Specified beam not active, ignoring");
+            }
 
 
 
