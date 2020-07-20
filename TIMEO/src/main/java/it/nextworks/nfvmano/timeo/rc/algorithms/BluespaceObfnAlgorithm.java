@@ -426,7 +426,7 @@ public class BluespaceObfnAlgorithm extends AbstractNsResourceAllocationAlgorith
      */
     private static boolean isAreaIncluded(double latitude1, double longitude1, float range1, double latitude, double longitude, float range) {
         if (range1 > range) return false;
-        double distance = Math.pow((latitude1 - latitude) * (latitude1 - latitude) + (longitude1 + longitude) * (longitude1 + longitude), 0.5);
+        double distance = Math.pow((latitude1 - latitude) * (latitude1 - latitude) + (longitude1 - longitude) * (longitude1 - longitude), 0.5);
         if (distance <= (range - range1)) return true;
         else return false;
     }
