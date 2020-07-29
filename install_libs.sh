@@ -10,6 +10,12 @@ if [[ -z "$1" ]]; then
     exit 1
 fi
 
+cd ConfigManagerApi
+mvn clean install && cd .. || ( echo "Could not install the ConfigManagerLibs"; exit 1 )
+echo ""
+echo "***  All done!  ***"
+
+
 cd "$1" || ( echo "Invalid folder $1."; usage; exit 1 )
 
 echo "***  Cloning the repo in $1  ***"
@@ -26,3 +32,5 @@ cd nfv-libs
 mvn clean install || ( echo "Could not install the libs"; exit 1 )
 echo ""
 echo "***  All done!  ***"
+
+
