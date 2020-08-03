@@ -89,7 +89,7 @@ fi
 # PostgresSQL
 sudo updatedb
 if ! locate bin/postgres >/dev/null 2>&1; then
-    echo "Installing postgresql"
+    echo "Installing PostgreSQL"
     sudo apt-get install postgresql-10=10.12-0ubuntu0.18.04.1 -y
 else
 
@@ -101,9 +101,9 @@ else
     sudo service postgresql start || true	
     postgres_version=$(sudo -u postgres psql -c "select version();" | grep PostgreSQL | cut -d" " -f3)
     if contains "$postgres_version" 10; then
-        echo "postgresql already present."
+        echo "PostgreSQL already present."
     else
-        echo "Postgres is present, but in a version different than 10 ($postgres_version)"
+        echo "PostgreSQL is present, but in a version different than 10 ($postgres_version)"
         echo "Only Postgres 10 is officially supported."
     fi
     	
