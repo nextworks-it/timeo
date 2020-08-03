@@ -41,8 +41,8 @@ sudo -v || (echo "Super user capabilities required."; exit 1)
 
 # Install deps
 
-# Java
-if ! type javac > /dev/null; then
+# Java JDK 
+if ! type javac > /dev/null 2>&1; then
     echo "Installing JDK"
     sudo apt-get install openjdk-8-jdk -y
 else
@@ -56,7 +56,8 @@ else
 	exit -1
     fi
 fi
-if ! type java > /dev/null; then
+# Java JRE
+if ! type java > /dev/null 2>&1; then
     echo "Installing JRE"
     sudo apt-get install openjdk-8-jre -y
 else
@@ -71,43 +72,45 @@ else
     fi
 fi
 
-
-if ! type rabbitmq-server 2> /dev/null; then
-    echo "Installing rabbitmq"
+# RabbitMQ
+if ! type rabbitmq-server > /dev/null 2>&1; then
+    echo "Installing RabbitMQ"
     sudo apt-get install rabbitmq-server=3.6.10-1 -y
 else
-    echo "Rabbitmq already present."
     rabbit_version=$(sudo rabbitmqctl status | grep "\{rabbit,\"RabbitMQ\"" | tr -dc '[:digit:].\n')
     if contains "$rabbit_version" 3.6; then
-	    echo "Rabbit already present"
+	    echo "RabbitMQ already present"
     else
-	    echo "Rabbit is present, but in a version different than 3.6"
-	    echo "Only Rabbit 3.6 is officially supported."
+	    echo "RabbitMQ is present, but in a version different than 3.6"
+	    echo "Only RabbitMQ 3.6 is officially supported."
     fi
 fi
 
-if ! locate bin/postgres 2>/dev/null; then
+# PostgresSQL
+sudo updatedb
+if ! locate bin/postgres >/dev/null 2>&1; then
     echo "Installing postgresql"
     sudo apt-get install postgresql-10=10.12-0ubuntu0.18.04.1 -y
 else
 
     
-    if ! type psql 2>/dev/null; then
-	    echo Installing psql client
-    	sudo apt install postgresql-client-10=10.12-0ubuntu0.18.04.1
+    if ! type psql > /dev/null 2>&1; then
+	echo Installing psql client
+    	sudo apt install postgresql-client-10=10.12-0ubuntu0.18.04.1 -y
     fi
-		
-postgres_version=$(sudo -u postgres psql -c "select version();" | grep PostgreSQL | cut -d" " -f3)
-    	if contains "$postgres_version" 10; then
-	    echo "postgresql already present."
-    	else
-	    echo "Postgres is present, but in a version different than 10 ($postgres_version)"
-            echo "Only Postgres 10 is officially supported."
-    	fi
-     
-	
+    sudo service postgresql start || true	
+    postgres_version=$(sudo -u postgres psql -c "select version();" | grep PostgreSQL | cut -d" " -f3)
+    if contains "$postgres_version" 10; then
+        echo "postgresql already present."
+    else
+        echo "Postgres is present, but in a version different than 10 ($postgres_version)"
+        echo "Only Postgres 10 is officially supported."
+    fi
+    	
 fi
-if ! type mvn 2> /dev/null; then
+
+# Maven
+if ! type mvn > /dev/null 2>&1; then
     echo "Installing maven"
     sudo apt-get install maven=3.6.0-1~18.04.1 -y
 else
@@ -116,8 +119,8 @@ else
 	    
     	echo "Maven already present."
     else
-            echo "Maven is present, but in a version different than 3.6 ($maven_version)"
-            echo "Only Maven 3.6 is officially supported."
+        echo "Maven is present, but in a version different than 3.6 ($maven_version)"
+        echo "Only Maven 3.6 is officially supported."
     fi
 fi
 
