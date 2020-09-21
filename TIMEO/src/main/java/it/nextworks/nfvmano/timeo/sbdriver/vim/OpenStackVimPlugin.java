@@ -120,7 +120,7 @@ import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.core.transport.Config;
 import org.openstack4j.model.identity.v3.Token;
-import org.openstack4j.model.image.Image;
+import org.openstack4j.model.image.v2.Image;
 import org.openstack4j.model.network.AttachInterfaceType;
 import org.openstack4j.model.network.IP;
 import org.openstack4j.model.network.IPVersionType;
@@ -1503,7 +1503,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 		List<? extends Image> images = null;
 		try {
 			//TODO: improve
-			images = os.images().listAll();
+			images = os.imagesV2().list();
 		} catch (Exception e) {
 			log.error("An error occurred gathering Image list: " + e.getMessage());
 			throw new FailedOperationException("An error occurred gathering Image list: " + e.getMessage());
