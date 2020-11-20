@@ -237,7 +237,9 @@ public class TapiSetupPathTask implements Runnable {
 		cc.setRequestedCapacity(c);
 		log.debug("Issuing TAPI request to:" + api.getApiClient().getBasePath());
 		createConnectivityService.setConnectivityConstraint(cc);
-		//CTTC server replies back with the same request issued 
+		//CTTC server replies back with the same request issued
+		String json = new Gson().toJson(createConnectivityService);
+		log.debug(json);
 		CreateConnectivityServiceRPCInputSchema response = api.createCreateConnectivityServiceById(createConnectivityService);
 
 		String replyUuid = response.getUuid();
