@@ -490,7 +490,7 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
 		return bbuConfigParams;
 	}
 	private Map<String,String> getRrhConfigurationParameters(){
-
+		/*
 		Map<String, String> configParameters = new HashMap<>();
 
 		configParameters.put("rcoutput.powerUp","1");
@@ -505,6 +505,31 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
 		}
 
 		return configParameters;
+
+		 */
+
+		Map<String, String> rrhConfigParams = new HashMap<>();
+		//rrhConfigParams.put("rcoutput.rxGain", Integer.toString(obfnRrhResourceAllocation.getRxGain()));
+		//rrhConfigParams.put("rcoutput.txGain",  Integer.toString(obfnRrhResourceAllocation.getTxGain()));
+		//TODO: the Pa gains should be calcuated, for the moment just copying the txGain
+		int txGain = 100;
+
+
+		int rxGain =100;
+
+
+		for(int i=0;i<16; i++){
+			String paGainKey = String.format("rcoutput.paGain%02d", i);
+			rrhConfigParams.put(paGainKey, Integer.toString(txGain));
+		}
+
+		rrhConfigParams.put("rcoutput.powerUp",  Boolean.toString(true));
+		rrhConfigParams.put("rcoutput.sleepMode",  Boolean.toString(false));
+		rrhConfigParams.put("rcoutput.batteryChargeEnable", "0");
+		rrhConfigParams.put("rcoutput.outputVoltage1Enable","0");
+		rrhConfigParams.put("rcoutput.outputVoltage1Level","0");
+		rrhConfigParams.put("rcoutput.outputVoltage2Enable", "0");
+		return rrhConfigParams;
 	}
 
 }
