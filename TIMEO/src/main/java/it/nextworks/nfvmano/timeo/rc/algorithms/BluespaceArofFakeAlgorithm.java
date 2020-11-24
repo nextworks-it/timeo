@@ -95,7 +95,7 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
 						this.getRrhConfigurationParameters()                            //parameters
 
 				);
-			}else{
+			}else if(pnfInstance.getPnfType()==PnfType.BBU){
         		pa = new PnfAllocation(
 						null,
 						pnfdId,
@@ -103,7 +103,17 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
 						0,
 						pnfInstance.getPnfInstanceId(),
 						"",
-						Collections.emptyMap()
+						this.getBBUConfigurationParameters()
+				);
+			}else{
+				pa = new PnfAllocation(
+						null,
+						pnfdId,
+						pnfInstance.getPnfdVersion(),
+						0,
+						pnfInstance.getPnfInstanceId(),
+						"",
+						new HashMap<>()
 				);
 			}
 
@@ -445,6 +455,40 @@ public class BluespaceArofFakeAlgorithm extends AbstractNsResourceAllocationAlgo
 	}
 
 
+
+	private Map<String, String> getBBUConfigurationParameters(){
+
+
+        /*
+         *  int operationMode;
+         *  int subcarriersNumber;
+         *  int pilotSpacing;
+            int modulationScheme;
+            long intermediateFrequency;
+         */
+		Map<String, String> bbuConfigParams = new HashMap<>();
+
+
+
+		Long intermediateFrequency =  new Long(5000000);
+
+		bbuConfigParams.put("rcoutput.intermediateFrequency",  intermediateFrequency.toString());
+		int modulationScheme = 1;
+		bbuConfigParams.put("rcoutput.modulationScheme",  Integer.toString(modulationScheme));
+		int subcarriersNumber = 3168;
+
+		bbuConfigParams.put("rcoutput.subcarriersNumber",  Integer.toString(subcarriersNumber));
+
+		int operationMode = 4;
+
+		bbuConfigParams.put("rcoutput.operationMode", Integer.toString(operationMode));
+
+		int pilotSpacing = 14;
+
+		bbuConfigParams.put("rcoutput.pilotSpacing",  Integer.toString(pilotSpacing));
+
+		return bbuConfigParams;
+	}
 	private Map<String,String> getRrhConfigurationParameters(){
 
 		Map<String, String> configParameters = new HashMap<>();
