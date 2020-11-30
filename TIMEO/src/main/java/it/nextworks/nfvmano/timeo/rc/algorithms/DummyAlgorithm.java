@@ -22,11 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
-import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathEndPoint;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
@@ -43,31 +41,35 @@ import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
  */
 public class DummyAlgorithm extends AbstractNsResourceAllocationAlgorithm {
 
-
 	public DummyAlgorithm() {
 		super(AlgorithmType.DUMMY);
 	}
 
 	@Override
-	public NsResourceSchedulingSolution computeNsResourceAllocationSolution(InstantiateNsRequest request, Nsd nsd, Map<Vnfd, Map<String, String>> vnfds, 
-			VimPlugin vimPlugin, SdnControllerPlugin sdnPlugin) throws NotExistingEntityException, ResourceAllocationSolutionNotFound {
+	public NsResourceSchedulingSolution computeNsResourceAllocationSolution(
+			InstantiateNsRequest request,
+			Nsd nsd,
+			Map<Vnfd, Map<String, String>> vnfds,
+			VimPlugin vimPlugin,
+			SdnControllerPlugin sdnPlugin
+	) {
 
 		List<VnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
 		List<NetworkPath> networkPaths = new ArrayList<>();
-		
+
 		VnfResourceAllocation vra1 = new VnfResourceAllocation(null, "hss", 0, "hss_vdu", 0, "OpenStack_local", "nova", "wasp");
 		VnfResourceAllocation vra2 = new VnfResourceAllocation(null, "oaisim", 0, "oaisim_vdu", 0, "OpenStack_local", "nova", "wasp");
 		VnfResourceAllocation vra3 = new VnfResourceAllocation(null, "mme", 0, "mme_vdu", 0, "OpenStack_local", "nova", "hulk");
 		VnfResourceAllocation vra4 = new VnfResourceAllocation(null, "spgw", 0, "spgw_vdu", 0, "OpenStack_local", "nova", "hulk");
-		
+
 		vnfResourceAllocation.add(vra1);
 		vnfResourceAllocation.add(vra2);
 		vnfResourceAllocation.add(vra3);
 		vnfResourceAllocation.add(vra4);
-		
+
 		String incomingLinkId = null;
 		String outgoingLinkId = null;
-		
+
 		//S6a HSS->MME
 		NetworkPathEndPoint npe1Src = new NetworkPathEndPoint("hss", 0, "hss_vdu", 0, "hssS6aInt");
 		NetworkPathEndPoint npe1Dst = new NetworkPathEndPoint("mme", 0, "mme_vdu", 0, "mmeS6aInt");
@@ -119,7 +121,7 @@ public class DummyAlgorithm extends AbstractNsResourceAllocationAlgorithm {
 		nph4.add(new NetworkPathHop(2, "openflow:3", "openflow:3:3", "openflow:3:1", incomingLinkId, outgoingLinkId, 0, false, true, null, null));
 		NetworkPath np4 = new NetworkPath(null, "NP_04_Mgt_OAISIM-MgtSAP", npe4, nph4, "mgt", false);
 		networkPaths.add(np4);
-		
+
 		//Mgt HSS->Router(MgtSap)
 		NetworkPathEndPoint npe5Src = new NetworkPathEndPoint("hss", 0, "hss_vdu", 0, "hssMgtInt");
 		NetworkPathEndPoint npe5Dst = new NetworkPathEndPoint("mgtSap", "mgt");
@@ -171,7 +173,7 @@ public class DummyAlgorithm extends AbstractNsResourceAllocationAlgorithm {
 		nph8.add(new NetworkPathHop(2, "openflow:3", "openflow:3:4", "openflow:3:1", incomingLinkId, outgoingLinkId, 0, false, true, null, null));
 		NetworkPath np8 = new NetworkPath(null, "NP_07_Sgi_SPGW-SgiSAP", npe8, nph8, "Sgi", false);
 		networkPaths.add(np8);
-		
+
 		List<String> networkNodesToBeActivated = new ArrayList<>();
 		networkNodesToBeActivated.add("openflow:3");
 		networkNodesToBeActivated.add("openflow:2");
@@ -179,14 +181,13 @@ public class DummyAlgorithm extends AbstractNsResourceAllocationAlgorithm {
 		networkNodesToBeActivated.add("openflow:9");
 		networkNodesToBeActivated.add("openflow:8");
 		networkNodesToBeActivated.add("openflow:7");
-		
-		Map<String,String> computeNodesToBeActivated = new HashMap<>();
-		computeNodesToBeActivated.put("wasp","OpenStack_local");
-		computeNodesToBeActivated.put("hulk","OpenStack_local");
-		
-		NsResourceSchedulingSolution solution = new NsResourceSchedulingSolution(request.getNsInstanceId(), vnfResourceAllocation, networkPaths, true, 
+
+		Map<String, String> computeNodesToBeActivated = new HashMap<>();
+		computeNodesToBeActivated.put("wasp", "OpenStack_local");
+		computeNodesToBeActivated.put("hulk", "OpenStack_local");
+
+		NsResourceSchedulingSolution solution = new NsResourceSchedulingSolution(request.getNsInstanceId(), vnfResourceAllocation, networkPaths, true,
 				networkNodesToBeActivated, computeNodesToBeActivated);
 		return solution;
 	}
-
 }

@@ -1,14 +1,18 @@
 package it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.apache.commons.collections15.map.HashedMap;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.OnDelete;
@@ -48,6 +52,15 @@ public class PnfInstance implements DescriptorInformationElement {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	List<PhysicalEquipmentPort> ports = new ArrayList<>();
 	
+	private PnfType pnfType;
+	
+
+	@OneToMany(mappedBy="pnfInstance",  cascade=CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<PnfInstanceMetadata> pnfInstanceMetadata=new ArrayList<>();
+
+
 	public PnfInstance() { }
 
 	/**
@@ -63,12 +76,44 @@ public class PnfInstance implements DescriptorInformationElement {
 			String pnfdId,
 			String pnfdVersion,
 			String description,
-			String location) {
+			String location
+			//List<PnfInstanceMetadata> pnfInstanceMetadata
+	) {
 		this.pnfInstanceId = pnfInstanceId;
 		this.pnfdId = pnfdId;
 		this.pnfdVersion = pnfdVersion;
 		this.description = description;
 		this.location = location;
+		this.pnfType = PnfType.UNDEFINED;
+		if(pnfInstanceMetadata!=null)
+			this.pnfInstanceMetadata = pnfInstanceMetadata;
+
+	}
+	
+	
+
+	/**
+	 * Constructor
+	 * 
+	 * @param pnfInstanceId ID of the PNF instance.
+	 * @param pnfdId ID of the PNFD defining the PNF.
+	 * @param pnfdVersion version of the PNFD defining the PNF.
+	 * @param description Description of the PNF instance.
+	 * @param location Geographical location where the PNF is deployed.
+	 * @param pnfType type of the PNF
+	 */
+	public PnfInstance(String pnfInstanceId,
+			String pnfdId,
+			String pnfdVersion,
+			String description,
+			String location,
+			PnfType pnfType) {
+		this.pnfInstanceId = pnfInstanceId;
+		this.pnfdId = pnfdId;
+		this.pnfdVersion = pnfdVersion;
+		this.description = description;
+		this.location = location;
+		this.pnfType = pnfType;
 	}
 	
 	/**
@@ -126,6 +171,16 @@ public class PnfInstance implements DescriptorInformationElement {
 	public List<PhysicalEquipmentPort> getPorts() {
 		return ports;
 	}
+	
+	
+
+	/**
+	 * @return the pnfType
+	 */
+	@JsonProperty("type")
+	public PnfType getPnfType() {
+		return pnfType;
+	}
 
 	@JsonIgnore
 	public String getManagementIpAddress() {
@@ -135,6 +190,14 @@ public class PnfInstance implements DescriptorInformationElement {
 		return null;
 	}
 
+	@JsonIgnore
+	public int getManagementPort() {
+		for (PhysicalEquipmentPort p : ports) {
+			if (p.isManagement()) return Integer.parseInt(p.getAddresses().get(AddressType.PORT));
+		}
+		return 8888;
+	}
+
 
 	@Override
 	public void isValid() throws MalformattedElementException {
@@ -142,6 +205,22 @@ public class PnfInstance implements DescriptorInformationElement {
 		if (pnfdId == null) throw new MalformattedElementException("PNF instance without PNFD ID.");
 		if (pnfdVersion == null) throw new MalformattedElementException("PNF instance without PNFD version.");
 		if ((ports == null) || (ports.isEmpty())) throw new MalformattedElementException("PNF instance without ports. At least one port is needed to access the PNF.");
+	}
+
+
+	/**
+	 * @return the pnfInstanceMetadata
+	 */
+	@JsonProperty("metadata")
+	public List<PnfInstanceMetadata> getPnfInstanceMetadata() {
+		return pnfInstanceMetadata;
+	}
+
+	/**
+	 * @param pnfInstanceMetadata the pnfInstanceMetadata to set
+	 */
+	public void setPnfInstanceMetadata(List<PnfInstanceMetadata> pnfInstanceMetadata) {
+		this.pnfInstanceMetadata = pnfInstanceMetadata;
 	}
 	
 }

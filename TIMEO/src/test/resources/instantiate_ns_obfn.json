@@ -1,0 +1,44 @@
+{
+  "nsInstanceId": "$NSI_ID",
+  "flavourId": "df_vCDN",
+  "nsInstantiationLevelId": "il_vCDN_small",
+  "sapData": [
+    {
+      "sapdId": "sap_mgmt",
+      "sapName": "",
+      "description": ""
+
+    },
+    {
+      "sapdId": "sap_users",
+      "sapName": "",
+      "description": "",
+      "locationInfo": {
+        "latitude": "10D",
+        "longitude": "10D",
+        "range": "1"
+      }
+    },
+    {
+      "sapdId": "sap_origin",
+      "sapName": "",
+      "description": ""
+    }
+  ],
+  "additionalParamForVnf": [
+    {
+      "vnfProfileId": "vCacheEdge_2_profile",
+      "additionalParam": {
+        "uservnf.origin_port": "32400",
+        "uservnf.origin_fqdn": "bluespace.lab"
+      }
+    }
+  ],
+  "additionalParamForNs": {
+    "uservnf.add_dns_hosts": "true",
+    "uservnf.rm_dns_hosts": "true",
+    "uservnf.cu_interface": "vxlan1",
+    "uservnf.internet_interface": "ens3",
+    "uservnf.hostname": "vepc-test"
+  }
+}

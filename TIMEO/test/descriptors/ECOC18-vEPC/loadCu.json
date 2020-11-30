@@ -1,0 +1,15 @@
+{
+	"pnfInstanceId": "CU_INSTANCE_001",
+	"pnfdId": "CU_v01",
+	"pnfdVersion": "0.1",
+	"description": "TEST CU",
+	"location": "ARNO",
+	"ports": [{
+		"portId": "port1",
+		"addresses": {
+			"MAC_ADDRESS": "de:ad:de:ad:de:ad",
+			"IP_ADDRESS": "10.10.20.2"
+		},
+		"management": true
+	}]
+}

@@ -120,7 +120,7 @@ import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.core.transport.Config;
 import org.openstack4j.model.identity.v3.Token;
-import org.openstack4j.model.image.Image;
+import org.openstack4j.model.image.v2.Image;
 import org.openstack4j.model.network.AttachInterfaceType;
 import org.openstack4j.model.network.IP;
 import org.openstack4j.model.network.IPVersionType;
@@ -404,7 +404,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 					break;
 				}
 				try{
-					log.debug("Attaching port  to router " + routerID);
+					log.debug("Attaching port to router " + routerID);
 					RouterInterface routerIf = os.networking().router().attachInterface(routerID, AttachInterfaceType.SUBNET, foundSubnet);
 					port = os.networking().port().get(routerIf.getPortId());
 				} catch(Exception e){
@@ -1094,7 +1094,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 	 * @return
 	 * @throws FailedOperationException
 	 */
-	private String getFlavour(VirtualComputeFlavour virtualComputeFlavor) throws FailedOperationException {
+	private String getFlavour(VirtualComputeFlavour virtualComputeFlavor, String name) throws FailedOperationException {
 		OSClientV3 os = null;
 		if (token == null || token.getExpires().compareTo(new Date()) < 0) {
 			log.debug("Token has expired, generating a new one");
@@ -1114,7 +1114,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 		}
 		List<? extends Flavor> flavors = null;
 		try {
-			flavors = os.compute().flavors().list();
+			flavors = os.compute().flavors().list(true);
 		} catch (Exception e) {
 			log.error("An error occurred during list flavors: " + e.getMessage());
 			throw new FailedOperationException("An error occurred during list flavors: " + e.getMessage());
@@ -1124,12 +1124,20 @@ public class OpenStackVimPlugin extends VimPlugin {
 			size += vStorage.getSizeOfStorage();
 		if (flavors != null && !flavors.isEmpty()) {
 			for (Flavor flavor : flavors) {
-				if (flavor.getVcpus() != virtualComputeFlavor.getVirtualCpu().getNumVirtualCpu())
+				log.debug("Flavour request with: " + virtualComputeFlavor.getVirtualCpu().getNumVirtualCpu() + " vCPU, " + virtualComputeFlavor.getVirtualMemory().getVirtualMemSize()*1024 + "vRAM, " + size + "vHDD");
+				log.debug("Flavour in check: " + flavor.getVcpus() + " vCPU, " + flavor.getRam() + "vRAM, " + flavor.getDisk() + "vHDD");
+				if (flavor.getVcpus() != virtualComputeFlavor.getVirtualCpu().getNumVirtualCpu()) {
+					log.debug("Skipping on vCPUs");
 					continue;
-				if (flavor.getRam() != virtualComputeFlavor.getVirtualMemory().getVirtualMemSize()*1024)
+				}
+				if (flavor.getRam() != (virtualComputeFlavor.getVirtualMemory().getVirtualMemSize()*1024)) {
+					log.debug("Skipping on vRAM");
 					continue;
-				if (flavor.getDisk() != size)
+				}
+				if (flavor.getDisk() != size) {
+					log.debug("Skipping on vHDD");
 					continue;
+				}
 
 				return flavor.getId();
 			}
@@ -1137,7 +1145,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 		Flavor flavor = null;
 		try {
 			flavor = os.compute().flavors()
-					.create(Builders.flavor().isPublic(false).name(virtualComputeFlavor.getFlavourId()).disk(size)
+					.create(Builders.flavor().isPublic(true).name(name).disk(size)
 							.ram(virtualComputeFlavor.getVirtualMemory().getVirtualMemSize()*1024)
 							.vcpus(virtualComputeFlavor.getVirtualCpu().getNumVirtualCpu()).build());
 			return flavor.getId();
@@ -1486,7 +1494,7 @@ public class OpenStackVimPlugin extends VimPlugin {
 //			throw new FailedOperationException("VM already instantiated");
 //		}
 
-		String flavorID = getFlavour(virtualComputeFlavour);
+		String flavorID = getFlavour(virtualComputeFlavour, request.getComputeName());
 		if (flavorID == null) {
 			log.error("An error occurred during flavor creation");
 			throw new FailedOperationException("An error occurred during flavor creation");
@@ -1494,7 +1502,8 @@ public class OpenStackVimPlugin extends VimPlugin {
 
 		List<? extends Image> images = null;
 		try {
-			images = os.images().list();
+			//TODO: improve
+			images = os.imagesV2().list();
 		} catch (Exception e) {
 			log.error("An error occurred gathering Image list: " + e.getMessage());
 			throw new FailedOperationException("An error occurred gathering Image list: " + e.getMessage());

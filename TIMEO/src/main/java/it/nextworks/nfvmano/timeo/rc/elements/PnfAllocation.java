@@ -38,6 +38,10 @@ public class PnfAllocation {
 	@JsonIgnore
 	private NsResourceSchedulingSolution nsRss;
 	
+	@ManyToOne
+	@JsonIgnore
+	private ScaleNsResourceAllocation sNSRA;
+	
 	//input
 	private String pnfdId;
 	private String pnfdVersion;
@@ -52,7 +56,11 @@ public class PnfAllocation {
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private Map<String, String> parameters = new HashMap<>();
-	
+
+
+
+
+
 	public PnfAllocation() {
 		// TODO Auto-generated constructor stub
 	}
@@ -81,8 +89,10 @@ public class PnfAllocation {
 		this.index = index;
 		this.pnfInstanceId = pnfInstanceId;
 		this.pnfProfileId = pnfProfileId;
+
 		if (parameters != null) this.parameters = parameters;
 	}
+
 
 	/**
 	 * @return the nsRss

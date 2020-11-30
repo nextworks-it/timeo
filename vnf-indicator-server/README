@@ -1,0 +1,11 @@
+Preconditions:
+$ pip3 install tornado
+$ pip3 install yattag
+
+Operating:
+Run with
+$ python3 vnfindicatorserver.py
+and see help via browser at 'http://localhost:8888'.
+
+See help for command line options via
+$ python3 vnfindicatorserver.py --help

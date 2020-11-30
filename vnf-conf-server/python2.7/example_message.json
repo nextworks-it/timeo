@@ -1,0 +1,26 @@
+{
+	"vnfConfigurationData": {
+		"cpConfiguration": [],
+		"dhcpServer": "null",
+		"vnfSpecificData": [{
+				"key": "vnf.hss.vdu.hss_vdu.hostname",
+				"value": "hss553"
+			},
+			{
+				"key": "uservnf.hss.vdu.hss.domainname",
+				"value": "vEPC.net"
+			},
+			{
+				"key": "vnf.spgw.vdu.spgw_vdu.intcp.spgwS1uInt.address",
+				"value": "192.168.10.3"
+			},
+			{
+				"key": "vnf.mme.vdu.mme_vdu.hostname",
+				"value": "mme555"
+			}
+
+		]
+	},
+	"vnfcConfigurationData": [],
+	"vnfInstanceId": "553"
+}

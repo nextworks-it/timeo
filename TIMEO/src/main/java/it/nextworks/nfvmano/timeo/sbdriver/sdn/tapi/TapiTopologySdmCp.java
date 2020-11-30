@@ -1,13 +1,13 @@
 package it.nextworks.nfvmano.timeo.sbdriver.sdn.tapi;
 
-import io.swagger.client.model.SdmPoolPac;
 import it.nextworks.nfvmano.libs.common.enums.LayerProtocol;
 import it.nextworks.nfvmano.timeo.rc.elements.TopologyLink;
 import it.nextworks.nfvmano.timeo.rc.elements.TopologyNode;
+//import io.swagger.client.model.SdmPoolCapabilityPac;
 
 public class TapiTopologySdmCp extends TapiTopologyCp {
 
-	private SdmPoolPac sdmPoolPac;
+	//private SdmPoolCapabilityPac sdmPoolPac;
 	
 	public TapiTopologySdmCp(TopologyNode node, TopologyLink outgoingLink, TopologyLink incomingLink, String address,
 			String cpId, String cpdId) {
@@ -21,19 +21,19 @@ public class TapiTopologySdmCp extends TapiTopologyCp {
 		this.layerProtocol = LayerProtocol.SDM;
 	}
 
-	/**
-	 * @return the sdmPoolPac
-	 */
-	public SdmPoolPac getSdmPoolPac() {
-		return sdmPoolPac;
-	}
-
-	/**
-	 * @param sdmPoolPac the sdmPoolPac to set
-	 */
-	public void setSdmPoolPac(SdmPoolPac sdmPoolPac) {
-		this.sdmPoolPac = sdmPoolPac;
-	}
+//	/**
+//	 * @return the sdmPoolPac
+//	 */
+//	public SdmPoolCapabilityPac getSdmPoolPac() {
+//		return sdmPoolPac;
+//	}
+//
+//	/**
+//	 * @param sdmPoolPac the sdmPoolPac to set
+//	 */
+//	public void setSdmPoolPac(SdmPoolCapabilityPac sdmPoolPac) {
+//		this.sdmPoolPac = sdmPoolPac;
+//	}
 	
 	
 

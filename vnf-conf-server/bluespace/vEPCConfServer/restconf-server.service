@@ -1,0 +1,10 @@
+[Unit]
+Description=vEPC Rest Agent
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python /opt/vEPCConfServer/server.py
+
+[Install]
+WantedBy=multi-user.target

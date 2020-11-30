@@ -1,0 +1,948 @@
+{
+  "service-interface-point": [
+    {
+      "administrative-state": "UNLOCKED",
+      "obfn-service-interface-point-spec": {
+        "supported-wavelength": {
+          "frequency-constraint": {
+            "adjustment-granularity": "G_200GHZ",
+            "grid-type": "DWDM"
+          },
+          "upper-frequency": 197.9,
+          "lower-frequency": 190.1
+        },
+        "supported-lower-angle": -60,
+        "supported-upper-angle": 60,
+        "supported-min-width": 20,
+        "supported-beams": 4,
+        "supported-max-width": 60
+      },
+      "name": [
+        {
+          "value": "node_111_port_11-input",
+          "value-name": "local-name"
+        },
+        {
+          "value": "INPUT",
+          "value-name": "port-direction"
+        },
+        {
+          "value": 1,
+          "value-name": "ols-id"
+        }
+      ],
+      "layer-protocol-name": "PHOTONIC_MEDIA",
+      "operational-state": "ENABLED",
+      "supported-layer-protocol-qualifier": [
+        "tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_NMC",
+        "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN"
+      ],
+      "tapi-photonic-media:media-channel-service-interface-point-spec": {
+        "mc-pool": {
+          "supportable-spectrum": [
+            {
+              "frequency-constraint": {
+                "adjustment-granularity": "G_6_25GHZ",
+                "grid-type": "FLEX"
+              },
+              "upper-frequency": 1961437501000000,
+              "lower-frequency": 1913312501000000
+            }
+          ],
+          "occupied-spectrum": [
+            {
+              "frequency-constraint": {
+                "adjustment-granularity": "G_6_25GHZ",
+                "grid-type": "FLEX"
+              },
+              "upper-frequency": 193125000,
+              "lower-frequency": 193075000
+            }
+          ]
+        }
+      },
+      "uuid": "1506716d-dc3e-4645-86e1-4cb8ba6a116b"
+    },
+    {
+      "administrative-state": "UNLOCKED",
+      "obfn-service-interface-point-spec": {
+        "supported-wavelength": {
+          "frequency-constraint": {
+            "adjustment-granularity": "G_200GHZ",
+            "grid-type": "DWDM"
+          },
+          "upper-frequency": 197.9,
+          "lower-frequency": 190.1
+        },
+        "supported-lower-angle": -60,
+        "supported-upper-angle": 60,
+        "supported-min-width": 20,
+        "supported-beams": 4,
+        "supported-max-width": 60
+      },
+      "name": [
+        {
+          "value": "node_111_port_11-output",
+          "value-name": "local-name"
+        },
+        {
+          "value": "OUTPUT",
+          "value-name": "port-direction"
+        },
+        {
+          "value": 2,
+          "value-name": "ols-id"
+        }
+      ],
+      "layer-protocol-name": "PHOTONIC_MEDIA",
+      "operational-state": "ENABLED",
+      "supported-layer-protocol-qualifier": [
+        "tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_NMC",
+        "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN"
+      ],
+      "tapi-photonic-media:media-channel-service-interface-point-spec": {
+        "mc-pool": {
+          "supportable-spectrum": [
+            {
+              "frequency-constraint": {
+                "adjustment-granularity": "G_6_25GHZ",
+                "grid-type": "FLEX"
+              },
+              "upper-frequency": 1961437501000000,
+              "lower-frequency": 1913312501000000
+            }
+          ],
+          "occupied-spectrum": [
+            {
+              "frequency-constraint": {
+                "adjustment-granularity": "G_6_25GHZ",
+                "grid-type": "FLEX"
+              },
+              "upper-frequency": 193125000,
+              "lower-frequency": 193075000
+            }
+          ]
+        }
+      },
+      "uuid": "e967dff5-c899-4324-9382-ae518d505448"
+    },
+    {
+      "administrative-state": "UNLOCKED",
+      "obfn-service-interface-point-spec": {
+        "supported-wavelength": {
+          "frequency-constraint": {
+            "adjustment-granularity": "G_200GHZ",
+            "grid-type": "DWDM"
+          },
+          "upper-frequency": 190.7,
+          "lower-frequency": 190.1
+        },
+        "supported-lower-angle": -60,
+        "supported-upper-angle": 60,
+        "supported-min-width": 20,
+        "supported-beams": 4,
+        "supported-max-width": 60
+      },
+      "name": [
+        {
+          "value": "node_111_port_12-input",
+          "value-name": "local-name"
+        },
+        {
+          "value": "INPUT",
+          "value-name": "port-direction"
+        },
+        {
+          "value": 3,
+          "value-name": "ols-id"
+        }
+      ],
+      "layer-protocol-name": "PHOTONIC_MEDIA",
+      "operational-state": "ENABLED",
+      "supported-layer-protocol-qualifier": [
+        "tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_NMC",
+        "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN"
+      ],
+      "tapi-photonic-media:media-channel-service-interface-point-spec": {
+        "mc-pool": {
+          "supportable-spectrum": [
+            {
+              "frequency-constraint": {
+                "adjustment-granularity": "G_6_25GHZ",
+                "grid-type": "FLEX"
+              },
+              "upper-frequency": 1961437501000000,
+              "lower-frequency": 1913312501000000
+            }
+          ],
+          "occupied-spectrum": [
+            {
+              "frequency-constraint": {
+                "adjustment-granularity": "G_6_25GHZ",
+                "grid-type": "FLEX"
+              },
+              "upper-frequency": 193125000,
+              "lower-frequency": 193075000
+            }
+          ]
+        }
+      },
+      "uuid": "1d2c5cd7-91eb-488f-a0bc-913908130bd4"
+    },
+    {
+      "administrative-state": "UNLOCKED",
+      "obfn-service-interface-point-spec": {
+        "supported-wavelength": {
+          "frequency-constraint": {
+            "adjustment-granularity": "G_200GHZ",
+            "grid-type": "DWDM"
+          },
+          "upper-frequency": 190.7,
+          "lower-frequency": 190.1
+        },
+        "supported-lower-angle": -60,
+        "supported-upper-angle": 60,
+        "supported-min-width": 20,
+        "supported-beams": 4,
+        "supported-max-width": 60
+      },
+      "name": [
+        {
+          "value": "node_111_port_12-output",
+          "value-name": "local-name"
+        },
+        {
+          "value": "OUTPUT",
+          "value-name": "port-direction"
+        },
+        {
+          "value": 4,
+          "value-name": "ols-id"
+        }
+      ],
+      "layer-protocol-name": "PHOTONIC_MEDIA",
+      "operational-state": "ENABLED",
+      "supported-layer-protocol-qualifier": [
+        "tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_NMC",
+        "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN"
+      ],
+      "tapi-photonic-media:media-channel-service-interface-point-spec": {
+        "mc-pool": {
+          "supportable-spectrum": [
+            {
+              "frequency-constraint": {
+                "adjustment-granularity": "G_6_25GHZ",
+                "grid-type": "FLEX"
+              },
+              "upper-frequency": 1961437501000000,
+              "lower-frequency": 1913312501000000
+            }
+          ],
+          "occupied-spectrum": [
+            {
+              "frequency-constraint": {
+                "adjustment-granularity": "G_6_25GHZ",
+                "grid-type": "FLEX"
+              },
+              "upper-frequency": 193125000,
+              "lower-frequency": 193075000
+            }
+          ]
+        }
+      },
+      "uuid": "21506245-7504-44c8-8e3a-ff2504779bab"
+    }
+  ],
+  "uuid": "uuid-context",
+  "tapi-connectivity:connectivity-context": {
+    "connection": [
+      {
+        "uuid": "c79ad00b-a24e-4ea0-9863-bb6c7c329919",
+        "name": [],
+        "connection-end-point": [
+          {
+            "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+            "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+            "node-edge-point-uuid": "ac40b7dc-658a-4e41-a97c-7169a0ebc098",
+            "connection-end-point-uuid": "c79ad00b-a24e-4ea0-9863-bb6c7c329919"
+          },
+          {
+            "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+            "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+            "node-edge-point-uuid": "3380961c-f1a7-4581-aa1c-fbcc26e3b778",
+            "connection-end-point-uuid": "c79ad00b-a24e-4ea0-9863-bb6c7c329919"
+          }
+        ]
+      },
+      {
+        "uuid": "d383233b-1c24-497d-ab51-939f86603a3f",
+        "name": [],
+        "connection-end-point": [
+          {
+            "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+            "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+            "node-edge-point-uuid": "3380961c-f1a7-4581-aa1c-fbcc26e3b778",
+            "connection-end-point-uuid": "d383233b-1c24-497d-ab51-939f86603a3f"
+          },
+          {
+            "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+            "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+            "node-edge-point-uuid": "ac40b7dc-658a-4e41-a97c-7169a0ebc098",
+            "connection-end-point-uuid": "d383233b-1c24-497d-ab51-939f86603a3f"
+          }
+        ]
+      }
+    ],
+    "connectivity-service": [
+      {
+        "connectivity-constraint": {
+          "requested-capacity": {
+            "total-size": {
+              "value": 1,
+              "unit": "GHz"
+            }
+          }
+        },
+        "performance": {
+          "ber": 9,
+          "snr": [
+            1,
+            2
+          ]
+        },
+        "end-point": [
+          {
+            "service-interface-point": {
+              "service-interface-point-uuid": "1506716d-dc3e-4645-86e1-4cb8ba6a116b"
+            },
+            "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+            "connection-end-point": [
+              {
+                "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+                "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+                "node-edge-point-uuid": "ac40b7dc-658a-4e41-a97c-7169a0ebc098",
+                "connection-end-point-uuid": "c79ad00b-a24e-4ea0-9863-bb6c7c329919"
+              }
+            ],
+            "layer-protocol-name": "PHOTONIC_MEDIA",
+            "local-id": "1506716d-dc3e-4645-86e1-4cb8ba6a116b"
+          },
+          {
+            "service-interface-point": {
+              "service-interface-point-uuid": "21506245-7504-44c8-8e3a-ff2504779bab"
+            },
+            "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+            "connection-end-point": [
+              {
+                "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+                "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+                "node-edge-point-uuid": "3380961c-f1a7-4581-aa1c-fbcc26e3b778",
+                "connection-end-point-uuid": "c79ad00b-a24e-4ea0-9863-bb6c7c329919"
+              }
+            ],
+            "layer-protocol-name": "PHOTONIC_MEDIA",
+            "local-id": "21506245-7504-44c8-8e3a-ff2504779bab"
+          }
+        ],
+        "uuid": "07bb5803-8d0a-4335-9995-a68ea30f153f",
+        "obfn-connectivity-constraint-spec": {
+          "obfn-pool": [
+            {
+              "obfn-id": 0,
+              "width": 20,
+              "offset-angle-X": -60,
+              "offset-angle-Y": -60,
+              "beam_enable": true
+            }
+          ],
+          "wavelength-reference-pool": [
+            {
+              "wavelength-id": 0,
+              "central-frequency": {
+                "frequency-constraint": {
+                  "adjustment-granularity": "FLEX",
+                  "grid-type": "G_6_25GHZ"
+                },
+                "central-frequency": 197
+              }
+            }
+          ]
+        }
+      },
+      {
+        "connectivity-constraint": {
+          "requested-capacity": {
+            "total-size": {
+              "value": 1,
+              "unit": "GHz"
+            }
+          }
+        },
+        "performance": {
+          "ber": 9,
+          "snr": [
+            1,
+            2
+          ]
+        },
+        "end-point": [
+          {
+            "service-interface-point": {
+              "service-interface-point-uuid": "1d2c5cd7-91eb-488f-a0bc-913908130bd4"
+            },
+            "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+            "connection-end-point": [
+              {
+                "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+                "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+                "node-edge-point-uuid": "3380961c-f1a7-4581-aa1c-fbcc26e3b778",
+                "connection-end-point-uuid": "d383233b-1c24-497d-ab51-939f86603a3f"
+              }
+            ],
+            "layer-protocol-name": "PHOTONIC_MEDIA",
+            "local-id": "1d2c5cd7-91eb-488f-a0bc-913908130bd4"
+          },
+          {
+            "service-interface-point": {
+              "service-interface-point-uuid": "e967dff5-c899-4324-9382-ae518d505448"
+            },
+            "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+            "connection-end-point": [
+              {
+                "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+                "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+                "node-edge-point-uuid": "ac40b7dc-658a-4e41-a97c-7169a0ebc098",
+                "connection-end-point-uuid": "d383233b-1c24-497d-ab51-939f86603a3f"
+              }
+            ],
+            "layer-protocol-name": "PHOTONIC_MEDIA",
+            "local-id": "e967dff5-c899-4324-9382-ae518d505448"
+          }
+        ],
+        "uuid": "0038f813-2c87-4994-b001-22dfb491fce8",
+        "obfn-connectivity-constraint-spec": {
+          "obfn-pool": [
+            {
+              "obfn-id": 0,
+              "width": 20,
+              "offset-angle-X": -60,
+              "offset-angle-Y": -60,
+              "beam_enable": true
+            }
+          ],
+          "wavelength-reference-pool": [
+            {
+              "wavelength-id": 0,
+              "central-frequency": {
+                "frequency-constraint": {
+                  "adjustment-granularity": "FLEX",
+                  "grid-type": "G_6_25GHZ"
+                },
+                "central-frequency": 190
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "name": [
+    {
+      "value": "cttc-ols-context",
+      "value-name": "name"
+    }
+  ],
+  "tapi-topology:topology-context": {
+    "nw-topology-service": {
+      "uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+      "name": [
+        {
+          "value": "MULTILAYER",
+          "value-name": "local-name"
+        },
+        {
+          "value": "ADNETN",
+          "value-name": "local-name"
+        }
+      ],
+      "topology": [
+        {
+          "topology-uuid": "fa357d12-986c-49e2-9314-6fbedae52b07"
+        },
+        {
+          "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e"
+        }
+      ]
+    },
+    "topology": [
+      {
+        "node": [
+          {
+            "name": [
+              {
+                "value": "10.1.1.111",
+                "value-name": "local-name"
+              },
+              {
+                "value": "10.1.1.221:830",
+                "value-name": "netconf"
+              }
+            ],
+            "encap-topology": {
+              "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e"
+            },
+            "owned-node-edge-point": [
+              {
+                "uuid": "ac40b7dc-658a-4e41-a97c-7169a0ebc098",
+                "name": [
+                  {
+                    "value": "node_111_port_11",
+                    "value-name": "local-name"
+                  }
+                ],
+                "layer-protocol-name": "PHOTONIC_MEDIA",
+                "mapped-service-interface-point": [
+                  {
+                    "service-interface-point-uuid": "1506716d-dc3e-4645-86e1-4cb8ba6a116b"
+                  },
+                  {
+                    "service-interface-point-uuid": "e967dff5-c899-4324-9382-ae518d505448"
+                  }
+                ],
+                "supported-cep-layer-protocol-qualifier": [
+                  "tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_NMC",
+                  "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN"
+                ],
+                "tapi-connectivity:cep-list": {
+                  "connection-end-point": [
+                    {
+                      "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+                      "uuid": "c79ad00b-a24e-4ea0-9863-bb6c7c329919",
+                      "layer-protocol-name": "PHOTONIC_MEDIA",
+                      "connection-port-direction": "INPUT",
+                      "parent-node-edge-point": {
+                        "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+                        "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+                        "node-edge-point-uuid": "ac40b7dc-658a-4e41-a97c-7169a0ebc098"
+                      },
+                      "tapi-obfn:obfn-connection-end-point-spec": {
+                        "obfn-pool": [
+                          {
+                            "obfn-id": 1,
+                            "width": 0,
+                            "offset-angle-X": 10,
+                            "offset-angle-Y": 20,
+                            "beam_enable": false
+                          }
+                        ],
+                        "wavelength-reference-pool": []
+                      },
+                      "connection-port-role": "UNKNOWN",
+                      "tapi-photonic-media:media-channel-connection-end-point-spec": {
+                        "media-channel": {
+                          "occupied-spectrum": {
+                            "frequency-constraint": {
+                              "adjustment-granularity": "G_6_25GHZ",
+                              "grid-type": "FLEX"
+                            },
+                            "upper-frequency": 193125000,
+                            "lower-frequency": 193075000
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+                      "uuid": "d383233b-1c24-497d-ab51-939f86603a3f",
+                      "layer-protocol-name": "PHOTONIC_MEDIA",
+                      "connection-port-direction": "OUTPUT",
+                      "parent-node-edge-point": {
+                        "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+                        "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+                        "node-edge-point-uuid": "ac40b7dc-658a-4e41-a97c-7169a0ebc098"
+                      },
+                      "tapi-obfn:obfn-connection-end-point-spec": {
+                        "obfn-pool": [
+                          {
+                            "obfn-id": 1,
+                            "width": 0,
+                            "offset-angle-X": 10,
+                            "offset-angle-Y": 20,
+                            "beam_enable": false
+                          }
+                        ],
+                        "wavelength-reference-pool": []
+                      },
+                      "connection-port-role": "UNKNOWN",
+                      "tapi-photonic-media:media-channel-connection-end-point-spec": {
+                        "media-channel": {
+                          "occupied-spectrum": {
+                            "frequency-constraint": {
+                              "adjustment-granularity": "G_6_25GHZ",
+                              "grid-type": "FLEX"
+                            },
+                            "upper-frequency": 193125000,
+                            "lower-frequency": 193075000
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                "link-port-direction": "BIDIRECTIONAL",
+                "link-port-role": "SYMMETRIC"
+              },
+              {
+                "uuid": "3380961c-f1a7-4581-aa1c-fbcc26e3b778",
+                "name": [
+                  {
+                    "value": "node_111_port_12",
+                    "value-name": "local-name"
+                  }
+                ],
+                "layer-protocol-name": "PHOTONIC_MEDIA",
+                "mapped-service-interface-point": [
+                  {
+                    "service-interface-point-uuid": "1d2c5cd7-91eb-488f-a0bc-913908130bd4"
+                  },
+                  {
+                    "service-interface-point-uuid": "21506245-7504-44c8-8e3a-ff2504779bab"
+                  }
+                ],
+                "supported-cep-layer-protocol-qualifier": [
+                  "tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_NMC",
+                  "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN"
+                ],
+                "tapi-connectivity:cep-list": {
+                  "connection-end-point": [
+                    {
+                      "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+                      "uuid": "c79ad00b-a24e-4ea0-9863-bb6c7c329919",
+                      "layer-protocol-name": "PHOTONIC_MEDIA",
+                      "connection-port-direction": "OUTPUT",
+                      "parent-node-edge-point": {
+                        "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+                        "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+                        "node-edge-point-uuid": "3380961c-f1a7-4581-aa1c-fbcc26e3b778"
+                      },
+                      "tapi-obfn:obfn-connection-end-point-spec": {
+                        "obfn-pool": [
+                          {
+                            "obfn-id": 2,
+                            "width": 0,
+                            "offset-angle-X": 10,
+                            "offset-angle-Y": 20,
+                            "beam_enable": false
+                          }
+                        ],
+                        "wavelength-reference-pool": []
+                      },
+                      "connection-port-role": "UNKNOWN",
+                      "tapi-photonic-media:media-channel-connection-end-point-spec": {
+                        "media-channel": {
+                          "occupied-spectrum": {
+                            "frequency-constraint": {
+                              "adjustment-granularity": "G_6_25GHZ",
+                              "grid-type": "FLEX"
+                            },
+                            "upper-frequency": 193125000,
+                            "lower-frequency": 193075000
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+                      "uuid": "d383233b-1c24-497d-ab51-939f86603a3f",
+                      "layer-protocol-name": "PHOTONIC_MEDIA",
+                      "connection-port-direction": "INPUT",
+                      "parent-node-edge-point": {
+                        "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+                        "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+                        "node-edge-point-uuid": "3380961c-f1a7-4581-aa1c-fbcc26e3b778"
+                      },
+                      "tapi-obfn:obfn-connection-end-point-spec": {
+                        "obfn-pool": [
+                          {
+                            "obfn-id": 2,
+                            "width": 0,
+                            "offset-angle-X": 10,
+                            "offset-angle-Y": 20,
+                            "beam_enable": false
+                          }
+                        ],
+                        "wavelength-reference-pool": []
+                      },
+                      "connection-port-role": "UNKNOWN",
+                      "tapi-photonic-media:media-channel-connection-end-point-spec": {
+                        "media-channel": {
+                          "occupied-spectrum": {
+                            "frequency-constraint": {
+                              "adjustment-granularity": "G_6_25GHZ",
+                              "grid-type": "FLEX"
+                            },
+                            "upper-frequency": 193125000,
+                            "lower-frequency": 193075000
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                "link-port-direction": "BIDIRECTIONAL",
+                "link-port-role": "SYMMETRIC"
+              }
+            ],
+            "uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff"
+          }
+        ],
+        "layer-protocol-name": [
+          "PHOTONIC_MEDIA",
+          "DSR"
+        ],
+        "link": [],
+        "uuid": "fa357d12-986c-49e2-9314-6fbedae52b07",
+        "name": [
+          {
+            "value": "MULTILAYER",
+            "value-name": "local-name"
+          }
+        ]
+      },
+      {
+        "node": [
+          {
+            "name": [
+              {
+                "value": "10.1.1.111",
+                "value-name": "local-name"
+              },
+              {
+                "value": "10.1.1.221:830",
+                "value-name": "netconf"
+              }
+            ],
+            "encap-topology": {
+              "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e"
+            },
+            "owned-node-edge-point": [
+              {
+                "uuid": "ac40b7dc-658a-4e41-a97c-7169a0ebc098",
+                "name": [
+                  {
+                    "value": "node_111_port_11",
+                    "value-name": "local-name"
+                  }
+                ],
+                "layer-protocol-name": "PHOTONIC_MEDIA",
+                "mapped-service-interface-point": [
+                  {
+                    "service-interface-point-uuid": "1506716d-dc3e-4645-86e1-4cb8ba6a116b"
+                  },
+                  {
+                    "service-interface-point-uuid": "e967dff5-c899-4324-9382-ae518d505448"
+                  }
+                ],
+                "supported-cep-layer-protocol-qualifier": [
+                  "tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_NMC",
+                  "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN"
+                ],
+                "tapi-connectivity:cep-list": {
+                  "connection-end-point": [
+                    {
+                      "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+                      "uuid": "c79ad00b-a24e-4ea0-9863-bb6c7c329919",
+                      "layer-protocol-name": "PHOTONIC_MEDIA",
+                      "connection-port-direction": "INPUT",
+                      "parent-node-edge-point": {
+                        "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+                        "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+                        "node-edge-point-uuid": "ac40b7dc-658a-4e41-a97c-7169a0ebc098"
+                      },
+                      "tapi-obfn:obfn-connection-end-point-spec": {
+                        "obfn-pool": [
+                          {
+                            "obfn-id": 1,
+                            "width": 0,
+                            "offset-angle-X": 10,
+                            "offset-angle-Y": 20,
+                            "beam_enable": false
+                          }
+                        ],
+                        "wavelength-reference-pool": []
+                      },
+                      "connection-port-role": "UNKNOWN",
+                      "tapi-photonic-media:media-channel-connection-end-point-spec": {
+                        "media-channel": {
+                          "occupied-spectrum": {
+                            "frequency-constraint": {
+                              "adjustment-granularity": "G_6_25GHZ",
+                              "grid-type": "FLEX"
+                            },
+                            "upper-frequency": 193125000,
+                            "lower-frequency": 193075000
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+                      "uuid": "d383233b-1c24-497d-ab51-939f86603a3f",
+                      "layer-protocol-name": "PHOTONIC_MEDIA",
+                      "connection-port-direction": "OUTPUT",
+                      "parent-node-edge-point": {
+                        "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+                        "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+                        "node-edge-point-uuid": "ac40b7dc-658a-4e41-a97c-7169a0ebc098"
+                      },
+                      "tapi-obfn:obfn-connection-end-point-spec": {
+                        "obfn-pool": [
+                          {
+                            "obfn-id": 1,
+                            "width": 0,
+                            "offset-angle-X": 10,
+                            "offset-angle-Y": 20,
+                            "beam_enable": false
+                          }
+                        ],
+                        "wavelength-reference-pool": []
+                      },
+                      "connection-port-role": "UNKNOWN",
+                      "tapi-photonic-media:media-channel-connection-end-point-spec": {
+                        "media-channel": {
+                          "occupied-spectrum": {
+                            "frequency-constraint": {
+                              "adjustment-granularity": "G_6_25GHZ",
+                              "grid-type": "FLEX"
+                            },
+                            "upper-frequency": 193125000,
+                            "lower-frequency": 193075000
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                "link-port-direction": "BIDIRECTIONAL",
+                "link-port-role": "SYMMETRIC"
+              },
+              {
+                "uuid": "3380961c-f1a7-4581-aa1c-fbcc26e3b778",
+                "name": [
+                  {
+                    "value": "node_111_port_12",
+                    "value-name": "local-name"
+                  }
+                ],
+                "layer-protocol-name": "PHOTONIC_MEDIA",
+                "mapped-service-interface-point": [
+                  {
+                    "service-interface-point-uuid": "1d2c5cd7-91eb-488f-a0bc-913908130bd4"
+                  },
+                  {
+                    "service-interface-point-uuid": "21506245-7504-44c8-8e3a-ff2504779bab"
+                  }
+                ],
+                "supported-cep-layer-protocol-qualifier": [
+                  "tapi-photonic-media:PHOTONIC_LAYER_QUALIFIER_NMC",
+                  "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN"
+                ],
+                "tapi-connectivity:cep-list": {
+                  "connection-end-point": [
+                    {
+                      "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+                      "uuid": "c79ad00b-a24e-4ea0-9863-bb6c7c329919",
+                      "layer-protocol-name": "PHOTONIC_MEDIA",
+                      "connection-port-direction": "OUTPUT",
+                      "parent-node-edge-point": {
+                        "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+                        "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+                        "node-edge-point-uuid": "3380961c-f1a7-4581-aa1c-fbcc26e3b778"
+                      },
+                      "tapi-obfn:obfn-connection-end-point-spec": {
+                        "obfn-pool": [
+                          {
+                            "obfn-id": 2,
+                            "width": 0,
+                            "offset-angle-X": 10,
+                            "offset-angle-Y": 20,
+                            "beam_enable": false
+                          }
+                        ],
+                        "wavelength-reference-pool": []
+                      },
+                      "connection-port-role": "UNKNOWN",
+                      "tapi-photonic-media:media-channel-connection-end-point-spec": {
+                        "media-channel": {
+                          "occupied-spectrum": {
+                            "frequency-constraint": {
+                              "adjustment-granularity": "G_6_25GHZ",
+                              "grid-type": "FLEX"
+                            },
+                            "upper-frequency": 193125000,
+                            "lower-frequency": 193075000
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "layer-protocol-qualifier": "tapi-obfn:PHOTONIC_LAYER_QUALIFIER_OBFN",
+                      "uuid": "d383233b-1c24-497d-ab51-939f86603a3f",
+                      "layer-protocol-name": "PHOTONIC_MEDIA",
+                      "connection-port-direction": "INPUT",
+                      "parent-node-edge-point": {
+                        "node-uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+                        "topology-uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+                        "node-edge-point-uuid": "3380961c-f1a7-4581-aa1c-fbcc26e3b778"
+                      },
+                      "tapi-obfn:obfn-connection-end-point-spec": {
+                        "obfn-pool": [
+                          {
+                            "obfn-id": 2,
+                            "width": 0,
+                            "offset-angle-X": 10,
+                            "offset-angle-Y": 20,
+                            "beam_enable": false
+                          }
+                        ],
+                        "wavelength-reference-pool": []
+                      },
+                      "connection-port-role": "UNKNOWN",
+                      "tapi-photonic-media:media-channel-connection-end-point-spec": {
+                        "media-channel": {
+                          "occupied-spectrum": {
+                            "frequency-constraint": {
+                              "adjustment-granularity": "G_6_25GHZ",
+                              "grid-type": "FLEX"
+                            },
+                            "upper-frequency": 193125000,
+                            "lower-frequency": 193075000
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                "link-port-direction": "BIDIRECTIONAL",
+                "link-port-role": "SYMMETRIC"
+              }
+            ],
+            "uuid": "fcbd4636-a185-4b0e-ba49-1709c08738ff"
+          }
+        ],
+        "layer-protocol-name": [
+          "PHOTONIC_MEDIA",
+          "DSR"
+        ],
+        "link": [],
+        "uuid": "339586dd-23d0-4b48-837c-401befa8569e",
+        "name": [
+          {
+            "value": "ADNETN",
+            "value-name": "local-name"
+          }
+        ]
+      }
+    ]
+  }
+}

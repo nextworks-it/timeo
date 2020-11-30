@@ -42,7 +42,7 @@ public class PnfManagementController {
 	public PnfManagementController() {	}
 	
 	@RequestMapping(value = "/pnf", method = RequestMethod.POST)
-	public ResponseEntity<?> onBoardNsd(@RequestBody PnfInstance pnfInstance) {
+	public ResponseEntity<?> onBoardPnf(@RequestBody PnfInstance pnfInstance) {
 		log.debug("Received an on-board PNF instance request");
 		try {
 			pnfManagementService.addPnfInstance(pnfInstance);

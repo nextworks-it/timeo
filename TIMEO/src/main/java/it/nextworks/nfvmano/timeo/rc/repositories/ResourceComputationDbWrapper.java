@@ -15,7 +15,9 @@
 */
 package it.nextworks.nfvmano.timeo.rc.repositories;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -29,7 +31,9 @@ import it.nextworks.nfvmano.timeo.rc.elements.InterDcNetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
+import it.nextworks.nfvmano.timeo.rc.elements.NsScaleSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.PnfAllocation;
+import it.nextworks.nfvmano.timeo.rc.elements.ScaleVnfResourceAllocation;
 import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 
 
@@ -37,16 +41,26 @@ import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 public class ResourceComputationDbWrapper {
 
 	private static final Logger log = LoggerFactory.getLogger(ResourceComputationDbWrapper.class);
-	
+
 	@Autowired
 	NetworkPathRepository networkPathRepository;
-	
+
 	@Autowired
 	NsResourceSchedulingSolutionRepository nsResourceSchedulingSolutionRepository;
 	
 	@Autowired
-	VnfResourceAllocationRepository vnfResourceAllocationRepository;
+	NsScaleSchedulingSolutionRepository nsScaleSchedulingSolutionRepository;
 	
+	@Autowired
+	ScaleNsResourceAllocationRepository scaleNsResourceAllocationRepository;
+
+		
+	@Autowired
+	ScaleVnfResourceAllocationRepository scaleVnfResourceAllocationRepository;
+
+	@Autowired
+	VnfResourceAllocationRepository vnfResourceAllocationRepository;
+
 	@Autowired
 	NetworkPathHopRepository networkPathHopRepository;
 	
@@ -57,7 +71,58 @@ public class ResourceComputationDbWrapper {
 	InterDcNetworkPathRepository interDcNetworkPathRepository;
 	
 	public ResourceComputationDbWrapper() {	}
-	
+
+	public synchronized void addNewNsScaleSchedulingSolution(NsScaleSchedulingSolution input) throws NotExistingEntityException, AlreadyExistingEntityException {
+		log.debug("Storing new NS scale scheduling solution in DB");
+		Optional<NsScaleSchedulingSolution> currentSS = nsScaleSchedulingSolutionRepository.findByNsInstanceId(input.getNsInstanceId());
+		if(currentSS.isPresent()) {
+			log.debug("removing previous solution");
+			nsScaleSchedulingSolutionRepository.delete(currentSS.get());
+		}
+		List<VnfResourceAllocation> overallVnfds = new ArrayList<>();
+		ArrayList<String> addedVnfds = new ArrayList<>();
+		NsResourceSchedulingSolution currentSolution = getNsResourceSchedulingSolution(input.getNsInstanceId());
+		for(ScaleVnfResourceAllocation vnfRA : input.getScaleNsResourceAllocation().getVnfResourceAllocation() ){
+			overallVnfds.add(vnfRA.getVnfResourceAllocation());
+			addedVnfds.add(vnfRA.getVnfdId());
+
+		}
+		for(VnfResourceAllocation vnfRA : currentSolution.getVnfResourceAllocation()){
+			if(!addedVnfds.contains(vnfRA.getVnfdId())){
+				overallVnfds.add(vnfRA);
+			}
+		}
+		//TODO: implement PNF, networkPaths, comuteNodes, NetworkNodes deallocation
+		List<PnfAllocation> overallPnfs = currentSolution.getPnfAllocation();
+		List<NetworkPath> overallNetworkPaths = currentSolution.getNetworkPaths();
+		Map<String,String> overallComputeNodes = currentSolution.getComputeNodesToBeActivated();
+		List<String> overallNetworkNodes = currentSolution.getNetworkNodesToBeActivated();
+		this.removeNsResourceSchedulingSolution(input.getNsInstanceId());
+		List<InterDcNetworkPath> interDcNetworkPaths = new ArrayList<InterDcNetworkPath>();
+		this.addNewNsResourceSchedulingSolution(new NsResourceSchedulingSolution
+				(input.getNsInstanceId(),
+						overallVnfds,
+						overallPnfs,
+						overallNetworkPaths,
+						interDcNetworkPaths,
+						input.isSolutionFound(),
+						overallNetworkNodes,
+						overallComputeNodes));
+
+		input.setPostScaleResourceSolution(this.getNsResourceSchedulingSolution(input.getNsInstanceId()));
+		log.debug("Storing nsScaleSolution");
+		nsScaleSchedulingSolutionRepository.saveAndFlush(input);
+		log.debug("Storing ScaleNsResourceAllocation");
+		scaleNsResourceAllocationRepository.saveAndFlush(input.getScaleNsResourceAllocation());
+		for(ScaleVnfResourceAllocation sVnf : input.getScaleNsResourceAllocation().getVnfResourceAllocation()) {
+			log.debug("Storing ScaleVnfResourceAllocation");
+			scaleVnfResourceAllocationRepository.saveAndFlush(sVnf);
+			
+		}
+
+
+	}
+
 	public synchronized void addNewNsResourceSchedulingSolution(NsResourceSchedulingSolution input) throws AlreadyExistingEntityException {
 		log.debug("Storing new NS resource scheduling solution in DB");
 		if (nsResourceSchedulingSolutionRepository.findByNsInstanceId(input.getNsInstanceId()).isPresent()) {
@@ -87,18 +152,20 @@ public class ResourceComputationDbWrapper {
 					NetworkPathHop targetHop = new NetworkPathHop(targetNp, hop.getHopNumber(), hop.getNodeId(), hop.getIngressPortId(),
 							hop.getEgressPortId(), hop.getIncomingLinkId(), hop.getOutgoingLinkId(), hop.getHopQueue(), hop.isFirst(), hop.isLast(), 
 							hop.getIngressServiceInterfacePoint(), hop.getEgressServiceInterfacePoint());
+					targetHop.setHopProperties(hop.getHopProperties());
 					networkPathHopRepository.saveAndFlush(targetHop);
 				}
 			}
 			List<InterDcNetworkPath> idnps = input.getInterDcNetworkPaths();
 			for (InterDcNetworkPath idnp : idnps) {
-				InterDcNetworkPath targetIdnp = new InterDcNetworkPath(output, idnp.getNetworkPathId());
+				InterDcNetworkPath targetIdnp = new InterDcNetworkPath(output, idnp.getNetworkPathId(), idnp.getSbNpType());
 				interDcNetworkPathRepository.saveAndFlush(targetIdnp);
 				List<NetworkPathHop> hops = idnp.getHops();
 				for (NetworkPathHop hop : hops) {
 					NetworkPathHop targetHop = new NetworkPathHop(targetIdnp, hop.getHopNumber(), hop.getNodeId(), hop.getIngressPortId(),
 							hop.getEgressPortId(), hop.getIncomingLinkId(), hop.getOutgoingLinkId(), hop.getHopQueue(), hop.isFirst(), hop.isLast(), 
 							hop.getIngressServiceInterfacePoint(), hop.getEgressServiceInterfacePoint());
+					targetHop.setHopProperties(hop.getHopProperties());
 					networkPathHopRepository.saveAndFlush(targetHop);
 				}
 			}
@@ -113,6 +180,16 @@ public class ResourceComputationDbWrapper {
 			return solOpt.get(); 
 		} else {
 			throw new NotExistingEntityException("NS resource scheduling solution not found for NS instance " + nsInstanceId);
+		}
+	}
+	
+	public NsScaleSchedulingSolution getNsScaleSchedulingSolution(String nsInstanceId) throws NotExistingEntityException {
+		log.debug("Retrieving NS scale scheduling solution from DB");
+		Optional<NsScaleSchedulingSolution> solOpt = nsScaleSchedulingSolutionRepository.findByNsInstanceId(nsInstanceId);
+		if (solOpt.isPresent()) {
+			return solOpt.get(); 
+		} else {
+			throw new NotExistingEntityException("NS scale scheduling solution not found for NS instance " + nsInstanceId);
 		}
 	}
 	

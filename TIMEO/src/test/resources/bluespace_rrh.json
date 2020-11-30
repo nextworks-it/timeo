@@ -1,0 +1,36 @@
+{
+  "pnfInstanceId": "RRH_001",
+  "pnfdId": "pRRH1",
+  "pnfdVersion": "0.1",
+  "description": "RRH",
+  "location": "1",
+  "type": "RRH",
+  "ports": [
+    {
+      "portId": "PORT_001",
+      "addresses": {
+        "MAC_ADDRESS": "MAC",
+        "IP_ADDRESS": "{{rrh1_mgmt}}"
+      },
+      "management": true
+    },
+    {
+      "portId": "PORT_002",
+      "addresses": {
+        "MAC_ADDRESS": "MAC",
+        "IP_ADDRESS": "{{rrh1_data}}"
+      },
+      "management": false,
+      "sipId": "1506716d-dc3e-4645-86e1-4cb8ba6a116b"
+    },
+    {
+      "portId": "PORT_003",
+      "addresses": {
+        "MAC_ADDRESS": "MAC",
+        "IP_ADDRESS": "{{rrh1_data}}"
+      },
+      "management": false,
+      "sipId": "e967dff5-c899-4324-9382-ae518d505448"
+    }
+  ]
+}

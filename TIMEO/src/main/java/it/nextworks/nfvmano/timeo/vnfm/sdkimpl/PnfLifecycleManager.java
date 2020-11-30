@@ -1,6 +1,7 @@
 package it.nextworks.nfvmano.timeo.vnfm.sdkimpl;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -62,7 +63,7 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 	//private RestTemplate restTemplate;
 	//private TaskExecutor taskExecutor;
 	//private String managementIp;
-	
+	private Map<String, String> currentConfiguParameters;
 	private VnfDriver pnfDriver;
 
 	/**
@@ -86,7 +87,8 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 			NsDbWrapper nsDbWrapper,
 			RestTemplate restTemplate,
 			TaskExecutor taskExecutor,
-			String managementIp) {
+			String managementIp,
+							   int managementPort) {
 		this.pnfId = pnfId;
 		this.internalStatus = VnfInternalStatus.ALLOCATED;
 		this.pnfd = pnfd;
@@ -97,8 +99,10 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 		//this.restTemplate = restTemplate;
 		//this.taskExecutor = taskExecutor;
 		//this.managementIp = managementIp;
-		this.pnfDriver = new RestVnfDriver(pnfId, managementIp, restTemplate, taskExecutor);
+		this.pnfDriver = new RestVnfDriver(pnfId, managementIp, managementPort, restTemplate, taskExecutor);
 		log.debug("Created REST-based PNF driver for PNF " + pnfId + " with IP " + managementIp);
+		this.currentConfiguParameters= new HashMap<String, String>();
+
 	}
 	
 	/**
@@ -120,7 +124,8 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 			case CONFIGURE_VNF: {
 				log.debug("Received configure PNF message with operation ID " + operationId);
 				log.trace("START CONFIGURE PNF " + operationId);
-				if (!(internalStatus.equals(VnfInternalStatus.ALLOCATED))) {
+				//TODO: j.brenes verify the second condition. Added for the scaling procedure. 
+				if (!(internalStatus.equals(VnfInternalStatus.ALLOCATED) || internalStatus.equals(VnfInternalStatus.CONFIGURED))) {
 					signalError(operationId, "Received configure PNF message in wrong status.");
 					return;
 				}
@@ -170,15 +175,22 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 		internalStatus = VnfInternalStatus.CONFIGURING_VNF;
 		try {
 			Map<String, String> configParameters = request.getNewValues();
-			Set<KeyValuePair> pnfSpecificData = new HashSet<>();
-			for (Map.Entry<String, String> p : configParameters.entrySet()) {
-				pnfSpecificData.add(new KeyValuePair(p.getKey(), p.getValue()));
-				//vnfDbWrapper.addGenericConfigParameterToVnfInfo(vnfInstanceId, p.getKey(), p.getValue());
+			if(!currentConfiguParameters.equals(configParameters)) {
+				Set<KeyValuePair> pnfSpecificData = new HashSet<>();
+				for (Map.Entry<String, String> p : configParameters.entrySet()) {
+					pnfSpecificData.add(new KeyValuePair(p.getKey(), p.getValue()));
+					//vnfDbWrapper.addGenericConfigParameterToVnfInfo(vnfInstanceId, p.getKey(), p.getValue());
+				}
+				VnfConfiguration pnfConfigurationData = new VnfConfiguration(null, null, pnfSpecificData);
+				SetConfigurationRequest configRequest = new SetConfigurationRequest(pnfId, pnfConfigurationData, null);
+				log.debug("Configuration request sent to PNF.");
+				this.currentConfiguParameters=configParameters;
+				pnfDriver.setConfiguration(configRequest, this);
+			}else {
+				log.debug("PNF configuration parameters unchanged. Skipping");
+				this.processVnfConfigurationAck(OperationStatus.SUCCESSFULLY_DONE);
 			}
-			VnfConfiguration pnfConfigurationData = new VnfConfiguration(null, null, pnfSpecificData);
-			SetConfigurationRequest configRequest = new SetConfigurationRequest(pnfId, pnfConfigurationData, null);
-			log.debug("Configuration request sent to PNF.");
-			pnfDriver.setConfiguration(configRequest, this);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			signalError(currentOperation, e.getMessage());
@@ -232,7 +244,7 @@ public class PnfLifecycleManager extends VeVnfmVnfmAccess {
 		ObjectMapper mapper = Utilities.buildObjectMapper();
 		try {
 			String json = mapper.writeValueAsString(ackMessage);
-			String topic = "vnflifecycle.notifyVnfConfigResult." + pnfId;
+			String topic = "pnflifecycle.notifyVnfConfigResult." + pnfId;
 			rabbitTemplate.convertAndSend(messageExchange.getName(), topic, json);
 			log.debug("Sent internal message with ACK for PNF configuration");
 		} catch (JsonProcessingException e) {

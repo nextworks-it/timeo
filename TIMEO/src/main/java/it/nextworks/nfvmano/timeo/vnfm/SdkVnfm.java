@@ -389,7 +389,9 @@ public class SdkVnfm extends Vnfm {
 		String pnfInfoId = nsDbWrapper.createPnfInfo(request.getNsInstanceId(), pnfd, pnfInstance, pnfName, request.getPnfProfileId());
 		log.debug("PNF info created with ID " + pnfInfoId);
 		String pnfMgtAddress = pnfInstance.getManagementIpAddress();
-		PnfLifecycleManager pnfLcm = new PnfLifecycleManager(pnfInstanceId, 
+		int port = pnfInstance.getManagementPort();
+		PnfLifecycleManager pnfLcm = new PnfLifecycleManager(
+				pnfInfoId,
 				pnfd.getPnfd(), 
 				rabbitTemplate, 
 				messageExchange, 
@@ -397,7 +399,8 @@ public class SdkVnfm extends Vnfm {
 				nsDbWrapper, 
 				restTemplate, 
 				taskExecutor, 
-				pnfMgtAddress);
+				pnfMgtAddress,
+				port);
 		createQueue(pnfInfoId, pnfLcm);
 		pnfLifecycleManagers.put(pnfInfoId, pnfLcm);
 		return pnfInfoId;
@@ -514,7 +517,7 @@ public class SdkVnfm extends Vnfm {
 	    log.debug("Queue created");
 	}
 	
-	private void createQueue(String pnfId, PnfLifecycleManager pnfLifecycleManager) {
+	void createQueue(String pnfId, PnfLifecycleManager pnfLifecycleManager) {
 		String queueName = NfvoConstants.pnfmQueueNamePrefix + pnfId;
 		log.debug("Creating new Queue " + queueName + " in rabbit host " + rabbitHost);
 		CachingConnectionFactory cf = new CachingConnectionFactory();

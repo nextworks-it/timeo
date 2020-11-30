@@ -21,15 +21,16 @@ import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.descriptors.vnfd.Vnfd;
 import it.nextworks.nfvmano.libs.osmanfvo.nslcm.interfaces.messages.InstantiateNsRequest;
 import it.nextworks.nfvmano.timeo.common.exception.ResourceAllocationSolutionNotFound;
+import it.nextworks.nfvmano.timeo.rc.elements.InterDcNetworkPath;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPath;
-import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathEndPoint;
-import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
+import it.nextworks.nfvmano.timeo.rc.elements.PnfAllocation;
 import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,18 +55,50 @@ public class VEPCStaticAlgorithmArno extends AbstractNsResourceAllocationAlgorit
 		List<VnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
 		List<NetworkPath> networkPaths = new ArrayList<>();
 		
-		VnfResourceAllocation vra1 = new VnfResourceAllocation(null, "vEPC_VNF", 0, "vEPC_vdu", 0, "OpenStack_local", "nova", "ONOSSONA");
+		VnfResourceAllocation vra1 = new VnfResourceAllocation(null, "vEPC", 0, "vEPC_vdu", 0, "OpenStack_local", "nova", "ONOSSONA");
 		
 		vnfResourceAllocation.add(vra1);
 
 		List<String> networkNodesToBeActivated = new ArrayList<>();
 
 		Map<String,String> computeNodesToBeActivated = new HashMap<>();
+
+		List<PnfAllocation> pnfs = new ArrayList<>();
+
+		pnfs.add(new PnfAllocation(
+				null,
+				"CU_v01",
+				"0.1",
+				0,
+				"CU_INSTANCE_001",
+				"CU_profile",
+				Collections.emptyMap()
+		));
+
+		pnfs.add(new PnfAllocation(
+				null,
+				"GW_v01",
+				"0.1",
+				1,
+				"GW_INSTANCE_001",
+				"GW_profile",
+				Collections.emptyMap()
+		));
+
 //		computeNodesToBeActivated.put("hulk","OpenStack_local");
 //		computeNodesToBeActivated.put("wasp","OpenStack_local");
+		
+		List<InterDcNetworkPath> interDcNetworkPaths = new ArrayList<>();
 
-		return new NsResourceSchedulingSolution(request.getNsInstanceId(), vnfResourceAllocation, networkPaths, true,
-				networkNodesToBeActivated, computeNodesToBeActivated);
+		return new NsResourceSchedulingSolution(
+				request.getNsInstanceId(),
+				vnfResourceAllocation,
+				pnfs,
+				networkPaths,
+				interDcNetworkPaths,
+				true,
+				networkNodesToBeActivated,
+				computeNodesToBeActivated
+		);
 	}
-
 }

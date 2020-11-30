@@ -29,6 +29,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
@@ -60,6 +61,11 @@ public class NsResourceSchedulingSolution {
     private Long id;
 	
 	private String nsInstanceId;
+	
+	@OneToOne(fetch=FetchType.EAGER, mappedBy="postScaleResourceSolution", cascade=CascadeType.ALL, orphanRemoval = true)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JsonIgnore
+	private NsScaleSchedulingSolution nsScaleSchedulingSolution; 
 	
 	@OneToMany(mappedBy = "nsRss", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
@@ -162,7 +168,7 @@ public class NsResourceSchedulingSolution {
 	 * @param vnfResourceAllocation information about the allocation of computing resources for the VNFs
 	 * @param pnfAllocation information about the PNF selected for the NS
 	 * @param networkPaths information about the allocation of network resources for the NS virtual links
-	 * @param interDcNetworkPath information about the allocation of transport path in inter-DC domains
+	 * @param interDcNetworkPaths information about the allocation of transport path in inter-DC domains
 	 * @param solutionFound true if a suitable resource allocation solution has been found
 	 * @param networkNodesToBeActivated network nodes to be activated
 	 * @param computeNodesToBeActivated compute nodes to be activated
@@ -184,6 +190,8 @@ public class NsResourceSchedulingSolution {
 		if (networkNodesToBeActivated != null) this.networkNodesToBeActivated = networkNodesToBeActivated;
 		if (computeNodesToBeActivated != null) this.computeNodesToBeActivated = computeNodesToBeActivated;
 	}
+	
+	
 	
 	/**
 	 * Constructor
@@ -289,8 +297,8 @@ public class NsResourceSchedulingSolution {
 	/**
 	 * Returns all the VNF resource allocation for a given VNFD ID
 	 * 
-	 * @param vnfdId
-	 * @return
+	 * @param vnfdId the VNFD ID
+	 * @return the {@link VnfResourceAllocation} for the given VNFD
 	 */
 	public List<VnfResourceAllocation> getVnfResourceAllocationForVnfd(String vnfdId) {
 		List<VnfResourceAllocation> result = new ArrayList<>();

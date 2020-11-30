@@ -1,0 +1,12 @@
+{
+	"version": "0.1",
+	"name": "vEPC",
+	"description": "virtual Evolved Packet Core",
+	"parameters": [{
+		"parameterId": "users",
+		"parameterName": "users",
+		"parameterType": "number",
+		"parameterDescription": "number of vEPC users",
+		"applicabilityField": "media"
+	}]
+}

@@ -1,0 +1,15 @@
+{
+	"pnfInstanceId": "pOrigin_INSTANCE_001",
+	"pnfdId": "pOrigin_v01",
+	"pnfdVersion": "0.1",
+	"description": "TEST Origin",
+	"location": "NXW",
+	"ports": [{
+		"portId": "origin_caches",
+		"addresses": {
+			"MAC_ADDRESS": "fa:16:3e:cc:a9:e7",
+			"IP_ADDRESS": "10.20.8.16"
+		},
+		"management": true
+	}]
+}

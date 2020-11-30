@@ -1,0 +1,216 @@
+{
+  "serviceRequests": [
+    {
+      "serviceId": "$NSI_ID",
+      "serviceAreaId": [
+        "1"
+      ],
+      "transmissionMode": "M1",
+      "vmRequirements": {}
+    }
+  ],
+  "geographicalAreas": [
+    {
+      "areaId": "1"
+    },
+    {
+      "areaId": "2"
+    },
+    {
+      "areaId": "3"
+    },
+    {
+      "areaId": "4"
+    },
+    {
+      "areaId": "5"
+    },
+    {
+      "areaId": "6"
+    }
+  ],
+  "datarate": {
+    "M2": 1419,
+    "M1": 1216,
+    "M3": 2838,
+    "M4": 5677
+  },
+  "rrhs": [
+    {
+      "rrhId": "RRH_001",
+      "beams": []
+    }
+  ],
+  "bbus": [
+    {
+      "bbuId": "BBU_001"
+
+    }
+  ],
+  "nodes": [
+    {
+      "nodeId": "BBU_001",
+      "nodeType": "BBU",
+      "switchingType": "NO_SWITCHING",
+      "ports": [
+        {
+          "portId": "PORT_003",
+          "portType": "UNSPECIFIED",
+          "neighbourNodeId": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+          "neighbourPortId": "1d2c5cd7-91eb-488f-a0bc-913908130bd4",
+          "cores": [],
+          "obfnCpSpec": null
+        },
+        {
+          "portId": "PORT_002",
+          "portType": "UNSPECIFIED",
+          "neighbourNodeId": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+          "neighbourPortId": "21506245-7504-44c8-8e3a-ff2504779bab",
+          "cores": [],
+          "obfnCpSpec": null
+        }
+      ],
+      "connectedRrhId": null,
+      "connectedRrhBeamId": null
+    },
+    {
+      "nodeId": "RRH_001",
+      "nodeType": "RRH",
+      "switchingType": "NO_SWITCHING",
+      "ports": [
+        {
+          "portId": "PORT_003",
+          "portType": "UNSPECIFIED",
+          "neighbourNodeId": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+          "neighbourPortId": "e967dff5-c899-4324-9382-ae518d505448",
+          "cores": [],
+          "obfnCpSpec": null
+        },
+        {
+          "portId": "PORT_002",
+          "portType": "UNSPECIFIED",
+          "neighbourNodeId": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+          "neighbourPortId": "1506716d-dc3e-4645-86e1-4cb8ba6a116b",
+          "cores": [],
+          "obfnCpSpec": null
+        }
+      ],
+      "connectedRrhId": null,
+      "connectedRrhBeamId": null
+    },
+    {
+      "nodeId": "fcbd4636-a185-4b0e-ba49-1709c08738ff",
+      "nodeType": "SWITCH",
+      "switchingType": "SPATIAL_SPECTRAL_SWITCHING",
+      "ports": [
+        {
+          "portId": "e967dff5-c899-4324-9382-ae518d505448",
+          "portType": "EGRESS",
+          "neighbourNodeId": "RRH_001",
+          "neighbourPortId": "PORT_003",
+          "cores": [],
+          "obfnCpSpec": {
+            "supportedLowerAngle": -90,
+            "supportedUpperAngle": 90,
+            "supportedMinWidth": 10,
+            "supportedMaxwidth": 100,
+            "supportedBeams": 4,
+            "bluespaceSupportedWavelength": {
+              "upperFrequency": 20000,
+              "lowerFrequency": 1000,
+              "bluespaceFrequencyConstraint": {
+                "adjustmentGranularity": "G_6_25GHZ",
+                "gridType": "G_6_25GHZ"
+              }
+            }
+          }
+        },
+        {
+          "portId": "1d2c5cd7-91eb-488f-a0bc-913908130bd4",
+          "portType": "INGRESS",
+          "neighbourNodeId": "BBU_001",
+          "neighbourPortId": "PORT_003",
+          "cores": [],
+          "obfnCpSpec": {
+            "supportedLowerAngle": -90,
+            "supportedUpperAngle": 90,
+            "supportedMinWidth": 10,
+            "supportedMaxwidth": 100,
+            "supportedBeams": 4,
+            "bluespaceSupportedWavelength": {
+              "upperFrequency": 20000,
+              "lowerFrequency": 1000,
+              "bluespaceFrequencyConstraint": {
+                "adjustmentGranularity": "G_6_25GHZ",
+                "gridType": "G_6_25GHZ"
+              }
+            }
+          }
+        },
+        {
+          "portId": "21506245-7504-44c8-8e3a-ff2504779bab",
+          "portType": "EGRESS",
+          "neighbourNodeId": "BBU_001",
+          "neighbourPortId": "PORT_002",
+          "cores": [],
+          "obfnCpSpec": {
+            "supportedLowerAngle": -90,
+            "supportedUpperAngle": 90,
+            "supportedMinWidth": 10,
+            "supportedMaxwidth": 100,
+            "supportedBeams": 4,
+            "bluespaceSupportedWavelength": {
+              "upperFrequency": 20000,
+              "lowerFrequency": 1000,
+              "bluespaceFrequencyConstraint": {
+                "adjustmentGranularity": "G_6_25GHZ",
+                "gridType": "G_6_25GHZ"
+              }
+            }
+          }
+        },
+        {
+          "portId": "1506716d-dc3e-4645-86e1-4cb8ba6a116b",
+          "portType": "INGRESS",
+          "neighbourNodeId": "RRH_001",
+          "neighbourPortId": "PORT_002",
+          "cores": [],
+          "obfnCpSpec": {
+            "supportedLowerAngle": -90,
+            "supportedUpperAngle": 90,
+            "supportedMinWidth": 10,
+            "supportedMaxwidth": 100,
+            "supportedBeams": 4,
+            "bluespaceSupportedWavelength": {
+              "upperFrequency": 20000,
+              "lowerFrequency": 1000,
+              "bluespaceFrequencyConstraint": {
+                "adjustmentGranularity": "G_6_25GHZ",
+                "gridType": "G_6_25GHZ"
+              }
+            }
+          }
+        }
+      ],
+      "connectedRrhId": null,
+      "connectedRrhBeamId": null
+    }
+  ],
+  "servers": [
+    {
+      "serverId": "server-id",
+      "totalCpu": 16,
+      "totalMemory": 16,
+      "totalStorage": 200000,
+      "totalNetwork": 0,
+      "totalGpu": 0,
+      "cpuLevel": "CPU_LEVEL",
+      "gpuLevel": "GPU_LEVEL",
+      "usedCpu": 0,
+      "usedMemory": 0,
+      "usedStorage": 0,
+      "usedNetwork": 0,
+      "usedGpu": 0
+    }
+  ]
+}

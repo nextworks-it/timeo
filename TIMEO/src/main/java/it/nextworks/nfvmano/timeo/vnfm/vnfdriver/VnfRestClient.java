@@ -15,6 +15,10 @@
 */
 package it.nextworks.nfvmano.timeo.vnfm.vnfdriver;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
+import it.nextworks.nfvmano.libs.vnfindicator.interfaces.messages.GetIndicatorValueResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -23,6 +27,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,6 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.nextworks.nfvmano.libs.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.vnfconfig.interfaces.messages.SetConfigurationRequest;
 import it.nextworks.nfvmano.libs.vnfconfig.interfaces.messages.SetConfigurationResponse;
+
 
 public class VnfRestClient {
 
@@ -44,6 +50,12 @@ public class VnfRestClient {
 		this.restTemplate = restTemplate;
 		this.configurationApiUrl = "http://" + vnfIpAddress + ":8888/vnfconfig/v1/configuration";
 		this.indicatorApiUrl = "http://" + vnfIpAddress + ":8888/vnfind/v1";
+	}
+
+	public VnfRestClient(RestTemplate restTemplate, String vnfIpAddress, int port) {
+		this.restTemplate = restTemplate;
+		this.configurationApiUrl = "http://" + vnfIpAddress + ":"+port+"/vnfconfig/v1/configuration";
+		this.indicatorApiUrl = "http://" + vnfIpAddress + ":"+port+"/vnfind/v1";
 	}
 
 	public SetConfigurationResponse setConfiguration(SetConfigurationRequest request)
@@ -66,32 +78,102 @@ public class VnfRestClient {
 		while (count < 60 ) {
 			log.debug("Cicling for VNF Configuration: " + count);
 			try {
-				ResponseEntity<?> httpResponse = restTemplate.exchange(configurationApiUrl, HttpMethod.PATCH,
-						new HttpEntity<SetConfigurationRequest>(request, headers),
-						SetConfigurationResponse.class);
+				ResponseEntity<SetConfigurationResponse> httpResponse = restTemplate.exchange(
+						configurationApiUrl,
+						HttpMethod.PATCH,
+						new HttpEntity<>(request, headers),
+						SetConfigurationResponse.class
+				);
 				switch (httpResponse.getStatusCode()) {
 				case OK: {
 					log.debug("Received VNF configuration response: " + httpResponse.getBody().toString());
-					return (SetConfigurationResponse) (httpResponse.getBody());
+					return httpResponse.getBody();
 				}
 				default: {
-					log.error("HTTP response code with failed VNF configuration.");
-					throw new FailedOperationException("HTTP response code with failed VNF configuration.");
+					String errorResponseString = httpResponse.getBody().toString();
+					log.error("HTTP response code with failed VNF configuration from: "+configurationApiUrl+ " "+errorResponseString);
+					throw new FailedOperationException("HTTP response code with failed VNF configuration from: "+configurationApiUrl);
 				}
 				}
-			} catch (RestClientException e) {
-				log.warn("Error while invoking REST API for VNF configuration: " + e.getMessage());
+			} catch (HttpStatusCodeException ex){
+				log.warn("HttpStatuscodeException while invoking REST API for VNF configuration: "+configurationApiUrl+" "+ex.getMessage(), ex);
+				log.warn("Response body: "+ex.getResponseBodyAsString());
 				count++;
 				try {
 					Thread.sleep(10000);
 				} catch (Exception e1) {
-					e1.printStackTrace();
+					log.error("Error during VNF/PNF configuration: "+configurationApiUrl, e1);
+				}
+
+			} catch (RestClientException e) {
+
+				log.warn("Error while invoking REST API for VNF configuration: "+configurationApiUrl+" "+e.getMessage(), e);
+				count++;
+				try {
+					Thread.sleep(10000);
+				} catch (Exception e1) {
+					log.error("Error during VNF/PNF configuration: "+configurationApiUrl, e1);
 				}
 			}
 			
 		}
-		log.error("Error while invoking REST API for VNF configuration");
-		throw new FailedOperationException("Error while invoking REST API for VNF configuration: ");
+		log.error("Error while invoking REST API for VNF configuration: "+configurationApiUrl);
+		throw new FailedOperationException("Error while invoking REST API for VNF configuration: "+ configurationApiUrl);
+	}
+
+	public GetIndicatorValueResponse getIndicatorValue(GeneralizedQueryRequest request)
+			throws FailedOperationException {
+		String requestString;
+		ObjectWriter mapper = new ObjectMapper().writerWithDefaultPrettyPrinter();
+		try {
+			requestString = mapper.writeValueAsString(request);
+		} catch (JsonProcessingException exc) {
+			log.error("Could not process get indicator request.");
+			log.debug("Details: ", exc);
+			throw new FailedOperationException("Could not process get indicator request");
+		}
+		log.debug("Sending GET VNF indicator request to VNF.");
+		log.debug(requestString);
+		HttpHeaders headers = new HttpHeaders();
+		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+		requestFactory.setConnectionRequestTimeout(5000);
+		requestFactory.setConnectTimeout(5000);
+		requestFactory.setReadTimeout(5000);
+		restTemplate.setRequestFactory(requestFactory);
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		ResponseEntity<GetIndicatorValueResponse> httpResponse = restTemplate.exchange(
+				indicatorApiUrl,
+				HttpMethod.GET,
+				new HttpEntity<>(request, headers),
+				GetIndicatorValueResponse.class
+		);
+		switch (httpResponse.getStatusCode()) {
+			case OK:
+				log.debug("Received GET VNF indicator response from:"+indicatorApiUrl);
+				String responseString;
+				try {
+					responseString = mapper.writeValueAsString(httpResponse.getBody());
+				} catch (JsonProcessingException exc) {
+					log.error("Cannot parse response.", exc);
+					throw new FailedOperationException(exc);
+				}
+				log.debug(responseString);
+				return httpResponse.getBody();
+
+			default:
+				log.error("Unexpected response code '{}' from VNF.", httpResponse.getStatusCode());
+				String errorResponseString;
+				try {
+					errorResponseString = mapper.writeValueAsString(httpResponse.getBody());
+				} catch (JsonProcessingException exc) {
+					log.error("Cannot parse error response.", exc);
+					throw new FailedOperationException(exc);
+				}
+				log.debug("Response:");
+				log.debug(errorResponseString);
+				throw new FailedOperationException("GET VNF indicator value operation failed at the VNF from: "+indicatorApiUrl);
+
+		}
 	}
 
 }

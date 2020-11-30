@@ -36,7 +36,7 @@ function readNSInstance(tableId, resId) {
 function terminateNSInstance(ids, resId) {
 	var nsId = ids.split('|')[0];
 	
-	var jsonObj = JSON.parse('{}');
+	var jsonObj = {};
 	jsonObj['nsInstanceId'] = nsId;
 	var currentDate = new Date();
 	jsonObj['terminateTime'] = currentDate.getTime();
@@ -107,15 +107,15 @@ function createNSITable(tableId, data, params) {
 //	console.log(JSON.stringify(data, null, 4));
 
 	var btnFlag = true;
-	var header = createTableHeaderByValues(['Id', 'Name', 'Description', 'NSD Id', 'Tenant', 'Instantiation State'], btnFlag, false);
+	var header = createTableHeaderByValues(['Id', 'Name', 'Description', 'NSD Id', 'Tenant', 'Instantiation State', 'IL'], btnFlag, false);
 	
 	table.innerHTML = header;
 	
 	var cbacks = ['nsi_details.html?nsiId=', 'terminateNSInstance'];
 	var names = ['View','Terminate'];
-    var columns = [['nsInstanceId'], ['nsName'], ['description'], ['nsdId'], ['tenantId'], ['nsState']];
+    var columns = [['nsInstanceId'], ['nsName'], ['description'], ['nsdId'], ['tenantId'], ['nsState'],['nsScaleStatus','nsScaleLevelId']];
 	var nsInfos = data['queryNsResult'];
-	var conts = '<tbody>';
+	table.innerHTML += '<tbody>';
 	
 	for (var i in nsInfos) {
 		createNSITableContents(table, nsInfos[i], btnFlag, resId, names, cbacks, columns, tenants, false);
@@ -137,23 +137,39 @@ function createNSIDetailsTable(tableId, data, resId) {
 //	console.log(JSON.stringify(data, null, 4));
 	
 	var btnFlag = false;
-	var header = createTableHeaderByValues(['Id', 'NSD', 'VNF Info', 'NS Virtual Link', 'SAP Info'], btnFlag, false);
+	var headers;
+	if (!data.queryNsResult[0].pnfInfo || data.queryNsResult[0].pnfInfo.length < 1) {
+		headers = ['Id', 'NSD', 'VNF Info', 'NS Virtual Link', 'SAP Info'];
+	} else {
+		headers = ['Id', 'NSD', 'VNF Info', 'PNF Info', 'IL', 'NS Virtual Link', 'SAP Info'];
+	}
+
+	table.innerHTML = '<table>';
+
+	var header = createTableHeaderByValues(headers, btnFlag, false);
 	
-	table.innerHTML = header;
+	table.innerHTML += header;
 	
 	var cbacks = [];
 	var names = [];
-    var columns = [['nsInstanceId'], ['nsdId'], ['vnfInfoId'], ['virtualLinkInfo'], ['sapInfo']];
+	var columns = [['nsInstanceId'], ['nsdId'], ['vnfInfoId'], ['pnfInfo'], ['virtualLinkInfo'], ['sapInfo']];
+	if (!data.queryNsResult[0].pnfInfo || data.queryNsResult[0].pnfInfo.length < 1) {
+		columns = [['nsInstanceId'], ['nsdId'], ['vnfInfoId'], ['virtualLinkInfo'], ['sapInfo']];
+	} else {
+		columns = [['nsInstanceId'], ['nsdId'], ['vnfInfoId'], ['pnfInfo'], ['virtualLinkInfo'], ['sapInfo']];
+	}
 	var nsInfo = data['queryNsResult'][0];
 	
-	var conts = '<tbody>';
+	table.innerHTML += '<tbody>';
 	createNSITableContents(table, nsInfo, btnFlag, resId, names, cbacks, columns, null, true);
 	table.innerHTML += '</tbody>';
+
+	table.innerHTML += '</table>';
 }
 
 function createNSITableContents(table, data, btnFlag, resId, names, cbacks, columns, tenants, vnfFlag) {
 	var btnText = '';
-	var text = '<tr>';
+	var text = '';
 	if (btnFlag) {
 		var val = '';
 		if (data.hasOwnProperty('nsInstanceId')) {
@@ -177,61 +193,108 @@ function createNSITableContents(table, data, btnFlag, resId, names, cbacks, colu
 	var tenant;
 	if (tenants) {
 		tenant = findNSTenant(tenants, data['nsInstanceId']);
-//		console.log(tenant);
 	}
 		
 	for (var key in columns) {
 		var subText = '<td>';
-		var values = [];
-		getValuesFromKeyPath(data, columns[key], values);
-//		console.log('key: ' + columns[key] + ' values: ' + values);
-		if ((typeof(values[0]) == 'object' || values[0] instanceof Array) && values[0].length > 1) {
-//			console.log(values[0]);
-			var subTable = '<table class="table table-borderless">';
-			for (var v in values[0]) {
-				if (columns[key].indexOf('virtualLinkInfo') >= 0) {
-					subTable += '<tr><td><b>' + values[0][v]['nsVirtualLinkDescId'] + '</b></td></tr>';
-					subTable += '<tr><td>' + values[0][v]['resourceHandle'][0]['resourceId'] + '</td></tr>';
-				} else if (columns[key].indexOf('sapInfo') >= 0) {
-					subTable += '<tr><td><b>' + values[0][v]['sapdId'] + '</b></td></tr>';
-					subTable += '<tr><td>' + values[0][v]['sapInstanceId'] + '</td></tr>';
-					//subTable += '<tr><td>' + values[0][v]['address'] + '</td></tr>';
-				} else if (columns[key].indexOf('vnfInfoId') >= 0) {
-//					console.log('Button ID: VNFbtn_' + values[0][v]);
-					subTable += '<tr><td><button id="VNFbtn_' + values[0][v] + '" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modal_VNFInfo_' + values[0][v] + '" data-id="' + values[0][v] + '"style="width: 100px">' + values[0][v] + ' - ' + '</button></td></tr>';
-				} else {
-					subTable += '<tr><td>' + values[0][v] + '</td></tr>';
+		var vals = [];
+		getValuesFromKeyPath(data, columns[key], vals);
+		if (vals[0]) {
+			var wroteHeader = false;
+			if (columns[key].includes('virtualLinkInfo')) {
+				var subTable = '<table class="table table-borderless">';
+				for (var v in vals[0]) {
+					if (!wroteHeader) {
+						subTable += '<thead><tr><th>Descriptor ID</th><th>Instance ID</th></tr></thead>';
+						wroteHeader = true;
+					}
+					subTable += '<tr>';
+					subTable += '<td><b>' + vals[0][v]['nsVirtualLinkDescId'] + '</b></td>';
+					subTable += '<td>' + vals[0][v]['resourceHandle'][0]['resourceId'] + '</td>';
+					subTable += '</tr>';
 				}
-			}
-			subTable += '</table>';
-			subText += subTable + '</td>';
-//			console.log("subTable: ", + subText);
-		} else if (values.length != 0) {
-			if (columns[key].indexOf('virtualLinkInfo') >= 0) {
-					subText += '<tr><td><b>' + values[0]['nsVirtualLinkDescId'] + '</b></td></tr>';
-					subText += '<tr><td>' + values[0]['resourceId'] + '</td></tr>';
-			} else if (columns[key].indexOf('sapInfo') >= 0) {
-					subText += '<tr><td><b>' + values[0]['sapdId'] + '</b></td></tr>';
-					subText += '<tr><td>' + values[0]['sapInstanceId'] + '</td></tr>';
-					subText += '<tr><td>' + values[0]['address'] + '</td></tr>';
-			} else {
-				subText += values[0] + '</td>';
-			}
-		} else {
-			if (columns[key].indexOf('tenantId') >= 0) {
+				subTable += '</table>';
+				subText += subTable;
+			} else if (columns[key].includes('sapInfo')) {
+				var subTable = '<table class="table table-borderless">';
+				for (var v in vals[0]) {
+					if (!wroteHeader) {
+						subTable += '<thead><tr><th>Descriptor ID</th><th>Instance ID</th><th>IP Address</th></tr></thead>';
+						wroteHeader = true;
+					}
+					subTable += '<tr>';
+					subTable += '<td><b>' + vals[0][v]['sapdId'] + '</b></td></tr>';
+					subTable += '<tr><td>' + vals[0][v]['sapInstanceId'] + '</td></tr>';
+					subTable += '<tr><td>' +"userAccessInfo" in vals[0][v] ? vals[0][v]["userAccessInfo"][0]["address"] : "" + '</td>';
+					subTable += '</tr>';
+				}
+				subTable += '</table>';
+				subText += subTable;
+			} else if (columns[key].includes('vnfInfoId')) {
+				var subTable = '<table class="table table-borderless"><tbody>';
+				for (var v in vals[0]) {
+					subTable += 
+						'<tr><td><button id="VNFbtn_' 
+						+ vals[0][v] 
+						+ '" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modal_VNFInfo_' 
+						+ vals[0][v] 
+						+ '" data-id="' 
+						+ vals[0][v] 
+						+ '"style="width: 100px">' 
+						+ vals[0][v] 
+						+ ' - ' 
+						+ '</button></td></tr>';
+				}
+				subTable += '</tbody></table>';
+				subText += subTable;
+			} else if (columns[key].includes('pnfInfo')) {
+				var subTable = '<table class="table table-borderless"><tbody>';
+				var pnf;
+				for (var v in vals[0]) {
+					pnf = vals[0][v];
+					subTable += '<tr><td>';
+					subTable += '<'
+					subTable += 'button id="PNFbtn_' + pnf.pnfId + '" ';
+					subTable += 'type="button" ';
+					subTable += 'class="btn btn-info btn-sm btn-block" ';
+					subTable += 'onclick="location.href=\'../pnf/pnfi_details.html?pnfiId=' + pnf.pnfId + '\'" ';
+					subTable += '>';
+					subTable += pnf.pnfId;
+					subTable += '</button>';
+					subTable += '</td></tr>';
+				}
+				subTable += '</tbody></table>';
+				subText += subTable;
+			} else if (
+				columns[key].includes("nsInstanceId") 
+					|| columns[key].includes("nsdId")
+					|| columns[key].includes("nsName")
+					|| columns[key].includes("description")
+					|| columns[key].includes("nsState")
+					|| columns[key].includes("nsScaleStatus")	
+				){
+				subText += vals[0];
+			} else if (columns[key].includes('tenantId')) {
 				subText += tenant;
 			}
 			subText += '</td>';
+		} else {
+			console.error("data for " + columns[key] + " unavailable.");
 		}
 		text += subText;
 	}
-	text += '</tr>';
 	
 	table.innerHTML += text;
 	
 	if (vnfFlag) {
 		for (var vnf in data['vnfInfoId']) {
-			getVNFInfo(data['nsInstanceId'], data['vnfInfoId'][vnf], 'VNFbtn_' + data['vnfInfoId'][vnf], resId, createVNFInfoModalDialog);
+			getVNFInfo(
+				data['nsInstanceId'],
+				data['vnfInfoId'][vnf],
+				'VNFbtn_' + data['vnfInfoId'][vnf],
+				resId,
+				createVNFInfoModalDialog
+			);
 		}
 	}
 }
@@ -269,33 +332,33 @@ function createVNFInfoModalDialog(elemId, data, resId) {
 	
 	var text = '<tr>';
 	for (var i in columns) {
-		var values = [];
-		getValuesFromKeyPath(data, columns[i], values);
+		var vals = [];
+		getValuesFromKeyPath(data, columns[i], vals);
 		
-//		console.log(values);
+//		console.log(vals);
 		
 		var subText = '';
 		var subTable = '<td><table class="table table-borderless">';
-		if (values[0] instanceof Array) {
-			for (var v in values[0]) {
+		if (vals[0] instanceof Array) {
+			for (var v in vals[0]) {
 				if (columns[i].indexOf('vnfcResourceInfo') >= 0 && data['instantiationState'] === 'INSTANTIATED') {
-					subTable += '<tr><td><b>' + values[0][v]['vduId'] + '</b></td></tr>';
-					subTable += '<tr><td>' + values[0][v]['vnfcInstanceId'] + '</td></tr>';
+					subTable += '<tr><td><b>' + vals[0][v]['vduId'] + '</b></td></tr>';
+					subTable += '<tr><td>' + vals[0][v]['vnfcInstanceId'] + '</td></tr>';
 				} 
 			}
 			subText += subTable + '</table></td>';
 		} else {
-			if(values.length > 1) {
-				for (var j in values) {
+			if(vals.length > 1) {
+				for (var j in vals) {
 					if (columns[i].indexOf('vnfState') >= 0 && data['instantiationState'] === 'INSTANTIATED') {
-						subTable += '<tr><td>' + values[j] + '</td></tr>';
+						subTable += '<tr><td>' + vals[j] + '</td></tr>';
 					} else {
-						subTable += '<tr><td>' + values[j] + '</td></tr>';
+						subTable += '<tr><td>' + vals[j] + '</td></tr>';
 					}
 				}
 				subText += subTable + '</table></td>';
 			} else {
-				subText += '<td>' + values[0] + '</td>';
+				subText += '<td>' + vals[0] + '</td>';
 			}
 		}
 		text += subText;
@@ -316,25 +379,25 @@ function createVNFInfoModalDialog(elemId, data, resId) {
 		newConts += '<table class="hidable-table table table-hover" style="display:table">' + newHeader + '<tbody><tr>';
 		
 		for (var k in newColumns) {
-			var values = [];
-			getValuesFromKeyPath(addInfo, newColumns[k], values);
+			var vals = [];
+			getValuesFromKeyPath(addInfo, newColumns[k], vals);
 			
-//			console.log(values);
+//			console.log(vals);
 			
 			var newSubTable = '<td><table class="table table-borderless">';
-			if (values[0] instanceof Array) {
-				for (var h in values[0]) {
+			if (vals[0] instanceof Array) {
+				for (var h in vals[0]) {
 					if (newColumns[k].indexOf('extCpInfo') >= 0) {
-						newSubTable += '<tr><td><b>' + values[0][h]['cpdId'] + '</b></td></tr>';
-						newSubTable += '<tr><td>' + values[0][h]['cpInstanceId'] + '</td></tr>';
+						newSubTable += '<tr><td><b>' + vals[0][h]['cpdId'] + '</b></td></tr>';
+						newSubTable += '<tr><td>' + vals[0][h]['cpInstanceId'] + '</td></tr>';
 					} else if (newColumns[k].indexOf('extVirtualLinkInfo') >= 0) {
-						newSubTable += '<tr><td><b>' + values[0][h]['extVirtualLinkId'] + '</b></td></tr>';
-						newSubTable += '<tr><td>' + values[0][h]['resourceHandle']['resourceId'] + '</td></tr>';
+						newSubTable += '<tr><td><b>' + vals[0][h]['extVirtualLinkId'] + '</b></td></tr>';
+						newSubTable += '<tr><td>' + vals[0][h]['resourceHandle']['resourceId'] + '</td></tr>';
 					}
 				}
 			} else {
-				for (var l in values) {
-					newSubTable += '<tr><td>' + values[l] + '</td></tr>';
+				for (var l in vals) {
+					newSubTable += '<tr><td>' + vals[l] + '</td></tr>';
 				}
 			}
 			

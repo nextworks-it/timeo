@@ -14,6 +14,7 @@ import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
 import it.nextworks.nfvmano.timeo.rc.elements.VnfResourceAllocation;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
+import it.nextworks.nfvmano.timeo.sbdriver.sdn.elements.SbNetworkPathType;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
 
 /**
@@ -29,8 +30,13 @@ public class BluespaceStaticAlgorithm extends AbstractNsResourceAllocationAlgori
 	}
 
 	@Override
-	public NsResourceSchedulingSolution computeNsResourceAllocationSolution(InstantiateNsRequest request, Nsd nsd,
-			Map<Vnfd, Map<String, String>> vnfds, VimPlugin vimPlugin, SdnControllerPlugin sdnPlugin)
+	public NsResourceSchedulingSolution computeNsResourceAllocationSolution(
+			InstantiateNsRequest request,
+			Nsd nsd,
+			Map<Vnfd, Map<String, String>> vnfds,
+			VimPlugin vimPlugin,
+			SdnControllerPlugin sdnPlugin
+	)
 			throws NotExistingEntityException, ResourceAllocationSolutionNotFound {
 		
 		List<VnfResourceAllocation> vnfResourceAllocation = new ArrayList<>();
@@ -43,8 +49,8 @@ public class BluespaceStaticAlgorithm extends AbstractNsResourceAllocationAlgori
 			String vduId = vnfd.getVdu().get(0).getVduId();
 			int vduIndex = 0;
 			String vimId = "OpenStack_local";
-			String zoneId = "netdev5";
-			String hostId = "compute1";
+			String zoneId = "nova";
+			String hostId = "NUC-Openstack";
 			
 			VnfResourceAllocation vra = new VnfResourceAllocation(null, vnfdId, vnfIndex, vduId, vduIndex, vimId, zoneId, hostId);
 			vnfResourceAllocation.add(vra);
@@ -61,7 +67,7 @@ public class BluespaceStaticAlgorithm extends AbstractNsResourceAllocationAlgori
 				0, 
 				true, 
 				false, 
-				"sip-pe1-uni1", 
+				"10.1.7.66_65536", 
 				null);
 		NetworkPathHop hop2 = new NetworkPathHop(1, 
 				"00:00:34:97:f6:5c:6d:e1", 					//node ID
@@ -73,10 +79,10 @@ public class BluespaceStaticAlgorithm extends AbstractNsResourceAllocationAlgori
 				false, 
 				true, 
 				null, 
-				"sip-pe2-uni1");
+				"10.1.7.83_1");
 		hops.add(hop1);
 		hops.add(hop2);
-		InterDcNetworkPath idnp = new InterDcNetworkPath(networkPathId, hops);
+		InterDcNetworkPath idnp = new InterDcNetworkPath(networkPathId, hops, SbNetworkPathType.SDM);
 		interDcNetworkPaths.add(idnp);
 		
 		NsResourceSchedulingSolution solution = new NsResourceSchedulingSolution(request.getNsInstanceId(), 

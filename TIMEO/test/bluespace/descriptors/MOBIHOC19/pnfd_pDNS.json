@@ -1,0 +1,39 @@
+{
+  "pnfd": {
+    "pnfdId": "pDNS_v01",
+    "provider": "NXW",
+    "version": "0.1",
+    "pnfExtCp": [
+
+      {
+        "cpdId": "dns_users",
+        "description": "Connection point for the gateway towards the users",
+        "layerProtocol": "IPV4",
+        "cpRole": "ROOT",
+        "addressData": [
+          {
+            "addressType": "IP_ADDRESS",
+            "iPAddressAssignment": false,
+            "floatingIpActivated": false,
+            "iPAddressType": "IPv4",
+            "numberOfIpAddress": 1
+          }
+        ]
+      }
+    ],
+    "security": {
+      "signature": "GW_PNFD_SIGNATURE",
+      "algorithm": "GW_PNFD_ALGORITHM",
+      "certificate": "GW_PNFD_CERTIFICATE"
+    },
+    "configurableProperty": [
+      "vnf.vCacheEdge_1_01.vdu.vCacheEdge_1_vdu.extcp.vCacheEdge_1_users_ext.floating",
+      "vnf.vCacheEdge_2_01.vdu.vCacheEdge_2_vdu.extcp.vCacheEdge_2_users_ext.floating",
+      "vnf.vCacheEdge_1_01.vdu.vCacheEdge_1_vdu.hostname",
+      "vnf.vCacheEdge_2_01.vdu.vCacheEdge_2_vdu.hostname",
+      "uservnf.origin_fqdn",
+      "uservnf.add_dns_hosts",
+      "uservnf.rm_dns_hosts"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "pnfInstanceId": "BBU_001",
+  "pnfdId": "pBBU",
+  "pnfdVersion": "0.1",
+  "description": "BBU",
+  "location": "1",
+  "type": "BBU",
+  "ports": [
+    {
+      "portId": "PORT_002",
+      "addresses": {
+        "MAC_ADDRESS": "MAC",
+        "IP_ADDRESS": "{{bbu_data}}"
+      },
+      "management": false,
+      "sipId": "21506245-7504-44c8-8e3a-ff2504779bab"
+    },
+    {
+      "portId": "PORT_003",
+      "addresses": {
+        "MAC_ADDRESS": "MAC",
+        "IP_ADDRESS": "{{bbu_data}}"
+      },
+      "management": false,
+      "sipId":  "1d2c5cd7-91eb-488f-a0bc-913908130bd4"
+    }
+
+  ]
+}

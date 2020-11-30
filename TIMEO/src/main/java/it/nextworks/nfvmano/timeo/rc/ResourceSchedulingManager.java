@@ -16,18 +16,25 @@
 package it.nextworks.nfvmano.timeo.rc;
 
 
-
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import it.nextworks.nfvmano.timeo.rc.algorithms.AlgorithmType;
-import it.nextworks.nfvmano.timeo.rc.algorithms.BluespaceStaticAlgorithm;
-import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithm5tonic;
-import it.nextworks.nfvmano.timeo.rc.algorithms.VEPCStaticAlgorithmArno;
+import it.nextworks.nfvmano.libs.catalogues.interfaces.elements.PnfdInfo;
+import it.nextworks.nfvmano.libs.descriptors.nsd.Pnfd;
+import it.nextworks.nfvmano.libs.records.nsinfo.NsInfo;
+import it.nextworks.nfvmano.libs.records.nsinfo.PnfInfo;
+import it.nextworks.nfvmano.timeo.catalogue.nsdmanagement.NsdManagementService;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.PnfManagementService;
+import it.nextworks.nfvmano.timeo.catalogue.pnfmanagement.elements.PnfInstance;
+import it.nextworks.nfvmano.timeo.common.exception.ScaleAllocationSolutionNotFound;
+import it.nextworks.nfvmano.timeo.nso.messages.ScaleNsRequestMessage;
+import it.nextworks.nfvmano.timeo.rc.algorithms.*;
 import it.nextworks.nfvmano.timeo.rc.algorithms.dijkstra.DijkstraAlgorithm;
+import it.nextworks.nfvmano.timeo.rc.elements.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.BindingBuilder;
@@ -41,6 +48,7 @@ import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -65,10 +73,6 @@ import it.nextworks.nfvmano.timeo.nso.NsManagementEngine;
 import it.nextworks.nfvmano.timeo.nso.messages.InstantiateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.messages.TerminateNsRequestMessage;
 import it.nextworks.nfvmano.timeo.nso.repository.NsDbWrapper;
-import it.nextworks.nfvmano.timeo.rc.algorithms.CdnStaticAlgorithmNXW;
-import it.nextworks.nfvmano.timeo.rc.algorithms.DummyAlgorithm;
-import it.nextworks.nfvmano.timeo.rc.algorithms.DummyAlgorithmNXW;
-import it.nextworks.nfvmano.timeo.rc.algorithms.NsResourceAllocationAlgorithmInterface;
 import it.nextworks.nfvmano.timeo.rc.algorithms.emma.EmmaNetCompAlgorithm;
 import it.nextworks.nfvmano.timeo.rc.elements.NetworkPathHop;
 import it.nextworks.nfvmano.timeo.rc.elements.NsResourceSchedulingSolution;
@@ -78,6 +82,7 @@ import it.nextworks.nfvmano.timeo.sbdriver.SbDriverType;
 import it.nextworks.nfvmano.timeo.sbdriver.SbDriversManager;
 import it.nextworks.nfvmano.timeo.sbdriver.sdn.SdnControllerPlugin;
 import it.nextworks.nfvmano.timeo.sbdriver.vim.VimPlugin;
+import it.nextworks.nfvmano.timeo.vnfm.VnfmHandler;
 
 /**
  * Entity in charge of computing the resources to be allocated 
@@ -107,6 +112,11 @@ public class ResourceSchedulingManager {
 	@Qualifier(NfvoConstants.computationQueueExchange)
 	TopicExchange computationMessageExchange;
 
+	//Used to retrieve Indicator and Configuration information
+	//from the VNFs/PNFs in the Algorithm (AitAlgorithm)
+	@Autowired
+	TaskExecutor taskExecutor;
+	
 	private Queue queue;
 	
 	@Value("${timeo.algorithm}")
@@ -117,15 +127,31 @@ public class ResourceSchedulingManager {
 	
 	@Value("${timeo.poweradaptation.network}")
 	private boolean networkPowerAdaptation;
+
+	//Used to store Rc Algorithm properties
+	@Value("#{${timeo.rc.properties}}")
+	private Map<String, String> rcProperties;
+	
+	@Value("${timeo.ait.algorithm}")
+	private String aitAlgorithmUrl;
 	
 	@Autowired
 	NsManagementEngine nsManagementEngine;
-	
+
+	@Autowired
+	private NsdManagementService nsdManagement;
+
 	@Autowired
 	private VnfPackageManagementService vnfPackageManagement;
+
+	@Autowired
+	private PnfManagementService pnfManagementService;
 	
 	@Autowired
 	private SbDriversManager sbDriversManager;
+	
+	@Autowired
+	private VnfmHandler vnfmHandler;
 	
 	private SdnControllerPlugin defaultSdnControllerPlugin;
 	
@@ -234,6 +260,13 @@ public class ResourceSchedulingManager {
 				break;
 			}
 
+			case SCALE: {
+				log.debug("Received computation release message for operation " + operationId);
+				ComputationScaleMessage scaleMsg = (ComputationScaleMessage)compMessage;
+				computeScale(scaleMsg);
+				break;
+			}
+
 			default: {
 				log.error("Received message with not supported type");
 				nsDbWrapper.updateInternalOperation(operationId, OperationStatus.FAILED, "Computation message with not supported type");
@@ -260,8 +293,9 @@ public class ResourceSchedulingManager {
 			String nsInstanceId = msg.getRequest().getNsInstanceId();
 			String nsFlavourId = msg.getRequest().getFlavourId(); 
 			String nsInstantiationLevel = msg.getRequest().getNsInstantiationLevelId();
-			
+
 			try {
+				NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
 				Nsd nsd = nsManagementEngine.retrieveNsd(nsInstanceId);
 				Map<Vnfd,Map<String, String>> vnfdsTarget = new HashMap<>();
 				Map<String,Map<String, String>> vnfds = nsd.getVnfdDataFromFlavour(nsFlavourId, nsInstantiationLevel);
@@ -274,13 +308,30 @@ public class ResourceSchedulingManager {
 					Vnfd vnfd = pkg.getVnfd();
 					vnfdsTarget.put(vnfd, entry.getValue());
 				}
-				
+
+				// Compute pnf instances and pnfds
+				Map<String, List<PnfInstance>> pnfInstances = new HashMap<>();
+				Map<String, Pnfd> pnfds = new HashMap<>();
+				for (PnfInfo pnfInfo : nsInfo.getPnfInfo()) {
+					String pnfdId = pnfInfo.getPnfdId();
+					pnfInstances.put(
+							pnfdId,
+							pnfManagementService.getPnfInstancesFromPnfd(pnfdId)
+					);
+					PnfdInfo pnfdInfo = nsdManagement.findPnfdInfo(pnfInfo.getPnfdInfoId());
+					Pnfd pnfd = pnfdInfo.getPnfd();
+					pnfds.put(pnfdId, pnfd);
+				}
+
 				NsResourceSchedulingSolution solution = algorithm.computeNsResourceAllocationSolution(
 						msg.getRequest(),
 						nsd,
 						vnfdsTarget,
 						defaultVimPlugin,
-						defaultSdnControllerPlugin
+						defaultSdnControllerPlugin,
+						vnfmHandler,
+						pnfds,
+						pnfInstances
 				);
 				//store in DB if successful
 				if (solution.isSolutionFound()) {
@@ -341,10 +392,114 @@ public class ResourceSchedulingManager {
 		}
 		log.debug("Adjustment of power state is terminated");
 	}
+
+	private void adjustPowerState(String nsInstance, String operationId, NsScaleSchedulingSolution solution) throws FailedOperationException {
+		log.debug("Triggering power state adjustment for NS instance " + nsInstance+"due to scaling operation:"+operationId);
+		if (computingPowerAdaptation) {
+			
+			switchOnComputeNodes(solution);
+			switchOffComputeNodes(solution);
+		
+		}
+		if (networkPowerAdaptation) {
+			switchOnNetworkNodes(solution);
+			switchOffNetworkNodes(solution);
+		}
 	
-	private void switchOnComputeNodes(NsResourceSchedulingSolution solution) throws FailedOperationException {
-		log.debug("Starting procedure to switch on compute nodes");
-		Map<String,String> computeNodesToBeActivated = solution.getComputeNodesToBeActivated();
+	}
+
+
+
+	private void computeScale(ComputationScaleMessage msg) throws NotExistingEntityException{
+		log.debug("Computing resources to be scaled");
+		NsScaleSchedulingSolution defaultScaleSolution = new NsScaleSchedulingSolution(
+				msg.getRequest().getNsInstanceId());
+		try {
+			NsResourceAllocationAlgorithmInterface algorithm = loadAlgorithm();
+			log.debug("Found algorithm of type " + algorithmType);
+
+			String nsInstanceId = msg.getRequest().getNsInstanceId();
+			NsInfo nsInfo = nsDbWrapper.getNsInfo(nsInstanceId);
+			String nsFlavourId = nsInfo.getFlavourId();
+			//TODO: verify this
+			String currentLevel = nsInfo.getNsScaleStatus().get(0).getNsScaleLevelId();
+			String scaleLevel = msg.getRequest().getScaleNsData().getScaleNsToLevelData().getNsInstantiationLevel();
+
+			Nsd nsd = nsManagementEngine.retrieveNsd(nsInstanceId);
+			Map<Vnfd, Map<String, String>> vnfdsTarget = new HashMap<>();
+			Map<String, Map<String, String>> currentVnfds = nsd.getVnfdDataFromFlavour(nsFlavourId, currentLevel);
+			Map<String, Map<String, String>> scaleVnfds = nsd.getVnfdDataFromFlavour(nsFlavourId, scaleLevel);
+			Set<String> vnfdIdsToAllocate = scaleVnfds.keySet();
+			vnfdIdsToAllocate.removeAll(currentVnfds.keySet());
+			for (String vnfdId : vnfdIdsToAllocate) {
+
+				log.debug("Found VNFD " + vnfdId);
+				OnboardedVnfPkgInfo pkg = vnfPackageManagement.getOnboardedVnfPkgInfoFromVnfd(vnfdId);
+				log.debug("Found VNF package.");
+				Vnfd vnfd = pkg.getVnfd();
+				vnfdsTarget.put(vnfd, scaleVnfds.get(vnfdId));
+			}
+
+			NsScaleSchedulingSolution scaleSolution = algorithm.computeNsScaleAllocationSolution(
+					msg.getRequest(),
+					nsInfo,
+					nsd,
+					vnfdsTarget,
+					defaultVimPlugin,
+					defaultSdnControllerPlugin, 
+					vnfPackageManagement
+			);
+			//store in DB if successful
+			if (scaleSolution.isSolutionFound()) {
+
+				log.debug("Solution found");
+				
+				resourceComputationDbWrapper.addNewNsScaleSchedulingSolution(scaleSolution);
+
+				if ((computingPowerAdaptation) || (networkPowerAdaptation)) {
+					adjustPowerState(msg.getRequest().getNsInstanceId(), msg.getOperationId(), scaleSolution);
+					//TODO: at the moment this is blocking. It should implement an asynchronous mechanism to enable multiple computations in parallel
+					//while the system is waiting for the change of power state at the other component
+				}
+				nsManagementEngine.notifyScaleComputationResult(msg.getRequest().getNsInstanceId(), msg.getOperationId(), scaleSolution);
+			} else {
+				log.error("Scale computation failed due to not available resources");
+				nsDbWrapper.updateInternalOperation(msg.getOperationId(), OperationStatus.FAILED, "Scale computation failed due to not available resources");
+				nsManagementEngine.notifyScaleComputationResult(msg.getRequest().getNsInstanceId(), msg.getOperationId(),
+						defaultScaleSolution);
+			}
+
+
+		} catch (AlgorithmNotAvailableException e) {
+			nsDbWrapper.updateInternalOperation(msg.getOperationId(), OperationStatus.FAILED, "Unable to find a suitable algorithm");
+			nsManagementEngine.notifyScaleComputationResult(msg.getRequest().getNsInstanceId(), msg.getOperationId(),
+					defaultScaleSolution);
+		}catch (ScaleAllocationSolutionNotFound e) {
+			log.error("Scale computation failed due to not available resources or method not implemented");
+			nsDbWrapper.updateInternalOperation(msg.getOperationId(), OperationStatus.FAILED, "Resource computation failed due to not available resources");
+			nsManagementEngine.notifyScaleComputationResult(msg.getRequest().getNsInstanceId(), msg.getOperationId(),
+					defaultScaleSolution);
+		} catch (NotExistingEntityException e) {
+			log.error("Resource computation failed due to missing entities in DB");
+			nsDbWrapper.updateInternalOperation(msg.getOperationId(), OperationStatus.FAILED, "Resource computation failed due to missing entities in DB");
+			nsManagementEngine.notifyScaleComputationResult(msg.getRequest().getNsInstanceId(), msg.getOperationId(),
+					defaultScaleSolution);
+		} catch (FailedOperationException e) {
+			log.error("Resource computation failed because of error while setting power state");
+			//TODO: to be better analyzed
+			nsDbWrapper.updateInternalOperation(msg.getOperationId(), OperationStatus.FAILED, "Resource computation failed because of error while setting power state");
+			nsManagementEngine.notifyScaleComputationResult(msg.getRequest().getNsInstanceId(), msg.getOperationId(),
+					defaultScaleSolution);
+		} catch (AlreadyExistingEntityException e) {
+			log.error("THIS SOULD NOT HAPPEN: Resource scaling failed because the NSI already had a NsResourceSchedulingSolution");
+			nsDbWrapper.updateInternalOperation(msg.getOperationId(), OperationStatus.FAILED, "Resource computation failed due to missing entities in DB");
+			nsManagementEngine.notifyScaleComputationResult(msg.getRequest().getNsInstanceId(), msg.getOperationId(),
+					defaultScaleSolution);
+		}
+
+	}
+	
+	private void switchOnComputeNodes(Map<String, String> computeNodesToBeActivated)throws FailedOperationException{
 		log.debug("Found " + computeNodesToBeActivated.size() + " compute nodes to be activated");
 		Map<String, PowerState> powerStates = new HashMap<>();
 		for (Map.Entry<String, String> e : computeNodesToBeActivated.entrySet()) {
@@ -360,9 +515,21 @@ public class ResourceSchedulingManager {
 		}
 	}
 	
-	private void switchOnNetworkNodes(NsResourceSchedulingSolution solution) throws FailedOperationException {
-		log.debug("Starting procedure to switch on network nodes");
-		List<String> networkNodesToBeActivated = solution.getNetworkNodesToBeActivated();
+	private void switchOnComputeNodes(NsResourceSchedulingSolution solution) throws FailedOperationException {
+		log.debug("Starting procedure to switch on compute nodes");
+		Map<String,String> computeNodesToBeActivated = solution.getComputeNodesToBeActivated();
+		switchOnComputeNodes(computeNodesToBeActivated);
+		
+	}
+	
+	private void switchOnComputeNodes(NsScaleSchedulingSolution solution) throws FailedOperationException {
+		log.debug("Starting procedure to switch on compute nodes due to scaling procedure");
+		Map<String,String> computeNodesToBeActivated = solution.getScaleNsResourceAllocation().getComputeNodesToBeActivated();
+		switchOnComputeNodes(computeNodesToBeActivated);
+		
+	}
+	
+	private void switchOnNetworkNodes(List<String> networkNodesToBeActivated)throws FailedOperationException{
 		log.debug("Found " + networkNodesToBeActivated.size() + " network nodes to be activated");
 		Map<String, PowerState> devicesPowerState = new HashMap<>();
 		for (String n : networkNodesToBeActivated) {
@@ -377,14 +544,25 @@ public class ResourceSchedulingManager {
 		}
 	}
 	
-	private void switchOffComputeNodes(NsResourceSchedulingSolution solution) throws FailedOperationException {
-		log.debug("Starting procedure to switch off compute nodes");
-		Map<String,String> computeNodes = solution.getAllComputeNodes();
+	private void switchOnNetworkNodes(NsResourceSchedulingSolution solution) throws FailedOperationException {
+		log.debug("Starting procedure to switch on network nodes");
+		List<String> networkNodesToBeActivated = solution.getNetworkNodesToBeActivated();
+		this.switchOnNetworkNodes(networkNodesToBeActivated);
+	}
+	
+	private void switchOnNetworkNodes(NsScaleSchedulingSolution solution) throws FailedOperationException{
+		log.debug("Starting procedure to switch on network nodes for scale");
+		List<String> networkNodesToBeActivated = solution.getScaleNsResourceAllocation().getNetworkNodesToBeActivated();
+		this.switchOnNetworkNodes(networkNodesToBeActivated);
+	}
+	
+	private void switchOffComputeNodes(Map<String, String> computeNodes, String nsInstanceId) throws FailedOperationException {
+		log.debug("Found compute hosts to switch off:"+computeNodes.keySet().size());
 		Map<String, PowerState> powerStates = new HashMap<>();
 		for (Map.Entry<String, String> e : computeNodes.entrySet()) {
 			String vimId = e.getValue();
 			String hostId = e.getKey();
-			List<VnfResourceAllocation> vnfSol = resourceComputationDbWrapper.getRemainingVnfAllocationsOnHost(solution.getNsInstanceId(), vimId, hostId);
+			List<VnfResourceAllocation> vnfSol = resourceComputationDbWrapper.getRemainingVnfAllocationsOnHost(nsInstanceId, vimId, hostId);
 			if (vnfSol.isEmpty()) {
 				log.debug("Compute node " + hostId + " needs to be switched off");
 				powerStates.put(hostId, PowerState.POWER_OFF);
@@ -401,12 +579,24 @@ public class ResourceSchedulingManager {
 		}
 	}
 	
-	private void switchOffNetworkNodes(NsResourceSchedulingSolution solution) throws FailedOperationException {
+	private void switchOffComputeNodes(NsResourceSchedulingSolution solution) throws FailedOperationException {
 		log.debug("Starting procedure to switch off compute nodes");
-		Set<String> networkNodes = solution.getAllNetworkNodes();
+		Map<String,String> computeNodes = solution.getAllComputeNodes();
+		switchOffComputeNodes(computeNodes, solution.getNsInstanceId());
+		
+	}
+	
+	private void switchOffComputeNodes(NsScaleSchedulingSolution solution) throws FailedOperationException {
+		log.debug("Starting procedure to switch off compute nodes");
+		Map<String,String> computeNodes = solution.getComputeNodesToBeDeactivated();
+		switchOffComputeNodes(computeNodes, solution.getNsInstanceId());
+		
+	}
+
+	private void switchOffNetworkNodes(String nsIntanceId, Set<String> networkNodes) throws FailedOperationException {
 		Map<String, PowerState> devicesPowerState = new HashMap<>();
 		for (String n : networkNodes) {
-			List<NetworkPathHop> usedHops = resourceComputationDbWrapper.getRemainingPathHopInUse(solution.getNsInstanceId(), n);
+			List<NetworkPathHop> usedHops = resourceComputationDbWrapper.getRemainingPathHopInUse(nsIntanceId, n);
 			if (usedHops.isEmpty()) {
 				log.debug("Network node " + n + " can be put in sleeping mode.");
 				devicesPowerState.put(n, PowerState.SLEEPING);
@@ -423,6 +613,17 @@ public class ResourceSchedulingManager {
 		}
 	}
 	
+	private void switchOffNetworkNodes(NsResourceSchedulingSolution solution) throws FailedOperationException {
+		log.debug("Starting procedure to switch off compute nodes");
+		Set<String> networkNodes = solution.getAllNetworkNodes();
+		switchOffNetworkNodes(solution.getNsInstanceId(), networkNodes);
+	}
+	
+	private void switchOffNetworkNodes(NsScaleSchedulingSolution solution) throws FailedOperationException {
+		log.debug("Starting procedure to switch off compute nodes");
+		Set<String> networkNodes = new HashSet<>(solution.getNetworkNodesToBeDeactivated());
+		switchOffNetworkNodes(solution.getNsInstanceId(), networkNodes);
+	}
 	private void releaseResources(ComputationReleaseMessage msg) throws NotExistingEntityException {
 		String nsInstanceId = msg.getRequest().getNsInstanceId();
 		String operationId = msg.getOperationId();
@@ -480,18 +681,51 @@ public class ResourceSchedulingManager {
 				return new DummyAlgorithmNXW();
 			case CDN_STATIC_NXW:
 				return new CdnStaticAlgorithmNXW();
+			case CDN_STATIC_BLUESPACE_NXW:
+				return new CdnStaticAlgorithmBluespaceNXW();
 			case CDN_STATIC_5TONIC:
 				return new CdnStaticAlgorithm5tonic();
 			case DIJKSTRA:
 				return new DijkstraAlgorithm();
 			case VEPC_STATIC_ARNO:
 				return new VEPCStaticAlgorithmArno();
+			case VEPC_STATIC_NXW:
+				return new VEPCStaticAlgorithmNXW();
 			case BLUESPACE_STATIC_NXW:
 				return new BluespaceStaticAlgorithm();
+
+			case BLUESPACE_AROF_FAKE:
+				return new BluespaceArofFakeAlgorithm(vnfPackageManagement, pnfManagementService, rcProperties);
+			case NXW_DYNAMIC_ALGORITHM:
+				return new NxwDynamicAlgorithm(vnfPackageManagement, pnfManagementService, rcProperties);
+			case BLUESPACE_AIT:
+				return new BluespaceObfnAlgorithm(aitAlgorithmUrl, vnfPackageManagement, pnfManagementService, taskExecutor, rcProperties);
+			case BLUESPACE_OBFN_STATIC:
+				return new BluespaceObfnAlgorithmStatic(aitAlgorithmUrl, vnfPackageManagement, pnfManagementService, taskExecutor, rcProperties);
 			default:
 				log.error("Algorithm type {} not yet implemented.", type);
 				throw new AlgorithmNotAvailableException();
 		}
 	}
 
+	/**
+	 * Method to be invoked to request the computation of the scaling resources for a NS
+	 *
+	 * @param message scale NS message
+	 * @throws NotExistingEntityException if the operation ID is not found in DB
+	 */
+    public void scaleResources(ScaleNsRequestMessage message) throws NotExistingEntityException {
+		log.debug("Invoked scale resource method");
+		if (queue == null) createQueue();
+		ComputationScaleMessage internalMessage = new ComputationScaleMessage(message.getOperationId(), message.getRequest());
+		ObjectMapper mapper = Utilities.buildObjectMapper();
+		try {
+			String json = mapper.writeValueAsString(internalMessage);
+			rabbitTemplate.convertAndSend(computationMessageExchange.getName(), "resourceSched", json);
+			log.debug("Sent internal message with request for computation of NS resources");
+		} catch (JsonProcessingException e) {
+			log.error("Error while translating internal computation reserve message in Json format.");
+			nsDbWrapper.updateInternalOperation(message.getOperationId(), OperationStatus.FAILED, "Error while translating internal computation reserve message in Json format.");
+		}
+    }
 }

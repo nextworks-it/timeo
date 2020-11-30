@@ -1,0 +1,33 @@
+{
+  "pnfd": {
+    "pnfdId": "pOrigin_v01",
+    "provider": "NXW",
+    "version": "0.1",
+    "pnfExtCp": [
+
+      {
+        "cpdId": "origin_caches",
+        "description": "Connection point for the origin towards the caches",
+        "layerProtocol": "IPV4",
+        "cpRole": "ROOT",
+        "addressData": [
+          {
+            "addressType": "IP_ADDRESS",
+            "iPAddressAssignment": false,
+            "floatingIpActivated": false,
+            "iPAddressType": "IPv4",
+            "numberOfIpAddress": 1
+          }
+        ]
+      }
+    ],
+    "security": {
+      "signature": "GW_PNFD_SIGNATURE",
+      "algorithm": "GW_PNFD_ALGORITHM",
+      "certificate": "GW_PNFD_CERTIFICATE"
+    },
+    "configurableProperty": [
+
+    ]
+  }
+}
